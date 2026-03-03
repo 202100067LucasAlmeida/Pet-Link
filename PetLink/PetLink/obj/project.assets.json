@@ -8,23 +8,23 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Leonor\\.nuget\\packages\\": {},
-    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\diana\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Leonor\\source\\repos\\PetLink\\PetLink\\PetLink.csproj",
+      "projectUniqueName": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3ºANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\PetLink.csproj",
       "projectName": "PetLink",
-      "projectPath": "C:\\Users\\Leonor\\source\\repos\\PetLink\\PetLink\\PetLink.csproj",
-      "packagesPath": "C:\\Users\\Leonor\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Leonor\\source\\repos\\PetLink\\PetLink\\obj\\",
+      "projectPath": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3ºANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\PetLink.csproj",
+      "packagesPath": "C:\\Users\\diana\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3ºANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Leonor\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\diana\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
