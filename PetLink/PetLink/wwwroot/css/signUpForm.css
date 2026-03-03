@@ -1,0 +1,248 @@
+﻿/* Auth Pages Custom Styles */
+:root {
+    --primary-color: #05528F;
+    --secondary-color: #F1F5F9;
+    --accent-color: #087CD9;
+    --text-dark: ##022845;
+    --text-muted: #636e72;
+    --bg-light: #f8f9fa;
+    --border-color: #e1e8ed;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
+    --border-radius: 12px;
+    --font-primary: "Poetsen One", sans-serif;
+    --font-display: "Oxygen", sans-serif;
+}
+
+/* fontes do google que tavam no documento de ESA*/
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Poetsen+One&display=swap');
+
+body {
+    font-family: var(--font-primary);
+    color: var(--text-dark);
+}
+
+/* Card Customization */
+.auth-card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+    .auth-card .card-body {
+        padding: 2.5rem;
+    }
+
+/* Header Styling */
+.auth-header {
+    margin-bottom: 2rem;
+}
+
+    .auth-header .brand-name {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header .tagline {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        letter-spacing: 0.3px;
+    }
+
+/* Form Styling */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        outline: none;
+    }
+
+/* Radio Button Styling */
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    flex: 1;
+    min-width: 120px;
+}
+
+    .radio-option .form-check {
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .radio-option .form-check:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+
+    .radio-option .form-check-input:checked + .form-check-label {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .radio-option .form-check-input:checked ~ .form-check {
+        border-color: var(--primary-color);
+        background-color: rgba(74, 144, 226, 0.1);
+    }
+
+/* Button Styling */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    }
+
+.btn-outline-custom {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+    .btn-outline-custom:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(74, 144, 226, 0.05);
+        transform: translateY(-2px);
+    }
+
+/* Social Login Section */
+.social-login {
+    position: relative;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+    .social-login::before,
+    .social-login::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background: var(--border-color);
+    }
+
+    .social-login::before {
+        left: 0;
+    }
+
+    .social-login::after {
+        right: 0;
+    }
+
+    .social-login span {
+        background: white;
+        padding: 0 1rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+/* Security Badges */
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.badge-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+    .badge-item i {
+        color: var(--accent-color);
+        font-size: 1.1rem;
+    }
+
+/* Footer Links */
+.auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+    .footer-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .auth-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .security-badges {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+}

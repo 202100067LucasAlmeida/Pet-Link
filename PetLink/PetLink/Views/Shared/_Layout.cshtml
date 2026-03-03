@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PetLink.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/signUpForm.css" asp-append-version="true" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Poetsen+One&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <header>
@@ -29,6 +35,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="AnimalListings"
                                asp-action="Index">Anúncios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SignUp">Sign Up</a>
                         </li>
                     </ul>
                 </div>

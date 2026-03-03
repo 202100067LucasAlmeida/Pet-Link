@@ -28,5 +28,13 @@ namespace PetLink.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        //temporário para questão de teste
+        public IActionResult SignUp()
+        {
+            return View("~/Views/Profile/SignUpForm.cshtml");
+        }
+
     }
 }

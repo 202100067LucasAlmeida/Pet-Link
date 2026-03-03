@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Sign Up Form";
+}
+
+<div class="row justify-content-center">
+
+    @* a nossa intro, tenho de mudar depois a cor e fonte das letras, e adicionar o logo somehow *@
+    <div class="text-center mb-4">
+        <h1 class="display-6 text-primary">PETLINK</h1>
+        <p class="text-muted">Connecting pets with loving homes</p>
+    </div>
+
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                @*tenho de arranjar foto das vaquinhas pra aqui*@
+
+                @*titulo do formulário*@
+                <h3 class="h5 mb-3">Create your account</h3>
+                <p class="text-muted small mb-4">Join our community of pet lovers and professionals.</p>
+
+
+                @*depois mudamos os values, tô só a seguir o mockup*@
+                <form>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" value="Jane Doe" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" value="jane@example.com" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" value="+1(555)000-0000" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" value="**********" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" value="**********" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">I am a:</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="petOwner">
+                                <label class="form-check-label" for="petOwner">
+                                    Pet Owner
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="petSitter">
+                                <label class="form-check-label" for="petSitter">
+                                    Pet Sitter
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="association">
+                                <label class="form-check-label" for="association">
+                                    Association
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*n sei se precisamos depois manter estas formalidades, mas vamos aproveitar que tá no mock up e que a privacy thing vem já criada*@
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" checked>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-primary">Terms & Conditions</a> and <a href="#" class="text-primary">Privacy Policy</a>.
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-4">Create Account</button>
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-2">OR CONTINUE WITH</p>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="button" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-google"></i> Google
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-github"></i> GitHub
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p class="mb-0">
+                            Don't have an account? <a href="#" class="text-primary">Sign up for free</a>
+                        </p>
+                    </div>
+
+                    @*arranjar ums icons ou emojis(?) pra meter aqui*@
+                    <div class="d-flex justify-content-center gap-4 small text-muted">
+                        <span>SECURE SSL</span>
+                        <span>TRUSTED PROVIDER</span>
+                        <span>PRIVACY FIRST</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        @*podemos considerar isto um footer, mas preciso formatar isto melhor por causa do footer automático do projeto*@
+        <div class="text-center mb-4">
+            <h1 class="display-6 text-primary">PETLINK</h1>
+            <p class="text-muted">Making pet adoption simple, transparent, and joyful. Our mission is to ensure every pet finds its forever home.</p>
+        </div>
+
+        <div class="text-center mt-4 small text-muted">
+            <p class="mb-1">© 2026 PetLink. All rights reserved.</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="#" class="text-muted text-decoration-none">Support</a>
+                <a href="#" class="text-muted text-decoration-none">Privacy</a>
+                <a href="#" class="text-muted text-decoration-none">Terms</a>
+            </div>
+        </div>
+    </div>
+</div>
