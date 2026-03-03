@@ -482,3 +482,17 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Ocultar pastas de código compilado do .NET
+bin/
+obj/
+
+# Ocultar ficheiros de utilizador do Visual Studio / VS Code
+.vscode/
+*.user
+
+# Ocultar a base de dados SQLite (MUITO IMPORTANTE)
+*.db
+*.db-shm
+*.db-wal
+petlink.db
