@@ -7,12 +7,12 @@
       "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\views\\profile\\signupform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\views\\profile\\signupform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SignUpForm.cshtml",
+              "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "RelativeDocumentMoniker": "PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "RelativeToolTip": "PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAAAHgAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-04T18:04:43.666Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -32,7 +45,7 @@
               "RelativeDocumentMoniker": "PetLink\\Views\\Home\\Index.cshtml",
               "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "PetLink\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAKYAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-03-04T16:48:05.561Z",
               "EditorCaption": ""
@@ -40,25 +53,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "PetLink\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "PetLink\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAABkAAABNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-04T16:30:18.414Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "PetLink\\wwwroot\\css\\site.css",
               "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\wwwroot\\css\\site.css",
               "RelativeToolTip": "PetLink\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGAAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2026-03-04T11:25:47.777Z",
               "EditorCaption": ""

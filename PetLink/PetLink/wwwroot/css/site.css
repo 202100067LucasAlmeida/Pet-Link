@@ -10,26 +10,42 @@
 }
 
 
-
 /* Modificadores do Bootstrap */
 .btn-primary {
     background-color: var(--petlink-primary);
     border-color: var(--petlink-primary);
 }
 
-.text-primary {
+.text-primary-blue {
     color: var(--petlink-primary) !important;
-    font-family: var(--font-primary)
-
+    font-family: var(--font-primary);
+    font-weight: 500
 }
 
-.text-highlight { 
+.text-highlight-blue {
     color: var(--petlink-highlight);
-    font-family: var(--font-display)
+    font-family: var(--font-display);
+    font-weight: 700
+}
 
+.text-primary-light {
+    color: whitesmoke;
+    font-family: var(--font-primary);
+    font-weight: 500
+}
+
+.text-highlight-light {
+    color: whitesmoke;
+    font-family: var(--font-display);
+    font-weight: 700
 }
 
 .bg-primary-light { background-color: var(--petlink-light-bg); }
+
+.search-card {
+    background-color: var(--petlink-light-bg);
+    border-radius: 60px;
+}
 
 /* Seção Hero */
 .hero-section {

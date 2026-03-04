@@ -2,7 +2,201 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4 text-primary">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero Section with Search -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3 text-primary-light">Find your perfect companion today.</h1>
+                <p class="lead text-muted mb-5 text-highlight-light">Connecting thousands of animals with loving homes.<br>Trustworthy, safe, and dedicated to animal welfare.</p>
+
+                <!-- Search Card -->
+                <div class="search-card p-4 search-card">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label text-highlight-blue">LOCATION</label>
+                            <input type="text" class="form-control" placeholder="Where are you?">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">ANIMAL TYPE</label>
+                            <select class="form-select">
+                                <option>All Animals</option>
+                                <option>Dogs</option>
+                                <option>Cats</option>
+                                <option>Birds</option>
+                                <option>Others</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">AGE RANGE</label>
+                            <select class="form-select">
+                                <option>Any Age</option>
+                                <option>Puppy/Kitten (0-1 year)</option>
+                                <option>Young (1-3 years)</option>
+                                <option>Adult (3-7 years)</option>
+                                <option>Senior (7+ years)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats/Features Section -->
+<section class="features-section py-4">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="feature-card p-3">
+                    <div class="feature-icon mb-2">✓</div>
+                    <h3 class="h5 fw-bold">Verified Shelters</h3>
+                    <p class="text-muted small mb-0">100% vetted partners only.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-3">
+                    <div class="feature-icon mb-2">↻</div>
+                    <h3 class="h5 fw-bold">Daily New Pets</h3>
+                    <p class="text-muted small mb-0">Updated listings every hour.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-3">
+                    <div class="feature-icon mb-2">✉</div>
+                    <h3 class="h5 fw-bold">Direct Contact</h3>
+                    <p class="text-muted small mb-0">Message owners instantly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Animals Section -->
+<section class="featured-section py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-primary text-uppercase small fw-bold">RECENTLY ADDED</span>
+                <h2 class="h3 fw-bold mb-0">Featured Animals for Adoption</h2>
+            </div>
+            <a href="#" class="btn btn-outline-primary">View All Pets →</a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Cooper -->
+            <div class="col-md-6 col-lg-3">
+                <div class="animal-card card h-100 border-0 shadow-sm">
+                    <div class="card-img-top bg-secondary" style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    <div class="card-body">
+                        <h3 class="h5 fw-bold mb-2">Cooper</h3>
+                        <div class="animal-details small">
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Lisbon, Portugal</p>
+                            <p class="mb-1"><i class="bi bi-calendar"></i> 4 months</p>
+                            <p class="mb-1"><i class="bi bi-tag"></i> Dog · Golden Retriever</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Luna -->
+            <div class="col-md-6 col-lg-3">
+                <div class="animal-card card h-100 border-0 shadow-sm">
+                    <div class="card-img-top bg-secondary" style="height: 180px; background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);"></div>
+                    <div class="card-body">
+                        <h3 class="h5 fw-bold mb-2">Luna</h3>
+                        <div class="animal-details small">
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Setúbal, Portugal</p>
+                            <p class="mb-1"><i class="bi bi-calendar"></i> 2 years</p>
+                            <p class="mb-1"><i class="bi bi-tag"></i> Cat · American Shorthair</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rio -->
+            <div class="col-md-6 col-lg-3">
+                <div class="animal-card card h-100 border-0 shadow-sm">
+                    <div class="card-img-top bg-secondary" style="height: 180px; background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);"></div>
+                    <div class="card-body">
+                        <h3 class="h5 fw-bold mb-2">Rio</h3>
+                        <div class="animal-details small">
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Leiria, Portugal</p>
+                            <p class="mb-1"><i class="bi bi-calendar"></i> 1 Year</p>
+                            <p class="mb-1"><i class="bi bi-tag"></i> Bird · Parrot · Macaw</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadow -->
+            <div class="col-md-6 col-lg-3">
+                <div class="animal-card card h-100 border-0 shadow-sm">
+                    <div class="card-img-top bg-secondary" style="height: 180px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <div class="card-body">
+                        <h3 class="h5 fw-bold mb-2">Shadow</h3>
+                        <div class="animal-details small">
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Algarve, Portugal</p>
+                            <p class="mb-1"><i class="bi bi-calendar"></i> 5 Years</p>
+                            <p class="mb-1"><i class="bi bi-tag"></i> Dog · Mutt</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pb-3">
+                        <a href="#" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div class="text-center py-5 mt-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <h4 class="h5 fw-bold mb-3">PETLINK</h4>
+                <p class="small text-muted">Connecting pets with loving homes since 2026.</p>
+            </div>
+
+            <div class="col-lg-4">
+                <h5 class="h6 fw-bold mb-3">Community</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Pet care resources</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Local shelters</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Volunteering</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Events</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4">
+                <h5 class="h6 fw-bold mb-3">Support</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="text-center small text-muted">
+            <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+        </div>
+    </div>
 </div>
