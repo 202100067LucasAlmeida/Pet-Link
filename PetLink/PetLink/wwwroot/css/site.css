@@ -5,15 +5,30 @@
     --petlink-highlight: #087CD9; /* Azul claro */
     --petlink-light-bg: #e6f2ff; /* Branco */
     --petlink-grey-bg: #F8FAFC; /* Cinza claro */
+    --font-primary: "Poetsen One", sans-serif;
+    --font-display: "Oxygen", sans-serif;
 }
+
+
 
 /* Modificadores do Bootstrap */
 .btn-primary {
     background-color: var(--petlink-primary);
     border-color: var(--petlink-primary);
 }
-.text-primary { color: var(--petlink-primary) !important; }
-.text-highlight { color: var(--petlink-highlight); }
+
+.text-primary {
+    color: var(--petlink-primary) !important;
+    font-family: var(--font-primary)
+
+}
+
+.text-highlight { 
+    color: var(--petlink-highlight);
+    font-family: var(--font-display)
+
+}
+
 .bg-primary-light { background-color: var(--petlink-light-bg); }
 
 /* Seção Hero */
