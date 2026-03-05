@@ -21,10 +21,42 @@ body {
     border-color: var(--petlink-primary);
 }
 
+.btn-secondary {
+    background-color: whitesmoke;
+    border-color: whitesmoke;
+}
+
+.text-primary-darkblue {
+    color: var(--petlink-dark);
+    font-family: var(--font-primary);
+    font-weight: 500
+}
+
 .text-primary-blue {
     color: var(--petlink-primary) !important;
     font-family: var(--font-primary);
     font-weight: 500
+}
+
+.text-primary-lightblue {
+    color: var(--petlink-highlight);
+    font-family: var(--font-primary);
+    font-weight: 500
+}
+
+.text-primary-light {
+    color: whitesmoke;
+    font-family: var(--font-primary);
+    font-weight: 500
+}
+
+
+/*----------------*/
+
+.text-highlight-darkblue {
+    color: var(--petlink-dark);
+    font-family: var(--font-display);
+    font-weight: 700
 }
 
 .text-highlight-blue {
@@ -33,10 +65,8 @@ body {
     font-weight: 700
 }
 
-.text-primary-light {
-    color: whitesmoke;
-    font-family: var(--font-primary);
-    font-weight: 500
+.text-highlight-lightblue {
+    color: var(--petlink-highlight);
 }
 
 .text-highlight-light {
@@ -125,3 +155,12 @@ html {
     box-shadow: var(--petlink-dark) 7px 7px 10px;
 }
 
+.animal-card {
+    border-radius: 30px;
+}
+
+.card-img-top {
+    border-radius: 30px 30px 0px 0px;
+    height: 180px;
+    object-fit: cover;
+}
