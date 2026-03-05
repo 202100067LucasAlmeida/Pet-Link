@@ -1,71 +1,71 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PetLink</title>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - PetLink</title>
 
-    <link rel="icon" type="image/png" href="~/favicon.png" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PetLink.styles.css" asp-append-version="true" />
+        <link rel="icon" type="image/png" href="~/favicon.png" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/PetLink.styles.css" asp-append-version="true" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Poetsen+One&display=swap"
-          rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Poetsen+One&display=swap"
+              rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-</head>
+    </head>
 
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center text-primary-blue" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.png" alt="PetLink Logo" height="40"
-                         class="d-inline-block align-text-top me-2">PETLINK
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
+                <div class="container">
+                    <a class="navbar-brand d-flex align-items-center text-primary-blue" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/logo.png" alt="PetLink Logo" height="40"
+                            class="d-inline-block align-text-top me-2">PETLINK
                     </a>
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav align-items-center fw-semibold">
-                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings" asp-action="Index">Adopt</a></li>
-                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
-                        <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                        <ul class="navbar-nav align-items-center fw-semibold">
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings" asp-action="Index">Adopt</a></li>
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
+                            <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
 
-                        <li class="nav-item me-4">
-                            <a class="nav-link text-primary-blue" href="#">
-                                <i class="bi bi-moon fs-5"></i></a></li>
+                            <li class="nav-item me-4">
+                                <a class="nav-link text-primary-blue" href="#">
+                                    <i class="bi bi-moon fs-5"></i></a></li>
 
-                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Login</a></li>
-                                    <li class="nav-item">
-                            <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Home" asp-action="SignUp">Sign Up</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-                </header>
-                <div class="container">
-                    <main role="main" class="pb-3">
-                        @RenderBody()
-                    </main>
-                </div>
-
-                <footer class="border-top footer text-muted">
-                    <div class="container">
-                        &copy; 2026 - PetLink - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Login</a></li>
+                                        <li class="nav-item">
+                                <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Home" asp-action="SignUp">Sign Up</a>
+                                        </li>
+                        </ul>
                     </div>
-                </footer>
-                <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                <script src="~/js/site.js" asp-append-version="true"></script>
-                @await RenderSectionAsync("Scripts", required: false)
-            </body>
+                </div>
+            </nav>
+        </header>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
 
-        </html>
+        <footer class="border-top mt-2 footer text-muted">
+            <div class="text-center small text-muted">
+                <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+
+</html>

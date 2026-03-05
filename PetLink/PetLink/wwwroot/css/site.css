@@ -164,3 +164,7 @@ html {
     height: 180px;
     object-fit: cover;
 }
+
+.btn-secondary:hover {
+    background-color: var(--petlink-highlight);
+}
