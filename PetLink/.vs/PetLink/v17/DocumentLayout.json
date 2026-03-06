@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\views\\profile\\signupform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\views\\profile\\signupform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|c:\\users\\diana\\desktop\\ips\\lei\\3\u00BAano\\esa\\projeto\\pet-link\\petlink\\petlink\\views\\home\\animalpage.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{C06009BC-4576-4EE5-918C-E1226AB70FAD}|PetLink\\PetLink.csproj|solutionrelative:petlink\\views\\home\\animalpage.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -23,19 +27,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "SignUpForm.cshtml",
+              "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "RelativeDocumentMoniker": "PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "RelativeToolTip": "PetLink\\Views\\Profile\\SignUpForm.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-06T21:43:14.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "AnimalPage.cshtml",
               "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Home\\AnimalPage.cshtml",
               "RelativeDocumentMoniker": "PetLink\\Views\\Home\\AnimalPage.cshtml",
               "ToolTip": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\Views\\Home\\AnimalPage.cshtml",
               "RelativeToolTip": "PetLink\\Views\\Home\\AnimalPage.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAI0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAAAI8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-03-06T21:28:25.583Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "site.css",
               "DocumentMoniker": "C:\\Users\\diana\\Desktop\\IPS\\LEI\\3\u00BAANO\\ESA\\PROJETO\\Pet-Link\\PetLink\\PetLink\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "PetLink\\wwwroot\\css\\site.css",
