@@ -36,5 +36,11 @@ namespace PetLink.Controllers
             return View("~/Views/Profile/SignUpForm.cshtml");
         }
 
+
+        public IActionResult ViewPet()
+        {
+            return View("~/Views/Home/AnimalPage.cshtml");
+        }
+
     }
 }
