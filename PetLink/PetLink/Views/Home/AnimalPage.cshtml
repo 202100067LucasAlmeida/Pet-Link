@@ -2,10 +2,141 @@
     ViewData["Title"] = "Pet Page";
 }
 
-<!-- Animal Details Section -->
+<!-- Breadcrumb -->
+<section class="breadcrumb-section py-3 bg-light">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
+                <li class="breadcrumb-item"><a class="text-decoration-none text-highlight-darkblue">ADOPT</a></li>
+                <li class="breadcrumb-item active  text-highlight-blue" aria-current="page">Cooper</li>
+            </ol>
+        </nav>
+    </div>
+</section>
 
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column - Animal Details -->
+            <div class="col-lg-8">
+                <!-- Animal Header -->
+                <div class="mb-4">
+                    <span class="status-green">AVAILABLE FOR ADOPTION</span>
+                    <h1 class="display-5 text-primary-darkblue mb-2">Cooper</h1>
+                    <p class="lead text-muted text-highlight-darkblue">Golden Retriever • Male • 4 months</p>
+                </div>
 
-<!-- Adoction Requirements and Chat Section -->
+                <!-- Animal Image -->
+                <img src="~/images/cooper.jpg" alt="Cooper's photo" class="pet-img">
+
+                <!-- Key Details -->
+                <div class="m-3 shadow-sm details-card">
+                    <div class="m-3">
+                        <div class="detail-item bg-light rounded">
+                            <span class="d-block text-muted small">Age</span>
+                            <span class="text-primary-darkblue">4 months</span>
+                        </div>
+                    </div>
+
+                    <div class="m-3">
+                        <div class="detail-item bg-light rounded">
+                            <span class="d-block text-muted small">Weight</span>
+                            <span class="text-primary-darkblue">11kg</span>
+                        </div>
+                    </div>
+
+                    <div class="m-3">
+                        <div class="detail-item bg-light rounded">
+                            <span class="d-block text-muted small">Color</span>
+                            <span class="text-primary-darkblue">Golden</span>
+                        </div>
+                    </div>
+
+                    <div class="m-2">
+                        <!-- Description -->
+                        <p class="lead text-highlight-darkblue text-muted">Cooper is the personification of joy. Found as a stray, he hasn't let his past dampen his spirit. He loves tennis balls, belly rubs, and is excellent with children. He's looking for a family that can match his energy and love.</p>
+
+                        <button class="btn btn-primary text-primary-light rounded-pill px-5">Adopt</button>
+
+                        <p class="m-2 small text-muted">
+                            By clicking "Adopt", you agree to our <a href="#" class="text-decoration-none">Adoption Terms and Conditions</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Medical History -->
+                <div class="medical-history mb-5">
+                    <h3 class="h4 text-primary-darkblue mb-3">Medical History</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Fully Vaccinated (Updated Aug 2023)</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Neutered</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Microchipped</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> No known allergies</li>
+                    </ul>
+                </div>
+
+                <!-- Temperament -->
+                <div class="temperament mb-5">
+                    <h3 class="h4 text-primary-darkblue mb-3">Temperament</h3>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <span class="badge bg-success bg-opacity-10 text-success p-3 rounded-pill">Kid Friendly</span>
+                        <span class="badge bg-info bg-opacity-10 text-info p-3 rounded-pill">Calm at Home</span>
+                        <span class="badge bg-warning bg-opacity-10 text-warning p-3 rounded-pill">Active</span>
+                    </div>
+                </div>
+
+                <!-- Adoption Requirements -->
+                <div class="adoption-requirements mb-5">
+                    <h3 class="h4 text-primary-darkblue mb-3">Adoption Requirements</h3>
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item border-0 ps-0">Potential owners must have a secure backyard or live near a dog park, as Golden Retrievers require daily physical activity.</li>
+                        <li class="list-group-item border-0 ps-0">Experience with large dogs breeds is preferred but not required. A home visit may be scheduled before final approval.</li>
+                        <li class="list-group-item border-0 ps-0">Ability to provide high-quality nutrition and regular grooming sessions for Buddy's thick coat.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Right Column - Chat Section -->
+            <div class="col-lg-4">
+                <div class="chat-card card shadow-sm sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="h5 fw-bold mb-0">Adoption Requirements</h3>
+                    </div>
+
+                    <div class="card-body" style="height: 300px; overflow-y: auto;">
+                        <!-- Chat Messages -->
+                        <div class="chat-message mb-3">
+                            <div class="message-sent d-flex justify-content-end mb-3">
+                                <div class="message-bubble bg-primary text-white p-3 rounded-3" style="max-width: 80%;">
+                                    <p class="mb-0 small">Is Cooper still available for meet and greets this weekend?</p>
+                                    <span class="d-block text-end small opacity-75 mt-1">You</span>
+                                </div>
+                            </div>
+
+                            <div class="message-received d-flex mb-3">
+                                <div class="message-bubble bg-light p-3 rounded-3" style="max-width: 80%;">
+                                    <p class="mb-0 small">Hello! Yes, Cooper is available. We have slots on Saturday morning!</p>
+                                    <span class="d-block text-start small text-muted mt-1">Shelter</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white">
+                        <div class="input-group">
+                            <input type="text" class="form-control border rounded-start-3" placeholder="Type a message...">
+                            <button class="btn btn-primary rounded-end-3" type="button">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 <!-- Featured Animals Section -->
