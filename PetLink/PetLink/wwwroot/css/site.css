@@ -183,11 +183,27 @@ html {
 }
 
 .pet-img {
-    border-radius: 30px;
+    border-radius: 50px;
     max-width: 400px;
     padding: 20px;
 }
 
 .btn-secondary:hover {
     background-color: var(--petlink-highlight);
+}
+
+.list-decorated {
+    color: var(--petlink-primary) !important;
+    font-family: var(--font-primary);
+    font-weight: 500;
+    background-color: var(--petlink-light-bg);
+    padding: 4px 7px;
+    border-radius: 50px;
+    border: 1.5px solid var(--petlink-primary);
+}
+
+.chat-card {
+    top: 20px;
+    border: 2px solid lightgrey;
+    border-radius: 30px;
 }
