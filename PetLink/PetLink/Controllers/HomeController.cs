@@ -30,10 +30,15 @@ namespace PetLink.Controllers
         }
 
 
-        //temporário para questão de teste
+        //temporï¿½rio para questï¿½o de teste
         public IActionResult SignUp()
         {
             return View("~/Views/Profile/SignUpForm.cshtml");
+        }
+
+        public IActionResult Login()
+        {
+            return View("~/Views/Profile/LoginForm.cshtml");
         }
 
 

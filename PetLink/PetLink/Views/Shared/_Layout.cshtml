@@ -34,6 +34,7 @@
 
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav align-items-center fw-semibold">
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Users" asp-action="Index">Users</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings" asp-action="Index">Adopt</a></li>
                             <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
                             <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
@@ -42,7 +43,7 @@
                                 <a class="nav-link text-primary-blue" href="#">
                                     <i class="bi bi-moon fs-5"></i></a></li>
 
-                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Login</a></li>
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Home" asp-action="LogIn">Login</a></li>
                                         <li class="nav-item">
                                 <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Home" asp-action="SignUp">Sign Up</a>
                                         </li>
