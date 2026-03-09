@@ -96,7 +96,6 @@ body {
 /* Seção Hero */
 .hero-section {
     background-color: var(--petlink-dark);
-    /* Se quiseres uma imagem de fundo subtil como no design, adiciona o link abaixo e descomenta */
     /* background-image: url('/images/hero-dog-bg.jpg'); */
     background-size: cover;
     background-position: center;
@@ -206,4 +205,102 @@ html {
     top: 20px;
     border: 2px solid lightgrey;
     border-radius: 30px;
+}
+
+/* --- Adopt Page (Listing) --- */
+.filter-card {
+    background-color: #fcfcfc;
+    border: 1px solid #eaeaea;
+}
+
+.filter-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0a1f35;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+}
+
+.animal-type-btn {
+    border: 1px solid #dee2e6;
+    background-color: white;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.animal-type-btn.active, .animal-type-btn:hover {
+    background-color: var(--petlink-primary);
+    color: white;
+    border-color: var(--petlink-primary);
+}
+
+.pet-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+
+.pet-card-img-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.pet-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-heart {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.btn-heart:hover {
+    color: #dc3545;
+}
+
+.badge-adoptable {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    background-color: var(--petlink-primary);
+    color: white;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    letter-spacing: 0.5px;
+}
+
+.pet-tag {
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.pet-tag-green {
+    background-color: #e3fbed;
+    color: #198754;
 }
