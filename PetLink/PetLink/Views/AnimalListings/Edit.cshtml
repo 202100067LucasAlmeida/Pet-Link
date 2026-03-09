@@ -1,84 +1,117 @@
 @model PetLink.Models.AnimalListing
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Listing";
 }
 
-<h1>Edit</h1>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
 
-<h4>AnimalListing</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary-blue fw-bold mb-0">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Animal Listing
+                </h2>
+                <a asp-action="Manage" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </a>
             </div>
-            <div class="form-group">
-                <label asp-for="Species" class="control-label"></label>
-                <select asp-for="Species" class="form-control"></select>
-                <span asp-validation-for="Species" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AgeMonths" class="control-label"></label>
-                <input asp-for="AgeMonths" class="form-control" />
-                <span asp-validation-for="AgeMonths" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsVaccinated" /> @Html.DisplayNameFor(model => model.IsVaccinated)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDewormed" /> @Html.DisplayNameFor(model => model.IsDewormed)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsSterilized" /> @Html.DisplayNameFor(model => model.IsSterilized)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TutorId" class="control-label"></label>
-                <select asp-for="TutorId" class="form-control" asp-items="ViewBag.TutorId"></select>
-                <span asp-validation-for="TutorId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-semibold small"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Basic Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label fw-semibold">Animal Name</label>
+                                <input asp-for="Name" class="form-control py-2" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Species" class="form-label fw-semibold">Species</label>
+                                <select asp-for="Species" class="form-select py-2"
+                                        asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.Species>()"></select>
+                                <span asp-validation-for="Species" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AgeMonths" class="form-label fw-semibold">Age (in months)</label>
+                                <input asp-for="AgeMonths" class="form-control py-2" />
+                                <span asp-validation-for="AgeMonths" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Location" class="form-label fw-semibold">Location</label>
+                                <input asp-for="Location" class="form-control py-2" />
+                                <span asp-validation-for="Location" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Health Information</h5>
+                        <div class="d-flex flex-wrap gap-4 mb-4 bg-light p-3 rounded-3">
+                            <div class="form-check form-switch fs-6">
+                                <input class="form-check-input" type="checkbox" asp-for="IsVaccinated">
+                                    <label class="form-check-label fw-semibold text-success"
+                                           asp-for="IsVaccinated">Vaccinated</label>
+                                </div>
+                                <div class="form-check form-switch fs-6">
+                                    <input class="form-check-input" type="checkbox" asp-for="IsDewormed">
+                                        <label class="form-check-label fw-semibold text-success"
+                                               asp-for="IsDewormed">Dewormed</label>
+                                    </div>
+                                    <div class="form-check form-switch fs-6">
+                                        <input class="form-check-input" type="checkbox" asp-for="IsSterilized">
+                                            <label class="form-check-label fw-semibold text-success"
+                                                   asp-for="IsSterilized">Sterilized</label>
+                                        </div>
+                                    </div>
+
+                                    <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Listing Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label asp-for="Status" class="form-label fw-semibold">Status</label>
+                                            <select asp-for="Status" class="form-select py-2"
+                                                    asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.ListingStatus>()"></select>
+                                            <span asp-validation-for="Status" class="text-danger small"></span>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label asp-for="TutorId" class="form-label fw-semibold">Tutor</label>
+                                            <select asp-for="TutorId" class="form-select py-2" asp-items="ViewBag.TutorId"></select>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label asp-for="CreatedAt" class="form-label fw-semibold">Date</label>
+                                            <input asp-for="CreatedAt" class="form-control py-2" />
+                                            <span asp-validation-for="CreatedAt" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid gap-2 mt-2">
+                                        <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3">
+                                            <i class="bi bi-save me-2"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @section Scripts {
+                @{
+                    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+                }
+            }

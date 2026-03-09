@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PetLink
 {
@@ -63,7 +64,7 @@ namespace PetLink
             {
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Manage));
             }
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
             return View(animalListing);
@@ -116,7 +117,7 @@ namespace PetLink
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Manage));
             }
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
             return View(animalListing);
@@ -153,12 +154,25 @@ namespace PetLink
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Manage));
         }
 
         private bool AnimalListingExists(int id)
         {
             return _context.AnimalListings.Any(e => e.Id == id);
+        }
+
+        // GET: AnimalListings/Manage
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Manage()
+        {
+            // Vai buscar todos os anúncios e inclui a informação do Tutor (para sabermos o email dele)
+            var allListings = await _context.AnimalListings
+                .Include(a => a.Tutor)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View(allListings);
         }
     }
 }

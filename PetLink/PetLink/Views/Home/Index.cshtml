@@ -1,157 +1,127 @@
-﻿@{
+﻿@model IEnumerable<PetLink.Models.AnimalListing>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<!-- Hero Section with Search -->
 <section class="hero-section py-5">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3 text-primary-light">Find your perfect <span class="text-primary-lightblue">companion</span> today.</h1>
-                <p class="lead text-muted mb-5 text-highlight-light">Connecting thousands of animals with loving homes.<br>Trustworthy, safe, and dedicated to animal welfare.</p>
+                <h1 class="display-4 fw-bold mb-3 text-primary-light">Find your perfect <span
+                    class="text-primary-lightblue">companion</span> today.</h1>
+                    <p class="lead text-muted mb-5 text-highlight-light">Connecting thousands of animals with loving
+                        homes.<br>Trustworthy, safe, and dedicated to animal welfare.</p>
 
-                <!-- Search Card -->
-                <div class="search-card p-3">
+                        <form asp-controller="AnimalListings" asp-action="Index" method="get">
+                            <div class="search-card p-3 shadow-sm bg-white">
+                                <div class="row g-4 align-items-end">
+                                    <div class="col-md-3 text-start">
+                                        <label class="form-label text-primary-blue small fw-bold mb-1">LOCATION</label>
+                                        <input type="text" name="location"
+                                               class="form-control text-highlight-blue border-0 bg-light"
+                                               placeholder="Where are you?">
+                                    </div>
+
+                                    <div class="col-md-3 text-start">
+                                        <label class="form-label text-primary-blue small fw-bold mb-1">ANIMAL TYPE</label>
+                                        <select name="species" class="form-select text-highlight-blue border-0 bg-light">
+                                            <option value="">All Animals</option>
+                                            <option value="Dog">Dogs</option>
+                                            <option value="Cat">Cats</option>
+                                            <option value="Bird">Birds</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3 text-start">
+                                        <label class="form-label text-primary-blue small fw-bold mb-1">AGE RANGE</label>
+                                        <select name="age" class="form-select text-highlight-blue border-0 bg-light">
+                                            <option value="">Any Age</option>
+                                            <option value="0-1">Puppy (0-1 yr)</option>
+                                            <option value="1-3">Young (1-3 yrs)</option>
+                                            <option value="3-7">Adult (3-7 yrs)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <button type="submit"
+                                                class="btn btn-primary rounded-pill px-4 py-2 w-100 fw-bold shadow-sm">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section px-5 py-5">
+            <div class="container">
+                <div class="row align-content-center text-center">
+                    <div class="col-md-4 py-2">
+                        <div class="feature-card p-3 mx-auto">
+                            <h3 class="h5 text-primary-blue">Verified Shelters</h3>
+                            <p class="text-muted small mb-0">100% vetted partners only.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 py-2">
+                        <div class="feature-card p-3 mx-auto">
+                            <h3 class="h5 text-primary-blue">Daily New Pets</h3>
+                            <p class="text-muted small mb-0">Updated listings every hour.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 py-2">
+                        <div class="feature-card p-3 mx-auto">
+                            <h3 class="h5 text-primary-blue">Direct Contact</h3>
+                            <p class="text-muted small mb-0">Message owners instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-section py-5 text-highlight-darkblue">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <span class="text-highlight-blue text-uppercase small fw-bold">RECENTLY ADDED</span>
+                        <h2 class="h3 text-primary-darkblue mb-0">Featured Animals for Adoption</h2>
+                    </div>
+                    <a asp-controller="AnimalListings" asp-action="Index" class="btn text-highlight-lightblue fw-bold">View All
+                        Pets &rarr;</a>
+                    </div>
+
                     <div class="row g-4">
-                        <div class="col-md-3">
-                            <label class="form-label text-primary-blue">LOCATION</label>
-                            <input type="text" class="form-control text-highlight-blue" placeholder="Where are you?">
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label text-primary-blue">ANIMAL TYPE</label>
-                            <select class="form-select text-highlight-blue">
-                                <option>All Animals</option>
-                                <option>Dogs</option>
-                                <option>Cats</option>
-                                <option>Birds</option>
-                                <option>Others</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label text-primary-blue">AGE RANGE</label>
-                            <select class="form-select text-highlight-blue">
-                                <option>Any Age</option>
-                                <option>Toddler (0-1 year)</option>
-                                <option>Young (1-3 years)</option>
-                                <option>Adult (3-7 years)</option>
-                                <option>Senior (7+ years)</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 align-content-center">
-                            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">Search</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats/Features Section -->
-<section class="features-section px-5 py-5">
-    <div class="container">
-        <div class="row align-content-center text-center">
-            <div class="col-md-4 py-2">
-                <div class="feature-card p-3">
-                    <h3 class="h5 text-primary-blue">Verified Shelters</h3>
-                    <p class="text-muted small mb-0">100% vetted partners only.</p>
-                </div>
-            </div>
-            <div class="col-md-4 py-2">
-                <div class="feature-card p-3">
-                    <h3 class="h5 text-primary-blue">Daily New Pets</h3>
-                    <p class="text-muted small mb-0">Updated listings every hour.</p>
-                </div>
-            </div>
-            <div class="col-md-4 py-2">
-                <div class="feature-card p-3">
-                    <h3 class="h5 text-primary-blue">Direct Contact</h3>
-                    <p class="text-muted small mb-0">Message owners instantly.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Animals Section -->
-<section class="featured-section py-5 text-highlight-darkblue">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <span class="text-highlight-blue text-uppercase small fw-bold">RECENTLY ADDED</span>
-                <h2 class="h3 text-primary-darkblue mb-0">Featured Animals for Adoption</h2>
-            </div>
-            <a href="#" class="btn text-highlight-lightblue">View All Pets →</a>
-        </div>
-
-        <div class="row g-4">
-            <!-- Cooper -->
-            <div class="col-md-6 col-lg-3">
-                <div class="animal-card card h-100 shadow-sm">
-                    <img src="~/images/cooper.jpg" alt="Cooper's photo" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue mb-2">Cooper</h3>
-                        <div class="animal-details small">
-                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Lisbon, Portugal</p>
-                            <p class="mb-1"><i class="bi bi-calendar"></i> 4 months</p>
-                            <p class="mb-1"><i class="bi bi-tag"></i> Dog · Golden Retriever</p>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pb-3">
-                        <a asp-controller="Home" asp-action="ViewPet" class="btn btn-secondary rounded-pill w-100 text-highlight-darkblue">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Luna -->
-            <div class="col-md-6 col-lg-3">
-                <div class="animal-card card h-100 shadow-sm">
-                    <img src="~/images/luna.jpg" alt="Luna's photo" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue mb-2">Luna</h3>
-                        <div class="animal-details small">
-                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Setúbal, Portugal</p>
-                            <p class="mb-1"><i class="bi bi-calendar"></i> 2 years</p>
-                            <p class="mb-1"><i class="bi bi-tag"></i> Cat · American Shorthair</p>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pb-3">
-                        <a href="#" class="btn btn-secondary rounded-pill w-100 text-highlight-darkblue">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rio -->
-            <div class="col-md-6 col-lg-3">
-                <div class="animal-card card h-100 shadow-sm">
-                    <img src="~/images/rio.jpg" alt="Rio's photo" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue mb-2">Rio</h3>
-                        <div class="animal-details small">
-                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Leiria, Portugal</p>
-                            <p class="mb-1"><i class="bi bi-calendar"></i> 1 Year</p>
-                            <p class="mb-1"><i class="bi bi-tag"></i> Bird · Parrot · Macaw</p>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pb-3">
-                        <a href="#" class="btn btn-secondary rounded-pill w-100 text-highlight-darkblue">View Details</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Shadow -->
-            <div class="col-md-6 col-lg-3">
-                <div class="animal-card card h-100 shadow-sm">
-                    <img src="~/images/shadow.jpg" alt="Shadow's photo" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue mb-2">Shadow</h3>
-                        <div class="animal-details small">
-                            <p class="mb-1"><i class="bi bi-geo-alt"></i> Algarve, Portugal</p>
-                            <p class="mb-1"><i class="bi bi-calendar"></i> 5 Years</p>
-                            <p class="mb-1"><i class="bi bi-tag"></i> Dog · Mutt</p>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="animal-card card h-100 shadow-sm border-0">
+                                        <img src="~/images/@(item.Name.ToLower()).jpg" alt="@item.Name's photo" class="card-img-top">
+                                            <div class="card-body">
+                                                <h3 class="h5 text-primary-darkblue mb-2 fw-bold">@item.Name</h3>
+                                                <div class="animal-details small text-muted">
+                                                    <p class="mb-1"><i class="bi bi-geo-alt"></i> @item.Location</p>
+                                                    <p class="mb-1"><i class="bi bi-calendar"></i> @item.AgeMonths months</p>
+                                                    <p class="mb-1"><i class="bi bi-tag"></i> @item.Species</p>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer bg-transparent border-0 pb-3">
+                                                <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@item.Id"
+                                                   class="btn btn-secondary rounded-pill w-100 fw-bold"
+                                                   style="color: var(--petlink-dark);">View Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+            else
+                            {
+                                <div class="col-12 text-center py-4">
+                                    <p class="text-muted">Nenhum animal listado recentemente.</p>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="card-footer bg-transparent border-0 pb-3">

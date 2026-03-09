@@ -1,0 +1,49 @@
+@model PetLink.Models.User
+
+@{
+    ViewData["Title"] = "Delete User";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-danger fw-bold mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Delete User
+                </h2>
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
+                    <i class="bi bi-arrow-left me-1"></i> Cancel
+                </a>
+            </div>
+
+            <div class="alert alert-danger rounded-4 shadow-sm border-0 mb-4 p-4">
+                <h5 class="fw-bold"><i class="bi bi-trash3 me-2"></i> Are you absolutely sure?</h5>
+                <p class="mb-0">You are about to permanently delete the account of <strong>@Model.Name</strong>. This action cannot be undone and will remove all associated data.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted fw-semibold">Name</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">Email</dt>
+                        <dd class="col-sm-8">@Model.Email</dd>
+
+                        <dt class="col-sm-4 text-muted fw-semibold">Role</dt>
+                        <dd class="col-sm-8">@Model.Role</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" class="d-grid gap-2">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger fw-bold rounded-pill py-2">
+                    <i class="bi bi-trash-fill me-2"></i> Yes, Delete This User
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>

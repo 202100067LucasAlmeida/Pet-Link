@@ -1,0 +1,111 @@
+@model IEnumerable<PetLink.Models.AnimalListing>
+
+@{
+    ViewData["Title"] = "Manage Listings";
+}
+
+<div class="container my-5">
+    @* Cabeçalho e Botão de Criar Novo *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary-blue fw-bold mb-0">
+            <i class="bi bi-card-checklist me-2"></i> Manage Listings
+        </h2>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New Listing
+        </a>
+    </div>
+
+    @* Cartão da Tabela *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="ps-4">Pet Name</th>
+                        <th>Species</th>
+                        <th>Health Info</th>
+                        <th>Status</th>
+                        <th>Added On</th>
+                        <th>Tutor / Shelter</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            @* Nome com um pequeno ícone dinâmico *@
+                            <td class="ps-4 fw-bold text-dark">
+                                <img src="~/images/@(item.Name.ToLower()).jpg" alt="Pet" class="rounded-circle me-2 object-fit-cover shadow-sm" style="width: 35px; height: 35px;" onerror="this.src='/images/cooper.jpg'"> 
+                                @item.Name
+                            </td>
+                            
+                            @* Espécie com Badge *@
+                            <td>
+                                <span class="badge bg-light text-dark border rounded-pill fw-semibold px-3">
+                                    @item.Species
+                                </span>
+                            </td>
+                            
+                            @* Saúde (Agrupada com ícones limpos) *@
+                            <td>
+                                @if(item.IsVaccinated) { <i class="bi bi-capsule text-success me-1" title="Vaccinated"></i> }
+                                @if(item.IsDewormed)   { <i class="bi bi-bug-fill text-success me-1" title="Dewormed"></i> }
+                                @if(item.IsSterilized) { <i class="bi bi-scissors text-success" title="Sterilized"></i> }
+                                @if(!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized) { <span class="text-muted small">No records</span> }
+                            </td>
+                            
+                            @* Estado do Anúncio *@
+                            <td>
+                                @if (item.Status.ToString() == "Published")
+                                {
+                                    <span class="badge bg-success rounded-pill fw-normal px-3"><i class="bi bi-check-circle me-1"></i> @item.Status</span>
+                                }
+                                else if (item.Status.ToString() == "Pendent")
+                                {
+                                    <span class="badge bg-warning text-dark rounded-pill fw-normal px-3"><i class="bi bi-hourglass-split me-1"></i> @item.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill fw-normal px-3">@item.Status</span>
+                                }
+                            </td>
+                            
+                            @* Data *@
+                            <td class="text-muted small">
+                                @item.CreatedAt.ToString("dd MMM yyyy")
+                            </td>
+
+                            @* Tutor *@
+                            <td class="text-muted small">
+                                @(item.Tutor != null ? item.Tutor.Email : "Unknown")
+                            </td>
+                            
+                            @* Botões de Ação Redondos *@
+                            <td class="text-end pe-4">
+                                <div class="btn-group shadow-sm rounded-pill" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary py-1 px-2" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info py-1 px-2" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-4 rounded-4" role="alert">
+            <i class="bi bi-info-circle me-2"></i> No animal listings found in the database.
+        </div>
+    }
+</div>
