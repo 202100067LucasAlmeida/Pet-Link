@@ -20,192 +20,200 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <button type="button" class="btn animal-type-btn w-100 rounded-3 active"><i
-                                    class="bi bi-list-task me-1"></i> Dogs</button>
+                                    class="bi bi-list-task me-1"></i> Dogs
+                                </button>    
+                            </div>
+                            
+                            <div class="col-6">
+                                <button type="button" class="btn animal-type-btn w-100 rounded-3"><i
+                                    class="bi bi-list-task me-1"></i> Cats
+                                </button>
+                            </div>
+                                
+                            <div class="col-6">
+                                <button type="button" class="btn animal-type-btn w-100 rounded-3"><i
+                                        class="bi bi-twitter me-1"></i> Birds
+                                </button>
+                            </div>
+                            
+                            <div class="col-6">
+                                <button type="button" class="btn animal-type-btn w-100 rounded-3">
+                                    <i class="bi bi-three-dots me-1"></i> Others
+                                </button>
+                            </div>    
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="filter-section-title"><i class="bi bi-tag me-2"></i> BREED</div>
+                        <select class="form-select rounded-3 py-2 text-muted fw-semibold fs-6">
+                            <option>All Breeds</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="filter-section-title"><i class="bi bi-clock me-2"></i> AGE RANGE</div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="agePuppy">
+                            <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1
+                                yr)
+                            </label>
+                        </div>
+                    
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="ageAdult" checked>
+                            <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7 yrs)</label>
+                        </div>
+                        
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ageSenior">
+                                <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+
+                                    yrs)</label>
                                 </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn animal-type-btn w-100 rounded-3"><i
-                                        class="bi bi-list-task me-1"></i> Cats</button>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-muted border-end-0"><i
+                                        class="bi bi-geo-alt"></i></span>
+                                        <input type="text" class="form-control border-start-0 ps-0" placeholder="Zip code or city">
                                     </div>
-                                    <div class="col-6">
-                                        <button type="button" class="btn animal-type-btn w-100 rounded-3"><i
-                                            class="bi bi-twitter me-1"></i> Birds</button>
-                                        </div>
-                                        <div class="col-6">
-                                            <button type="button" class="btn animal-type-btn w-100 rounded-3"><i
-                                                class="bi bi-three-dots me-1"></i> Others</button>
-                                            </div>
-                                        </div>
+                                </div>
+
+                                <div class="mb-5">
+                                    <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
+                                    <input type="range" class="form-range" min="0" max="500" id="rangeInput">
+                                    <div class="d-flex justify-content-between text-muted small mt-1">
+                                        <span>0km</span>
+                                        <span>500km</span>
                                     </div>
+                                </div>
 
-                                    <div class="mb-4">
-                                        <div class="filter-section-title"><i class="bi bi-tag me-2"></i> BREED</div>
-                                        <select class="form-select rounded-3 py-2 text-muted fw-semibold fs-6">
-                                            <option>All Breeds</option>
-                                        </select>
-                                    </div>
+                                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3"
+                                        style="background-color: #0a4f8b; border: none;">Apply Filters
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
-                                    <div class="mb-4">
-                                        <div class="filter-section-title"><i class="bi bi-clock me-2"></i> AGE RANGE</div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="agePuppy">
-                                            <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1
-                                                yr)</label>
+                    <div class="col-lg-9">
+                        <div class="mb-4">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb small mb-2">
+                                    <li class="breadcrumb-item">
+                                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">Search Pets</li>
+                                </ol>
+                            </nav>
+
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3">
+                                <div>
+                                    <h1 class="display-6 fw-bold mb-1" style="color: var(--petlink-dark);">Find Your New Best Friend</h1>
+                                    <p class="text-muted mb-0">Showing @Model.Count() adoptable pets near your location</p>
+                                </div>
+                            
+                                <div class="mt-3 mt-md-0 d-flex align-items-center">
+                                    <span class="text-muted small me-2">Sort by:</span>
+                                    <select class="form-select form-select-sm rounded-3 border-0 shadow-sm fw-semibold text-dark"
+                                            style="width: 150px;">
+                                        <option>Newest Arrivals</option>
+                                        <option>Oldest</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 flex-wrap mb-4">
+                                <span
+                                    class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                                    Dogs <i class="bi bi-x ms-1 cursor-pointer"></i>
+                                </span>
+                                
+                                <span
+                                    class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                                    Adult <i class="bi bi-x ms-1 cursor-pointer"></i>
+                                </span>
+                                
+                                <span
+                                    class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                                    Within 25 miles <i class="bi bi-x ms-1 cursor-pointer"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-5">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-md-6 col-xl-4">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                                        <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+
+                                            <div class="pet-card-img-wrapper">
+                                                <img src="~/images/@(item.Name.ToLower()).jpg" alt="@item.Name's photo" class="pet-card-img">
+                                                <button class="btn-heart"><i class="bi bi-suit-heart"></i></button>
+
+                                                @if (item.Status.ToString() == "Publicado")
+                                                {
+                                                    <span class="badge badge-adoptable fw-bold rounded-2">ADOPTABLE</span>
+                                                }
                                             </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="ageAdult" checked>
-                                                <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7
-                                                    yrs)</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="ageSenior">
-                                                    <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+
-                                                        yrs)</label>
-                                                    </div>
-                                                </div>
 
-                                                <div class="mb-4">
-                                                    <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
-                                                    <div class="input-group">
-                                                        <span class="input-group-text bg-white text-muted border-end-0"><i
-                                                            class="bi bi-geo-alt"></i></span>
-                                                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Zip code or city">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-5">
-                                                        <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
-                                                        <input type="range" class="form-range" min="0" max="500" id="rangeInput">
-                                                        <div class="d-flex justify-content-between text-muted small mt-1">
-                                                            <span>0km</span>
-                                                            <span>500km</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3"
-                                                            style="background-color: #0a4f8b; border: none;">Apply Filters</button>
-                                                </form>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-9">
-
-                                            <div class="mb-4">
-                                                <nav aria-label="breadcrumb">
-                                                    <ol class="breadcrumb small mb-2">
-                                                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"
-                                                                                           class="text-decoration-none text-muted">Home</a></li>
-                                                            <li class="breadcrumb-item active" aria-current="page">Search Pets</li>
-                                                        </ol>
-                                                    </nav>
-
-                                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3">
-                                                        <div>
-                                                            <h1 class="display-6 fw-bold mb-1" style="color: var(--petlink-dark);">Find Your New Best Friend
-                                                            </h1>
-                                                            <p class="text-muted mb-0">Showing @Model.Count() adoptable pets near your location</p>
-                                                        </div>
-                                                        <div class="mt-3 mt-md-0 d-flex align-items-center">
-                                                            <span class="text-muted small me-2">Sort by:</span>
-                                                            <select class="form-select form-select-sm rounded-3 border-0 shadow-sm fw-semibold text-dark"
-                                                                    style="width: 150px;">
-                                                                <option>Newest Arrivals</option>
-                                                                <option>Oldest</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="d-flex gap-2 flex-wrap mb-4">
-                                                        <span
-                                                            class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
-                                                            Dogs <i class="bi bi-x ms-1 cursor-pointer"></i>
-                                                        </span>
-                                                        <span
-                                                            class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
-                                                            Adult <i class="bi bi-x ms-1 cursor-pointer"></i>
-                                                        </span>
-                                                        <span
-                                                            class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
-                                                            Within 25 miles <i class="bi bi-x ms-1 cursor-pointer"></i>
-                                                        </span>
-                                                    </div>
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <h4 class="h5 fw-bold mb-0" style="color: var(--petlink-dark);">@item.Name</h4>
+                                                    <span class="small text-muted"><i class="bi bi-geo-alt"></i> @item.Location</span>
                                                 </div>
 
-                                                <div class="row g-4 mb-5">
-                                                    @foreach (var item in Model)
+                                                <p class="text-muted small mb-3">@item.Species • @item.AgeMonths mo.</p>
+
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @if (item.IsVaccinated)
                                                     {
-                                                        <div class="col-md-6 col-xl-4">
-                                                            <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
-                                                                <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-
-                                                                    <div class="pet-card-img-wrapper">
-                                                                        <img src="~/images/@(item.Name.ToLower()).jpg" alt="@item.Name's photo" class="pet-card-img">
-                                                                            <button class="btn-heart"><i class="bi bi-suit-heart"></i></button>
-
-                                                                            @if (item.Status.ToString() == "Publicado")
-                                                                            {
-                                                                                <span class="badge badge-adoptable fw-bold rounded-2">ADOPTABLE</span>
-                                                                            }
-                                                                        </div>
-
-                                                                        <div class="card-body p-3">
-                                                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                                                <h4 class="h5 fw-bold mb-0" style="color: var(--petlink-dark);">@item.Name</h4>
-                                                                                <span class="small text-muted"><i class="bi bi-geo-alt"></i> @item.Location</span>
-                                                                            </div>
-
-                                                                            <p class="text-muted small mb-3">@item.Species • @item.AgeMonths mo.</p>
-
-                                                                            <div class="d-flex flex-wrap gap-2">
-                                                                                @if (item.IsVaccinated)
-                                                                                {
-                                                                                    <span class="pet-tag pet-tag-green">Vaccinated</span>
-                                                                                }
-                                                                                @if (item.IsSterilized)
-                                                                                {
-                                                                                    <span class="pet-tag">Sterilized</span>
-                                                                                }
-                                                                                @if (!item.IsVaccinated && !item.IsSterilized)
-                                                                                {
-                                                                                    <span class="pet-tag">Needs Vet</span>
-                                                                                }
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        }
-
-                                                        @if (!Model.Any())
-                                                        {
-                                                            <div class="col-12 text-center py-5">
-                                                                <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                                                                <h5 class="fw-bold">No pets found matching your criteria.</h5>
-                                                                <p class="text-muted">Try adjusting your filters or search location.</p>
-                                                            </div>
-                                                        }
-                                                    </div>
-
-                                                    @if (Model.Any())
+                                                        <span class="pet-tag pet-tag-green">Vaccinated</span>
+                                                    }
+                                                    @if (item.IsSterilized)
                                                     {
-                                                        <nav aria-label="Page navigation">
-                                                            <ul class="pagination justify-content-center">
-                                                                <li class="page-item disabled"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-muted"
-                                                                                                      href="#"><i class="bi bi-chevron-left"></i></a></li>
-                                                                    <li class="page-item active"><a class="page-link border-0 shadow-sm rounded-3 me-2"
-                                                                                                        style="background-color: var(--petlink-dark);" href="#">1</a></li>
-                                                                        <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark"
-                                                                                                     href="#">2</a></li>
-                                                                            <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark"
-                                                                                                         href="#">3</a></li>
-                                                                                <li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted">...</span>
-                                                                                </li>
-                                                                                <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark"
-                                                                                                             href="#">12</a></li>
-                                                                                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 text-dark" href="#"><i
-                                                                                        class="bi bi-chevron-right"></i></a></li>
-                                                                                    </ul>
-                                                                                </nav>
-                                                                            }
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                        <span class="pet-tag">Sterilized</span>
+                                                    }
+                                                    @if (!item.IsVaccinated && !item.IsSterilized)
+                                                    {
+                                                        <span class="pet-tag">Needs Vet</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+
+                            @if (!Model.Any())
+                            {
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                                    <h5 class="fw-bold">No pets found matching your criteria.</h5>
+                                    <p class="text-muted">Try adjusting your filters or search location.</p>
+                                </div>
+                            }
+                        </div>
+
+                        @if (Model.Any())
+                        {
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-muted" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                                    <li class="page-item active"><a class="page-link border-0 shadow-sm rounded-3 me-2" style="background-color: var(--petlink-dark);" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">3</a></li>
+                                    <li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted">...</span></li>
+                                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">12</a></li>
+                                    <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 text-dark" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                                </ul>
+                            </nav>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

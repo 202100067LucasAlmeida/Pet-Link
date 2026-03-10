@@ -30,6 +30,7 @@
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
+                
                 <tbody>
                     @foreach (var item in Model)
                     {
@@ -87,9 +88,11 @@
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary py-1 px-2" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+                                    
                                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info py-1 px-2" title="Details">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete">
                                         <i class="bi bi-trash"></i>
                                     </a>

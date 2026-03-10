@@ -8,143 +8,146 @@
     <div class="text-center m-4 mt-5">
         <h1 class="display-6 text-primary-blue fw-bold">
             <i class="text-primary me-2"><img src="~/images/logo.png" alt="PetLink Logo" height="40"
-                                              class="d-inline-block align-text-top me-2"></i>PETLINK
-            </h1>
-            <p class="text-muted">Connecting pets with loving homes</p>
-        </div>
+                                              class="d-inline-block align-text-top me-2">
+            </i>PETLINK
+        </h1>
+        <p class="text-muted">Connecting pets with loving homes</p>
+    </div>
 
-        <div class="col-md-8 col-lg-6 m-4 mt-0">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4 p-md-5">
+    <div class="col-md-8 col-lg-6 m-4 mt-0">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
 
-                    @* Título do formulário *@
-                    <h3 class="h4 mb-2 text-dark fw-bold">Create your account</h3>
-                    <p class="text-muted small mb-4">Join our community of pet lovers and professionals.</p>
+                @* Título do formulário *@
+                <h3 class="h4 mb-2 text-dark fw-bold">Create your account</h3>
+                <p class="text-muted small mb-4">Join our community of pet lovers and professionals.</p>
 
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div class="alert alert-success text-center rounded-3 small fw-semibold mb-4">
-                            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-                        </div>
-                    }
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success text-center rounded-3 small fw-semibold mb-4">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                    </div>
+                }
 
-                    @* Mensagem de erro (se o email já existir, ou as passwords não baterem certo) *@
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger text-center rounded-3 small fw-semibold mb-4">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
-                        </div>
-                    }
+                @* Mensagem de erro (se o email já existir, ou as passwords não baterem certo) *@
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center rounded-3 small fw-semibold mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
+                    </div>
+                }
 
-                    @* Formulário aponta para Profile / SignUpForm no C# *@
-                    <form asp-controller="Profile" asp-action="SignUpForm" method="post">
-                        <div class="mb-3">
-                            <label for="fullName" class="form-label fw-semibold">Full Name</label>
-                            <input type="text" name="fullName" class="form-control py-2" id="fullName"
-                                   placeholder="Jane Doe" required>
-                        </div>
+                @* Formulário aponta para Profile / SignUpForm no C# *@
+                <form asp-controller="Profile" asp-action="SignUpForm" method="post">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label fw-semibold">Full Name</label>
+                        <input type="text" name="fullName" class="form-control py-2" id="fullName"
+                               placeholder="Jane Doe" required>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-semibold">Email Address</label>
-                            <input type="email" name="email" class="form-control py-2" id="email"
-                                   placeholder="jane@example.com" required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <input type="email" name="email" class="form-control py-2" id="email"
+                               placeholder="jane@example.com" required>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="phone" class="form-label fw-semibold">Phone Number</label>
-                            <input type="tel" name="phone" class="form-control py-2" id="phone"
-                                   placeholder="+351 900 000 000" required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                        <input type="tel" name="phone" class="form-control py-2" id="phone"
+                               placeholder="+351 900 000 000" required>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">Password</label>
-                            <input type="password" name="password" class="form-control py-2" id="password"
-                                   placeholder="**********" required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <input type="password" name="password" class="form-control py-2" id="password"
+                               placeholder="**********" required>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
-                            <input type="password" name="confirmPassword" class="form-control py-2" id="confirmPassword"
-                                   placeholder="**********" required>
-                        </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                        <input type="password" name="confirmPassword" class="form-control py-2" id="confirmPassword"
+                               placeholder="**********" required>
+                    </div>
 
-                        <div class="mb-4 mt-4">
-                            <label class="form-label fw-semibold">I am a:</label>
-                            <div class="d-flex flex-wrap gap-4">
-                                <div class="form-check">
-                                    @* O value agora é "User" *@
-                                    <input class="form-check-input" type="radio" name="userType" value="User" id="petOwner"
-                                           checked>
-                                    <label class="form-check-label" for="petOwner">
-                                        Pet Owner
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    @* O value agora é "PetSitter" *@
-                                    <input class="form-check-input" type="radio" name="userType" value="PetSitter"
-                                           id="petSitter">
-                                    <label class="form-check-label" for="petSitter">
-                                        Pet Sitter
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    @* O value agora é "Shelter" *@
-                                    <input class="form-check-input" type="radio" name="userType" value="Shelter"
-                                           id="association">
-                                    <label class="form-check-label" for="association">
-                                        Shelter / Association
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
+                    <div class="mb-4 mt-4">
+                        <label class="form-label fw-semibold">I am a:</label>
+                        <div class="d-flex flex-wrap gap-4">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms" required checked>
-                                <label class="form-check-label small" for="terms">
-                                    I agree to the <a href="#" class="text-primary text-decoration-none">Terms &
-                                    Conditions</a> and <a href="#" class="text-primary text-decoration-none">Privacy
-                                    Policy</a>.
+                                <input class="form-check-input" type="radio" name="userType" value="User" id="petOwner"
+                                       checked>
+                                <label class="form-check-label" for="petOwner">
+                                    Pet Owner
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" value="PetSitter"
+                                       id="petSitter">
+                                <label class="form-check-label" for="petSitter">
+                                    Pet Sitter
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" value="Shelter"
+                                       id="association">
+                                <label class="form-check-label" for="association">
+                                    Shelter / Association
                                 </label>
                             </div>
                         </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">Create
-                            Account</button>
-
-                            @* Separador "OR" igual ao Login *@
-                            <div class="text-center mb-4 position-relative">
-                                <hr class="text-muted">
-                                <span
-                                    class="bg-white px-2 position-absolute top-50 start-50 translate-middle small text-muted">OR
-                                    CONTINUE WITH</span>
-                                </div>
-
-                                <div class="d-flex gap-3 justify-content-center mb-4">
-                                    <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
-                                        <i class="bi bi-google"></i> Google
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
-                                        <i class="bi bi-github"></i> GitHub
-                                    </button>
-                                </div>
-
-                                <div class="text-center">
-                                    <p class="mb-0 small">
-                                        Already have an account?
-                                        <a asp-controller="Profile" asp-action="LoginForm"
-                                           class="text-primary fw-semibold text-decoration-none">Log in</a>
-                                    </p>
-                                </div>
-                            </form>
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required checked>
+                            <label class="form-check-label small" for="terms">
+                                I agree to the <a href="#" class="text-primary text-decoration-none">Terms &
+                                Conditions</a> and <a href="#" class="text-primary text-decoration-none">Privacy
+                                Policy</a>.
+                            </label>
                         </div>
                     </div>
 
-                    @* Ícones finais adicionados *@
-                    <div class="d-flex justify-content-center gap-4 mt-4 small text-muted fw-semibold">
-                        <span><i class="bi bi-shield-lock"></i> SECURE SSL</span>
-                        <span><i class="bi bi-patch-check"></i> TRUSTED PROVIDER</span>
-                        <span><i class="bi bi-incognito"></i> PRIVACY FIRST</span>
+                    <button type="submit" class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">Create
+                        Account
+                    </button>
+
+                    @* Separador "OR" igual ao Login *@
+                    <div class="text-center mb-4 position-relative">
+                        <hr class="text-muted">
+                        <span
+                            class="bg-white px-2 position-absolute top-50 start-50 translate-middle small text-muted">OR
+                            CONTINUE WITH
+                        </span>
                     </div>
-                </div>
+
+                    <div class="d-flex gap-3 justify-content-center mb-4">
+                        <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
+                            <i class="bi bi-google"></i> Google
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
+                            <i class="bi bi-github"></i> GitHub
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="mb-0 small">
+                            Already have an account?
+                            <a asp-controller="Profile" asp-action="LoginForm"
+                               class="text-primary fw-semibold text-decoration-none">Log in</a>
+                        </p>
+                    </div>
+                </form>
             </div>
+        </div>
+
+        @* Ícones finais *@
+        <div class="d-flex justify-content-center gap-4 mt-4 small text-muted fw-semibold">
+            <span><i class="bi bi-shield-lock"></i> SECURE SSL</span>
+            <span><i class="bi bi-patch-check"></i> TRUSTED PROVIDER</span>
+            <span><i class="bi bi-incognito"></i> PRIVACY FIRST</span>
+        </div>
+    </div>
+</div>

@@ -44,62 +44,68 @@
 
                                 <li class="nav-item me-3">
                                     <a class="nav-link text-primary-blue" asp-controller="AnimalListings"
-                                       asp-action="Manage">Listings</a>
+                                           asp-action="Manage">Listings
+                                    </a>
                                 </li>
                             }
 
-                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings"
-                                                             asp-action="Index">Adopt</a></li>
-                                <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
-                                <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link text-primary-blue" asp-controller="AnimalListings"
+                                       asp-action="Index">Adopt
+                                </a>
+                            </li>
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
+                            <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+                            <li class="nav-item me-4">
+                                <a class="nav-link text-primary-blue" href="#"><i class="bi bi-moon-fill fs-5"></i></a>
+                            </li>
 
-                                <li class="nav-item me-4">
-                                    <a class="nav-link text-primary-blue" href="#"><i class="bi bi-moon-fill fs-5"></i></a>
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item me-3">
+                                    <span class="nav-link text-dark fw-bold"><i class="bi bi-person-circle me-1"></i>
+                                        Olá, @User.Identity.Name!
+                                    </span>
                                 </li>
 
-
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <li class="nav-item me-3">
-                                        <span class="nav-link text-dark fw-bold"><i class="bi bi-person-circle me-1"></i> Olá,
-                                            @User.Identity.Name!</span>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm"
-                                               asp-controller="Profile" asp-action="Logout">Sair</a>
-                                        </li>
-                                    }
-                        else
-                                    {
-                                        <li class="nav-item me-3">
-                                            <a class="nav-link text-primary-blue" asp-controller="Profile"
-                                               asp-action="LoginForm">Login</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Profile"
-                                               asp-action="SignUpForm">Sign Up</a>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-                </header>
-
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
-
-                <footer class="border-top mt-5 py-2 footer text-muted bg-white">
-                    <div class="container text-center small text-muted">
-                        <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm"
+                                           asp-controller="Profile" asp-action="Logout">Sair
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item me-3">
+                                    <a class="nav-link text-primary-blue" asp-controller="Profile"
+                                       asp-action="LoginForm">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Profile"
+                                           asp-action="SignUpForm">Sign Up
+                                    </a>
+                                </li>
+                            }
+                        </ul>
                     </div>
-                </footer>
+                </div>
+            </nav>
+        </header>
 
-                <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                <script src="~/js/site.js" asp-append-version="true"></script>
-                @await RenderSectionAsync("Scripts", required: false)
-            </body>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
 
-        </html>
+        <footer class="border-top mt-5 py-2 footer text-muted bg-white">
+            <div class="container text-center small text-muted">
+                <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+</html>

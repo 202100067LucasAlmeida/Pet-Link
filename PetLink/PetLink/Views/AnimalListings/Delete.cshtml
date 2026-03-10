@@ -7,11 +7,12 @@
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            
+
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="text-danger fw-bold mb-0">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i> Delete Listing
                 </h2>
+
                 <a asp-action="Manage" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
                     <i class="bi bi-arrow-left me-1"></i> Cancel
                 </a>
@@ -19,7 +20,9 @@
 
             <div class="alert alert-danger rounded-4 shadow-sm border-0 mb-4 p-4">
                 <h5 class="fw-bold"><i class="bi bi-trash3 me-2"></i> Are you absolutely sure?</h5>
-                <p class="mb-0">You are about to permanently delete the listing for <strong>@Model.Name</strong>. This action cannot be undone.</p>
+                <p class="mb-0">You are about to permanently delete the listing for <strong>@Model.Name</strong>. This
+                    action cannot be undone.
+                </p>
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 mb-4">
@@ -30,7 +33,7 @@
 
                         <dt class="col-sm-4 text-muted fw-semibold">Species</dt>
                         <dd class="col-sm-8">@Model.Species</dd>
-                        
+
                         <dt class="col-sm-4 text-muted fw-semibold">Location</dt>
                         <dd class="col-sm-8">@Model.Location</dd>
 
@@ -46,7 +49,6 @@
                     <i class="bi bi-trash-fill me-2"></i> Yes, Delete This Listing
                 </button>
             </form>
-
         </div>
     </div>
 </div>
