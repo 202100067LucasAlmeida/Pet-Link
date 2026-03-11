@@ -24,6 +24,7 @@ body {
 .btn-secondary {
     background-color: whitesmoke;
     border-color: whitesmoke;
+    color: var(--petlink-dark);
 }
 
 .status-green {
@@ -188,7 +189,8 @@ html {
 }
 
 .btn-secondary:hover {
-    background-color: var(--petlink-highlight);
+    background-color: var(--petlink-primary);
+    color: white;
 }
 
 .list-decorated {
