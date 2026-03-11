@@ -1,10 +1,13 @@
+
 # PetLink 🐾
 
 > Uma plataforma web centralizada para promover a adoção responsável de animais em Portugal, garantindo transparência, segurança e centralização de informação.
 
 ## 📖 Sobre o Projeto
 
-O **PetLink** é uma aplicação web desenvolvida em **ASP.NET Core MVC** que visa combater a informação dispersa sobre a adoção animal. A plataforma permite que indivíduos, associações e abrigos publiquem anúncios de adoção de forma estruturada. Conta com um sistema robusto de validação por parte de administradores, pesquisa com filtros avançados, e uma secção dedicada a serviços de *Petsitting*.
+O **PetLink** é uma aplicação web desenvolvida em **ASP.NET Core MVC** que visa combater a informação dispersa sobre a adoção animal. A plataforma permite que indivíduos, associações e abrigos publiquem anúncios de adoção de forma estruturada. Conta com um sistema robusto de validação de anúncios por parte de administradores, pesquisa com filtros avançados, e uma secção dedicada a serviços de *Petsitting*.
+
+---
 
 ## ✨ Principais Funcionalidades
 
@@ -15,12 +18,25 @@ O **PetLink** é uma aplicação web desenvolvida em **ASP.NET Core MVC** que vi
 * **Recursos Educativos:** Artigos e tutoriais sobre os cuidados básicos de cada animal.
 * **Petsitting:** Listagem de perfis de *sitters* para alojamento e passeios.
 
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 * **Backend:** C# com ASP.NET Core 8 MVC
 * **Base de Dados:** Microsoft SQL Server & Entity Framework Core
 * **Frontend:** HTML5, CSS3, JavaScript (Vanilla) e Bootstrap 5
 * **Ferramentas:** Visual Studio 2022, VS Code, Git/GitHub
+
+---
+
+## 🏗️ Arquitetura
+O sistema segue o padrão **MVC (Model-View-Controller)** providenciado pelo ASP.NET Core.
+
+Principais componentes:
+
+- **Models** – Representação dos dados e entidades
+- **Views** – Interface do utilizador (Razor Pages)
+- **Controllers** – Lógica de negócio e controlo das rotas
 
 ---
 
@@ -115,3 +131,4 @@ Projeto desenvolvido no âmbito da unidade curricular de Gestão de Projetos Inf
 Este projeto tem fins académicos.
 
 ---
+
