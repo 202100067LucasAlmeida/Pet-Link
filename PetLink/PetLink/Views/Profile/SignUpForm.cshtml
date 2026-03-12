@@ -60,7 +60,13 @@
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold">Password</label>
                         <input type="password" name="password" class="form-control py-2" id="password"
-                               placeholder="**********" required>
+                               placeholder="**********" required minlength="6">
+                        <div class="mt-2">
+                            <small class="password-requirement d-block">
+                                <i class="bi bi-check-circle-fill text-success" id="lengthIcon"></i>
+                                <span id="lengthText">Minimum 6 characters</span>
+                            </small>
+                        </div>
                     </div>
 
                     <div class="mb-3">

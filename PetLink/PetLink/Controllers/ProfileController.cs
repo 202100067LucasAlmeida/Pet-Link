@@ -71,6 +71,14 @@ namespace PetLink.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUpForm(string fullName, string email, string phone, string password, string confirmPassword, string userType)
         {
+            //extra: confirmar o nome
+            if (!IsValidName(fullName))
+            {
+                ViewBag.Error = "O nome não deve ter números nem simbolos.";
+                return View();
+            }
+
+
             // 1. Validar se as passwords coincidem
             if (password != confirmPassword)
             {
@@ -110,6 +118,17 @@ namespace PetLink.Controllers
             // 6. Redirecionar para o Login com uma mensagem de sucesso
             TempData["SuccessMessage"] = "Conta criada com sucesso! Podes fazer login.";
             return RedirectToAction("LoginForm");
+        }
+
+
+        private bool IsValidName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            return System.Text.RegularExpressions.Regex.IsMatch(name, @"^[\p{L}\s\-']+$");
         }
 
         // 4. Faz o Logout
