@@ -16,14 +16,14 @@ namespace PetLink.Models
         public Species Species { get; set; }
 
         [Required]
-        public string Location { get; set; } // Pode ser Distrito/Concelho
+        public string Location { get; set; } 
 
         public int AgeMonths { get; set; }
 
         [Required]
         public string Description { get; set; }
 
-        // Checklist de Saúde (Requisito R24)
+        // Informação de saúde do animal
         public bool IsVaccinated { get; set; }
         public bool IsDewormed { get; set; }
         public bool IsSterilized { get; set; }
@@ -32,10 +32,10 @@ namespace PetLink.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Foreign Key para o Tutor (Utilizador que criou o anúncio)
+        // Chave estrangeira para o utilizador que criou o anúncio 
         public int TutorId { get; set; }
         
         [ForeignKey("TutorId")]
-        public User Tutor { get; set; } // Propriedade de Navegação
+        public User Tutor { get; set; } 
     }
 }

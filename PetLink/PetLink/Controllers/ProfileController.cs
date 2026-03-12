@@ -101,7 +101,7 @@ namespace PetLink.Controllers
 
             if (userType == "PetSitter") role = UserRole.PetSitter;
             if (userType == "Associacao") role = UserRole.Shelter;
-            if(userType == "Adotante") role = UserRole.Adopter;
+            if(userType == "User") role = UserRole.User;
             
             // Cria o novo objeto User
             var newUser = new PetLink.Models.User

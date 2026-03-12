@@ -5,7 +5,7 @@ namespace PetLink.Models
 {
     public class User
     {
-        [Key] // Define que é a Primary Key
+        [Key] // Define que é a primary key
         public int Id { get; set; }
 
         [RegularExpression(@"^[\p{L}\s\-']+$", ErrorMessage = "O nome não pode conter simbolos ou números!")]
@@ -22,10 +22,10 @@ namespace PetLink.Models
 
         public UserRole Role { get; set; }
 
-        // Indica se a Associação/PetSitter já foi verificada pelo Admin (Requisito R10)
+        // Indica se a Associação/PetSitter já foi verificada pelo Admin 
         public bool IsVerified { get; set; } = false; 
 
-        // Relação 1 para Muitos: Um utilizador pode ter vários anúncios
+        
         public ICollection<AnimalListing> Listings { get; set; }
     }
 }

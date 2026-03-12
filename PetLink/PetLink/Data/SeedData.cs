@@ -14,10 +14,10 @@ namespace PetLink.Data
                 // Verifica se a base de dados já tem algum Utilizador
                 if (context.Users.Any())
                 {
-                    return;   // A base de dados já foi preenchida ("seeded")
+                    return;   
                 }
 
-                // 1. Criar Utilizadores (Atualizado com o nome do abrigo do Mockup)
+                // Cria utilizadores 
                 var admin = new User
                 {
                     Name = "Administrador PetLink",
@@ -48,7 +48,7 @@ namespace PetLink.Data
                 context.Users.AddRange(admin, shelter, particular);
                 context.SaveChanges();
 
-                // 2. Criar Anúncios de Animais (Baseado nos Mockups)
+                // Cria anúncios de animais 
                 var listings = new AnimalListing[]
                 {
                     new AnimalListing
@@ -70,7 +70,7 @@ namespace PetLink.Data
                         Name = "Luna",
                         Species = Species.Cat,
                         Location = "Setúbal, Portugal",
-                        AgeMonths = 24, // 2 years
+                        AgeMonths = 24, 
                         Description = "Sweet American Shorthair cat. Very calm and great for apartments. She loves to nap in sunny spots.",
                         IsVaccinated = true,
                         IsDewormed = true,
@@ -84,7 +84,7 @@ namespace PetLink.Data
                         Name = "Rio",
                         Species = Species.Bird,
                         Location = "Leiria, Portugal",
-                        AgeMonths = 12, // 1 year
+                        AgeMonths = 12, 
                         Description = "Colorful Macaw parrot. Very talkative, smart, and loves interaction. Needs an experienced bird owner.",
                         IsVaccinated = false,
                         IsDewormed = false,
@@ -98,7 +98,7 @@ namespace PetLink.Data
                         Name = "Shadow",
                         Species = Species.Dog,
                         Location = "Algarve, Portugal",
-                        AgeMonths = 60, // 5 years
+                        AgeMonths = 60,
                         Description = "Faithful mutt looking for a quiet home. Shadow is a very loyal companion who enjoys long, peaceful walks.",
                         IsVaccinated = true,
                         IsDewormed = true,
@@ -112,7 +112,7 @@ namespace PetLink.Data
                         Name = "Rex",
                         Species = Species.Dog,
                         Location = "Porto, Portugal",
-                        AgeMonths = 36, // 3 years
+                        AgeMonths = 36, 
                         Description = "Friendly French Bulldog. Perfect for apartment living and very sociable with other dogs.",
                         IsVaccinated = true,
                         IsDewormed = true,
@@ -126,7 +126,7 @@ namespace PetLink.Data
                         Name = "Max",
                         Species = Species.Dog,
                         Location = "Coimbra, Portugal",
-                        AgeMonths = 96, // 8 years (Senior)
+                        AgeMonths = 96, 
                         Description = "Senior German Shepherd. Very well trained, protective, and calm. Looking for a comfortable retirement home.",
                         IsVaccinated = true,
                         IsDewormed = true,
@@ -140,7 +140,7 @@ namespace PetLink.Data
                         Name = "Daisy",
                         Species = Species.Dog,
                         Location = "Braga, Portugal",
-                        AgeMonths = 48, // 4 years
+                        AgeMonths = 48, 
                         Description = "Active Beagle who loves the outdoors. Has a great nose and needs plenty of exercise.",
                         IsVaccinated = true,
                         IsDewormed = true,
@@ -154,7 +154,7 @@ namespace PetLink.Data
                         Name = "Misty",
                         Species = Species.Cat,
                         Location = "Aveiro, Portugal",
-                        AgeMonths = 60, // 5 years
+                        AgeMonths = 60, 
                         Description = "Calm Domestic Longhair. Very independent but enjoys evening cuddles on the sofa.",
                         IsVaccinated = true,
                         IsDewormed = true,

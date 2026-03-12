@@ -6,7 +6,7 @@ using PetLink.Models;
 
 namespace PetLink.Controllers
 {
-    [Authorize(Roles = "Admin")] // Só o Admin tem acesso a este CRUD inteiro
+    [Authorize(Roles = "Admin")] // Apenas utilizadores com role "Admin" podem aceder a este controller
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,12 +17,14 @@ namespace PetLink.Controllers
         }
 
         // GET: Users
+        // Mostra a lista de todos os utilizadores registados
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
         }
 
         // GET: Users/Details/5
+        // Mostra os detalhes de um utilizador específico
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -36,6 +38,7 @@ namespace PetLink.Controllers
         }
 
         // GET: Users/Edit/5
+        // Mostra o formulário de edição de um utilizador
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -47,6 +50,7 @@ namespace PetLink.Controllers
         }
 
         // POST: Users/Edit/5
+        // Recebe os dados editados do utilizador e atualiza na base de dados
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,PasswordHash,Role,IsVerified")] User user)
@@ -71,6 +75,7 @@ namespace PetLink.Controllers
         }
 
         // GET: Users/Delete/5
+        // Mostra a página de confirmação para eliminar um utilizador
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -84,6 +89,7 @@ namespace PetLink.Controllers
         }
 
         // POST: Users/Delete/5
+        // Remove o utilizador da base de dados após confirmação
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -98,18 +104,22 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Verifica se um utilizador existe na base de dados
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
 
+
         // GET: Users/Create
+        // Mostra o formulário para criar um novo utilizador
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Users/Create
+        // Recebe os dados do novo utilizador e guarda na base de dados
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Email,PasswordHash,Role,IsVerified")] User user)

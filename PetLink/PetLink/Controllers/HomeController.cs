@@ -10,7 +10,7 @@ namespace PetLink.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context)
         {
             _context = context;
         }
