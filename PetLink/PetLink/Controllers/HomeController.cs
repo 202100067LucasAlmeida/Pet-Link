@@ -8,15 +8,15 @@ namespace PetLink.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
+        // Método responsável por carregar a página inicial.
+        // Obtém os 4 anúncios de animais mais recentes da base de dados e envia-os para a View da homepage.
         public async Task<IActionResult> Index()
         {
             // Vai buscar os 4 animais mais recentes
@@ -25,16 +25,19 @@ namespace PetLink.Controllers
                 .Take(4)
                 .ToListAsync();
 
-            // Envia a lista para a Homepage
+            // Envia a lista de animais recentes para a View da homepage
             return View(recentPets);
         }
 
+        // Carrega a página de política de privacidade
         public IActionResult Privacy()
         {
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        
+        // Método utilizado para mostrar a página de erro da aplicação
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

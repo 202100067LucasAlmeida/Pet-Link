@@ -24,6 +24,7 @@ namespace PetLink.Models.Enums
         User,
         Shelter,
         PetSitter,
-        Admin
+        Admin,
+        Adopter
     }
 }

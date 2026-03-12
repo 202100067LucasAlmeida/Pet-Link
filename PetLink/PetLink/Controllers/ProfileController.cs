@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using PetLink.Data;
 using Microsoft.EntityFrameworkCore;
+using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
@@ -59,7 +60,7 @@ namespace PetLink.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // 3. Mostra a página de Registo (GET)
+        // 3. Mostra a página de Registo 
         [HttpGet]
         public IActionResult SignUpForm()
         {
@@ -71,7 +72,7 @@ namespace PetLink.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUpForm(string fullName, string email, string phone, string password, string confirmPassword, string userType)
         {
-            //extra: confirmar o nome
+            //confirma o nome
             if (!IsValidName(fullName))
             {
                 ViewBag.Error = "O nome não deve ter números nem simbolos.";
@@ -79,14 +80,14 @@ namespace PetLink.Controllers
             }
 
 
-            // 1. Validar se as passwords coincidem
+            // Valida se as passwords coincidem
             if (password != confirmPassword)
             {
                 ViewBag.Error = "As passwords não coincidem.";
                 return View();
             }
 
-            // 2. Verificar se o email já existe na base de dados
+            // Verifica se o email já existe na base de dados
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
             {
@@ -94,33 +95,34 @@ namespace PetLink.Controllers
                 return View();
             }
 
-            // 3. Mapear o tipo de utilizador (userType do HTML para o nosso Enum UserRole)
-            // Assumindo que os values no HTML serão: "Adotante", "PetSitter", "Associacao"
-            PetLink.Models.Enums.UserRole role = PetLink.Models.Enums.UserRole.User; // Padrão
+            // Mapea o tipo de utilizador (userType do HTML para o nosso Enum UserRole)
 
-            if (userType == "PetSitter") role = PetLink.Models.Enums.UserRole.PetSitter;
-            if (userType == "Associacao") role = PetLink.Models.Enums.UserRole.Shelter;
+            UserRole role = UserRole.User;
 
-            // 4. Criar o novo objeto User
+            if (userType == "PetSitter") role = UserRole.PetSitter;
+            if (userType == "Associacao") role = UserRole.Shelter;
+            if(userType == "Adotante") role = UserRole.Adopter;
+            
+            // Cria o novo objeto User
             var newUser = new PetLink.Models.User
             {
                 Name = fullName,
                 Email = email,
-                PasswordHash = password, // NOTA: Num projeto real devíamos encriptar isto!
+                PasswordHash = password,
                 Role = role,
                 IsVerified = false // Requer verificação do admin para Associações e PetSitters
             };
 
-            // 5. Guardar na base de dados
+            //Guarda na base de dados o user
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // 6. Redirecionar para o Login com uma mensagem de sucesso
+            // Redireciona para o Login com uma mensagem de sucesso
             TempData["SuccessMessage"] = "Conta criada com sucesso! Podes fazer login.";
             return RedirectToAction("LoginForm");
         }
 
-
+        // Verifica se o nome contém apenas letras, espaços ou caracteres válidos
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
