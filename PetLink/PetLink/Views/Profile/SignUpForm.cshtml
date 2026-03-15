@@ -1,5 +1,5 @@
-﻿@{
-    ViewData["Title"] = "Sign Up";
+﻿﻿@{
+ViewData["Title"] = "Sign Up";
 }
 
 <div class="row justify-content-center">
@@ -7,8 +7,9 @@
     @* Intro com a marca a combinar com o Login *@
     <div class="text-center m-4 mt-5">
         <h1 class="display-6 text-primary-blue fw-bold">
-            <i class="text-primary me-2"><img src="~/images/logo.png" alt="PetLink Logo" height="40"
-                                              class="d-inline-block align-text-top me-2">
+            <i class="text-primary me-2">
+                <img src="~/images/logo.png" alt="PetLink Logo" height="40"
+                     class="d-inline-block align-text-top me-2">
             </i>PETLINK
         </h1>
         <p class="text-muted">Connecting pets with loving homes</p>
@@ -29,42 +30,63 @@
                     </div>
                 }
 
-                @* Mensagem de erro (se o email já existir, ou as passwords não baterem certo) *@
-                @if (ViewBag.Error != null)
-                {
-                    <div class="alert alert-danger text-center rounded-3 small fw-semibold mb-4">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
-                    </div>
-                }
+                <!-- Error message container for AJAX errors -->
+                <div id="errorContainer" class="alert alert-danger text-center rounded-3 small fw-semibold mb-4" style="display: none;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span id="errorMessage"></span>
+                </div>
+
+                <!-- Field-specific error container -->
+                <div id="fieldErrors" class="mb-3"></div>
 
                 @* Formulário aponta para Profile / SignUpForm no C# *@
-                <form asp-controller="Profile" asp-action="SignUpForm" method="post">
+                <form id="signupForm" asp-controller="Profile" asp-action="SignUpForm" method="post">
                     <div class="mb-3">
                         <label for="fullName" class="form-label fw-semibold">Full Name</label>
                         <input type="text" name="fullName" class="form-control py-2" id="fullName"
-                               placeholder="Jane Doe" required>
+                               placeholder="Jane Doe" value="@ViewBag.FullName" required>
+                        <div class="invalid-feedback" id="fullNameError"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold">Email Address</label>
                         <input type="email" name="email" class="form-control py-2" id="email"
-                               placeholder="jane@example.com" required>
+                               placeholder="jane@example.com" value="@ViewBag.Email" required>
+                        <div class="invalid-feedback" id="emailError"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="phone" class="form-label fw-semibold">Phone Number</label>
                         <input type="tel" name="phone" class="form-control py-2" id="phone"
-                               placeholder="+351 900 000 000" required>
+                               placeholder="+351 900 000 000" value="@ViewBag.Phone" required>
+                        <div class="invalid-feedback" id="phoneError"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold">Password</label>
                         <input type="password" name="password" class="form-control py-2" id="password"
-                               placeholder="**********" required minlength="6">
+                               placeholder="**********" required>
+                        <div class="invalid-feedback" id="passwordError"></div>
                         <div class="mt-2">
-                            <small class="password-requirement d-block">
-                                <i class="bi bi-check-circle-fill text-success" id="lengthIcon"></i>
+                            <small class="password-requirement d-block" id="lengthReq">
+                                <i class="bi bi-circle" id="lengthIcon"></i>
                                 <span id="lengthText">Minimum 6 characters</span>
+                            </small>
+                            <small class="password-requirement d-block" id="lowercaseReq">
+                                <i class="bi bi-circle" id="lowercaseIcon"></i>
+                                <span id="lowercaseText">One lowercase letter</span>
+                            </small>
+                            <small class="password-requirement d-block" id="uppercaseReq">
+                                <i class="bi bi-circle" id="uppercaseIcon"></i>
+                                <span id="uppercaseText">One uppercase letter</span>
+                            </small>
+                            <small class="password-requirement d-block" id="numberReq">
+                                <i class="bi bi-circle" id="numberIcon"></i>
+                                <span id="numberText">One number</span>
+                            </small>
+                            <small class="password-requirement d-block" id="symbolReq">
+                                <i class="bi bi-circle" id="symbolIcon"></i>
+                                <span id="symbolText">One symbol</span>
                             </small>
                         </div>
                     </div>
@@ -73,6 +95,7 @@
                         <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
                         <input type="password" name="confirmPassword" class="form-control py-2" id="confirmPassword"
                                placeholder="**********" required>
+                        <div class="invalid-feedback" id="confirmPasswordError"></div>
                     </div>
 
                     <div class="mb-4 mt-4">
@@ -80,26 +103,18 @@
                         <div class="d-flex flex-wrap gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="userType" value="User" id="petOwner"
-                                       checked>
-                                <label class="form-check-label" for="petOwner">
-                                    Pet Owner
-                                </label>
+                                       @(ViewBag.UserType == "User" ? "checked" : "checked")>
+                                <label class="form-check-label" for="petOwner">Pet Owner</label>
                             </div>
-
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" value="PetSitter"
-                                       id="petSitter">
-                                <label class="form-check-label" for="petSitter">
-                                    Pet Sitter
-                                </label>
+                                <input class="form-check-input" type="radio" name="userType" value="PetSitter" id="petSitter"
+                                       @(ViewBag.UserType == "PetSitter" ? "checked" : "")>
+                                <label class="form-check-label" for="petSitter">Pet Sitter</label>
                             </div>
-
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userType" value="Shelter"
-                                       id="association">
-                                <label class="form-check-label" for="association">
-                                    Shelter / Association
-                                </label>
+                                <input class="form-check-input" type="radio" name="userType" value="Shelter" id="association"
+                                       @(ViewBag.UserType == "Shelter" ? "checked" : "")>
+                                <label class="form-check-label" for="association">Shelter / Association</label>
                             </div>
                         </div>
                     </div>
@@ -108,23 +123,21 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="terms" required checked>
                             <label class="form-check-label small" for="terms">
-                                I agree to the <a href="#" class="text-primary text-decoration-none">Terms &
-                                Conditions</a> and <a href="#" class="text-primary text-decoration-none">Privacy
-                                Policy</a>.
+                                I agree to the <a href="#" class="text-primary text-decoration-none">Terms & Conditions</a>
+                                and <a href="#" class="text-primary text-decoration-none">Privacy Policy</a>.
                             </label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">Create
-                        Account
+                    <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">
+                        Create Account
                     </button>
 
                     @* Separador "OR" igual ao Login *@
                     <div class="text-center mb-4 position-relative">
                         <hr class="text-muted">
-                        <span
-                            class="bg-white px-2 position-absolute top-50 start-50 translate-middle small text-muted">OR
-                            CONTINUE WITH
+                        <span class="bg-white px-2 position-absolute top-50 start-50 translate-middle small text-muted">
+                            OR CONTINUE WITH
                         </span>
                     </div>
 
@@ -132,7 +145,6 @@
                         <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
                             <i class="bi bi-google"></i> Google
                         </button>
-
                         <button type="button" class="btn btn-outline-secondary w-50 rounded-pill py-2">
                             <i class="bi bi-github"></i> GitHub
                         </button>
@@ -157,3 +169,123 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Real-time password validation
+            $('#password').on('input', function() {
+                var password = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("ValidatePassword", "Profile")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ password: password }),
+                    success: function(requirements) {
+                        updatePasswordRequirement('length', requirements.length);
+                        updatePasswordRequirement('lowercase', requirements.lowercase);
+                        updatePasswordRequirement('uppercase', requirements.uppercase);
+                        updatePasswordRequirement('number', requirements.number);
+                        updatePasswordRequirement('symbol', requirements.symbol);
+                    }
+                });
+            });
+
+            // Form submission with AJAX validation
+            $('#signupForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = {
+                    FullName: $('#fullName').val(),
+                    Email: $('#email').val(),
+                    Phone: $('#phone').val(),
+                    Password: $('#password').val(),
+                    ConfirmPassword: $('#confirmPassword').val(),
+                    UserType: $('input[name="userType"]:checked').val()
+                };
+
+                // Clear previous errors
+                clearErrors();
+
+                $.ajax({
+                    url: '@Url.Action("ValidateSignUp", "Profile")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response.success) {
+                            // If validation passes, submit the form normally
+                            $('#signupForm')[0].submit();
+                        } else {
+                            // Display field-specific errors
+                            displayErrors(response.errors);
+                        }
+                    },
+                    error: function() {
+                        showGeneralError('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            // Real-time field validation on blur
+            $('#fullName, #email, #phone, #password, #confirmPassword').on('blur', function() {
+                validateField($(this).attr('id'));
+            });
+        });
+
+        function updatePasswordRequirement(requirement, isValid) {
+            var icon = $('#' + requirement + 'Icon');
+            var text = $('#' + requirement + 'Text');
+
+            if (isValid) {
+                icon.removeClass('bi bi-circle').addClass('bi bi-check-circle-fill text-success');
+                text.css('color', '#28a745');
+            } else {
+                icon.removeClass('bi bi-check-circle-fill text-success').addClass('bi bi-circle');
+                text.css('color', '');
+            }
+        }
+
+        function validateField(fieldId) {
+            var field = $('#' + fieldId);
+            var value = field.val();
+
+            // Simple client-side validation before server call
+            if (fieldId === 'fullName' && value && !/^[\p{L}\s\-']+$/u.test(value)) {
+                showFieldError('fullName', 'O nome não deve ter números nem símbolos.');
+            } else {
+                hideFieldError(fieldId);
+            }
+        }
+
+        function displayErrors(errors) {
+            for (var field in errors) {
+                showFieldError(field, errors[field]);
+            }
+        }
+
+        function showFieldError(fieldId, message) {
+            var field = $('#' + fieldId);
+            field.addClass('is-invalid');
+            $('#' + fieldId + 'Error').text(message).show();
+        }
+
+        function hideFieldError(fieldId) {
+            var field = $('#' + fieldId);
+            field.removeClass('is-invalid');
+            $('#' + fieldId + 'Error').text('').hide();
+        }
+
+        function clearErrors() {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').text('').hide();
+            $('#errorContainer').hide();
+        }
+
+        function showGeneralError(message) {
+            $('#errorMessage').text(message);
+            $('#errorContainer').show();
+        }
+    </script>
+}

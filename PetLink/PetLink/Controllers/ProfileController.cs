@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
-using PetLink.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PetLink.Data;
+using PetLink.Models;
 using PetLink.Models.Enums;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace PetLink.Controllers
 {
@@ -72,38 +74,53 @@ namespace PetLink.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUpForm(string fullName, string email, string phone, string password, string confirmPassword, string userType)
         {
-            //confirma o nome
+            var errors = new List<string>();
+
             if (!IsValidName(fullName))
             {
-                ViewBag.Error = "O nome não deve ter números nem simbolos.";
-                return View();
+                errors.Add("O nome não deve ter números nem símbolos.");
             }
 
+            if (!IsValidEmail(email))
+            {
+                errors.Add("O email deve conter um @ e ser válido.");
+            }
 
-            // Valida se as passwords coincidem
             if (password != confirmPassword)
             {
-                ViewBag.Error = "As passwords não coincidem.";
+                errors.Add("As passwords não coincidem.");
+            }
+
+            var passwordErrors = ValidatePassword(password);
+            errors.AddRange(passwordErrors);
+
+            if (errors.Any())
+            {
+                ViewBag.Error = string.Join(" ", errors);
+                // Preserve form data
+                ViewBag.FullName = fullName;
+                ViewBag.Email = email;
+                ViewBag.Phone = phone;
+                ViewBag.UserType = userType;
                 return View();
             }
 
-            // Verifica se o email já existe na base de dados
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
             {
                 ViewBag.Error = "Este email já está registado.";
+                ViewBag.FullName = fullName;
+                ViewBag.Email = email;
+                ViewBag.Phone = phone;
+                ViewBag.UserType = userType;
                 return View();
             }
 
-            // Mapea o tipo de utilizador (userType do HTML para o nosso Enum UserRole)
-
             UserRole role = UserRole.User;
-
             if (userType == "PetSitter") role = UserRole.PetSitter;
-            if (userType == "Associacao") role = UserRole.Shelter;
-            if(userType == "User") role = UserRole.User;
-            
-            // Cria o novo objeto User
+            if (userType == "Shelter") role = UserRole.Shelter;
+            if (userType == "User") role = UserRole.User;
+
             var newUser = new PetLink.Models.User
             {
                 Name = fullName,
@@ -111,26 +128,14 @@ namespace PetLink.Controllers
                 PasswordHash = password,
                 Role = role,
                 IsVerified = false // Requer verificação do admin para Associações e PetSitters
+                IsVerified = false
             };
 
-            //Guarda na base de dados o user
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Redireciona para o Login com uma mensagem de sucesso
             TempData["SuccessMessage"] = "Conta criada com sucesso! Podes fazer login.";
             return RedirectToAction("LoginForm");
-        }
-
-        // Verifica se o nome contém apenas letras, espaços ou caracteres válidos
-        private bool IsValidName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return false;
-            }
-
-            return System.Text.RegularExpressions.Regex.IsMatch(name, @"^[\p{L}\s\-']+$");
         }
 
         // 4. Faz o Logout
@@ -138,6 +143,139 @@ namespace PetLink.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
+        }
+
+
+
+        //sprint 2 -----------
+
+        //verificações pedidas do sign up
+        [HttpPost]
+        public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
+        {
+            var errors = new Dictionary<string, string>();
+
+            // Validate Name
+            if (string.IsNullOrWhiteSpace(model.FullName))
+            {
+                errors["fullName"] = "O nome é obrigatório.";
+            }
+            else if (!IsValidName(model.FullName))
+            {
+                errors["fullName"] = "O nome não deve ter números nem símbolos.";
+            }
+
+            // Validate Email
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                errors["email"] = "O email é obrigatório.";
+            }
+            else if (!IsValidEmail(model.Email))
+            {
+                errors["email"] = "O email deve conter um @ e ser válido.";
+            }
+            else
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+                if (existingUser != null)
+                {
+                    errors["email"] = "Este email já está registado.";
+                }
+            }
+
+            // Validate Phone
+            if (string.IsNullOrWhiteSpace(model.Phone))
+            {
+                errors["phone"] = "O telefone é obrigatório.";
+            }
+
+            // Validate Password
+            var passwordErrors = ValidatePassword(model.Password);
+            if (passwordErrors.Any())
+            {
+                errors["password"] = string.Join(" ", passwordErrors);
+            }
+
+            // Validate Confirm Password
+            if (model.Password != model.ConfirmPassword)
+            {
+                errors["confirmPassword"] = "As passwords não coincidem.";
+            }
+
+            if (errors.Any())
+            {
+                return Json(new { success = false, errors });
+            }
+
+            return Json(new { success = true });
+        }
+
+
+        [HttpPost]
+        public IActionResult ValidatePassword([FromBody] PasswordValidationModel model)
+        {
+            var requirements = new Dictionary<string, bool>
+            {
+                { "length", model.Password?.Length >= 6 },
+                { "lowercase", model.Password?.Any(char.IsLower) ?? false },
+                { "uppercase", model.Password?.Any(char.IsUpper) ?? false },
+                { "number", model.Password?.Any(char.IsDigit) ?? false },
+                { "symbol", model.Password?.Any(c => !char.IsLetterOrDigit(c)) ?? false }
+            };
+
+            return Json(requirements);
+        }
+
+
+        //métodos extra
+        private bool IsValidName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+            return Regex.IsMatch(name, @"^[\p{L}\s\-']+$");
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private List<string> ValidatePassword(string password)
+        {
+            var errors = new List<string>();
+
+            if (string.IsNullOrEmpty(password))
+            {
+                errors.Add("A password é obrigatória.");
+                return errors;
+            }
+
+            if (password.Length < 6)
+                errors.Add("A password deve ter pelo menos 6 caracteres.");
+
+            if (!password.Any(char.IsLower))
+                errors.Add("A password deve ter pelo menos uma letra minúscula.");
+
+            if (!password.Any(char.IsUpper))
+                errors.Add("A password deve ter pelo menos uma letra maiúscula.");
+
+            if (!password.Any(char.IsDigit))
+                errors.Add("A password deve ter pelo menos um número.");
+
+            if (!password.Any(c => !char.IsLetterOrDigit(c)))
+                errors.Add("A password deve ter pelo menos um símbolo.");
+
+            return errors;
         }
     }
 }
