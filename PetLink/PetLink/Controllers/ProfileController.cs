@@ -128,7 +128,6 @@ namespace PetLink.Controllers
                 PasswordHash = password,
                 Role = role,
                 IsVerified = false // Requer verificação do admin para Associações e PetSitters
-                IsVerified = false
             };
 
             _context.Users.Add(newUser);
