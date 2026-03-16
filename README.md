@@ -30,13 +30,14 @@ O **PetLink** é uma aplicação web desenvolvida em **ASP.NET Core MVC** que vi
 ---
 
 ## 🏗️ Arquitetura
+
 O sistema segue o padrão **MVC (Model-View-Controller)** providenciado pelo ASP.NET Core.
 
 Principais componentes:
 
-- **Models** – Representação dos dados e entidades
-- **Views** – Interface do utilizador (Razor Pages)
-- **Controllers** – Lógica de negócio e controlo das rotas
+* **Models** – Representação dos dados e entidades
+* **Views** – Interface do utilizador (Razor Pages)
+* **Controllers** – Lógica de negócio e controlo das rotas
 
 ---
 
@@ -131,4 +132,3 @@ Projeto desenvolvido no âmbito da unidade curricular de Gestão de Projetos Inf
 Este projeto tem fins académicos.
 
 ---
-
