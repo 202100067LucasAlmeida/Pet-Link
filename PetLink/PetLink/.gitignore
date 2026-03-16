@@ -496,3 +496,6 @@ obj/
 *.db-shm
 *.db-wal
 petlink.db
+
+# Ignorar configurações locais
+appsettings.Development.json
