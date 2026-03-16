@@ -14,6 +14,7 @@ namespace PetLink.Models
         public string Name { get; set; }
 
         public Species Species { get; set; }
+        public Breed Breed { get; set; }
 
         [Required]
         public string Location { get; set; } 

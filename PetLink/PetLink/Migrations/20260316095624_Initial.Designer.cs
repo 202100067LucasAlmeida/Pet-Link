@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260315215203_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260316095624_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,9 @@ namespace PetLink.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AgeMonths")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Breed")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
