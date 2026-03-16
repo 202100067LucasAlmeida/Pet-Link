@@ -11,6 +11,11 @@ namespace PetLink.Models.Enums
         Other
     }
 
+    public enum Breed
+    {
+
+    }
+
     public enum ListingStatus
     {
         Pendent,   // Aguarda aprovação do Admin (Requisito R20)

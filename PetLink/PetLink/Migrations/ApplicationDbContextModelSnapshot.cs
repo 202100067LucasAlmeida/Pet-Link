@@ -33,6 +33,9 @@ namespace PetLink.Migrations
                     b.Property<int>("AgeMonths")
                         .HasColumnType("int");
 
+                    b.Property<int>("Breed")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
