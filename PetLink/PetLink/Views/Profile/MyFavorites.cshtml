@@ -6,119 +6,129 @@
 
 <div class="container py-4">
     <div class="row justify-content-center">
+
+        <div class="row">
+
+            <div class="col-lg-3 mb-4">
+                <!-- Sidebar -->
+                @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+            </div>
         
-        <div class="col-md-10">
-            <h2 class="text-primary-blue mb-4">My Favorites</h2>
+            <div class="col-lg-9">
+                <h2 class="text-primary-blue mb-4">My Favorites</h2>
             
-            @if (!Model.Any())
-            {
-                <div class="text-center py-5 bg-primary-light rounded-3">
-                    <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
-                    <h4 class="mt-3 text-muted">No favorites yet</h4>
-                    <p class="text-muted">Start adding pets to your favorites by clicking the heart icon on pet listings!</p>
-                    <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
-                        Browse Pets
-                    </a>
-                </div>
-            }
-            else
-            {
-                <div class="row g-4">
-                    @foreach (var pet in Model.Where(p => p.Status == ListingStatus.Published))
-                    {
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 border-0 shadow-sm pet-card" data-pet-id="@pet.Id">
-                                <div class="pet-card-img-wrapper">
-                                    <!-- Imagem placeholder(não sei bem como meter isto das imagens) -->
-                                    <div class="pet-card-img bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center">
-                                        @switch (pet.Species)
-                                        {
-                                            case Species.Dog:
-                                                <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
-                                                break;
-                                            case Species.Cat:
-                                                <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
-                                                break;
-                                            case Species.Bird:
-                                                <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
-                                                break;
-                                            default:
-                                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                                                break;
-                                        }
-                                    </div>
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 bg-primary-light rounded-3">
+                        <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
+                        <h4 class="mt-3 text-muted">No favorites yet</h4>
+                        <p class="text-muted">Start adding pets to your favorites by clicking the heart icon on pet listings!</p>
+                        <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
+                            Browse Pets
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-4">
+                        @foreach (var pet in Model.Where(p => p.Status == ListingStatus.Published))
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 border-0 shadow-sm pet-card" data-pet-id="@pet.Id">
+                                    <div class="pet-card-img-wrapper">
+                                        <!-- Imagem placeholder(não sei bem como meter isto das imagens) -->
+                                        <div class="pet-card-img bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center">
+                                            @switch (pet.Species)
+                                            {
+                                                case Species.Dog:
+                                                    <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                    break;
+                                                case Species.Cat:
+                                                    <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                    break;
+                                                case Species.Bird:
+                                                    <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                    break;
+                                                default:
+                                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                                    break;
+                                            }
+                                        </div>
                                     
-                                    <button class="btn-heart active" data-pet-id="@pet.Id">
-                                        <i class="bi bi-heart-fill text-danger"></i>
-                                    </button>
+                                        <button class="btn-heart active" data-pet-id="@pet.Id">
+                                            <i class="bi bi-heart-fill text-danger"></i>
+                                        </button>
                                     
-                                    <span class="badge-adoptable">Ready to adopt</span>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="card-title fw-bold mb-0 text-primary-darkblue">@pet.Name</h5>
-                                        <span class="pet-tag">@pet.Species</span>
+                                        <span class="badge-adoptable">Ready to adopt</span>
                                     </div>
-                                    <p class="card-text text-muted small mb-2">
-                                        <i class="bi bi-geo-alt-fill me-1"></i>@pet.Location
-                                    </p>
-                                    <p class="card-text text-muted small mb-2">
-                                        <i class="bi bi-calendar me-1"></i>
-                                        @{
-                                            var years = pet.AgeMonths / 12;
-                                            var months = pet.AgeMonths % 12;
-                                            var ageText = "";
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title fw-bold mb-0 text-primary-darkblue">@pet.Name</h5>
+                                            <span class="pet-tag">@pet.Species</span>
+                                        </div>
+                                        <p class="card-text text-muted small mb-2">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>@pet.Location
+                                        </p>
+                                        <p class="card-text text-muted small mb-2">
+                                            <i class="bi bi-calendar me-1"></i>
+                                            @{
+                                                var years = pet.AgeMonths / 12;
+                                                var months = pet.AgeMonths % 12;
+                                                var ageText = "";
                                             
-                                            if (years > 0)
-                                            {
-                                                ageText += $"{years} {(years == 1 ? "year" : "years")}";
-                                                if (months > 0) ageText += " ";
+                                                if (years > 0)
+                                                {
+                                                    ageText += $"{years} {(years == 1 ? "year" : "years")}";
+                                                    if (months > 0) ageText += " ";
+                                                }
+                                                if (months > 0 || years == 0)
+                                                {
+                                                    ageText += $"{months} {(months == 1 ? "month" : "months")}";
+                                                }
                                             }
-                                            if (months > 0 || years == 0)
-                                            {
-                                                ageText += $"{months} {(months == 1 ? "month" : "months")}";
-                                            }
-                                        }
-                                        @ageText
+                                            @ageText
                                         
-                                        @if (pet.Breed != 0)
-                                        {
-                                            <span class="mx-2">•</span>
-                                            <span>@pet.Breed</span>
-                                        }
-                                    </p>
-                                    <div class="d-flex gap-2 mb-3">
-                                        @if (pet.IsVaccinated)
-                                        {
-                                            <span class="pet-tag pet-tag-green" title="Vaccinated">
-                                                <i class="bi bi-shield-check me-1"></i>Vaccinated
-                                            </span>
-                                        }
-                                        @if (pet.IsDewormed)
-                                        {
-                                            <span class="pet-tag pet-tag-green" title="Dewormed">
-                                                <i class="bi bi-capsule me-1"></i>Dewormed
-                                            </span>
-                                        }
-                                        @if (pet.IsSterilized)
-                                        {
-                                            <span class="pet-tag pet-tag-green" title="Sterilized">
-                                                <i class="bi bi-heart-pulse me-1"></i>Sterilized
-                                            </span>
-                                        }
-                                    </div>
-                                    <div class="d-grid gap-2">
-                                        <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" class="btn btn-outline-primary rounded-pill">
-                                            View Details
-                                        </a>
+                                            @if (pet.Breed != 0)
+                                            {
+                                                <span class="mx-2">•</span>
+                                                <span>@pet.Breed</span>
+                                            }
+                                        </p>
+                                        <div class="d-flex gap-2 mb-3">
+                                            @if (pet.IsVaccinated)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Vaccinated">
+                                                    <i class="bi bi-shield-check me-1"></i>Vaccinated
+                                                </span>
+                                            }
+                                            @if (pet.IsDewormed)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Dewormed">
+                                                    <i class="bi bi-capsule me-1"></i>Dewormed
+                                                </span>
+                                            }
+                                            @if (pet.IsSterilized)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Sterilized">
+                                                    <i class="bi bi-heart-pulse me-1"></i>Sterilized
+                                                </span>
+                                            }
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" class="btn btn-outline-primary rounded-pill">
+                                                View Details
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            }
+                        }
+                    </div>
+                }
+            </div>
+
         </div>
+
     </div>
 </div>
 

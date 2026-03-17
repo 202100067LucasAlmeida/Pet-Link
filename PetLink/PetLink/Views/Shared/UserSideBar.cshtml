@@ -1,4 +1,27 @@
-﻿@page
-@model PetLink.Views.Shared.UserSideBarModel
-@{
+﻿@{
+    ViewData["Title"] = "User Side Bar";
 }
+
+<div class="list-group list-group-flush">
+    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+        <i class="bi bi-person-circle me-2"></i>My Profile
+    </a>
+    <a asp-controller="Profile" asp-action="MyFavorites" class="list-group-item list-group-item-action">
+        <i class="bi me-2"></i>My Favorites
+    </a>
+    <a href="#" class="list-group-item list-group-item-action">
+        <i class="bi me-2"></i>Applications
+    </a>
+    <a href="#" class="list-group-item list-group-item-action">
+        <i class="bi me-2"></i>Messages
+    </a>
+</div>
+<h3>SUPPORT</h3>
+<div class="list-group list-group-flush">
+    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+        <i class="bi me-2"></i>Help Center
+    </a>
+    <a asp-controller="Profile" asp-action="AccountSettings" class="list-group-item list-group-item-action" active>
+        <i class="bi me-2"></i>Account Settings
+    </a>
+</div>

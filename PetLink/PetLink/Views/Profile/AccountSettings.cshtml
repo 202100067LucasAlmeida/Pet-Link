@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Account Settings";
+}
+
+<div class="container py-4">
+    <div class="row">
+
+        <div class="col-lg-3 mb-4">
+            <!-- Sidebar -->
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Account Settings</h5>
+                    <p class="text-muted small mb-4">Manage your account preferences, security, and payment information.</p>
+
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-pills mb-4 pb-2 border-bottom">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Profile Information</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="#">Notifications</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="#">Security</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="#">Payment Methods</a>
+                        </li>
+                    </ul>
+
+                    <!-- Personal Details Section -->
+                    <div class="mb-5">
+                        <h5 class="fw-bold mb-4">Personal Details</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <span class="text-muted">Full Name:</span>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="1" placeholder="@User.Identity.Name">@User.Identity.Name</textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <span class="text-muted">Phone Number:</span>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="1" placeholder="phone"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <span class="text-muted">Email Address:</span>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="1" placeholder="email"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <span class="text-muted">Location:</span>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="1" placeholder="location"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Profile Picture Section -->
+                    <div class="mb-5">
+                        <h5 class="fw-bold mb-4">Profile Picture</h5>
+
+                        <div class="d-flex align-items-start gap-4">
+                            <div class="position-relative">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 100px; height: 100px;">
+                                    <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                                </div>
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <div class="mb-3">
+                                    <button class="btn btn-primary btn-sm me-2">
+                                        <i class="bi bi-upload me-1"></i>Upload New Photo
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash me-1"></i>Remove
+                                    </button>
+                                </div>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    JPG, GIF or PNG. Max size of 800K
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- About Me Section -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-4">About Me</h5>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Bio</label>
+                            <textarea class="form-control" rows="4"
+                                      placeholder="Passionate pet lover with a spacious home. I've grown up with dogs and currently looking to adopt a companion for my weekend hikes. Experience with Golden Retrievers and Labradors.">Passionate pet lover with a spacious home. I've grown up with dogs and currently looking to adopt a companion for my weekend hikes. Experience with Golden Retrievers and Labradors.</textarea>
+                            <div class="form-text">
+                                Brief description for your profile. This helps shelters know more about you.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Save Changes
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

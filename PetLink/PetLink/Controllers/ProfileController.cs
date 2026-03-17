@@ -373,7 +373,13 @@ namespace PetLink.Controllers
         }
 
         #endregion
-    
 
+
+
+        //account settings
+        public IActionResult AccountSettings()
+        {
+            return View();
+        }
     }
 }
