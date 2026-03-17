@@ -7,6 +7,12 @@ using PetLink.Models;
 using PetLink.Models.Enums;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace PetLink.Controllers
 {
@@ -276,5 +282,98 @@ namespace PetLink.Controllers
 
             return errors;
         }
+
+        #region Favorites
+        // GET: Profile/MyFavorites
+        [Authorize]
+        public async Task<IActionResult> MyFavorites()
+        {
+            // Get current user ID from claims
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Challenge();
+            }
+
+            var favoriteListings = await _context.FavoritePets
+                .Where(f => f.UserId == userId)
+                .Include(f => f.AnimalListing)
+                .Select(f => f.AnimalListing)
+                .Where(a => a.Status == ListingStatus.Published)
+                .ToListAsync();
+
+            return View(favoriteListings);
+        }
+
+        // POST: Profile/ToggleFavorite
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int animalListingId)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst("UserId");
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Json(new { success = false, message = "User not authenticated" });
+                }
+
+                // Verificar se o animal listing existe e está publicado
+                var animalListing = await _context.AnimalListings
+                    .FirstOrDefaultAsync(a => a.Id == animalListingId && a.Status == ListingStatus.Published);
+
+                if (animalListing == null)
+                {
+                    return Json(new { success = false, message = "Animal listing not available" });
+                }
+
+                var existingFavorite = await _context.FavoritePets
+                    .FirstOrDefaultAsync(f => f.UserId == userId && f.AnimalListingId == animalListingId);
+
+                if (existingFavorite != null)
+                {
+                    _context.FavoritePets.Remove(existingFavorite);
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, isFavorited = false, message = "Removed from favorites" });
+                }
+                else
+                {
+                    var favorite = new FavoritePet
+                    {
+                        UserId = userId,
+                        AnimalListingId = animalListingId,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.FavoritePets.Add(favorite);
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, isFavorited = true, message = "Added to favorites" });
+                }
+            }
+            catch
+            {
+                return Json(new { success = false, message = "An error occurred" });
+            }
+        }
+
+        // GET: Profile/IsFavorited
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> IsFavorited(int animalListingId)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Json(false);
+            }
+
+            var isFavorited = await _context.FavoritePets
+                .AnyAsync(f => f.UserId == userId && f.AnimalListingId == animalListingId);
+
+            return Json(isFavorited);
+        }
+
+        #endregion
+    
+
     }
 }
