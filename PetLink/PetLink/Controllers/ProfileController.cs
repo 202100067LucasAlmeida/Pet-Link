@@ -349,7 +349,7 @@ namespace PetLink.Controllers
                     return Json(new { success = true, isFavorited = true, message = "Added to favorites" });
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return Json(new { success = false, message = "An error occurred" });
             }
