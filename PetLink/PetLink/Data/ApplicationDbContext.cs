@@ -13,6 +13,7 @@ namespace PetLink.Data
         // Estas propriedades DbSet vão transformar-se nas tabelas do SQL Server
         public DbSet<User> Users { get; set; }
         public DbSet<AnimalListing> AnimalListings { get; set; }
+        public DbSet<FavoritePet> FavoritePets { get; set; }
         // public DbSet<Message> Messages { get; set; }
         // public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
@@ -26,6 +27,23 @@ namespace PetLink.Data
                 .WithMany(u => u.Listings)
                 .HasForeignKey(a => a.TutorId)
                 .OnDelete(DeleteBehavior.Cascade); // Se o user for apagado, os anúncios dele também são
+
+            modelBuilder.Entity<FavoritePet>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.FavoritePets) 
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Restrict para não apagar favoritos se o user for apagado
+
+            modelBuilder.Entity<FavoritePet>()
+                .HasOne(f => f.AnimalListing)
+                .WithMany(a => a.Favorites) 
+                .HasForeignKey(f => f.AnimalListingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Índice único para evitar favoritos duplicados
+            modelBuilder.Entity<FavoritePet>()
+                .HasIndex(f => new { f.UserId, f.AnimalListingId })
+                .IsUnique();
         }
     }
 }

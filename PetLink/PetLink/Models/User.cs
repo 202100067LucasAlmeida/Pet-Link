@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using PetLink.Models.Enums;
+using System.Collections.Generic;
 
 namespace PetLink.Models
 {
@@ -27,5 +28,7 @@ namespace PetLink.Models
 
         
         public ICollection<AnimalListing> Listings { get; set; }
+
+        public ICollection<FavoritePet> FavoritePets {get; set;}
     }
 }
