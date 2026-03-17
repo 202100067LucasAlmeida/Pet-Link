@@ -130,7 +130,8 @@
 
             <div class="col-lg-4">
                 <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px;">
-                    <div class="card-header text-white py-3 rounded-top-4" style="background-color: var(--petlink-primary);">
+                    <div class="card-header text-white py-3 rounded-top-4"
+                         style="background-color: var(--petlink-primary);">
                         <h3 class="h6 mb-0 fw-bold">
                             <i class="bi bi-person-badge me-2"></i>
                             @(Model.Tutor != null ? Model.Tutor.Email : "Unknown Shelter")
@@ -184,21 +185,35 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
-                    <img src="~/images/@(Model.Name.ToLower()).jpg" alt="@Model.Name's photo"
-                         class="img-fluid rounded-4 shadow-sm mb-4 w-100"
-                         style="max-height: 500px; object-fit: cover;" />
-                    
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue fw-bold mb-2">Cooper</h3>
-                        <div class="text-muted small">
-                            <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> Lisbon</p>
-                            <p class="mb-1"><i class="bi bi-calendar me-1"></i> 4 months</p>
+            @foreach (var pet in ViewBag.OtherPets as IEnumerable<PetLink.Models.AnimalListing>)
+            {
+                <div class="col-md-6 col-lg-3">
+                    <a asp-action="Details" asp-route-id="@pet.Id" class="text-decoration-none text-dark">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card">
+
+                            <img src="~/images/@(pet.Name.ToLower()).jpg" alt="@pet.Name's photo"
+                                class="img-fluid w-100" style="height: 200px; object-fit: cover;" />
+
+                            <div class="card-body">
+                                <h3 class="h5 text-primary-darkblue fw-bold mb-2">
+                                    @pet.Name
+                                </h3>
+                                <div class="text-muted small">
+                                    <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> @pet.Location</p>
+                                    <p class="mb-1"><i class="bi bi-info-circle me-1"></i> @pet.Species • @pet.AgeMonths mo.</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-            </div>
+            }
+
+            @if (((IEnumerable<PetLink.Models.AnimalListing>)ViewBag.OtherPets).Count() == 0)
+            {
+                <div class="col-12 text-center text-muted">
+                    <p>No other pets available for adoption right now.</p>
+                </div>
+            }
         </div>
     </div>
 </section>

@@ -54,8 +54,15 @@
                                        asp-action="Index">Adopt
                                 </a>
                             </li>
-                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" href="#">Petsitting</a></li>
+
+                            <li class="nav-item me-3">
+                                <a class="nav-link text-primary-blue" asp-controller="Petsitter"
+                                       asp-action="Index">Petsitting
+                                </a>
+                            </li>
+
                             <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+
                             <li class="nav-item me-4">
                                 <a class="nav-link text-primary-blue" href="#"><i class="bi bi-moon-fill fs-5"></i></a>
                             </li>
@@ -108,4 +115,5 @@
         <script src="~/js/site.js" asp-append-version="true"></script>
         @await RenderSectionAsync("Scripts", required: false)
     </body>
+
 </html>
