@@ -134,25 +134,17 @@
                          style="background-color: var(--petlink-primary);">
                         <h3 class="h6 mb-0 fw-bold">
                             <i class="bi bi-person-badge me-2"></i>
-                            @(Model.Tutor != null ? Model.Tutor.Email : "Unknown Shelter")
+                            @(Model.Tutor != null ? Model.Tutor.Name : "Unknown Shelter")
                         </h3>
+                        <div class="small text-white-50">Chat about @Model.Name</div>
                     </div>
 
-                    <div class="card-body bg-light" style="height: 350px; overflow-y: auto;">
+                    <div class="card-body bg-light" id="chatBox" style="height: 350px; overflow-y: auto;">
                         <div class="chat-message mb-3">
-                            <div class="message-sent d-flex justify-content-end mb-3">
-                                <div class="message-bubble text-white p-3 rounded-4 shadow-sm"
-                                     style="max-width: 85%; background-color: var(--petlink-primary);">
-                                    <p class="mb-0 small">Is @Model.Name still available for meet and greets this
-                                        weekend?
-                                    </p>
-                                </div>
-                            </div>
-
                             <div class="message-received d-flex mb-3">
                                 <div class="message-bubble p-3 rounded-4 shadow-sm bg-white" style="max-width: 85%;">
                                     <p class="mb-0 small text-dark">
-                                        Hello! Yes, @Model.Name is available. We have slots on Saturday morning!
+                                        Hello! Let me know if you want to meet @Model.Name this weekend!
                                     </p>
                                 </div>
                             </div>
@@ -161,9 +153,9 @@
 
                     <div class="card-footer bg-white border-top-0 p-3 rounded-bottom-4">
                         <div class="input-group">
-                            <input type="text" class="form-control border bg-light rounded-start-pill ps-4"
+                            <input type="text" id="messageInput" class="form-control border bg-light rounded-start-pill ps-4"
                                    placeholder="Type a message...">
-                            <button class="btn btn-primary rounded-end-pill px-4" type="button">
+                            <button id="sendButton" class="btn btn-primary rounded-end-pill px-4" type="button" style="background-color: var(--petlink-primary); border: none;">
                                 <i class="bi bi-send-fill"></i>
                             </button>
                         </div>
@@ -217,3 +209,9 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    
+    <script src="~/js/chat.js"></script>
+}
