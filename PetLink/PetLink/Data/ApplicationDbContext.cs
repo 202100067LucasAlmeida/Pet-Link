@@ -5,7 +5,7 @@ namespace PetLink.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -15,12 +15,11 @@ namespace PetLink.Data
         public DbSet<AnimalListing> AnimalListings { get; set; }
         // public DbSet<Message> Messages { get; set; }
         // public DbSet<Favorite> Favorites { get; set; }
-
-        // Opcional: Usar o OnModelCreating para regras de base de dados mais complexas
+        public DbSet<Petsitter> Petsitters { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             // Exemplo: Um User tem muitos AnimalListings
             modelBuilder.Entity<AnimalListing>()
                 .HasOne(a => a.Tutor)

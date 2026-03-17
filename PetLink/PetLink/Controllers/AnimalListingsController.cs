@@ -39,8 +39,18 @@ namespace PetLink
                 return NotFound();
             }
 
+            var otherPets = await _context.AnimalListings
+                .Include(a => a.Tutor)
+                .Where(a => a.Id != id) // Não mostrar o próprio Sitter na secção "Outros"
+                .Take(4) // Limitar a 4 cartões para não desformatar a página
+                .ToListAsync();
+
+            // 3. Coloca os outros Sitters na "Mochila" (ViewBag)
+            ViewBag.OtherPets = otherPets;
+
             return View(animalListing);
         }
+
 
         // GET: AnimalListings/Create
         public IActionResult Create()
