@@ -7,6 +7,11 @@ using PetLink.Models;
 using PetLink.Models.Enums;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
