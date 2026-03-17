@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using PetLink.Models.Enums;
+using System.Collections.Generic;
 
 namespace PetLink.Models
 {
@@ -38,5 +39,7 @@ namespace PetLink.Models
         
         [ForeignKey("TutorId")]
         public User Tutor { get; set; } 
+
+         public ICollection<FavoritePet> Favorites { get; set; }
     }
 }
