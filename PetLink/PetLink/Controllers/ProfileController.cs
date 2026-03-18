@@ -43,34 +43,35 @@ namespace PetLink.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginForm(string email, string password, bool rememberMe)
         {
-            // Procura o utilizador na base de dados
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                return Json(new { success = false, message = "Please fill in all fields." });
+            }
+
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
 
             if (user == null)
             {
-                // Mostra erro na página se não encontrar
-                ViewBag.Error = "Email ou password inválidos.";
-                return View();
+                return Json(new { success = false, message = "Invalid email or password." });
             }
 
-            // Cria o "Cartão de Cidadão" virtual (Claims) do utilizador
+            // Login (Claims)
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()), // Define se é Admin, PetSitter, etc.
-                new Claim("UserId", user.Id.ToString()),
-                new Claim("IsVerified", user.IsVerified.ToString())
-            };
+    {
+        new Claim(ClaimTypes.Name, user.Name),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role.ToString()),
+        new Claim("UserId", user.Id.ToString())
+    };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties { IsPersistent = rememberMe };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { IsPersistent = rememberMe });
 
-            // Efetua o login (Cria o Cookie no navegador)
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-            return RedirectToAction("Index", "Home");
+            // Retorna sucesso para o JS fazer o redirect
+            return Json(new { success = true });
         }
 
         // 3. Mostra a página de Registo (GET)
