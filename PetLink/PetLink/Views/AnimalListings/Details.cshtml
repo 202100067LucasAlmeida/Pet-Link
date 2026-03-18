@@ -27,19 +27,31 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="mb-4">
-                    @if (Model.Status.ToString() == "Publicado")
-                    {
-                        <span class="badge bg-success mb-2">AVAILABLE FOR ADOPTION</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary mb-2">@Model.Status.ToString().ToUpper()</span>
-                    }
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            @if (Model.Status.ToString() == "Publicado")
+                            {
+                                <span class="badge bg-success mb-2">AVAILABLE FOR ADOPTION</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary mb-2">@Model.Status.ToString().ToUpper()</span>
+                            }
 
-                    <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">@Model.Name</h1>
-                    <p class="lead text-muted text-highlight-darkblue">
-                        @Model.Species • @Model.Location • @Model.AgeMonths months
-                    </p>
+                            <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">@Model.Name</h1>
+                            <p class="lead text-muted text-highlight-darkblue">
+                                @Model.Species • @Model.Location • @Model.AgeMonths months
+                            </p>
+                        </div>
+
+                        <!-- Botão favorito -->
+                        @if (User.IsInRole("User"))
+                        {
+                            <button class="btn-heart favorite-toggle" data-pet-id="@Model.Id" id="favoriteBtn">
+                                <i class="bi bi-heart" id="favoriteIcon"></i>
+                            </button>
+                        }
+                    </div>
                 </div>
 
                 <img src="~/images/@(Model.Name.ToLower()).jpg" alt="@Model.Name's photo"
@@ -217,3 +229,109 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var petId = @Model.Id;
+            
+            // Verificar estado inicial
+            $.ajax({
+                url: '@Url.Action("Check", "Favorites")',
+                type: 'GET',
+                data: { animalListingId: petId },
+                success: function(isFavorited) {
+                    if (isFavorited) {
+                        $('#favoriteIcon').removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                        $('#favoriteBtn').addClass('active');
+                    }
+                }
+            });
+            
+            // Clique no coração
+            $('#favoriteBtn').click(function(e) {
+                e.preventDefault();
+                
+                var icon = $('#favoriteIcon');
+                
+                $.ajax({
+                    url: '@Url.Action("Toggle", "Favorites")',
+                    type: 'POST',
+                    data: { animalListingId: petId },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.isFavorited) {
+                                icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                                showNotification('Added to favorites!');
+                            } else {
+                                icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
+                                showNotification('Removed from favorites!');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            function showNotification(message) {
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                setTimeout(() => toast.fadeOut(300, function() { $(this).remove(); }), 2000);
+            }
+        });
+    </script>
+
+   
+
+    <style>
+        .btn-heart {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+        
+        .btn-heart:hover {
+            transform: scale(1.1);
+            border-color: var(--petlink-primary);
+        }
+        
+        .btn-heart i {
+            font-size: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--petlink-primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @@keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    
+}
