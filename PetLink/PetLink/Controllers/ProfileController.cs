@@ -8,7 +8,6 @@ using PetLink.Models.Enums;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +15,12 @@ using System.Collections.Generic;
 
 namespace PetLink.Controllers
 {
+    // Classe necessária para o JS verificar o email em tempo real
+    public class EmailCheckRequest
+    {
+        public string Email { get; set; }
+    }
+
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -68,79 +73,12 @@ namespace PetLink.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // 3. Mostra a página de Registo 
+        // 3. Mostra a página de Registo (GET)
         [HttpGet]
         public IActionResult SignUpForm()
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
-        }
-
-        // POST: Recebe os dados do formulário de registo e cria a conta
-        [HttpPost]
-        public async Task<IActionResult> SignUpForm(string fullName, string email, string phone, string password, string confirmPassword, string userType)
-        {
-            var errors = new List<string>();
-
-            if (!IsValidName(fullName))
-            {
-                errors.Add("O nome não deve ter números nem símbolos.");
-            }
-
-            if (!IsValidEmail(email))
-            {
-                errors.Add("O email deve conter um @ e ser válido.");
-            }
-
-            if (password != confirmPassword)
-            {
-                errors.Add("As passwords não coincidem.");
-            }
-
-            var passwordErrors = ValidatePassword(password);
-            errors.AddRange(passwordErrors);
-
-            if (errors.Any())
-            {
-                ViewBag.Error = string.Join(" ", errors);
-                // Preserve form data
-                ViewBag.FullName = fullName;
-                ViewBag.Email = email;
-                ViewBag.Phone = phone;
-                ViewBag.UserType = userType;
-                return View();
-            }
-
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (existingUser != null)
-            {
-                ViewBag.Error = "Este email já está registado.";
-                ViewBag.FullName = fullName;
-                ViewBag.Email = email;
-                ViewBag.Phone = phone;
-                ViewBag.UserType = userType;
-                return View();
-            }
-
-            UserRole role = UserRole.User;
-            if (userType == "PetSitter") role = UserRole.PetSitter;
-            if (userType == "Shelter") role = UserRole.Shelter;
-            if (userType == "User") role = UserRole.User;
-
-            var newUser = new PetLink.Models.User
-            {
-                Name = fullName,
-                Email = email,
-                PasswordHash = password,
-                Role = role,
-                IsVerified = false // Requer verificação do admin para Associações e PetSitters
-            };
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Conta criada com sucesso! Podes fazer login.";
-            return RedirectToAction("LoginForm");
         }
 
         // 4. Faz o Logout
@@ -151,10 +89,20 @@ namespace PetLink.Controllers
         }
 
 
+        // sprint 2 -----------
 
-        //sprint 2 -----------
+        // Verificação do Email para o JavaScript (Real-time)
+        [HttpPost]
+        public async Task<IActionResult> ValidateEmail([FromBody] EmailCheckRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return Json(new { isAvailable = false });
 
-        //verificações pedidas do sign up
+            bool emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
+            return Json(new { isAvailable = !emailExists });
+        }
+
+        // Verificações pedidas do sign up e Criação de Conta
         [HttpPost]
         public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
         {
@@ -167,7 +115,7 @@ namespace PetLink.Controllers
             }
             else if (!IsValidName(model.FullName))
             {
-                errors["fullName"] = "O nome não deve ter números nem símbolos.";
+                errors["fullName"] = "Name must not contain numbers or symbols.";
             }
 
             // Validate Email
@@ -177,21 +125,21 @@ namespace PetLink.Controllers
             }
             else if (!IsValidEmail(model.Email))
             {
-                errors["email"] = "O email deve conter um @ e ser válido.";
+                errors["email"] = "Please provide a valid email address.";
             }
             else
             {
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (existingUser != null)
                 {
-                    errors["email"] = "Este email já está registado.";
+                    errors["email"] = "This email is already registered.";
                 }
             }
 
             // Validate Phone
             if (string.IsNullOrWhiteSpace(model.Phone))
             {
-                errors["phone"] = "O telefone é obrigatório.";
+                errors["phone"] = "Phone number is required.";
             }
 
             // Validate Password
@@ -204,13 +152,29 @@ namespace PetLink.Controllers
             // Validate Confirm Password
             if (model.Password != model.ConfirmPassword)
             {
-                errors["confirmPassword"] = "As passwords não coincidem.";
+                errors["confirmPassword"] = "Passwords do not match.";
             }
 
             if (errors.Any())
             {
                 return Json(new { success = false, errors });
             }
+
+            UserRole role = UserRole.User;
+            if (model.UserType == "PetSitter") role = UserRole.PetSitter;
+            if (model.UserType == "Shelter") role = UserRole.Shelter;
+
+            var newUser = new PetLink.Models.User
+            {
+                Name = model.FullName,
+                Email = model.Email,
+                PasswordHash = model.Password,
+                Role = role,
+                IsVerified = false // Requer verificação do admin para Associações e PetSitters
+            };
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
 
             return Json(new { success = true });
         }
@@ -232,7 +196,7 @@ namespace PetLink.Controllers
         }
 
 
-        //métodos extra
+        // métodos extra
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -261,24 +225,24 @@ namespace PetLink.Controllers
 
             if (string.IsNullOrEmpty(password))
             {
-                errors.Add("A password é obrigatória.");
+                errors.Add("Password is required.");
                 return errors;
             }
 
             if (password.Length < 6)
-                errors.Add("A password deve ter pelo menos 6 caracteres.");
+                errors.Add("Minimum 6 characters.");
 
             if (!password.Any(char.IsLower))
-                errors.Add("A password deve ter pelo menos uma letra minúscula.");
+                errors.Add("One lowercase letter required.");
 
             if (!password.Any(char.IsUpper))
-                errors.Add("A password deve ter pelo menos uma letra maiúscula.");
+                errors.Add("One uppercase letter required.");
 
             if (!password.Any(char.IsDigit))
-                errors.Add("A password deve ter pelo menos um número.");
+                errors.Add("One number required.");
 
             if (!password.Any(c => !char.IsLetterOrDigit(c)))
-                errors.Add("A password deve ter pelo menos um símbolo.");
+                errors.Add("One symbol required.");
 
             return errors;
         }
@@ -373,8 +337,6 @@ namespace PetLink.Controllers
         }
 
         #endregion
-
-
 
         //account settings
         public IActionResult AccountSettings()
