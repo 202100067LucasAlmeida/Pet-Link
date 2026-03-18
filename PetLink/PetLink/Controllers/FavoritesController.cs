@@ -7,7 +7,7 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
-    [Authorize]
+    [Authorize(Roles =  "User")]
     public class FavoritesController : Controller
     {
         private readonly ApplicationDbContext _context;
