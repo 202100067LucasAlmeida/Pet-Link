@@ -1,20 +1,27 @@
-﻿@{
+﻿@using PetLink.Models.Enums
+@{
     ViewData["Title"] = "User Side Bar";
+    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <div class="list-group list-group-flush">
     <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
         <i class="bi bi-person-circle me-2"></i>My Profile
     </a>
-    <a asp-controller="Profile" asp-action="MyFavorites" class="list-group-item list-group-item-action">
+    @if (userRole == UserRole.User.ToString())
+    {
+
+    <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action">
         <i class="bi me-2"></i>My Favorites
-    </a>
+    </a>}
     <a href="#" class="list-group-item list-group-item-action">
         <i class="bi me-2"></i>Applications
     </a>
     <a href="#" class="list-group-item list-group-item-action">
         <i class="bi me-2"></i>Messages
     </a>
+    
 </div>
 <h3>SUPPORT</h3>
 <div class="list-group list-group-flush">
