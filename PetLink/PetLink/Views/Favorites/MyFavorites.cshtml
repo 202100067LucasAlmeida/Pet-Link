@@ -145,7 +145,7 @@
                 var card = button.closest('.col-md-6');
                 
                 $.ajax({
-                    url: '@Url.Action("ToggleFavorite", "Profile")',
+                    url: '@Url.Action("Toggle", "Favorites")',
                     type: 'POST',
                     data: { animalListingId: petId },
                     success: function(response) {
