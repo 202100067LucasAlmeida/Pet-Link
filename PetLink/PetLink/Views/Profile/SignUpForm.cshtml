@@ -1,6 +1,8 @@
 ﻿﻿@{
-ViewData["Title"] = "Sign Up";
+    ViewData["Title"] = "Sign Up";
 }
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
 <div class="row justify-content-center">
 
@@ -30,17 +32,22 @@ ViewData["Title"] = "Sign Up";
                     </div>
                 }
 
-                <!-- Error message container for AJAX errors -->
+                <div id="successContainer" class="alert alert-success text-center rounded-3 small fw-semibold mb-4" style="display: none;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span id="successMessage"></span>
+                    <br>
+                    <a asp-controller="Profile" asp-action="LoginForm" class="btn btn-sm btn-success mt-2 rounded-pill fw-bold px-4">Go to Login</a>
+                </div>
+
                 <div id="errorContainer" class="alert alert-danger text-center rounded-3 small fw-semibold mb-4" style="display: none;">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     <span id="errorMessage"></span>
                 </div>
 
-                <!-- Field-specific error container -->
                 <div id="fieldErrors" class="mb-3"></div>
 
                 @* Formulário aponta para Profile / SignUpForm no C# *@
-                <form id="signupForm" asp-controller="Profile" asp-action="SignUpForm" method="post">
+                <form id="signupForm" asp-controller="Profile" asp-action="SignUpForm" method="post" novalidate>
                     <div class="mb-3">
                         <label for="fullName" class="form-label fw-semibold">Full Name</label>
                         <input type="text" name="fullName" class="form-control py-2" id="fullName"
@@ -50,23 +57,38 @@ ViewData["Title"] = "Sign Up";
 
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold">Email Address</label>
-                        <input type="email" name="email" class="form-control py-2" id="email"
-                               placeholder="jane@example.com" value="@ViewBag.Email" required>
+                        <div class="position-relative">
+                            <input type="email" name="email" class="form-control py-2" id="email"
+                                placeholder="jane@example.com" value="@ViewBag.Email" required>
+                            <div id="emailLoading" class="spinner-border spinner-border-sm text-primary position-absolute" role="status" style="right: 15px; top: 12px; display: none;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
                         <div class="invalid-feedback" id="emailError"></div>
+                        <div class="valid-feedback fw-semibold" id="emailSuccess" style="display: none;">
+                            <i class="bi bi-check-circle-fill"></i> Email is available!
+                        </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="phone" class="form-label fw-semibold">Phone Number</label>
-                        <input type="tel" name="phone" class="form-control py-2" id="phone"
-                               placeholder="+351 900 000 000" value="@ViewBag.Phone" required>
+                        <div class="w-100">
+                            <input type="tel" name="phone" class="form-control py-2 w-100" id="phone"
+                                   placeholder="912 345 678" value="@ViewBag.Phone" required style="width: 100%;">
+                        </div>
                         <div class="invalid-feedback" id="phoneError"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label fw-semibold">Password</label>
-                        <input type="password" name="password" class="form-control py-2" id="password"
-                               placeholder="**********" required>
+                        <div class="input-group">
+                            <input type="password" name="password" class="form-control py-2 border-end-0" id="password" placeholder="**********" required>
+                            <button class="btn btn-outline-secondary border border-start-0 bg-white" type="button" id="togglePassword">
+                                <i class="bi bi-eye text-muted" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
                         <div class="invalid-feedback" id="passwordError"></div>
+
                         <div class="mt-2">
                             <small class="password-requirement d-block" id="lengthReq">
                                 <i class="bi bi-circle" id="lengthIcon"></i>
@@ -93,8 +115,12 @@ ViewData["Title"] = "Sign Up";
 
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
-                        <input type="password" name="confirmPassword" class="form-control py-2" id="confirmPassword"
-                               placeholder="**********" required>
+                        <div class="input-group">
+                            <input type="password" name="confirmPassword" class="form-control py-2 border-end-0" id="confirmPassword" placeholder="**********" required>
+                            <button class="btn btn-outline-secondary border border-start-0 bg-white" type="button" id="toggleConfirmPassword">
+                                <i class="bi bi-eye text-muted" id="toggleConfirmPasswordIcon"></i>
+                            </button>
+                        </div>
                         <div class="invalid-feedback" id="confirmPasswordError"></div>
                     </div>
 
@@ -121,11 +147,12 @@ ViewData["Title"] = "Sign Up";
 
                     <div class="mb-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="terms" required checked>
+                            <input class="form-check-input" type="checkbox" id="terms" required>
                             <label class="form-check-label small" for="terms">
                                 I agree to the <a href="#" class="text-primary text-decoration-none">Terms & Conditions</a>
                                 and <a href="#" class="text-primary text-decoration-none">Privacy Policy</a>.
                             </label>
+                            <div class="invalid-feedback" id="termsError"></div>
                         </div>
                     </div>
 
@@ -170,4 +197,19 @@ ViewData["Title"] = "Sign Up";
     </div>
 </div>
 
-<script src="~/js/site.js" asp-append-version="true"></script>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const phoneInputField = document.querySelector("#phone");
+            
+            window.phoneInput = window.intlTelInput(phoneInputField, {
+                preferredCountries: ["pt", "br", "gb", "us"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            });
+            
+            document.querySelector('.iti').style.width = '100%';
+        });
+    </script>
+}
