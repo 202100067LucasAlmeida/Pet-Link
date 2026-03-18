@@ -111,6 +111,46 @@ $(document).ready(function () {
     });
 });
 
+$('#loginForm').on('submit', function (e) {
+    e.preventDefault();
+    clearErrors();
+
+    var email = $('#email').val().trim();
+    var password = $('#password').val();
+    var rememberMe = $('#rememberMe').is(':checked');
+
+    // Validação básica local
+    if (!email) { showFieldError('email', 'Email is required.'); return; }
+    if (!password) { showFieldError('password', 'Password is required.'); return; }
+
+    var submitBtn = $('#submitBtn');
+    var originalText = submitBtn.text();
+    submitBtn.html('<span class="spinner-border spinner-border-sm"></span> Logging in...').prop('disabled', true);
+
+    $.ajax({
+        url: '/Profile/LoginForm',
+        type: 'POST',
+        data: {
+            email: email,
+            password: password,
+            rememberMe: rememberMe
+        },
+        success: function (response) {
+            if (response.success) {
+                // Se o login deu certo, manda para a Home
+                window.location.href = '/Home/Index';
+            } else {
+                submitBtn.html(originalText).prop('disabled', false);
+                showGeneralError(response.message);
+            }
+        },
+        error: function () {
+            submitBtn.html(originalText).prop('disabled', false);
+            showGeneralError('An error occurred. Please try again.');
+        }
+    });
+});
+
 // --- 4. FUNÇÕES AUXILIARES DE VALIDAÇÃO ---
 
 function updatePasswordRequirement(req, isValid) {
