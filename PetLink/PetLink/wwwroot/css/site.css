@@ -458,3 +458,29 @@ footer {
     font-weight: bold;
 }
 
+.h-sidebar .nav-link {
+    color: dimgrey;
+}
+
+.h-sidebar .nav-link:hover {
+    color: var(--petlink-highlight);
+}
+
+.h-sidebar .nav-link.active {
+    color: var(--petlink-primary);
+    font-weight: bold;
+    border-color: var(--petlink-primary);
+}
+
+
+.details-sec .form-control {
+    width: 350px; 
+    height: 38px; 
+    resize: none;
+}
+
+.about-me-sec .form-control {
+    width: 850px;
+    height: 150px;
+    resize: none;
+}

@@ -14,28 +14,28 @@
         <div class="col-lg-9">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Account Settings</h5>
+                    <h3 class="mb-3 text-primary-darkblue">Account Settings</h3>
                     <p class="text-muted small mb-4">Manage your account preferences, security, and payment information.</p>
 
                     <!-- Navigation Tabs -->
-                    <ul class="nav nav-pills mb-4 pb-2 border-bottom">
+                    <ul class="nav nav-pills mb-4 pb-2 border-bottom h-sidebar">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Profile Information</a>
+                            <a class="nav-link" asp-controller="Profile" asp-action="AccountSettings">Profile Information</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Notifications</a>
+                            <a class="nav-link" href="#">Notifications</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Security</a>
+                            <a class="nav-link" href="#">Security</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Payment Methods</a>
+                            <a class="nav-link" href="#">Payment Methods</a>
                         </li>
                     </ul>
 
                     <!-- Personal Details Section -->
-                    <div class="mb-5">
-                        <h5 class="fw-bold mb-4">Personal Details</h5>
+                    <div class="mb-5 details-sec">
+                        <h4 class="mb-4 text-primary-darkblue">Personal Details</h4>
 
                         <div class="row mb-3">
                             <div class="col-sm-3">
@@ -78,7 +78,7 @@
 
                     <!-- Profile Picture Section -->
                     <div class="mb-5">
-                        <h5 class="fw-bold mb-4">Profile Picture</h5>
+                        <h4 class="mb-4 text-primary-darkblue">Profile Picture</h4>
 
                         <div class="d-flex align-items-start gap-4">
                             <div class="position-relative">
@@ -108,8 +108,8 @@
                     <hr class="my-4">
 
                     <!-- About Me Section -->
-                    <div class="mb-4">
-                        <h5 class="fw-bold mb-4">About Me</h5>
+                    <div class="mb-4 about-me-sec">
+                        <h4 class="mb-4 text-primary-darkblue">About Me</h4>
 
                         <div class="mb-3">
                             <label class="form-label fw-medium">Bio</label>
