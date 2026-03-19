@@ -207,3 +207,37 @@ function showGeneralSuccess(msg) {
     $('#errorContainer').hide();
     $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
+
+
+//ações da side bar, pra personalizar o css
+document.addEventListener('DOMContentLoaded', function () {
+    const currentUrl = window.location.pathname.toLowerCase();
+    const navItems = document.querySelectorAll('.sidebar-profile .list-group-item');
+
+    navItems.forEach(item => {
+        // Remove active class from all items first
+        item.classList.remove('active');
+
+        // Get the href attribute (which is generated from asp-controller/asp-action)
+        const href = item.getAttribute('href');
+
+        // Check if this item's href matches current URL
+        // Skip items with href="#"
+        if (href && href !== '#' && href !== '') {
+            // For exact match or if current URL ends with the href
+            if (currentUrl === href.toLowerCase() ||
+                currentUrl.endsWith(href.toLowerCase()) ||
+                // Check if it's the home/index page
+                (href.toLowerCase() === '/' && currentUrl === '/') ||
+                (href.toLowerCase() === '' && currentUrl === '/')) {
+                item.classList.add('active');
+            }
+
+            // For controller/action matching (more flexible)
+            const controllerAction = href.toLowerCase().split('?')[0]; // Remove query strings
+            if (currentUrl.includes(controllerAction) && controllerAction !== '/') {
+                item.classList.add('active');
+            }
+        }
+    });
+});

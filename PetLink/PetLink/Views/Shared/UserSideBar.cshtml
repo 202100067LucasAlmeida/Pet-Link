@@ -5,30 +5,30 @@
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
-<div class="list-group list-group-flush">
-    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+<div class="list-group list-group-flush mb-3 sidebar-profile">
+    <a href="#" class="list-group-item list-group-item-action mb-1">
         <i class="bi bi-person-circle me-2"></i>My Profile
     </a>
     @if (userRole == UserRole.User.ToString())
     {
 
-    <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action">
-        <i class="bi me-2"></i>My Favorites
+        <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action mb-1">
+            <i class="bi bi-heart me-2"></i>My Favorites
     </a>}
-    <a href="#" class="list-group-item list-group-item-action">
-        <i class="bi me-2"></i>Applications
+    <a href="#" class="list-group-item list-group-item-action mb-1">
+        <i class="bi bi-file-ruled me-2"></i>Applications
     </a>
-    <a href="#" class="list-group-item list-group-item-action">
-        <i class="bi me-2"></i>Messages
+    <a href="#" class="list-group-item list-group-item-action mb-1">
+        <i class="bi bi-chat-left me-2"></i>Messages
     </a>
     
 </div>
-<h3>SUPPORT</h3>
-<div class="list-group list-group-flush">
-    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-        <i class="bi me-2"></i>Help Center
+<p class="text-muted small">SUPPORT</p>
+<div class="list-group list-group-flush sidebar-profile">
+    <a href="#" class="list-group-item list-group-item-action mb-1">
+        <i class="bi bi-question-circle me-2"></i>Help Center
     </a>
-    <a asp-controller="Profile" asp-action="AccountSettings" class="list-group-item list-group-item-action" active>
-        <i class="bi me-2"></i>Account Settings
+    <a asp-controller="Profile" asp-action="AccountSettings" class="list-group-item list-group-item-action mb-1">
+        <i class="bi bi-gear me-2"></i>Account Settings
     </a>
 </div>

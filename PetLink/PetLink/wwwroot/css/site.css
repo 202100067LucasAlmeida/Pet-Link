@@ -437,3 +437,24 @@ footer {
 .pet-card .btn {
     margin-top: auto;
 }
+
+
+/*personalizar o side bar do profile dashboard*/
+
+.sidebar-profile .list-group-item {
+    color: dimgrey;
+    border: none;
+    padding: 5px;
+}
+
+.sidebar-profile .list-group-item:hover {
+    background-color: rgba(5, 82, 143, 0.1);
+    color: var(--petlink-highlight);
+}
+
+.sidebar-profile .list-group-item.active {
+    background-color: rgba(38, 122, 180, 0.2);
+    color: var(--petlink-primary);
+    font-weight: bold;
+}
+
