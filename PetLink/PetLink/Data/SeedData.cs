@@ -161,7 +161,45 @@ namespace PetLink.Data
 
                 context.AnimalListings.AddRange(listings);
 
-                // Guarda as alterações finais das Listings e dos PetSitters
+                // 5. Cria mensagens de teste entre João Silva e Sarah Jenkins
+                // Verifica se já existem mensagens para não duplicar no Seed
+                if (!context.Messages.Any())
+                {
+                    var messages = new List<Message>
+                    {
+                        // CENÁRIO A: João (User) -> Sarah (Petsitter)
+                        new Message
+                        {
+                            SenderId = particular.Id,
+                            ReceiverId = sitter1.Id,
+                            Content = "Olá Sarah! Vi que te especializas em cachorros. Estás disponível para a próxima semana?",
+                            Timestamp = DateTime.Now.AddDays(-1),
+                            IsRead = true
+                        },
+                        new Message
+                        {
+                            SenderId = sitter1.Id,
+                            ReceiverId = particular.Id,
+                            Content = "Olá João! Sim, estou disponível. Qual é a raça do teu cão?",
+                            Timestamp = DateTime.Now.AddHours(-5),
+                            IsRead = false
+                        },
+
+                        // CENÁRIO B: João (User) -> Sunny Paws Shelter (Dono do Animal "Cooper")
+                        new Message
+                        {
+                            SenderId = particular.Id,
+                            ReceiverId = shelter.Id,
+                            Content = "Boa tarde! Gostaria de saber mais sobre o Cooper. Ele dá-se bem com outros cães?",
+                            Timestamp = DateTime.Now.AddHours(-2),
+                            IsRead = false
+                        }
+                    };
+
+                    context.Messages.AddRange(messages);
+                }
+
+                // Guarda as alterações finais
                 context.SaveChanges();
             }
         }

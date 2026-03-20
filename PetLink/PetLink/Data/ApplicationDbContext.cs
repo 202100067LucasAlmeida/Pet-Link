@@ -14,7 +14,7 @@ namespace PetLink.Data
         public DbSet<User> Users { get; set; }
         public DbSet<AnimalListing> AnimalListings { get; set; }
         public DbSet<FavoritePet> FavoritePets { get; set; }
-        // public DbSet<Message> Messages { get; set; }
+        public DbSet<Message> Messages { get; set; }
         // public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,13 +30,13 @@ namespace PetLink.Data
 
             modelBuilder.Entity<FavoritePet>()
                 .HasOne(f => f.User)
-                .WithMany(u => u.FavoritePets) 
+                .WithMany(u => u.FavoritePets)
                 .HasForeignKey(f => f.UserId)
                 .OnDelete(DeleteBehavior.Restrict); // Restrict para não apagar favoritos se o user for apagado
 
             modelBuilder.Entity<FavoritePet>()
                 .HasOne(f => f.AnimalListing)
-                .WithMany(a => a.Favorites) 
+                .WithMany(a => a.Favorites)
                 .HasForeignKey(f => f.AnimalListingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -44,6 +44,22 @@ namespace PetLink.Data
             modelBuilder.Entity<FavoritePet>()
                 .HasIndex(f => new { f.UserId, f.AnimalListingId })
                 .IsUnique();
+
+            // Configuração para as Mensagens
+            modelBuilder.Entity<Message>(entity =>
+            {
+                // Define quem envia
+                entity.HasOne(m => m.Sender)
+                      .WithMany()
+                      .HasForeignKey(m => m.SenderId)
+                      .OnDelete(DeleteBehavior.Restrict); // Evita erros de cascata apagar users
+
+                // Define quem recebe
+                entity.HasOne(m => m.Receiver)
+                      .WithMany()
+                      .HasForeignKey(m => m.ReceiverId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

@@ -8,14 +8,8 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a asp-controller="Home" asp-action="Index"
-                       class="text-decoration-none text-highlight-darkblue">HOME</a>
-                </li>
-
-                <li class="breadcrumb-item">
-                    <a asp-action="Index" class="text-decoration-none text-highlight-darkblue">PETSITTING</a>
-                </li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-highlight-darkblue">PETSITTING</a></li>
                 <li class="breadcrumb-item active text-highlight-blue" aria-current="page">@Model.User.Name</li>
             </ol>
         </nav>
@@ -50,17 +44,14 @@
 
                 <div class="m-3 shadow-sm card border-0 rounded-4 mb-5">
                     <div class="card-body p-4 d-flex justify-content-around flex-wrap bg-light rounded-top-4 border-bottom">
-
                         <div class="text-center">
                             <span class="d-block text-muted small fw-bold text-uppercase">Rate</span>
                             <span class="text-primary-darkblue fs-5 fw-semibold">@Model.HourlyRate.ToString("0")€ / hr</span>
                         </div>
-
                         <div class="text-center">
                             <span class="d-block text-muted small fw-bold text-uppercase">Location</span>
                             <span class="text-primary-darkblue fs-5 fw-semibold">@Model.LocationZone</span>
                         </div>
-
                         <div class="text-center">
                             <span class="d-block text-muted small fw-bold text-uppercase">Experience</span>
                             <span class="text-primary-darkblue fs-5 fw-semibold">Pro Sitter</span>
@@ -69,20 +60,10 @@
 
                     <div class="p-4">
                         <h3 class="h5 text-primary-darkblue mb-3 fw-bold">About @Model.User.Name.Split(' ')[0]</h3>
-                        <p class="lead text-highlight-darkblue text-muted mb-4">
-                            @Model.Bio
-                        </p>
-
+                        <p class="lead text-highlight-darkblue text-muted mb-4">@Model.Bio</p>
                         <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2" style="background-color: #0a4f8b; border: none;">
                             Book @Model.User.Name.Split(' ')[0]
                         </button>
-
-                        <p class="mt-3 small text-muted">
-                            By clicking "Book", you agree to our
-                            <a href="#" class="text-decoration-none">
-                                Service Terms and Conditions
-                            </a>.
-                        </p>
                     </div>
                 </div>
 
@@ -93,72 +74,70 @@
                         {
                             foreach (var tag in Model.SpecialtyTags.Split(','))
                             {
-                                <li class="mb-2">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i> @tag.Trim()
-                                </li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> @tag.Trim()</li>
                             }
                         }
-                        else
-                        {
-                            <li class="mb-2 text-muted"><i class="bi bi-dash-circle me-2"></i> No specific preferences listed.</li>
-                        }
                     </ul>
-                </div>
-
-                <div class="temperament mb-5">
-                    <h3 class="h4 text-primary-darkblue mb-3 fw-bold">Services Offered</h3>
-                    <div class="d-flex gap-3 flex-wrap">
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">
-                            <i class="bi bi-house-door me-1"></i> House Sitting
-                        </span>
-
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">
-                            <i class="bi bi-brightness-high me-1"></i> Dog Walking
-                        </span>
-
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">
-                            <i class="bi bi-moon-stars me-1"></i> Overnight Boarding
-                        </span>
-                    </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px;">
-                    <div class="card-header text-white py-3 rounded-top-4" style="background-color: var(--petlink-primary, #0a4f8b);">
-                        <h3 class="h6 mb-0 fw-bold">
-                            <i class="bi bi-chat-dots me-2"></i>
-                            Chat with @Model.User.Name.Split(' ')[0]
-                        </h3>
-                    </div>
-
-                    <div class="card-body bg-light" style="height: 350px; overflow-y: auto;">
-                        <div class="chat-message mb-3">
-                            <div class="message-sent d-flex justify-content-end mb-3">
-                                <div class="message-bubble text-white p-3 rounded-4 shadow-sm"
-                                     style="max-width: 85%; background-color: var(--petlink-primary, #0a4f8b);">
-                                    <p class="mb-0 small">Hi @Model.User.Name.Split(' ')[0]! Are you available to watch my dog this coming weekend?</p>
-                                </div>
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border-radius: 20px; overflow: hidden;">
+                    <div class="card-header border-0 py-3" style="background-color: var(--petlink-primary); color: white;">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-calendar-check-fill" style="color: var(--petlink-primary);"></i>
                             </div>
-
-                            <div class="message-received d-flex mb-3">
-                                <div class="message-bubble p-3 rounded-4 shadow-sm bg-white border" style="max-width: 85%;">
-                                    <p class="mb-0 small text-dark">
-                                        Hello! Yes, I am. What kind of dog do you have and where are you located?
-                                    </p>
-                                </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Hire @Model.User.Name</h6>
+                                <small style="opacity: 0.8; font-size: 0.75rem;">Check availability</small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-footer bg-white border-top-0 p-3 rounded-bottom-4 border">
-                        <div class="input-group">
-                            <input type="text" class="form-control border bg-light rounded-start-pill ps-4"
-                                   placeholder="Type a message...">
-                            <button class="btn btn-primary rounded-end-pill px-4" type="button" style="background-color: #0a4f8b; border: none;">
+                    <div class="card-body" id="chatBox" style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
+                        @if (ViewBag.ChatHistory != null && ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
+                        {
+                            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                            foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                            {
+                                bool isMine = msg.SenderId == currentUserId;
+                                <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                    <div class="p-3 shadow-sm" 
+                                        style="max-width: 85%; border-radius: 18px; font-size: 0.85rem;
+                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;" 
+                                                        : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
+                                        <p class="mb-0">@msg.Content</p>
+                                        <div class="text-end" style="font-size: 0.6rem; opacity: 0.7; margin-top: 4px;">
+                                            @msg.Timestamp.ToString("HH:mm")
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                <i class="bi bi-chat-dots mb-2 opacity-25" style="font-size: 3rem; color: var(--petlink-primary);"></i>
+                                <p class="text-muted small">No messages yet. Say hi to @Model.User.Name.Split(' ')[0]!</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-white border-0 p-3">
+                        <form asp-controller="Messages" asp-action="SendMessage" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="receiverId" value="@Model.UserId" />
+                            @* Adicionamos o returnUrl para não sair da página ao enviar *@
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            
+                            <input type="text" name="content" class="form-control border-0 rounded-pill ps-4 py-2" 
+                                style="background-color: var(--petlink-grey-bg); font-size: 0.9rem;" 
+                                placeholder="Message @Model.User.Name..." required autocomplete="off">
+                            <button class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
+                                    type="submit" style="background-color: var(--petlink-primary); color: white; width: 40px; height: 40px;">
                                 <i class="bi bi-send-fill"></i>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -182,7 +161,6 @@
                 <div class="col-md-6 col-lg-3">
                     <a asp-action="Details" asp-route-id="@sitter.Id" class="text-decoration-none text-dark">
                         <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card">
-                            
                             <img src="~/images/@(sitter.User.Name.ToLower().Replace(" ", "")).jpg" 
                                  alt="@sitter.User.Name's photo"
                                  class="img-fluid w-100" style="height: 200px; object-fit: cover;" />
@@ -204,7 +182,6 @@
                     </a>
                 </div>
             }
-            
             @if (((IEnumerable<PetLink.Models.Petsitter>)ViewBag.OtherSitters).Count() == 0)
             {
                 <div class="col-12 text-center text-muted">
@@ -214,3 +191,15 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var chatBox = document.getElementById("chatBox");
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+    </script>
+    <script src="~/js/chat.js"></script>
+}

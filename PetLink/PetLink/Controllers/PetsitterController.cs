@@ -24,28 +24,31 @@ namespace PetLink.Controllers
         }
 
         // GET: Petsitter/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null) return NotFound();
-
-            // 1. Vai buscar o Sitter Principal
-            var petsitter = await _context.Petsitters
+            var sitter = await _context.Petsitters
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (petsitter == null) return NotFound();
+            if (sitter == null) return NotFound();
 
-            // 2. Vai buscar outros 4 Sitters (excluindo o atual)
-            var otherSitters = await _context.Petsitters
-                .Include(p => p.User)
-                .Where(p => p.Id != id) // Não mostrar o próprio Sitter na secção "Outros"
-                .Take(4) // Limitar a 4 cartões para não desformatar a página
-                .ToListAsync();
+            // Carregar histórico de mensagens
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (!string.IsNullOrEmpty(userIdClaim))
+            {
+                int currentUserId = int.Parse(userIdClaim);
 
-            // 3. Coloca os outros Sitters na "Mochila" (ViewBag)
-            ViewBag.OtherSitters = otherSitters;
+                ViewBag.ChatHistory = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == sitter.UserId) ||
+                                (m.SenderId == sitter.UserId && m.ReceiverId == currentUserId))
+                    .OrderBy(m => m.Timestamp)
+                    .ToListAsync();
+            }
 
-            return View(petsitter);
+            // Carregar outros sitters para a ViewBag (como já deves ter)
+            ViewBag.OtherSitters = await _context.Petsitters.Include(p => p.User).Where(p => p.Id != id).Take(4).ToListAsync();
+
+            return View(sitter);
         }
     }
 }

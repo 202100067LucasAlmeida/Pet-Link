@@ -14,14 +14,17 @@
 
         <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action mb-1">
             <i class="bi bi-heart me-2"></i>My Favorites
-    </a>}
+        </a>
+    }
     <a href="#" class="list-group-item list-group-item-action mb-1">
         <i class="bi bi-file-ruled me-2"></i>Applications
     </a>
-    <a href="#" class="list-group-item list-group-item-action mb-1">
+
+    <a asp-controller="Messages" asp-action="Index"
+           class="list-group-item list-group-item-action mb-1 @(currentAction == "Index" ? "active" : "")">
         <i class="bi bi-chat-left me-2"></i>Messages
     </a>
-    
+
 </div>
 <p class="text-muted small">SUPPORT</p>
 <div class="list-group list-group-flush sidebar-profile">
