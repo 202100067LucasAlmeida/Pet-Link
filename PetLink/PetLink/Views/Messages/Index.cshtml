@@ -96,12 +96,9 @@
 
                                 <div class="p-3 border-top bg-white">
                                     @* Mudamos para apontar para a nova Action *@
-                                    <form asp-action="SendMessage" method="post" class="d-flex gap-2 align-items-center">
-                                        
-                                        @* Campo escondido para saber QUEM recebe a mensagem *@
+                                    <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
                                         <input type="hidden" name="receiverId" value="@Model.ActiveConversation.OtherUserId" />
-                                        
-                                        <button type="button" class="btn btn-link text-muted p-0"><i class="bi bi-plus-circle fs-5"></i></button>
                                         
                                         @* O "name" aqui deve ser igual ao parâmetro no C# (content) *@
                                         <input type="text" name="content" id="messageInput" class="form-control rounded-pill border-0 py-2" 

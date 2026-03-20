@@ -1,19 +1,19 @@
 "use strict";
 
-// 1. Criar a ligação ao Hub
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("/chatHub")
-    .build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-// Desativar o botão de enviar até a ligação estar estabelecida
-document.getElementById("sendButton").disabled = true;
+connection.on("ReceiveMessage", function (senderId, content, time) {
+    // 1. Verifica se esta mensagem pertence à conversa aberta
+    var activeChatId = $("input[name='receiverId']").val();
+    var currentUserId = $("#currentUserId").val(); // Precisas de um input hidden com o teu ID
 
-// 2. O que fazer quando RECEBEMOS uma mensagem
-connection.on("ReceiveMessage", function (user, message) {
-    const chatBox = document.getElementById("chatBox");
+    var isMine = senderId == currentUserId;
 
-    // Criar o balão de mensagem (Estilo Recebido - Branco)
-    const msgHtml = `
+    // 2. Cria o HTML do balão (usa as mesmas classes que já tens no CSHTML)
+    var alignment = isMine ? "justify-content-end" : "justify-content-start";
+    var bg = isMine ? "background-color: var(--petlink-primary); color: white;" : "background-color: white; color: var(--petlink-dark);";
+
+    var msgHtml = `
         <div class="message-sent d-flex justify-content-end mb-3">
             <div class="message-bubble text-white p-3 rounded-4 shadow-sm" 
                 style="max-width: 85%; background-color: var(--petlink-primary);">
@@ -22,38 +22,21 @@ connection.on("ReceiveMessage", function (user, message) {
             </div>
         </div>`;
 
-    chatBox.innerHTML += msgHtml;
-    chatBox.scrollTop = chatBox.scrollHeight; // Fazer scroll automático para o fundo
+    // 3. Adiciona ao chat e faz scroll
+    $("#chatWindow").append(messageHtml);
+    $("#chatWindow").scrollTop($("#chatWindow")[0].scrollHeight);
 });
 
-// 3. Iniciar a ligação
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+connection.start();
 
-// 4. O que fazer quando CLICAMOS NO BOTÃO de Enviar
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    const user = "You"; // Mais tarde será com o nome do utilizador
-    const messageInput = document.getElementById("messageInput");
-    const message = messageInput.value;
+// Intercetar o formulário para enviar via SignalR em vez de POST normal
+$('#sendMessageForm').on('submit', function (e) {
+    e.preventDefault();
+    var receiverId = $("input[name='receiverId']").val();
+    var content = $("#messageInput").val();
 
-    if (message.trim() === "") return; // Não enviar mensagens vazias
-
-    // Enviar para o C#
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
-    });
-
-    // Limpar a caixa de texto
-    messageInput.value = "";
-    event.preventDefault();
-});
-
-// (Extra) Enviar mensagem ao carregar no "Enter"
-document.getElementById("messageInput").addEventListener("keypress", function (e) {
-    if (e.key === 'Enter') {
-        document.getElementById("sendButton").click();
+    if (content.trim() !== "") {
+        connection.invoke("SendChatMessage", parseInt(receiverId), content);
+        $("#messageInput").val("").focus();
     }
 });

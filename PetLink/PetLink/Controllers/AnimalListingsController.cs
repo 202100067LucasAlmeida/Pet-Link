@@ -24,31 +24,31 @@ namespace PetLink
         }
 
         // GET: AnimalListings/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var animalListing = await _context.AnimalListings
+            var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (animalListing == null)
+
+            if (listing == null) return NotFound();
+
+            // Carregar histórico de mensagens entre o User atual e o Tutor deste animal
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (!string.IsNullOrEmpty(userIdClaim))
             {
-                return NotFound();
+                int currentUserId = int.Parse(userIdClaim);
+
+                ViewBag.ChatHistory = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
+                                (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
+                    .OrderBy(m => m.Timestamp)
+                    .ToListAsync();
             }
 
-            var otherPets = await _context.AnimalListings
-                .Include(a => a.Tutor)
-                .Where(a => a.Id != id) // Não mostrar o próprio Sitter na secção "Outros"
-                .Take(4) // Limitar a 4 cartões para não desformatar a página
-                .ToListAsync();
+            // Lógica para carregar OtherPets (ViewBag.OtherPets) que já tens...
+            ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
 
-            // 3. Coloca os outros Sitters na "Mochila" (ViewBag)
-            ViewBag.OtherPets = otherPets;
-
-            return View(animalListing);
+            return View(listing);
         }
 
 

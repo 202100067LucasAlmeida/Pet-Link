@@ -82,34 +82,62 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px;">
-                    <div class="card-header text-white py-3 rounded-top-4" style="background-color: var(--petlink-primary, #0a4f8b);">
-                        <h3 class="h6 mb-0 fw-bold">
-                            <i class="bi bi-chat-dots me-2"></i>
-                            Chat with @Model.User.Name.Split(' ')[0]
-                        </h3>
-                    </div>
-
-                    <div class="card-body bg-light" id="chatBox" style="height: 350px; overflow-y: auto;">
-                        <div class="chat-message mb-3">
-                            <div class="message-received d-flex mb-3">
-                                <div class="message-bubble p-3 rounded-4 shadow-sm bg-white border" style="max-width: 85%;">
-                                    <p class="mb-0 small text-dark">
-                                        Hello! Let me know if you have any questions.
-                                    </p>
-                                </div>
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border-radius: 20px; overflow: hidden;">
+                    <div class="card-header border-0 py-3" style="background-color: var(--petlink-primary); color: white;">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-calendar-check-fill" style="color: var(--petlink-primary);"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Hire @Model.User.Name</h6>
+                                <small style="opacity: 0.8; font-size: 0.75rem;">Check availability</small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-footer bg-white border-top-0 p-3 rounded-bottom-4 border">
-                        <div class="input-group">
-                            <input type="text" id="messageInput" class="form-control border bg-light rounded-start-pill ps-4"
-                                   placeholder="Type a message...">
-                            <button id="sendButton" class="btn btn-primary rounded-end-pill px-4" type="button" style="background-color: #0a4f8b; border: none;">
+                    <div class="card-body" id="chatBox" style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
+                        @if (ViewBag.ChatHistory != null && ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
+                        {
+                            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                            foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                            {
+                                bool isMine = msg.SenderId == currentUserId;
+                                <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                    <div class="p-3 shadow-sm" 
+                                        style="max-width: 85%; border-radius: 18px; font-size: 0.85rem;
+                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;" 
+                                                        : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
+                                        <p class="mb-0">@msg.Content</p>
+                                        <div class="text-end" style="font-size: 0.6rem; opacity: 0.7; margin-top: 4px;">
+                                            @msg.Timestamp.ToString("HH:mm")
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                <i class="bi bi-chat-dots mb-2 opacity-25" style="font-size: 3rem; color: var(--petlink-primary);"></i>
+                                <p class="text-muted small">No messages yet. Say hi to @Model.User.Name.Split(' ')[0]!</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-white border-0 p-3">
+                        <form asp-controller="Messages" asp-action="SendMessage" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="receiverId" value="@Model.UserId" />
+                            @* Adicionamos o returnUrl para não sair da página ao enviar *@
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                            
+                            <input type="text" name="content" class="form-control border-0 rounded-pill ps-4 py-2" 
+                                style="background-color: var(--petlink-grey-bg); font-size: 0.9rem;" 
+                                placeholder="Message @Model.User.Name..." required autocomplete="off">
+                            <button class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
+                                    type="submit" style="background-color: var(--petlink-primary); color: white; width: 40px; height: 40px;">
                                 <i class="bi bi-send-fill"></i>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -165,6 +193,13 @@
 </section>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var chatBox = document.getElementById("chatBox");
+            if (chatBox) {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+    </script>
     <script src="~/js/chat.js"></script>
 }
