@@ -58,12 +58,12 @@ namespace PetLink.Controllers
 
             // Login (Claims)
             var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.Name),
-        new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.Role, user.Role.ToString()),
-        new Claim("UserId", user.Id.ToString())
-    };
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("UserId", user.Id.ToString())
+            };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,

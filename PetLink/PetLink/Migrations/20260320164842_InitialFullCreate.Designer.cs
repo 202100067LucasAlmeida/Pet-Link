@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260317172907_AddFavoritePets")]
-    partial class AddFavoritePets
+    [Migration("20260320164842_InitialFullCreate")]
+    partial class InitialFullCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,82 @@ namespace PetLink.Migrations
                     b.ToTable("FavoritePets");
                 });
 
+            modelBuilder.Entity("PetLink.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AnimalListingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalListingId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("PetLink.Models.Petsitter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("DistanceKm")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("LocationZone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
+                    b.Property<string>("SpecialtyTags")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Petsitters");
+                });
+
             modelBuilder.Entity("PetLink.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -165,6 +241,42 @@ namespace PetLink.Migrations
                         .IsRequired();
 
                     b.Navigation("AnimalListing");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PetLink.Models.Message", b =>
+                {
+                    b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
+                        .WithMany()
+                        .HasForeignKey("AnimalListingId");
+
+                    b.HasOne("PetLink.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PetLink.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AnimalListing");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("PetLink.Models.Petsitter", b =>
+                {
+                    b.HasOne("PetLink.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
