@@ -254,5 +254,12 @@ namespace PetLink.Controllers
         {
             return View();
         }
+
+        public IActionResult ForgotPasswordForm()
+        {
+            //adicionar lógica de enviar um email pra pessoa
+            return View();
+        }
+
     }
 }
