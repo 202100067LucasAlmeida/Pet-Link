@@ -3,12 +3,23 @@
     ViewData["Title"] = "User Side Bar";
     var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
 <div class="list-group list-group-flush mb-3 sidebar-profile">
     <a href="#" class="list-group-item list-group-item-action mb-1">
         <i class="bi bi-person-circle me-2"></i>My Profile
     </a>
+
+<div class="list-group list-group-flush mb-3 sidebar-profile">
+    @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
+    {
+        <a asp-controller="Profile" asp-action="MyProfile" 
+           class="list-group-item list-group-item-action mb-1 @(currentAction == "MyProfile" && currentController == "Profile" ? "active" : "")">
+            <i class="bi bi-person-circle me-2"></i>My Profile
+        </a>
+    }
+
     @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
     {
 
