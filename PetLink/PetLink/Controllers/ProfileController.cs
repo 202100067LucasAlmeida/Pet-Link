@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
@@ -255,7 +256,7 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // My profile
+        // My profile-------- 
         
         // GET: Profile/MyProfile
         [Authorize(Roles = "User,PetSitter")]
@@ -311,14 +312,20 @@ namespace PetLink.Controllers
             var unreadMessages = await _context.Messages
                 .CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
-            // Passar dados para a view via ViewBag
-            ViewBag.SavedPets = savedPets;
-            ViewBag.ActiveApplications = activeApplications;
-            ViewBag.RecentMessages = recentMessages;
-            ViewBag.TotalApplications = totalApplications;
-            ViewBag.UnreadMessages = unreadMessages;
+            var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
 
-            return View(user);
+            var viewModel = new ProfileViewModel
+            {
+            User= user,
+            SavedPets = savedPets,
+            ActiveApplications = activeApplications,
+            RecentMessages = recentMessages,
+            TotalApplications = totalApplications,
+            UnreadMessages = unreadMessages,
+            DaysSinceJoined = daysSinceJoined 
+            };
+
+            return View(viewModel);
         }
 
         // POST: Profile/MarkMessagesAsRead
