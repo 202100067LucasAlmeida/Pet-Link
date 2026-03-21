@@ -9,7 +9,7 @@
     <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
         <i class="bi bi-person-circle me-2"></i>My Profile
     </a>
-    @if (userRole == UserRole.User.ToString())
+    @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
     {
 
     <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action">
