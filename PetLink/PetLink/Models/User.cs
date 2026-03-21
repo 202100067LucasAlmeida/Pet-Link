@@ -37,7 +37,7 @@ namespace PetLink.Models
         public ICollection<AnimalListing> Listings { get; set; }
         public ICollection<FavoritePet> FavoritePets {get; set;}
         public ICollection<Application> Applications { get; set; }
-       // public ICollection<Message> SentMessages { get; set; }
-       // public ICollection<Message> ReceivedMessages { get; set; }
+        public ICollection<Message> SentMessages { get; set; }
+        public ICollection<Message> ReceivedMessages { get; set; }
     }
 }

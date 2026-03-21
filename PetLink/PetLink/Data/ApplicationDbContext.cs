@@ -17,6 +17,7 @@ namespace PetLink.Data
         public DbSet<Message> Messages { get; set; }
         // public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
+        public DbSet<Application> Applications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -60,6 +61,18 @@ namespace PetLink.Data
                       .HasForeignKey(m => m.ReceiverId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<Application>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Applications)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Application>()
+                .HasOne(a => a.AnimalListing)
+                .WithMany()
+                .HasForeignKey(a => a.AnimalListingId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -255,7 +255,7 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // ==================== MY PROFILE PAGE ====================
+        // My profile
         
         // GET: Profile/MyProfile
         [Authorize(Roles = "User,PetSitter")]

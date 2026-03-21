@@ -1,0 +1,249 @@
+@using PetLink.Models.Enums
+@model PetLink.Models.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+}
+
+<div class="container py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Welcome Header -->
+            <div class="mb-4">
+                <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
+                <p class="text-muted">Manage your pet adoptions and view your saved companions.</p>
+            </div>
+
+            <!-- Active Applications Section -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0">
+                    <h4 class="fw-bold text-primary-darkblue mb-0">
+                        <i class="bi bi-file-text me-2"></i>Active Applications
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (!Model.ActiveApplications.Any())
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No active applications</p>
+                            <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-sm btn-primary rounded-pill">
+                                Browse Pets
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var app in Model.ActiveApplications)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="fw-bold text-primary-darkblue mb-1">@app.AnimalListing?.Name</h5>
+                                        <p class="text-muted small mb-2">
+                                            @app.AnimalListing?.Breed.ToString().ToUpper()<br>
+                                            Submitted on @app.SubmittedAt.ToString("MMM dd, yyyy") • @(app.AnimalListing?.Tutor?.Name ?? "Unknown Shelter")
+                                        </p>
+                                        <div class="d-flex align-items-center">
+                                            @if (app.Status == ApplicationStatus.Pending)
+                                            {
+                                                <span class="badge bg-warning text-dark me-2">In Progress</span>
+                                                <span class="small text-muted">Step @app.CurrentStep of @app.TotalSteps</span>
+                                            }
+                                            else if (app.Status == ApplicationStatus.Approved)
+                                            {
+                                                <span class="badge bg-success me-2">Approved</span>
+                                                <span class="small text-muted">Ready for pickup</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <a asp-controller="Applications" asp-action="Details" asp-route-id="@app.Id" 
+                                       class="btn btn-sm btn-outline-primary rounded-pill">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Saved Pets Section -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 pt-4 pb-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="fw-bold text-primary-darkblue mb-0">
+                                    <i class="bi bi-heart-fill text-danger me-2"></i>Saved Pets
+                                </h4>
+                                <a asp-controller="Favorites" asp-action="Index" class="btn btn-link text-decoration-none">
+                                    View All
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (!Model.SavedPets.Any())
+                            {
+                                <div class="text-center py-4">
+                                    <i class="bi bi-heart fs-1 text-muted"></i>
+                                    <p class="text-muted mt-2">No saved pets yet</p>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var pet in Model.SavedPets)
+                                {
+                                    <div class="d-flex align-items-center border-bottom pb-3 mb-3">
+                                        <div class="flex-shrink-0">
+                                            @{
+                                                var imagePath = $"/images/{pet.Name.ToLower()}.jpg";
+                                                var fullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", $"{pet.Name.ToLower()}.jpg");
+                                                var imageExists = System.IO.File.Exists(fullPath);
+                                            }
+                                            @if (imageExists)
+                                            {
+                                                <img src="@imagePath" alt="@pet.Name" class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                    <i class="bi bi-image text-muted"></i>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="fw-bold mb-0">@pet.Name</h6>
+                                            <small class="text-muted d-block">@pet.Location, Portugal</small>
+                                            <small class="text-muted">@pet.Species • @pet.Breed</small>
+                                        </div>
+                                        <span class="badge bg-light text-dark">@pet.Species.ToString().ToUpper()</span>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+             <!-- Recent Messages Section -->
+<div class="col-md-6">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold text-primary-darkblue mb-0">
+                    <i class="bi bi-chat-dots me-2"></i>Recent Messages
+                </h4>
+                <a href="#" class="btn btn-link text-decoration-none">
+                    View All
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @{
+                var recentMessages = ViewBag.RecentMessages as List<PetLink.Models.Message>;
+            }
+            @if (recentMessages == null || !recentMessages.Any())
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-chat-dots fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No messages yet</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var msg in recentMessages)
+                {
+                    <div class="border-bottom pb-3 mb-3 @(msg.IsRead == false ? "bg-light p-2 rounded-3" : "")">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="fw-bold mb-0">@msg.Sender?.Name</h6>
+                            <small class="text-muted">
+                                @{
+                                    var timeAgo = DateTime.Now - msg.CreatedAt;
+                                    if (timeAgo.TotalHours < 24)
+                                    {
+                                        <span>@((int)timeAgo.TotalHours)h ago</span>
+                                    }
+                                    else if (timeAgo.TotalDays < 7)
+                                    {
+                                        <span>@((int)timeAgo.TotalDays)d ago</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@msg.CreatedAt.ToString("MMM dd")</span>
+                                    }
+                                }
+                            </small>
+                        </div>
+                        <p class="text-muted small mb-0 mt-1">
+                            @(msg.Content.Length > 80 ? msg.Content.Substring(0, 80) + "..." : msg.Content)
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>   
+
+            <!-- Statistics Cards -->
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-file-text text-primary fs-3"></i>
+                                </div>
+                                <div>
+                                    <h2 class="fw-bold mb-0">@Model.TotalApplications</h2>
+                                    <p class="text-muted mb-0">Total Applications</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
+                                    <i class="bi bi-envelope text-warning fs-3"></i>
+                                </div>
+                                <div>
+                                    <h2 class="fw-bold mb-0">@Model.UnreadMessages</h2>
+                                    <p class="text-muted mb-0">Unread Messages</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Marcar mensagens como lidas quando o utilizador vê o perfil
+            @if (Model.UnreadMessages > 0)
+            {
+                <text>
+                $.ajax({
+                    url: '@Url.Action("MarkMessagesAsRead", "Profile")',
+                    type: 'POST',
+                    success: function() {
+                        console.log('Messages marked as read');
+                    }
+                });
+                </text>
+            }
+        });
+    </script>
+}
