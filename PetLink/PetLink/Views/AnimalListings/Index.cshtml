@@ -143,7 +143,7 @@
                                     }
                                 </a>
                                 
-                                @if (User.IsInRole("User"))
+                                @if (User.IsInRole("User")||User.IsInRole("PetSitter") )
                                 {
                                     <button class="btn-heart favorite-toggle position-absolute top-0 end-0 m-2" data-pet-id="@item.Id">
                                         <i class="bi bi-heart"></i>
