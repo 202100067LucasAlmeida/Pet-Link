@@ -25,7 +25,7 @@ namespace PetLink.Models
         
         public DateTime SubmittedAt { get; set; } = DateTime.Now;
         
-        // Navigation properties
+        // propiedade de navegação
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
         

@@ -127,7 +127,6 @@
                     <div class="card-footer bg-white border-0 p-3">
                         <form asp-controller="Messages" asp-action="SendMessage" method="post" class="d-flex gap-2">
                             <input type="hidden" name="receiverId" value="@Model.UserId" />
-                            @* Adicionamos o returnUrl para não sair da página ao enviar *@
                             <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
                             
                             <input type="text" name="content" class="form-control border-0 rounded-pill ps-4 py-2" 

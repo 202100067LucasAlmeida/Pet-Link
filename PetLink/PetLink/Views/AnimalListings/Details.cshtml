@@ -160,7 +160,6 @@
             <div class="col-lg-4">
                 <div class="card shadow-sm border-0 sticky-top"
                      style="top: 20px; border-radius: 20px; overflow: hidden;">
-                    @* Header com as tuas cores oficiais *@
                     <div class="card-header py-3 border-0"
                          style="background-color: var(--petlink-primary); color: white;">
                         <div class="d-flex align-items-center">
@@ -175,7 +174,6 @@
                         </div>
                     </div>
 
-                    @* Corpo do Chat - Fundo cinza como no Account *@
                     <div class="card-body" id="chatBox"
                          style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
                         @if (ViewBag.ChatHistory != null &&
@@ -207,11 +205,9 @@
                         }
                     </div>
 
-                    @* Footer com Input arredondado *@
                     <div class="card-footer bg-white border-0 p-3">
                         <form asp-controller="Messages" asp-action="SendMessage" method="post" class="input-group">
                             <input type="hidden" name="receiverId" value="@Model.TutorId" />
-                            @* Adicionamos o ReturnUrl para ele não sair desta página ao enviar *@
                             <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
 
                             <input type="text" name="content"
@@ -330,7 +326,7 @@
         </div>
     </div>
 
-    <!-- Success Notification (hidden by default) -->
+    <!-- Success Notification  -->
     <div id="adoptSuccessNotification" class="adopt-success-notification" style="display: none;">
         <div class="adopt-success-content">
             <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28a745;"></i>

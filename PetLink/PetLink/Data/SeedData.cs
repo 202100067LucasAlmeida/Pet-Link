@@ -20,7 +20,7 @@ namespace PetLink.Data
                     return;
                 }
 
-                // 1. Cria utilizadores (Admin, Shelter, Particular)
+                // Cria utilizadores (Admin, Shelter, Particular)
                 var admin = new User
                 {
                     Name = "Administrador PetLink",
@@ -48,16 +48,16 @@ namespace PetLink.Data
                     IsVerified = false
                 };
 
-                // 2. Cria utilizadores base para os Pet Sitters
+                // Cria utilizadores base para os Pet Sitters
                 var sitter1 = new User { Name = "Sarah Jenkins", Email = "sarah@petlink.com", PasswordHash = "...", Role = UserRole.PetSitter, IsVerified = true };
                 var sitter2 = new User { Name = "Marcus Chen", Email = "marcus@petlink.com", PasswordHash = "...", Role = UserRole.PetSitter, IsVerified = true };
                 var sitter3 = new User { Name = "Elena Smith", Email = "elena@petlink.com", PasswordHash = "...", Role = UserRole.PetSitter, IsVerified = true };
 
-                // Adiciona e guarda todos os utilizadores para que a BD gere os IDs (necessários para as chaves estrangeiras)
+                // Adiciona e guarda todos os utilizadores para que a BD gere os IDs 
                 context.Users.AddRange(admin, shelter, particular, sitter1, sitter2, sitter3);
                 context.SaveChanges();
 
-                // 3. Cria os detalhes/perfis dos Pet Sitters ligados aos IDs gerados
+                // Cria os detalhes/perfis dos Pet Sitters ligados aos IDs gerados
                 var petSitters = new Petsitter[]
                 {
                     new Petsitter
@@ -95,10 +95,10 @@ namespace PetLink.Data
                     }
                 };
 
-                // Adiciona os Pet Sitters (usando o AddRange genérico do Contexto)
+                // Adiciona os Pet Sitters 
                 context.AddRange(petSitters);
 
-                // 4. Cria anúncios de animais associados aos Shelters/Particulares
+                // Cria anúncios de animais associados aos Shelters/Particulares
                 var listings = new AnimalListing[]
                 {
                     new AnimalListing
@@ -161,7 +161,7 @@ namespace PetLink.Data
 
                 context.AnimalListings.AddRange(listings);
 
-                // 5. Cria mensagens de teste entre João Silva e Sarah Jenkins
+                // Cria mensagens de teste 
                 // Verifica se já existem mensagens para não duplicar no Seed
                 if (!context.Messages.Any())
                 {

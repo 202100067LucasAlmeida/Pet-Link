@@ -16,7 +16,6 @@ using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
-    // Classe necessária para o JS verificar o email em tempo real
     public class EmailCheckRequest
     {
         public string Email { get; set; }
@@ -31,7 +30,7 @@ namespace PetLink.Controllers
             _context = context;
         }
 
-        // 1. Mostra a página de Login (GET)
+        //Mostra a página de Login 
         [HttpGet]
         public IActionResult LoginForm()
         {
@@ -40,7 +39,7 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // 2. Recebe os dados do formulário quando clicas "Log In" (POST)
+        // Recebe os dados do formulário 
         [HttpPost]
         public async Task<IActionResult> LoginForm(string email, string password, bool rememberMe)
         {
@@ -57,7 +56,6 @@ namespace PetLink.Controllers
                 return Json(new { success = false, message = "Invalid email or password." });
             }
 
-            // Login (Claims)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
@@ -71,11 +69,10 @@ namespace PetLink.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties { IsPersistent = rememberMe });
 
-            // Retorna sucesso para o JS fazer o redirect
             return Json(new { success = true });
         }
 
-        // 3. Mostra a página de Registo (GET)
+        // Mostra a página de Registo 
         [HttpGet]
         public IActionResult SignUpForm()
         {
@@ -83,7 +80,7 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // 4. Faz o Logout
+        // Faz o Logout
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -93,7 +90,7 @@ namespace PetLink.Controllers
 
         // sprint 2 -----------
 
-        // Verificação do Email para o JavaScript (Real-time)
+        // Verificação do Email
         [HttpPost]
         public async Task<IActionResult> ValidateEmail([FromBody] EmailCheckRequest request)
         {
@@ -104,13 +101,13 @@ namespace PetLink.Controllers
             return Json(new { isAvailable = !emailExists });
         }
 
-        // Verificações pedidas do sign up e Criação de Conta
+        // Verificaçõesdo sign up e criação de conta
         [HttpPost]
         public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
         {
             var errors = new Dictionary<string, string>();
 
-            // Validate Name
+            // valida nome
             if (string.IsNullOrWhiteSpace(model.FullName))
             {
                 errors["fullName"] = "O nome é obrigatório.";
@@ -120,7 +117,7 @@ namespace PetLink.Controllers
                 errors["fullName"] = "Name must not contain numbers or symbols.";
             }
 
-            // Validate Email
+            // valida email
             if (string.IsNullOrWhiteSpace(model.Email))
             {
                 errors["email"] = "O email é obrigatório.";
@@ -138,20 +135,20 @@ namespace PetLink.Controllers
                 }
             }
 
-            // Validate Phone
+            // valida telemóvel
             if (string.IsNullOrWhiteSpace(model.Phone))
             {
                 errors["phone"] = "Phone number is required.";
             }
 
-            // Validate Password
+            // valida password
             var passwordErrors = ValidatePassword(model.Password);
             if (passwordErrors.Any())
             {
                 errors["password"] = string.Join(" ", passwordErrors);
             }
 
-            // Validate Confirm Password
+            // valida confirmação de password
             if (model.Password != model.ConfirmPassword)
             {
                 errors["confirmPassword"] = "Passwords do not match.";
@@ -198,7 +195,6 @@ namespace PetLink.Controllers
         }
 
 
-        // métodos extra
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -256,20 +252,20 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // My profile-------- 
+        // My profile
         
         // GET: Profile/MyProfile
         [Authorize(Roles = "User,PetSitter")]
         public async Task<IActionResult> MyProfile()
         {
-            // Obter o ID do utilizador logado
+            // Obtem o ID do utilizador logado
             var userIdClaim = User.FindFirst("UserId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
             {
                 return Challenge();
             }
 
-            // Buscar utilizador
+            // Vai buscar o utilizador
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -278,7 +274,7 @@ namespace PetLink.Controllers
                 return NotFound();
             }
 
-            // Buscar saved pets (favoritos)
+            // Vai buscar saved pets
             var savedPets = await _context.FavoritePets
                 .Where(f => f.UserId == userId)
                 .Include(f => f.AnimalListing)
@@ -286,7 +282,7 @@ namespace PetLink.Controllers
                 .Where(a => a.Status == ListingStatus.Published)
                 .ToListAsync();
 
-            // Buscar active applications (pending ou approved)
+            // vai buscar active applications 
             var activeApplications = await _context.Applications
                 .Where(a => a.UserId == userId && 
                        (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.Approved))
@@ -296,7 +292,7 @@ namespace PetLink.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            // Buscar mensagens recentes
+            // mensagens recentes
             var recentConversations = new List<Message>();
 
             var allMessages = await _context.Messages
@@ -306,7 +302,7 @@ namespace PetLink.Controllers
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
 
-            // Agrupar por conversa (pessoa com quem se está a falar)
+            // Agrupar por conversa 
             var conversations = allMessages
             .GroupBy(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
             .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault())

@@ -6,7 +6,7 @@ namespace PetLink.Models
 {
     public class User
     {
-        [Key] // Define que é a primary key
+        [Key] 
         public int Id { get; set; }
 
         [RegularExpression(@"^[\p{L}\s\-']+$", ErrorMessage = "O nome não pode conter simbolos ou números!")]

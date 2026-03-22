@@ -12,12 +12,7 @@ namespace PetLink.Controllers
         {
             _context = context;
         }
-/*
-        public IActionResult Index(Species specie, )
-        {
-            var result = null;
 
-            return View(result);
-        }*/
+        
     }
 }

@@ -10,19 +10,16 @@ namespace PetLink.Data
         {
         }
 
-        // Estas propriedades DbSet vão transformar-se nas tabelas do SQL Server
         public DbSet<User> Users { get; set; }
         public DbSet<AnimalListing> AnimalListings { get; set; }
         public DbSet<FavoritePet> FavoritePets { get; set; }
         public DbSet<Message> Messages { get; set; }
-        // public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         public DbSet<Application> Applications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Exemplo: Um User tem muitos AnimalListings
             modelBuilder.Entity<AnimalListing>()
                 .HasOne(a => a.Tutor)
                 .WithMany(u => u.Listings)

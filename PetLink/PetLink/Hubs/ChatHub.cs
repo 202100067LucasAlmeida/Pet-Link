@@ -20,7 +20,7 @@ namespace PetLink.Hubs
 
             int senderId = int.Parse(senderIdClaim);
 
-            // 1. Grava na Base de Dados (O Arquivo)
+            // Grava na Base de Dados 
             var message = new Message
             {
                 SenderId = senderId,
@@ -32,7 +32,7 @@ namespace PetLink.Hubs
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 
-            // 2. Envia em Tempo Real (O Estafeta)
+            // Envia em Tempo Real 
             // Enviamos para o Remetente e para o Destinatário
             await Clients.User(receiverId.ToString()).SendAsync("ReceiveMessage", senderId, content, message.Timestamp.ToString("HH:mm"));
             await Clients.User(senderId.ToString()).SendAsync("ReceiveMessage", senderId, content, message.Timestamp.ToString("HH:mm"));

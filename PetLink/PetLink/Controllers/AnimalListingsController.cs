@@ -45,7 +45,7 @@ namespace PetLink
                     .ToListAsync();
             }
 
-            // Lógica para carregar OtherPets (ViewBag.OtherPets) que já tens...
+            // carregar OtherPets
             ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
 
             return View(listing);
@@ -92,8 +92,6 @@ namespace PetLink
         }
 
         // POST: AnimalListings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized,Status,CreatedAt,TutorId")] AnimalListing animalListing)

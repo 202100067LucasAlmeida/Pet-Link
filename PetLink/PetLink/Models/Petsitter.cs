@@ -8,7 +8,7 @@ namespace PetLink.Models
         [Key]
         public int Id { get; set; }
 
-        // Ligação ao Utilizador (Nome, Email, etc)
+        // Ligação ao Utilizador 
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User? User { get; set; }
@@ -23,7 +23,7 @@ namespace PetLink.Models
         public string LocationZone { get; set; }
         public double DistanceKm { get; set; }
 
-        // Tags separadas por vírgula (ex: "SMALL DOGS,PUPPIES")
+        // Tags separadas por vírgula 
         public string SpecialtyTags { get; set; }
     }
 }

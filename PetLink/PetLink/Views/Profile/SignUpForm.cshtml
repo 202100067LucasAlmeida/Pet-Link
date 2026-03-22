@@ -6,7 +6,6 @@
 
 <div class="row justify-content-center">
 
-    @* Intro com a marca a combinar com o Login *@
     <div class="text-center m-4 mt-5">
         <h1 class="display-6 text-primary-blue fw-bold">
             <i class="text-primary me-2">
@@ -46,7 +45,7 @@
 
                 <div id="fieldErrors" class="mb-3"></div>
 
-                @* Formulário aponta para Profile / SignUpForm no C# *@
+                @* Formulário aponta para Profile / SignUpForm *@
                 <form id="signupForm" asp-controller="Profile" asp-action="SignUpForm" method="post" novalidate>
                     <div class="mb-3">
                         <label for="fullName" class="form-label fw-semibold">Full Name</label>
@@ -160,7 +159,6 @@
                         Create Account
                     </button>
 
-                    @* Separador "OR" igual ao Login *@
                     <div class="text-center mb-4 position-relative">
                         <hr class="text-muted">
                         <span class="bg-white px-2 position-absolute top-50 start-50 translate-middle small text-muted">

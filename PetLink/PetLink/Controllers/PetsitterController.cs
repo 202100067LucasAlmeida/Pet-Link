@@ -16,7 +16,6 @@ namespace PetLink.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // O Include(p => p.User) é vital para conseguirmos aceder ao Nome e IsVerified do User
             var sitters = await _context.Petsitters
                                         .Include(p => p.User)
                                         .ToListAsync();
@@ -45,7 +44,7 @@ namespace PetLink.Controllers
                     .ToListAsync();
             }
 
-            // Carregar outros sitters para a ViewBag (como já deves ter)
+            // Carregar outros sitters para a ViewBag 
             ViewBag.OtherSitters = await _context.Petsitters.Include(p => p.User).Where(p => p.Id != id).Take(4).ToListAsync();
 
             return View(sitter);

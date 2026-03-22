@@ -35,20 +35,20 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            @* Nome com um pequeno ícone dinâmico *@
+                            @* Nome  *@
                             <td class="ps-4 fw-bold text-dark">
                                 <img src="~/images/@(item.Name.ToLower()).jpg" alt="Pet" class="rounded-circle me-2 object-fit-cover shadow-sm" style="width: 35px; height: 35px;" onerror="this.src='/images/cooper.jpg'"> 
                                 @item.Name
                             </td>
                             
-                            @* Espécie com Badge *@
+                            @* Espécie *@
                             <td>
                                 <span class="badge bg-light text-dark border rounded-pill fw-semibold px-3">
                                     @item.Species
                                 </span>
                             </td>
                             
-                            @* Saúde (Agrupada com ícones limpos) *@
+                            @* Saúde  *@
                             <td>
                                 @if(item.IsVaccinated) { <i class="bi bi-capsule text-success me-1" title="Vaccinated"></i> }
                                 @if(item.IsDewormed)   { <i class="bi bi-bug-fill text-success me-1" title="Dewormed"></i> }
@@ -82,7 +82,7 @@
                                 @(item.Tutor != null ? item.Tutor.Email : "Unknown")
                             </td>
                             
-                            @* Botões de Ação Redondos *@
+                            @* Botões  *@
                             <td class="text-end pe-4">
                                 <div class="btn-group shadow-sm rounded-pill" role="group">
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary py-1 px-2" title="Edit">

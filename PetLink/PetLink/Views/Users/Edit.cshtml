@@ -24,7 +24,6 @@
                     <form asp-action="Edit">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        @* Esconde o ID e a Password para não os perdermos no POST *@
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="PasswordHash" />
 
@@ -42,7 +41,6 @@
 
                         <div class="mb-3">
                             <label asp-for="Role" class="form-label fw-semibold">Account Type (Role)</label>
-                            @* O ASP.NET gera o dropdown automaticamente a partir do teu Enum! *@
                             <select asp-for="Role" class="form-select py-2"
                                     asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.UserRole>()"></select>
                             <span asp-validation-for="Role" class="text-danger small"></span>

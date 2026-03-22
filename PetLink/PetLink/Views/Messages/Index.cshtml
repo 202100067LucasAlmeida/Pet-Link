@@ -14,7 +14,7 @@
 
         <div class="col-lg-9">
             <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
-                <div class="card-body p-0"> @* P-0 para o chat encostar às bordas do card *@
+                <div class="card-body p-0"> 
                     
                     <div class="row g-0" style="height: 75vh; min-height: 600px;">
                         
@@ -95,12 +95,10 @@
                                 </div>
 
                                 <div class="p-3 border-top bg-white">
-                                    @* Mudamos para apontar para a nova Action *@
                                     <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
                                         <input type="hidden" name="receiverId" value="@Model.ActiveConversation.OtherUserId" />
                                         
-                                        @* O "name" aqui deve ser igual ao parâmetro no C# (content) *@
                                         <input type="text" name="content" id="messageInput" class="form-control rounded-pill border-0 py-2" 
                                             style="background-color: var(--petlink-grey-bg);" placeholder="Type your message here..." 
                                             required autocomplete="off">

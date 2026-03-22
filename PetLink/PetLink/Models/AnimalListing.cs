@@ -34,7 +34,6 @@ namespace PetLink.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Chave estrangeira para o utilizador que criou o anúncio 
         public int TutorId { get; set; }
         
         [ForeignKey("TutorId")]
