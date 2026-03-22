@@ -16,10 +16,32 @@
         <!-- Main Content -->
         <div class="col-lg-9">
             <!-- Welcome Header -->
-            <div class="mb-4">
-                <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
-                <p class="text-muted">Manage your pet adoptions and view your saved companions.</p>
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center">
+            <!-- Foto de perfil -->
+            <div class="flex-shrink-0">
+                @if (!string.IsNullOrEmpty(Model.User.ProfilePicture))
+                {
+                    <img src="@Model.User.ProfilePicture" alt="@Model.User.Name" 
+                         class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 80px; height: 80px;">
+                        <i class="bi bi-person-circle text-primary fs-1"></i>
+                    </div>
+                }
             </div>
+            <div class="flex-grow-1 ms-4">
+                <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
+                <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
+                
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Active Applications Section -->
             <div class="card border-0 shadow-sm rounded-4 mb-4">
