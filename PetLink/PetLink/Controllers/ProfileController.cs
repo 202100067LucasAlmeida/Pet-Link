@@ -298,12 +298,24 @@ namespace PetLink.Controllers
                 .ToListAsync();
 
             // Buscar mensagens recentes
-            var recentMessages = await _context.Messages
-                .Where(m => m.ReceiverId == userId)
-                .Include(m => m.Sender)
-                .OrderByDescending(m => m.CreatedAt)
-                .Take(3)
-                .ToListAsync();
+            var recentConversations = new List<Message>();
+
+            var allMessages = await _context.Messages
+            .Where(m => m.ReceiverId == userId || m.SenderId == userId)
+            .Include(m => m.Sender)
+            .Include(m => m.Receiver)
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
+
+            // Agrupar por conversa (pessoa com quem se está a falar)
+            var conversations = allMessages
+            .GroupBy(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+            .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault())
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(3)
+            .ToList();
+
+            recentConversations = conversations;
 
             // Calcular estatísticas
             var totalApplications = await _context.Applications
@@ -319,7 +331,7 @@ namespace PetLink.Controllers
             User= user,
             SavedPets = savedPets,
             ActiveApplications = activeApplications,
-            RecentMessages = recentMessages,
+            RecentConversations = recentConversations,
             TotalApplications = totalApplications,
             UnreadMessages = unreadMessages,
             DaysSinceJoined = daysSinceJoined 

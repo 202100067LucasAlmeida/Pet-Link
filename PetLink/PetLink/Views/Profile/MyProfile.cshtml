@@ -37,7 +37,6 @@
             <div class="flex-grow-1 ms-4">
                 <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
                 <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
-                
             </div>
         </div>
     </div>
@@ -155,20 +154,20 @@
                 </div>
 
             <!-- Recent Messages Section -->
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="fw-bold text-primary-darkblue mb-0">
-                                <i class="bi bi-chat-dots me-2"></i>Recent Messages
-                            </h4>
-                            <a asp-controller="Messages" asp-action="Index" class="btn btn-link text-decoration-none">
-                    View All 
-                            </a>
-                </div>
+<div class="col-md-6">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold text-primary-darkblue mb-0">
+                    <i class="bi bi-chat-dots me-2"></i>Recent Messages
+                </h4>
+                <a asp-controller="Messages" asp-action="Index" class="btn btn-link text-decoration-none">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
             </div>
-            <div class="card-body">
-            @if (Model.RecentMessages == null || !Model.RecentMessages.Any())
+        </div>
+        <div class="card-body">
+            @if (Model.RecentConversations == null || !Model.RecentConversations.Any())
             {
                 <div class="text-center py-4">
                     <i class="bi bi-chat-dots fs-1 text-muted"></i>
@@ -177,49 +176,69 @@
             }
             else
             {
-                @foreach (var msg in Model.RecentMessages)
+                @foreach (var msg in Model.RecentConversations)
                 {
-                    <div class="border-bottom pb-3 mb-3 @(msg.IsRead == false ? "bg-light p-2 rounded-3" : "")">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                @if (!string.IsNullOrEmpty(msg.Sender?.ProfilePicture))
-                                {
-                                    <img src="@msg.Sender.ProfilePicture" alt="@msg.Sender.Name" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
-                                }
-                                else
-                                {
-                                    <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                        <i class="bi bi-person-circle text-secondary"></i>
-                                    </div>
-                                }
-                                <h6 class="fw-bold mb-0">@msg.Sender?.Name</h6>
-                            </div>
-                            <small class="text-muted">
-                                @{
-                                    var timeAgo = DateTime.Now - msg.CreatedAt;
-                                    if (timeAgo.TotalMinutes < 60)
+                    // Determinar quem é a outra pessoa na conversa
+                    var otherPerson = msg.SenderId == Model.User.Id ? msg.Receiver : msg.Sender;
+                    var isUnread = msg.ReceiverId == Model.User.Id && !msg.IsRead;
+                    
+                    <a asp-controller="Messages" asp-action="Index" asp-route-id="@otherPerson?.Id" 
+                       class="text-decoration-none">
+                        <div class="border-bottom pb-3 mb-3 @(isUnread ? "bg-light p-2 rounded-3" : "") 
+                                    hover-message transition-all">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(otherPerson?.ProfilePicture))
                                     {
-                                        <span>@((int)timeAgo.TotalMinutes)m ago</span>
-                                    }
-                                    else if (timeAgo.TotalHours < 24)
-                                    {
-                                        <span>@((int)timeAgo.TotalHours)h ago</span>
-                                    }
-                                    else if (timeAgo.TotalDays < 7)
-                                    {
-                                        <span>@((int)timeAgo.TotalDays)d ago</span>
+                                        <img src="@otherPerson.ProfilePicture" alt="@otherPerson.Name" 
+                                             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                                     }
                                     else
                                     {
-                                        <span>@msg.CreatedAt.ToString("MMM dd")</span>
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="bi bi-person-circle text-secondary fs-4"></i>
+                                        </div>
                                     }
+                                    <div>
+                                        <h6 class="fw-bold mb-0">@otherPerson?.Name</h6>
+                                        <small class="text-muted">
+                                            @{
+                                                var timeAgo = DateTime.Now - msg.CreatedAt;
+                                                if (timeAgo.TotalMinutes < 60)
+                                                {
+                                                    <span>@((int)timeAgo.TotalMinutes)m ago</span>
+                                                }
+                                                else if (timeAgo.TotalHours < 24)
+                                                {
+                                                    <span>@((int)timeAgo.TotalHours)h ago</span>
+                                                }
+                                                else if (timeAgo.TotalDays < 7)
+                                                {
+                                                    <span>@((int)timeAgo.TotalDays)d ago</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@msg.CreatedAt.ToString("MMM dd")</span>
+                                                }
+                                            }
+                                        </small>
+                                    </div>
+                                </div>
+                                @if (isUnread)
+                                {
+                                    <span class="badge bg-primary rounded-pill">New</span>
                                 }
-                            </small>
+                            </div>
+                            <p class="text-muted small mb-0 mt-2">
+                                @{
+                                    var preview = msg.Content.Length > 80 ? msg.Content.Substring(0, 80) + "..." : msg.Content;
+                                    var sender = msg.SenderId == Model.User.Id ? "You: " : "";
+                                }
+                                <span class="@(isUnread ? "fw-bold" : "")">@sender@preview</span>
+                            </p>
                         </div>
-                        <p class="text-muted small mb-0 mt-2">
-                            @(msg.Content.Length > 80 ? msg.Content.Substring(0, 80) + "..." : msg.Content)
-                        </p>
-                    </div>
+                    </a>
                 }
             }
         </div>

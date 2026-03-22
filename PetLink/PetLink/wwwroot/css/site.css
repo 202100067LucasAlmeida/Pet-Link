@@ -484,3 +484,18 @@ footer {
     height: 150px;
     resize: none;
 }
+
+/* Hover effect for messages */
+.hover-message {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.hover-message:hover {
+    background-color: var(--petlink-light-bg);
+    transform: translateX(5px);
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}

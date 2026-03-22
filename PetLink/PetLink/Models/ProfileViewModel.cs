@@ -12,7 +12,7 @@ namespace PetLink.Models.ViewModels
         
         public List<Application> ActiveApplications { get; set; }
         
-        public List<Message> RecentMessages { get; set; }
+        public List<Message> RecentConversations { get; set; }
         
         public int TotalApplications { get; set; }
         public int UnreadMessages { get; set; }
