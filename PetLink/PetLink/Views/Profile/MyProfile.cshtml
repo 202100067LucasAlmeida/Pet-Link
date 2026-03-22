@@ -134,22 +134,19 @@
 
             <!-- Recent Messages Section -->
             <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-header bg-white border-0 pt-4 pb-0">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold text-primary-darkblue mb-0">
-                    <i class="bi bi-chat-dots me-2"></i>Recent Messages
-                </h4>
-                <a asp-controller="Messages" asp-action="Index" class="btn btn-link text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="fw-bold text-primary-darkblue mb-0">
+                                <i class="bi bi-chat-dots me-2"></i>Recent Messages
+                            </h4>
+                            <a asp-controller="Messages" asp-action="Index" class="btn btn-link text-decoration-none">
                     View All 
-                </a>
+                            </a>
+                </div>
             </div>
-        </div>
-        <div class="card-body">
-            @{
-                var recentMessages = ViewBag.RecentMessages as List<PetLink.Models.Message>;
-            }
-            @if (recentMessages == null || !recentMessages.Any())
+            <div class="card-body">
+            @if (Model.RecentMessages == null || !Model.RecentMessages.Any())
             {
                 <div class="text-center py-4">
                     <i class="bi bi-chat-dots fs-1 text-muted"></i>
@@ -158,15 +155,31 @@
             }
             else
             {
-                @foreach (var msg in recentMessages)
+                @foreach (var msg in Model.RecentMessages)
                 {
                     <div class="border-bottom pb-3 mb-3 @(msg.IsRead == false ? "bg-light p-2 rounded-3" : "")">
                         <div class="d-flex justify-content-between">
-                            <h6 class="fw-bold mb-0">@msg.Sender?.Name</h6>
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(msg.Sender?.ProfilePicture))
+                                {
+                                    <img src="@msg.Sender.ProfilePicture" alt="@msg.Sender.Name" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-person-circle text-secondary"></i>
+                                    </div>
+                                }
+                                <h6 class="fw-bold mb-0">@msg.Sender?.Name</h6>
+                            </div>
                             <small class="text-muted">
                                 @{
                                     var timeAgo = DateTime.Now - msg.CreatedAt;
-                                    if (timeAgo.TotalHours < 24)
+                                    if (timeAgo.TotalMinutes < 60)
+                                    {
+                                        <span>@((int)timeAgo.TotalMinutes)m ago</span>
+                                    }
+                                    else if (timeAgo.TotalHours < 24)
                                     {
                                         <span>@((int)timeAgo.TotalHours)h ago</span>
                                     }
@@ -181,7 +194,7 @@
                                 }
                             </small>
                         </div>
-                        <p class="text-muted small mb-0 mt-1">
+                        <p class="text-muted small mb-0 mt-2">
                             @(msg.Content.Length > 80 ? msg.Content.Substring(0, 80) + "..." : msg.Content)
                         </p>
                     </div>
@@ -203,21 +216,6 @@
                     <div>
                         <h2 class="fw-bold mb-0">@Model.TotalApplications</h2>
                         <p class="text-muted mb-0">Total Applications</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 rounded-circle p-3 me-3">
-                        <i class="bi bi-envelope text-warning fs-3"></i>
-                    </div>
-                    <div>
-                        <h2 class="fw-bold mb-0">@Model.UnreadMessages</h2>
-                        <p class="text-muted mb-0">Unread Messages</p>
                     </div>
                 </div>
             </div>
