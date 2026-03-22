@@ -101,8 +101,6 @@
                             @Model.Description
                         </p>
 
-                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2">Adopt
-                            @Model.Name
                         <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2" id="adoptBtn">
                             Adopt @Model.Name
                         </button>
@@ -295,47 +293,52 @@
     </div>
 </section>
 
-                            data: { animalListingId: petId },
-                            success: function (isFavorited) {
-                                if (isFavorited) {
-                                    $('#favoriteIcon').removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                    $('#favoriteBtn').addClass('active');
-                                }
-                            }
-                        });
+<section class="pop-up-adopt p-3 m-2">
+    <!-- Adoption Confirmation Modal -->
+    <div id="adoptModal" class="adopt-modal-overlay" style="display: none;">
+        <div class="adopt-modal-container">
+            <div class="adopt-modal-header">
+                <h3>Adopt @Model.Name</h3>
+            </div>
+            <div class="adopt-modal-body">
+                <p>Thank you for choosing responsible adoption, and for choosing our lovely @Model.Name! Before proceeding, please confirm the following:</p>
+                <div class="adopt-confirmation-items">
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead1" class="adopt-checkbox">
+                        <label for="confirmRead1">
+                            I understand the responsibility of pet ownership and am ready to provide a loving home.
+                        </label>
+                    </div>
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead2" class="adopt-checkbox">
+                        <label for="confirmRead2">
+                            I have read and agree to the adoption terms and conditions.
+                        </label>
+                    </div>
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead3" class="adopt-checkbox">
+                        <label for="confirmRead3">
+                            I confirm that I have the time, resources, and space to care for @Model.Name.
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="adopt-modal-footer">
+                <button class="adopt-cancel-btn">Cancel</button>
+                <button class="adopt-confirm-btn" disabled>Confirm Adoption</button>
+            </div>
+        </div>
+    </div>
 
-                        // Clique no coração
-                        $('#favoriteBtn').click(function (e) {
-                            e.preventDefault();
+    <!-- Success Notification (hidden by default) -->
+    <div id="adoptSuccessNotification" class="adopt-success-notification" style="display: none;">
+        <div class="adopt-success-content">
+            <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28a745;"></i>
+            <h4>Adoption Request Sent!</h4>
+            <p>Thank you for wanting to adopt @Model.Name. The pet's tutor will contact you soon to discuss the next steps.</p>
+        </div>
+    </div>
+</section>
 
-                            var icon = $('#favoriteIcon');
-
-                            $.ajax({
-                                url: '@Url.Action("Toggle", "Favorites")',
-                                type: 'POST',
-                                data: { animalListingId: petId },
-                                success: function (response) {
-                                    if (response.success) {
-                                        if (response.isFavorited) {
-                                            icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                            showNotification('Added to favorites!');
-                                        } else {
-                                            icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                                            showNotification('Removed from favorites!');
-                                        }
-                                    }
-                                }
-                            });
-                        });
-
-                        function showNotification(message) {
-                            // Remove notificações anteriores
-                            $('.toast-notification').remove();
-
-                            var toast = $(`<div class="toast-notification">${message}</div>`);
-                            $('body').append(toast);
-                            setTimeout(() => toast.fadeOut(300, function () { $(this).remove(); }), 2000);
-                        }
-                    });
-    </script>
-}
+<script src="~/js/adopt.js" asp-append-version="true"></script>
+<script src="~/js/favorite.js" asp-append-version="true"></script>
