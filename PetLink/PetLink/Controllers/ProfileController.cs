@@ -284,7 +284,6 @@ namespace PetLink.Controllers
                 .Include(f => f.AnimalListing)
                 .Select(f => f.AnimalListing)
                 .Where(a => a.Status == ListingStatus.Published)
-                .Take(3)
                 .ToListAsync();
 
             // Buscar active applications (pending ou approved)
