@@ -35,20 +35,12 @@
                         <div class="flex-grow-1 ms-4">
                             <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
                             <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
-                            <p class="text-muted small mb-0">
-                                <i class="bi bi-envelope me-1"></i> @Model.User.Email
-                                @if (!string.IsNullOrEmpty(Model.User.Phone))
-                                {
-                                    <span class="mx-2">•</span>
-                                    <i class="bi bi-telephone me-1"></i> @Model.User.Phone
-                                }
-                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Active Applications Section (EM CIMA) -->
+            <!-- Active Applications Section -->
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-white border-0 pt-4 pb-0">
                     <h4 class="fw-bold text-primary-darkblue mb-0">
@@ -103,7 +95,7 @@
 
         
             <div class="row">
-                <!-- Saved Pets Section (Carrossel Horizontal com 2 cards visíveis) -->
+                <!-- Saved Pets Section -->
 <div class="col-md-6 mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold text-primary-darkblue mb-0">
@@ -174,7 +166,7 @@
                 </div>
             </div>
             
-            <!-- Botões de navegação (setas) -->
+            <!-- Botões de navegação -->
             @if (Model.SavedPets.Count() > 2)
             {
                 <button class="btn btn-light rounded-circle shadow-sm position-absolute start-0 top-50 translate-middle-y ms-2" 
@@ -188,7 +180,7 @@
             }
         </div>
         
-        <!-- Indicador de quantos animais faltam (opcional) -->
+        <!-- Indicador de quantos animais faltam -->
         if (Model.SavedPets.Count() > 2)
         {
             <div class="text-center mt-3">
