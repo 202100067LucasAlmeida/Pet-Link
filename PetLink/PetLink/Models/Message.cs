@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
@@ -20,5 +22,7 @@ namespace PetLink.Models
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
         public bool IsRead { get; set; } = false;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
@@ -255,11 +256,111 @@ namespace PetLink.Controllers
             return View();
         }
 
-        public IActionResult ForgotPasswordForm()
+        // My profile-------- 
+        
+        // GET: Profile/MyProfile
+        [Authorize(Roles = "User,PetSitter")]
+        public async Task<IActionResult> MyProfile()
         {
-            //adicionar lógica de enviar um email pra pessoa
-            return View();
+            // Obter o ID do utilizador logado
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Challenge();
+            }
+
+            // Buscar utilizador
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Buscar saved pets (favoritos)
+            var savedPets = await _context.FavoritePets
+                .Where(f => f.UserId == userId)
+                .Include(f => f.AnimalListing)
+                .Select(f => f.AnimalListing)
+                .Where(a => a.Status == ListingStatus.Published)
+                .ToListAsync();
+
+            // Buscar active applications (pending ou approved)
+            var activeApplications = await _context.Applications
+                .Where(a => a.UserId == userId && 
+                       (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.Approved))
+                .Include(a => a.AnimalListing)
+                .ThenInclude(a => a.Tutor)
+                .OrderByDescending(a => a.SubmittedAt)
+                .Take(3)
+                .ToListAsync();
+
+            // Buscar mensagens recentes
+            var recentConversations = new List<Message>();
+
+            var allMessages = await _context.Messages
+            .Where(m => m.ReceiverId == userId || m.SenderId == userId)
+            .Include(m => m.Sender)
+            .Include(m => m.Receiver)
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
+
+            // Agrupar por conversa (pessoa com quem se está a falar)
+            var conversations = allMessages
+            .GroupBy(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+            .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault())
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(3)
+            .ToList();
+
+            recentConversations = conversations;
+
+            // Calcular estatísticas
+            var totalApplications = await _context.Applications
+                .CountAsync(a => a.UserId == userId);
+                
+            var unreadMessages = await _context.Messages
+                .CountAsync(m => m.ReceiverId == userId && !m.IsRead);
+
+            var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
+
+            var viewModel = new ProfileViewModel
+            {
+            User= user,
+            SavedPets = savedPets,
+            ActiveApplications = activeApplications,
+            RecentConversations = recentConversations,
+            TotalApplications = totalApplications,
+            UnreadMessages = unreadMessages,
+            DaysSinceJoined = daysSinceJoined 
+            };
+
+            return View(viewModel);
         }
 
+        // POST: Profile/MarkMessagesAsRead
+        [HttpPost]
+        [Authorize(Roles = "User,PetSitter")]
+        public async Task<IActionResult> MarkMessagesAsRead()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Json(new { success = false });
+            }
+
+            var unreadMessages = await _context.Messages
+                .Where(m => m.ReceiverId == userId && !m.IsRead)
+                .ToListAsync();
+
+            foreach (var msg in unreadMessages)
+            {
+                msg.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+        }
     }
 }
