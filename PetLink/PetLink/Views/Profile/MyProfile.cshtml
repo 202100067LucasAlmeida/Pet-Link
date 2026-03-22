@@ -97,61 +97,96 @@
             </div>
 
             <div class="row">
+                
                 <!-- Saved Pets Section -->
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm rounded-4 mb-4">
-                        <div class="card-header bg-white border-0 pt-4 pb-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="fw-bold text-primary-darkblue mb-0">
-                                    <i class="bi bi-heart-fill text-danger me-2"></i>Saved Pets
-                                </h4>
-                                <a asp-controller="Favorites" asp-action="Index" class="btn btn-link text-decoration-none">
-                                    View All
+<div class="col-md-12 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-primary-darkblue mb-0">
+            <i class="bi bi-heart-fill text-danger me-2"></i>Saved Pets
+        </h4>
+        <a asp-controller="Favorites" asp-action="Index" class="btn btn-link text-decoration-none">
+            View All <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    
+    @if (Model.SavedPets == null || !Model.SavedPets.Any())
+    {
+        <div class="text-center py-5 bg-primary-light rounded-3">
+            <i class="bi bi-heart fs-1 text-muted"></i>
+            <p class="text-muted mt-2">No saved pets yet</p>
+            <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-sm btn-primary rounded-pill">
+                Browse Pets
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="position-relative">
+            <div class="row flex-nowrap overflow-auto pb-3" style="scroll-behavior: smooth; gap: 1rem;" id="savedPetsCarousel">
+                @foreach (var pet in Model.SavedPets)
+                {
+                    <div class="col-md-3" style="flex: 0 0 auto; width: 280px;">
+                        <div class="card border-0 shadow-sm rounded-4 h-100">
+                            <div class="position-relative">
+                                @{
+                                    var imagePath = $"/images/{pet.Name.ToLower()}.jpg";
+                                    var fullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", $"{pet.Name.ToLower()}.jpg");
+                                    var imageExists = System.IO.File.Exists(fullPath);
+                                }
+                                @if (imageExists)
+                                {
+                                    <img src="@imagePath" alt="@pet.Name" 
+                                         class="card-img-top rounded-top-4" 
+                                         style="height: 160px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center rounded-top-4" 
+                                         style="height: 160px;">
+                                        <i class="bi bi-image text-muted fs-1"></i>
+                                    </div>
+                                }
+                                <span class="badge bg-primary position-absolute bottom-0 start-0 m-2 rounded-pill">
+                                    @pet.Species.ToString().ToUpper()
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="fw-bold text-primary-darkblue mb-1">@pet.Name</h6>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-geo-alt me-1"></i>@pet.Location, Portugal
+                                </p>
+                                <div class="d-flex flex-wrap gap-1 mb-3">
+                                    @if (pet.Breed != 0)
+                                    {
+                                        <span class="badge bg-light text-dark">@pet.Breed</span>
+                                    }
+                                    <span class="badge bg-light text-dark">@pet.AgeMonths months</span>
+                                </div>
+                                <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" 
+                                   class="btn btn-outline-primary rounded-pill w-100">
+                                    View Details
                                 </a>
                             </div>
                         </div>
-                        <div class="card-body">
-                            @if (!Model.SavedPets.Any())
-                            {
-                                <div class="text-center py-4">
-                                    <i class="bi bi-heart fs-1 text-muted"></i>
-                                    <p class="text-muted mt-2">No saved pets yet</p>
-                                </div>
-                            }
-                            else
-                            {
-                                @foreach (var pet in Model.SavedPets)
-                                {
-                                    <div class="d-flex align-items-center border-bottom pb-3 mb-3">
-                                        <div class="flex-shrink-0">
-                                            @{
-                                                var imagePath = $"/images/{pet.Name.ToLower()}.jpg";
-                                                var fullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", $"{pet.Name.ToLower()}.jpg");
-                                                var imageExists = System.IO.File.Exists(fullPath);
-                                            }
-                                            @if (imageExists)
-                                            {
-                                                <img src="@imagePath" alt="@pet.Name" class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
-                                            }
-                                            else
-                                            {
-                                                <div class="bg-secondary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-image text-muted"></i>
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <h6 class="fw-bold mb-0">@pet.Name</h6>
-                                            <small class="text-muted d-block">@pet.Location, Portugal</small>
-                                            <small class="text-muted">@pet.Species • @pet.Breed</small>
-                                        </div>
-                                        <span class="badge bg-light text-dark">@pet.Species.ToString().ToUpper()</span>
-                                    </div>
-                                }
-                            }
-                        </div>
                     </div>
-                </div>
+                }
+            </div>
+            
+            <!-- Botões de navegação (setas) -->
+            @if (Model.SavedPets.Count() > 3)
+            {
+                <button class="btn btn-light rounded-circle shadow-sm position-absolute start-0 top-50 translate-middle-y ms-2" 
+                        id="scrollLeftBtn" style="z-index: 10; width: 40px; height: 40px;">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-light rounded-circle shadow-sm position-absolute end-0 top-50 translate-middle-y me-2" 
+                        id="scrollRightBtn" style="z-index: 10; width: 40px; height: 40px;">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            }
+        </div>
+    }
+</div>
 
             <!-- Recent Messages Section -->
 <div class="col-md-6">
@@ -268,19 +303,22 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Marcar mensagens como lidas quando o utilizador vê o perfil
-            @if (Model.UnreadMessages > 0)
-            {
-                <text>
-                $.ajax({
-                    url: '@Url.Action("MarkMessagesAsRead", "Profile")',
-                    type: 'POST',
-                    success: function() {
-                        console.log('Messages marked as read');
-                    }
+            // Scroll para as setas do carrossel de saved pets
+            const carousel = document.getElementById('savedPetsCarousel');
+            const scrollLeftBtn = document.getElementById('scrollLeftBtn');
+            const scrollRightBtn = document.getElementById('scrollRightBtn');
+            
+            if (scrollLeftBtn && scrollRightBtn && carousel) {
+                scrollLeftBtn.addEventListener('click', () => {
+                    carousel.scrollBy({ left: -300, behavior: 'smooth' });
                 });
-                </text>
+                
+                scrollRightBtn.addEventListener('click', () => {
+                    carousel.scrollBy({ left: 300, behavior: 'smooth' });
+                });
             }
+            
+            
         });
     </script>
 }
