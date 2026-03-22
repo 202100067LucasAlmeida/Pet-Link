@@ -1,0 +1,160 @@
+﻿.adopt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.adopt-modal-container {
+    background-color: white;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.adopt-modal-header {
+    padding: 20px 25px;
+    border-bottom: 2px solid #f0f0f0;
+    background: var(--petlink-primary);
+    border-radius: 20px 20px 0 0;
+}
+
+.adopt-modal-header h3 {
+    margin: 0;
+    color: white;
+    font-weight: bold;
+}
+
+.adopt-modal-body {
+    padding: 25px;
+}
+
+.adopt-confirmation-items {
+    margin-top: 20px;
+}
+
+.adopt-confirm-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.adopt-checkbox {
+    margin-right: 12px;
+    margin-top: 3px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.adopt-confirm-item label {
+    cursor: pointer;
+    color: #555;
+    line-height: 1.4;
+}
+
+.adopt-modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.adopt-cancel-btn,
+.adopt-confirm-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.adopt-cancel-btn {
+    background-color: #f8f9fa;
+    color: #666;
+    border: 1px solid #dee2e6;
+}
+
+    .adopt-cancel-btn:hover {
+        background-color: #e9ecef;
+    }
+
+.adopt-confirm-btn {
+    background-color: var(--petlink-primary, #007bff);
+    color: white;
+}
+
+.adopt-confirm-btn:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.adopt-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.adopt-success-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.adopt-success-content {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    min-width: 300px;
+    border-left: 4px solid #28a745;
+}
+
+.adopt-success-content h4 {
+    margin: 10px 0 5px 0;
+    color: #333;
+}
+
+.adopt-success-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}

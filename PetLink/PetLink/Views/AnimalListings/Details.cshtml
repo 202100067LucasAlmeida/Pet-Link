@@ -4,6 +4,8 @@
     ViewData["Title"] = Model.Name + " - Pet Details";
 }
 
+<link rel="stylesheet" href="~/css/adopt.css" asp-append-version="true" />
+
 <section class="breadcrumb-section py-3 bg-light">
     <div class="container">
         <nav aria-label="breadcrumb">
@@ -101,6 +103,8 @@
 
                         <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2">Adopt
                             @Model.Name
+                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2" id="adoptBtn">
+                            Adopt @Model.Name
                         </button>
 
                         <p class="mt-3 small text-muted">
@@ -291,15 +295,6 @@
     </div>
 </section>
 
-@section Scripts {
-    <script>
-                    $(document).ready(function () {
-                        var petId = @Model.Id;
-
-                        // Verificar estado inicial
-                        $.ajax({
-                            url: '@Url.Action("Check", "Favorites")',
-                            type: 'GET',
                             data: { animalListingId: petId },
                             success: function (isFavorited) {
                                 if (isFavorited) {
