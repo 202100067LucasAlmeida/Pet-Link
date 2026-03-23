@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260320164842_InitialFullCreate")]
-    partial class InitialFullCreate
+    [Migration("20260323092659_FullCreate")]
+    partial class FullCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,10 +33,10 @@ namespace PetLink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AgeMonths")
+                    b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int>("Breed")
+                    b.Property<int>("AgeMonths")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -80,6 +80,44 @@ namespace PetLink.Migrations
                     b.ToTable("AnimalListings");
                 });
 
+            modelBuilder.Entity("PetLink.Models.Application", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimalListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrentStep")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TotalSteps")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalListingId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Applications");
+                });
+
             modelBuilder.Entity("PetLink.Models.FavoritePet", b =>
                 {
                     b.Property<int>("Id")
@@ -121,6 +159,9 @@ namespace PetLink.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
@@ -133,6 +174,12 @@ namespace PetLink.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalListingId");
@@ -140,6 +187,10 @@ namespace PetLink.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Messages");
                 });
@@ -191,12 +242,24 @@ namespace PetLink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -205,6 +268,12 @@ namespace PetLink.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
@@ -224,6 +293,25 @@ namespace PetLink.Migrations
                         .IsRequired();
 
                     b.Navigation("Tutor");
+                });
+
+            modelBuilder.Entity("PetLink.Models.Application", b =>
+                {
+                    b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
+                        .WithMany()
+                        .HasForeignKey("AnimalListingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PetLink.Models.User", "User")
+                        .WithMany("Applications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AnimalListing");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PetLink.Models.FavoritePet", b =>
@@ -263,6 +351,14 @@ namespace PetLink.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PetLink.Models.User", null)
+                        .WithMany("ReceivedMessages")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("PetLink.Models.User", null)
+                        .WithMany("SentMessages")
+                        .HasForeignKey("UserId1");
+
                     b.Navigation("AnimalListing");
 
                     b.Navigation("Receiver");
@@ -288,9 +384,15 @@ namespace PetLink.Migrations
 
             modelBuilder.Entity("PetLink.Models.User", b =>
                 {
+                    b.Navigation("Applications");
+
                     b.Navigation("FavoritePets");
 
                     b.Navigation("Listings");
+
+                    b.Navigation("ReceivedMessages");
+
+                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }
