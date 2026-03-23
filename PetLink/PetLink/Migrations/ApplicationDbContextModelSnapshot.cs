@@ -30,10 +30,10 @@ namespace PetLink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AgeMonths")
+                    b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<int>("Breed")
+                    b.Property<int>("AgeMonths")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")

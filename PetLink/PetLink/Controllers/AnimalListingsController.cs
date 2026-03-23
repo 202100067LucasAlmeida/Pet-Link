@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
 using Microsoft.AspNetCore.Authorization;
+using PetLink.Models.Enums;
 
 namespace PetLink
 {
@@ -142,6 +143,37 @@ namespace PetLink
             }
 
             return View(animalListing);
+        }
+
+        public async Task<IActionResult> Search(Species? species, 
+                                                string? location, 
+                                                Age? age)
+        {
+            var query = _context.AnimalListings
+                        .Include(t => t.Tutor)
+                        .AsQueryable();
+
+            // Apenas animais publicados, autorizados pelo administrador
+            query = query.Where(p => p.Status == ListingStatus.Published);
+
+            if (species.HasValue)
+            {
+                query = query.Where(p => p.Species == species.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                query = query.Where(p => p.Location.ToLower().Contains(location.ToLower()));
+            }
+
+            if (age.HasValue)
+            {
+                query = query.Where(p => p.Age == age.Value);
+            }
+
+            var results = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+
+            return View("Index", results);
         }
 
         // POST: AnimalListings/Delete/5

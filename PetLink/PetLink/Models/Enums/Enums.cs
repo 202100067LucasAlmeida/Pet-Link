@@ -11,9 +11,12 @@ namespace PetLink.Models.Enums
         Other
     }
 
-    public enum Breed
+    public enum Age
     {
-
+        Puppy,
+        Adult,
+        Senior,
+        Unkown
     }
 
     public enum ListingStatus

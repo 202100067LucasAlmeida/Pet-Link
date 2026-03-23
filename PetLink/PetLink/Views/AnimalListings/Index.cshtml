@@ -1,3 +1,4 @@
+@using PetLink.Models.Enums
 @model IEnumerable<PetLink.Models.AnimalListing>
 
 @{
@@ -13,21 +14,33 @@
             </div>
 
             <div class="card filter-card rounded-4 shadow-sm p-4">
-                <form>
+                <form method="get" asp-action="Search" asp-controller="AnimalListings">
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-bag me-2"></i> ANIMAL TYPE</div>
                         <div class="row g-2">
                             <div class="col-6">
-                                <button type="button" class="btn animal-type-btn w-100 rounded-3 active"><i class="bi bi-list-task me-1"></i> Dogs</button>    
+                                <input type="radio" name="species" value="@Species.Dog" id="dog" hidden>
+                                <label for="dog" class="btn animal-type-btn w-100 rounded-3">
+                                    <i class="bi bi-list-task me-1"></i>Dogs
+                                </label>
                             </div>
                             <div class="col-6">
-                                <button type="button" class="btn animal-type-btn w-100 rounded-3"><i class="bi bi-list-task me-1"></i> Cats</button>
+                                <input type="radio" name="species" value="@Species.Cat" id="cat" hidden>
+                                <label for="cat" class="btn animal-type-btn w-100 rounded-3">
+                                    <i class="bi bi-list-task me-1"></i>Cats
+                                </label>
                             </div>
                             <div class="col-6">
-                                <button type="button" class="btn animal-type-btn w-100 rounded-3"><i class="bi bi-twitter me-1"></i> Birds</button>
+                                <input type="radio" name="species" value="@Species.Bird" id="bird" hidden>
+                                <label for="bird" class="btn animal-type-btn w-100 rounded-3">
+                                    <i class="bi bi-list-task me-1"></i>Birds
+                                </label>
                             </div>
                             <div class="col-6">
-                                <button type="button" class="btn animal-type-btn w-100 rounded-3"><i class="bi bi-three-dots me-1"></i> Others</button>
+                                <input type="radio" name="species" value="@Species.Other" id="other" hidden>
+                                <label for="other" class="btn animal-type-btn w-100 rounded-3">
+                                    <i class="bi bi-list-task me-1"></i>Others
+                                </label>
                             </div>    
                         </div>
                     </div>
@@ -42,26 +55,31 @@
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-clock me-2"></i> AGE RANGE</div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="agePuppy">
-                            <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1 yr)</label>
+                            <input class="form-check-input" type="radio" name="age" value="@Age.Puppy" id="agePuppy">
+                            <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1
+                                yr)
+                            </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="ageAdult" checked>
+                            <input class="form-check-input" type="radio" name="age" value="@Age.Adult" id="ageAdult" checked>
                             <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7 yrs)</label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="ageSenior">
-                            <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+ yrs)</label>
-                        </div>
-                    </div>
+                        
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="age" value="@Age.Senior" id="ageSenior">
+                                <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+
+                                    yrs)</label>
+                                </div>
+                            </div>
 
-                    <div class="mb-4">
-                        <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-geo-alt"></i></span>
-                            <input type="text" class="form-control border-start-0 ps-0" placeholder="Zip code or city">
-                        </div>
-                    </div>
+                            <div class="mb-4">
+                                <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-muted border-end-0"><i
+                                        class="bi bi-geo-alt"></i></span>
+                                        <input type="text" name="location" class="form-control border-start-0 ps-0" placeholder="Zip code or city">
+                                    </div>
+                                </div>
 
                     <div class="mb-5">
                         <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>

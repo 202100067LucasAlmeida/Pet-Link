@@ -15,12 +15,12 @@ namespace PetLink.Models
         public string Name { get; set; }
 
         public Species Species { get; set; }
-        public Breed Breed { get; set; }
 
         [Required]
         public string Location { get; set; } 
 
-        public int AgeMonths { get; set; }
+        public int AgeMonths { get; set; } 
+        public Age Age { get; set; }
 
         [Required]
         public string Description { get; set; }
