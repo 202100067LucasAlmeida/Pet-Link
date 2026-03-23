@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using PetLink.Models.Enums;
+using System.Collections.Generic;
 
 namespace PetLink.Models
 {
@@ -33,10 +34,11 @@ namespace PetLink.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Chave estrangeira para o utilizador que criou o anúncio 
         public int TutorId { get; set; }
         
         [ForeignKey("TutorId")]
         public User Tutor { get; set; } 
+
+         public ICollection<FavoritePet> Favorites { get; set; }
     }
 }

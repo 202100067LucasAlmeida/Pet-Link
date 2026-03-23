@@ -7,9 +7,20 @@ using PetLink.Models;
 using PetLink.Models.Enums;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
+    public class EmailCheckRequest
+    {
+        public string Email { get; set; }
+    }
+
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +30,7 @@ namespace PetLink.Controllers
             _context = context;
         }
 
-        // 1. Mostra a página de Login (GET)
+        //Mostra a página de Login 
         [HttpGet]
         public IActionResult LoginForm()
         {
@@ -28,41 +39,40 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // 2. Recebe os dados do formulário quando clicas "Log In" (POST)
+        // Recebe os dados do formulário 
         [HttpPost]
         public async Task<IActionResult> LoginForm(string email, string password, bool rememberMe)
         {
-            // Procura o utilizador na base de dados
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                return Json(new { success = false, message = "Please fill in all fields." });
+            }
+
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
 
             if (user == null)
             {
-                // Mostra erro na página se não encontrar
-                ViewBag.Error = "Email ou password inválidos.";
-                return View();
+                return Json(new { success = false, message = "Invalid email or password." });
             }
 
-            // Cria o "Cartão de Cidadão" virtual (Claims) do utilizador
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()), // Define se é Admin, PetSitter, etc.
-                new Claim("UserId", user.Id.ToString()),
-                new Claim("IsVerified", user.IsVerified.ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("UserId", user.Id.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties { IsPersistent = rememberMe };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties { IsPersistent = rememberMe });
 
-            // Efetua o login (Cria o Cookie no navegador)
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-            return RedirectToAction("Index", "Home");
+            return Json(new { success = true });
         }
 
-        // 3. Mostra a página de Registo 
+        // Mostra a página de Registo 
         [HttpGet]
         public IActionResult SignUpForm()
         {
@@ -70,74 +80,7 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // POST: Recebe os dados do formulário de registo e cria a conta
-        [HttpPost]
-        public async Task<IActionResult> SignUpForm(string fullName, string email, string phone, string password, string confirmPassword, string userType)
-        {
-            var errors = new List<string>();
-
-            if (!IsValidName(fullName))
-            {
-                errors.Add("O nome não deve ter números nem símbolos.");
-            }
-
-            if (!IsValidEmail(email))
-            {
-                errors.Add("O email deve conter um @ e ser válido.");
-            }
-
-            if (password != confirmPassword)
-            {
-                errors.Add("As passwords não coincidem.");
-            }
-
-            var passwordErrors = ValidatePassword(password);
-            errors.AddRange(passwordErrors);
-
-            if (errors.Any())
-            {
-                ViewBag.Error = string.Join(" ", errors);
-                // Preserve form data
-                ViewBag.FullName = fullName;
-                ViewBag.Email = email;
-                ViewBag.Phone = phone;
-                ViewBag.UserType = userType;
-                return View();
-            }
-
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (existingUser != null)
-            {
-                ViewBag.Error = "Este email já está registado.";
-                ViewBag.FullName = fullName;
-                ViewBag.Email = email;
-                ViewBag.Phone = phone;
-                ViewBag.UserType = userType;
-                return View();
-            }
-
-            UserRole role = UserRole.User;
-            if (userType == "PetSitter") role = UserRole.PetSitter;
-            if (userType == "Shelter") role = UserRole.Shelter;
-            if (userType == "User") role = UserRole.User;
-
-            var newUser = new PetLink.Models.User
-            {
-                Name = fullName,
-                Email = email,
-                PasswordHash = password,
-                Role = role,
-                IsVerified = false // Requer verificação do admin para Associações e PetSitters
-            };
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Conta criada com sucesso! Podes fazer login.";
-            return RedirectToAction("LoginForm");
-        }
-
-        // 4. Faz o Logout
+        // Faz o Logout
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -145,66 +88,92 @@ namespace PetLink.Controllers
         }
 
 
+        // sprint 2 -----------
 
-        //sprint 2 -----------
+        // Verificação do Email
+        [HttpPost]
+        public async Task<IActionResult> ValidateEmail([FromBody] EmailCheckRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return Json(new { isAvailable = false });
 
-        //verificações pedidas do sign up
+            bool emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == request.Email.ToLower());
+            return Json(new { isAvailable = !emailExists });
+        }
+
+        // Verificaçõesdo sign up e criação de conta
         [HttpPost]
         public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
         {
             var errors = new Dictionary<string, string>();
 
-            // Validate Name
+            // valida nome
             if (string.IsNullOrWhiteSpace(model.FullName))
             {
                 errors["fullName"] = "O nome é obrigatório.";
             }
             else if (!IsValidName(model.FullName))
             {
-                errors["fullName"] = "O nome não deve ter números nem símbolos.";
+                errors["fullName"] = "Name must not contain numbers or symbols.";
             }
 
-            // Validate Email
+            // valida email
             if (string.IsNullOrWhiteSpace(model.Email))
             {
                 errors["email"] = "O email é obrigatório.";
             }
             else if (!IsValidEmail(model.Email))
             {
-                errors["email"] = "O email deve conter um @ e ser válido.";
+                errors["email"] = "Please provide a valid email address.";
             }
             else
             {
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
                 if (existingUser != null)
                 {
-                    errors["email"] = "Este email já está registado.";
+                    errors["email"] = "This email is already registered.";
                 }
             }
 
-            // Validate Phone
+            // valida telemóvel
             if (string.IsNullOrWhiteSpace(model.Phone))
             {
-                errors["phone"] = "O telefone é obrigatório.";
+                errors["phone"] = "Phone number is required.";
             }
 
-            // Validate Password
+            // valida password
             var passwordErrors = ValidatePassword(model.Password);
             if (passwordErrors.Any())
             {
                 errors["password"] = string.Join(" ", passwordErrors);
             }
 
-            // Validate Confirm Password
+            // valida confirmação de password
             if (model.Password != model.ConfirmPassword)
             {
-                errors["confirmPassword"] = "As passwords não coincidem.";
+                errors["confirmPassword"] = "Passwords do not match.";
             }
 
             if (errors.Any())
             {
                 return Json(new { success = false, errors });
             }
+
+            UserRole role = UserRole.User;
+            if (model.UserType == "PetSitter") role = UserRole.PetSitter;
+            if (model.UserType == "Shelter") role = UserRole.Shelter;
+
+            var newUser = new PetLink.Models.User
+            {
+                Name = model.FullName,
+                Email = model.Email,
+                PasswordHash = model.Password,
+                Role = role,
+                IsVerified = false // Requer verificação do admin para Associações e PetSitters
+            };
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
 
             return Json(new { success = true });
         }
@@ -226,7 +195,6 @@ namespace PetLink.Controllers
         }
 
 
-        //métodos extra
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -255,26 +223,140 @@ namespace PetLink.Controllers
 
             if (string.IsNullOrEmpty(password))
             {
-                errors.Add("A password é obrigatória.");
+                errors.Add("Password is required.");
                 return errors;
             }
 
             if (password.Length < 6)
-                errors.Add("A password deve ter pelo menos 6 caracteres.");
+                errors.Add("Minimum 6 characters.");
 
             if (!password.Any(char.IsLower))
-                errors.Add("A password deve ter pelo menos uma letra minúscula.");
+                errors.Add("One lowercase letter required.");
 
             if (!password.Any(char.IsUpper))
-                errors.Add("A password deve ter pelo menos uma letra maiúscula.");
+                errors.Add("One uppercase letter required.");
 
             if (!password.Any(char.IsDigit))
-                errors.Add("A password deve ter pelo menos um número.");
+                errors.Add("One number required.");
 
             if (!password.Any(c => !char.IsLetterOrDigit(c)))
-                errors.Add("A password deve ter pelo menos um símbolo.");
+                errors.Add("One symbol required.");
 
             return errors;
+        }
+
+
+        //account settings
+        public IActionResult AccountSettings()
+        {
+            return View();
+        }
+
+        // My profile
+        
+        // GET: Profile/MyProfile
+        [Authorize(Roles = "User,PetSitter")]
+        public async Task<IActionResult> MyProfile()
+        {
+            // Obtem o ID do utilizador logado
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Challenge();
+            }
+
+            // Vai buscar o utilizador
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Vai buscar saved pets
+            var savedPets = await _context.FavoritePets
+                .Where(f => f.UserId == userId)
+                .Include(f => f.AnimalListing)
+                .Select(f => f.AnimalListing)
+                .Where(a => a.Status == ListingStatus.Published)
+                .ToListAsync();
+
+            // vai buscar active applications 
+            var activeApplications = await _context.Applications
+                .Where(a => a.UserId == userId && 
+                       (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.Approved))
+                .Include(a => a.AnimalListing)
+                .ThenInclude(a => a.Tutor)
+                .OrderByDescending(a => a.SubmittedAt)
+                .Take(3)
+                .ToListAsync();
+
+            // mensagens recentes
+            var recentConversations = new List<Message>();
+
+            var allMessages = await _context.Messages
+            .Where(m => m.ReceiverId == userId || m.SenderId == userId)
+            .Include(m => m.Sender)
+            .Include(m => m.Receiver)
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync();
+
+            // Agrupar por conversa 
+            var conversations = allMessages
+            .GroupBy(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+            .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault())
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(3)
+            .ToList();
+
+            recentConversations = conversations;
+
+            // Calcular estatísticas
+            var totalApplications = await _context.Applications
+                .CountAsync(a => a.UserId == userId);
+                
+            var unreadMessages = await _context.Messages
+                .CountAsync(m => m.ReceiverId == userId && !m.IsRead);
+
+            var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
+
+            var viewModel = new ProfileViewModel
+            {
+            User= user,
+            SavedPets = savedPets,
+            ActiveApplications = activeApplications,
+            RecentConversations = recentConversations,
+            TotalApplications = totalApplications,
+            UnreadMessages = unreadMessages,
+            DaysSinceJoined = daysSinceJoined 
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Profile/MarkMessagesAsRead
+        [HttpPost]
+        [Authorize(Roles = "User,PetSitter")]
+        public async Task<IActionResult> MarkMessagesAsRead()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Json(new { success = false });
+            }
+
+            var unreadMessages = await _context.Messages
+                .Where(m => m.ReceiverId == userId && !m.IsRead)
+                .ToListAsync();
+
+            foreach (var msg in unreadMessages)
+            {
+                msg.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
         }
     }
 }

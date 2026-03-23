@@ -1,0 +1,143 @@
+@using PetLink.Models
+@using PetLink.ViewModels
+@model MessagesViewModel
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<div class="container py-4" style="font-family: var(--font-display);">
+    <div class="row">
+
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
+                <div class="card-body p-0"> 
+                    
+                    <div class="row g-0" style="height: 75vh; min-height: 600px;">
+                        
+                        <div class="col-md-4 border-end d-flex flex-column bg-white">
+                            <div class="p-4 border-bottom">
+                                <h3 class="mb-3 text-primary-darkblue" style="font-family: var(--font-primary);">Messages</h3>
+                                <div class="input-group input-group-sm rounded-pill border bg-light">
+                                    <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-0 bg-transparent ps-1" placeholder="Search conversations...">
+                                </div>
+                            </div>
+
+                            <div class="overflow-auto flex-grow-1">
+                                <div class="list-group list-group-flush">
+                                    @if (Model.Conversations.Any())
+                                    {
+                                        @foreach (var conv in Model.Conversations)
+                                        {
+                                            <a asp-action="Index" asp-route-id="@conv.OtherUserId" 
+                                               class="list-group-item list-group-item-action p-3 border-0" 
+                                               style="@(conv.IsActive ? "background-color: var(--petlink-light-bg); border-left: 4px solid var(--petlink-primary) !important;" : "")">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="position-relative me-3">
+                                                        <img src="/images/default-avatar.jpg" class="rounded-circle shadow-sm" width="45" height="45">
+                                                        @if(conv.IsOnline) { 
+                                                            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span> 
+                                                        }
+                                                    </div>
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 text-truncate fw-bold" style="color: var(--petlink-dark); font-size: 0.9rem;">@conv.OtherUserName</h6>
+                                                            <small class="text-muted" style="font-size: 0.7rem;">@conv.LastMessageTimestamp.ToString("HH:mm")</small>
+                                                        </div>
+                                                        <p class="text-muted small m-0 text-truncate">@conv.LastMessagePreview</p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center p-4 mt-5 text-muted small">No messages found.</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 d-flex flex-column" style="background-color: white;">
+                            @if (Model.ActiveConversation != null)
+                            {
+                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white shadow-sm">
+                                    <div class="d-flex align-items-center ms-2">
+                                        <img src="/images/default-avatar.jpg" class="rounded-circle me-3" width="40" height="40">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" style="color: var(--petlink-dark);">@Model.ActiveConversation.OtherUserName</h6>
+                                            <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">● ACTIVE NOW</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted d-flex gap-3 me-2">
+                                        <i class="bi bi-telephone cursor-pointer hover-primary"></i>
+                                        <i class="bi bi-info-circle cursor-pointer hover-primary"></i>
+                                    </div>
+                                </div>
+
+                                <div class="flex-grow-1 p-4 overflow-auto" id="chatWindow" style="background-color: var(--petlink-grey-bg);">
+                                    @foreach (var msg in Model.ActiveConversation.Messages)
+                                    {
+                                        var isMine = msg.SenderId == int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                                        <div class="d-flex mb-4 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                            @if (!isMine) { <img src="/images/default-avatar.jpg" class="rounded-circle me-2 align-self-end mb-1" width="28" height="28"> }
+                                            <div class="p-3 shadow-sm" style="max-width: 75%; border-radius: 18px; 
+                                                 @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;" : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
+                                                <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">@msg.Content</p>
+                                                <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">@msg.Timestamp.ToString("HH:mm")</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="p-3 border-top bg-white">
+                                    <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
+                                        <input type="hidden" name="receiverId" value="@Model.ActiveConversation.OtherUserId" />
+                                        
+                                        <input type="text" name="content" id="messageInput" class="form-control rounded-pill border-0 py-2" 
+                                            style="background-color: var(--petlink-grey-bg);" placeholder="Type your message here..." 
+                                            required autocomplete="off">
+                                        
+                                        <button type="submit" class="btn border-0 rounded-circle d-flex align-items-center justify-content-center" 
+                                                style="background-color: var(--petlink-primary); color: white; width: 40px; height: 40px;">
+                                            <i class="bi bi-send-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
+                                    <div class="mb-3" style="background-color: var(--petlink-light-bg); padding: 25px; border-radius: 50%;">
+                                        <i class="bi bi-chat-left-dots" style="font-size: 2.5rem; color: var(--petlink-primary);"></i>
+                                    </div>
+                                    <h4 style="font-family: var(--font-primary); color: var(--petlink-dark);">Select a conversation</h4>
+                                    <p class="text-muted small">Choose a contact from the left to start messaging.</p>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var chatWindow = document.getElementById("chatWindow");
+            if (chatWindow) {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            $('#messageInput').focus();
+        });
+    </script>
+}

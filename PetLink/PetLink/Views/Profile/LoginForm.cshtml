@@ -4,7 +4,6 @@
 
 <div class="row justify-content-center">
 
-    @* Intro com a marca *@
     <div class="text-center m-4 mt-5">
         <h1 class="display-6 text-primary-blue fw-bold">
             <i class=" text-primary me-2"><img src="~/images/logo.png" alt="PetLink Logo" height="40"
@@ -31,23 +30,36 @@
                 }
 
                 @* POST para o ProfileController e action LoginForm *@
-                <form asp-controller="Profile" asp-action="LoginForm" method="post">
+                <form id="loginForm" asp-controller="Profile" asp-action="LoginForm" method="post" novalidate>
+
+                    <div id="errorContainer" class="alert alert-danger text-center rounded-3 small fw-semibold mb-4"
+                         style="display: none;">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold">Email Address</label>
                         <input type="email" name="email" class="form-control py-2" id="email"
                                placeholder="jane@example.com" required>
+                        <div class="invalid-feedback" id="emailError"></div>
                     </div>
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <label for="password" class="form-label fw-semibold mb-0">Password</label>
-
-                            @* Link prático para recuperar password *@
-                            <a href="#" class="small text-decoration-none text-primary-lightblue">Forgot Password?</a>
+                            <a asp-controller="Profile" asp-action="ForgotPasswordForm" class="small text-decoration-none text-primary-lightblue">Forgot Password?</a>
                         </div>
 
-                        <input type="password" name="password" class="form-control py-2 mt-2" id="password"
-                               placeholder="**********" required>
+                        <div class="input-group mt-2">
+                            <input type="password" name="password" class="form-control py-2 border-end-0" id="password"
+                                   placeholder="**********" required>
+                            <button class="btn btn-outline-secondary border border-start-0 bg-white" type="button"
+                                    id="togglePassword">
+                                <i class="bi bi-eye text-muted" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback" id="passwordError"></div>
                     </div>
 
                     <div class="mb-4 form-check">
@@ -55,9 +67,9 @@
                         <label class="form-check-label small" for="rememberMe">Remember me</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">Log In</button>
+                    <button type="submit" id="submitBtn"
+                            class="btn btn-primary w-100 py-2 mb-4 fw-bold rounded-pill">Log In</button>
 
-                    @* Separador visual "OR" *@
                     <div class="text-center mb-4 position-relative">
                         <hr class="text-muted">
                         <span
@@ -87,7 +99,7 @@
             </div>
         </div>
 
-        @* Ícones de confiança no fundo (com icons do Bootstrap) *@
+        @* Ícones de confiança no fundo *@
         <div class="d-flex justify-content-center gap-4 mt-4 small text-muted fw-semibold">
             <span><i class="bi bi-shield-lock"></i> SECURE</span>
             <span><i class="bi bi-check-circle"></i> VERIFIED</span>

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
+using PetLink.Hubs;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -18,6 +19,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Profile/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -55,5 +58,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

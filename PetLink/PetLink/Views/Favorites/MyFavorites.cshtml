@@ -1,0 +1,207 @@
+@using PetLink.Models.Enums
+@model IEnumerable<PetLink.Models.AnimalListing>
+@{
+    ViewData["Title"] = "My Favorites";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <!-- Sidebar -->
+                @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+            </div>
+        
+            <div class="col-lg-9">
+                <h2 class="text-primary-blue mb-4">My Favorites</h2>
+            
+                @if (!Model.Any())
+                {
+                    <div class="text-center py-5 bg-primary-light rounded-3">
+                        <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
+                        <h4 class="mt-3 text-muted">No favorites yet</h4>
+                        <p class="text-muted">Start adding pets to your favorites by clicking the heart icon on pet listings!</p>
+                        <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
+                            Browse Pets
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-4">
+                        @foreach (var pet in Model.Where(p => p.Status == ListingStatus.Published))
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 border-0 shadow-sm pet-card d-flex flex-column" data-pet-id="@pet.Id">
+                                    <div class="pet-card-img-wrapper position-relative">
+                                        <!-- Verificar se a imagem existe -->
+                                        @{
+                                            var imageName = pet.Name.ToLower() + ".jpg";
+                                            var imagePath = "/images/" + imageName;
+                                            var imageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", imageName);
+                                            var imageExists = System.IO.File.Exists(imageFullPath);
+                                        }
+                                        
+                                        @if (imageExists)
+                                        {
+                                            <img src="@imagePath" alt="@pet.Name's photo" 
+                                                 class="w-100" 
+                                                 style="height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center" 
+                                                 style="height: 200px; border-radius: 12px 12px 0 0;">
+                                                @switch (pet.Species)
+                                                {
+                                                    case Species.Dog:
+                                                        <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                        break;
+                                                    case Species.Cat:
+                                                        <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                        break;
+                                                    case Species.Bird:
+                                                        <i class="bi bi-emoji-smile text-primary-blue" style="font-size: 4rem;"></i>
+                                                        break;
+                                                    default:
+                                                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                                        break;
+                                                }
+                                            </div>
+                                        }
+                                        
+                                        <button class="btn-heart active position-absolute top-0 end-0 m-2" data-pet-id="@pet.Id">
+                                            <i class="bi bi-heart-fill text-danger"></i>
+                                        </button>
+                                        
+                                        <span class="badge-adoptable position-absolute bottom-0 start-0 m-3">
+                                            READY TO ADOPT
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="card-body d-flex flex-column flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title fw-bold mb-0 text-primary-darkblue">@pet.Name</h5>
+                                            <span class="pet-tag">@pet.Species.ToString().ToUpper()</span>
+                                        </div>
+                                        <p class="card-text text-muted small mb-2">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>@pet.Location
+                                        </p>
+                                        <p class="card-text text-muted small mb-2">
+                                            <i class="bi bi-calendar me-1"></i>
+                                            @{
+                                                var years = pet.AgeMonths / 12;
+                                                var months = pet.AgeMonths % 12;
+                                                var ageText = "";
+                                                
+                                                if (years > 0)
+                                                {
+                                                    ageText += $"{years} {(years == 1 ? "year" : "years")}";
+                                                    if (months > 0) ageText += " ";
+                                                }
+                                                if (months > 0 || years == 0)
+                                                {
+                                                    ageText += $"{months} {(months == 1 ? "month" : "months")}";
+                                                }
+                                            }
+                                            @ageText
+                                        
+                                            @if (pet.Breed != 0)
+                                            {
+                                                <span class="mx-2">•</span>
+                                                <span>@pet.Breed</span>
+                                            }
+                                        </p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            @if (pet.IsVaccinated)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Vaccinated">
+                                                    <i class="bi bi-shield-check me-1"></i>VACCINATED
+                                                </span>
+                                            }
+                                            @if (pet.IsDewormed)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Dewormed">
+                                                    <i class="bi bi-capsule me-1"></i>DEWORMED
+                                                </span>
+                                            }
+                                            @if (pet.IsSterilized)
+                                            {
+                                                <span class="pet-tag pet-tag-green" title="Sterilized">
+                                                    <i class="bi bi-heart-pulse me-1"></i>STERILIZED
+                                                </span>
+                                            }
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 mt-auto">
+                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" 
+                                               class="btn btn-outline-primary rounded-pill">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.btn-heart').click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var button = $(this);
+                var petId = button.data('pet-id');
+                var icon = button.find('i');
+                var card = button.closest('.col-md-6');
+                
+                $.ajax({
+                    url: '@Url.Action("Toggle", "Favorites")',
+                    type: 'POST',
+                    data: { animalListingId: petId },
+                    success: function(response) {
+                        if (response.success) {
+                            // Mostra a notificação antes de remover o card
+                            showNotification(response.message);
+                            
+                            // Pequeno atraso para a notificação ser vista
+                            setTimeout(function() {
+                                card.fadeOut(300, function() {
+                                    $(this).remove();
+                                    if ($('.pet-card').length === 0) {
+                                        location.reload();
+                                    }
+                                });
+                            }, 100);
+                        }
+                    },
+                    error: function() {
+                        showNotification('Error updating favorite. Please try again.', 'error');
+                    }
+                });
+            });
+            
+            // Função de notificação 
+            function showNotification(message, type = 'success') {
+                $('.toast-notification').remove();
+                
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                
+                setTimeout(() => {
+                    toast.fadeOut(300, function() { 
+                        $(this).remove(); 
+                    });
+                }, 2000);
+            }
+        });
+    </script>
+}
+

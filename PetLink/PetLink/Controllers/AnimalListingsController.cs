@@ -24,23 +24,33 @@ namespace PetLink
         }
 
         // GET: AnimalListings/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var animalListing = await _context.AnimalListings
+            var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (animalListing == null)
+
+            if (listing == null) return NotFound();
+
+            // Carregar histórico de mensagens entre o User atual e o Tutor deste animal
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (!string.IsNullOrEmpty(userIdClaim))
             {
-                return NotFound();
+                int currentUserId = int.Parse(userIdClaim);
+
+                ViewBag.ChatHistory = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
+                                (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
+                    .OrderBy(m => m.Timestamp)
+                    .ToListAsync();
             }
 
-            return View(animalListing);
+            // carregar OtherPets
+            ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
+
+            return View(listing);
         }
+
 
         // GET: AnimalListings/Create
         public IActionResult Create()
@@ -82,8 +92,6 @@ namespace PetLink
         }
 
         // POST: AnimalListings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized,Status,CreatedAt,TutorId")] AnimalListing animalListing)

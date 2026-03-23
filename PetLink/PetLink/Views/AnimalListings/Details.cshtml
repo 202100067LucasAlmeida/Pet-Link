@@ -4,6 +4,8 @@
     ViewData["Title"] = Model.Name + " - Pet Details";
 }
 
+<link rel="stylesheet" href="~/css/adopt.css" asp-append-version="true" />
+
 <section class="breadcrumb-section py-3 bg-light">
     <div class="container">
         <nav aria-label="breadcrumb">
@@ -27,28 +29,57 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="mb-4">
-                    @if (Model.Status.ToString() == "Publicado")
-                    {
-                        <span class="badge bg-success mb-2">AVAILABLE FOR ADOPTION</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary mb-2">@Model.Status.ToString().ToUpper()</span>
-                    }
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            @if (Model.Status.ToString() == "Publicado")
+                            {
+                                <span class="badge bg-success mb-2">AVAILABLE FOR ADOPTION</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary mb-2">@Model.Status.ToString().ToUpper()</span>
+                            }
 
-                    <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">@Model.Name</h1>
-                    <p class="lead text-muted text-highlight-darkblue">
-                        @Model.Species • @Model.Location • @Model.AgeMonths months
-                    </p>
+                            <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">@Model.Name</h1>
+                            <p class="lead text-muted text-highlight-darkblue">
+                                @Model.Species • @Model.Location • @Model.AgeMonths months
+                            </p>
+                        </div>
+
+                        @if (User.IsInRole("User"))
+                        {
+                            <button class="btn-heart favorite-toggle" data-pet-id="@Model.Id" id="favoriteBtn">
+                                <i class="bi bi-heart" id="favoriteIcon"></i>
+                            </button>
+                        }
+                    </div>
                 </div>
 
-                <img src="~/images/@(Model.Name.ToLower()).jpg" alt="@Model.Name's photo"
-                     class="img-fluid rounded-4 shadow-sm mb-4 w-100" style="max-height: 500px; object-fit: cover;" />
+                <!-- Verificar se a imagem existe -->
+                @{
+                    var imageName = Model.Name.ToLower() + ".jpg";
+                    var imagePath = "/images/" + imageName;
+                    var imageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                imageName);
+                    var imageExists = System.IO.File.Exists(imageFullPath);
+                }
+
+                @if (imageExists)
+                {
+                    <img src="@imagePath" alt="@Model.Name's photo" class="img-fluid rounded-4 shadow-sm mb-4 w-100"
+                         style="max-height: 500px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center rounded-4 mb-4 w-100"
+                         style="height: 400px; max-height: 500px;">
+                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                }
 
                 <div class="m-3 shadow-sm card border-0 rounded-4 mb-5">
                     <div
                         class="card-body p-4 d-flex justify-content-around flex-wrap bg-light rounded-top-4 border-bottom">
-
                         <div class="text-center">
                             <span class="d-block text-muted small fw-bold text-uppercase">Age</span>
                             <span class="text-primary-darkblue fs-5 fw-semibold">@Model.AgeMonths mo.</span>
@@ -70,15 +101,13 @@
                             @Model.Description
                         </p>
 
-                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2">Adopt
-                            @Model.Name
+                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2" id="adoptBtn">
+                            Adopt @Model.Name
                         </button>
 
                         <p class="mt-3 small text-muted">
                             By clicking "Adopt", you agree to our
-                            <a href="#" class="text-decoration-none">
-                                Adoption Terms and Conditions
-                            </a>.
+                            <a href="#" class="text-decoration-none">Adoption Terms and Conditions</a>.
                         </p>
                     </div>
                 </div>
@@ -104,7 +133,8 @@
 
                         @if (!Model.IsVaccinated && !Model.IsDewormed && !Model.IsSterilized)
                         {
-                            <li class="mb-2 text-muted"><i class="bi bi-dash-circle me-2"></i> No medical records provided.
+                            <li class="mb-2 text-muted">
+                                <i class="bi bi-dash-circle me-2"></i> No medical records provided.
                             </li>
                         }
                     </ul>
@@ -116,56 +146,81 @@
                         <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Kid
                             Friendly
                         </span>
-
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">
-                            Calm at Home
+                        <span
+                            class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Calm
+                            at Home
                         </span>
-
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">
-                            Social
+                        <span
+                            class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Social
                         </span>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px;">
-                    <div class="card-header text-white py-3 rounded-top-4" style="background-color: var(--petlink-primary);">
-                        <h3 class="h6 mb-0 fw-bold">
-                            <i class="bi bi-person-badge me-2"></i>
-                            @(Model.Tutor != null ? Model.Tutor.Email : "Unknown Shelter")
-                        </h3>
-                    </div>
-
-                    <div class="card-body bg-light" style="height: 350px; overflow-y: auto;">
-                        <div class="chat-message mb-3">
-                            <div class="message-sent d-flex justify-content-end mb-3">
-                                <div class="message-bubble text-white p-3 rounded-4 shadow-sm"
-                                     style="max-width: 85%; background-color: var(--petlink-primary);">
-                                    <p class="mb-0 small">Is @Model.Name still available for meet and greets this
-                                        weekend?
-                                    </p>
-                                </div>
+                <div class="card shadow-sm border-0 sticky-top"
+                     style="top: 20px; border-radius: 20px; overflow: hidden;">
+                    <div class="card-header py-3 border-0"
+                         style="background-color: var(--petlink-primary); color: white;">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                                 style="width: 35px; height: 35px;">
+                                <i class="bi bi-person-badge text-primary"></i>
                             </div>
-
-                            <div class="message-received d-flex mb-3">
-                                <div class="message-bubble p-3 rounded-4 shadow-sm bg-white" style="max-width: 85%;">
-                                    <p class="mb-0 small text-dark">
-                                        Hello! Yes, @Model.Name is available. We have slots on Saturday morning!
-                                    </p>
-                                </div>
+                            <div>
+                                <h3 class="h6 mb-0 fw-bold">@(Model.Tutor?.Name ?? "Pet Tutor")</h3>
+                                <div style="font-size: 0.7rem; opacity: 0.8;">Chat about @Model.Name</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-footer bg-white border-top-0 p-3 rounded-bottom-4">
-                        <div class="input-group">
-                            <input type="text" class="form-control border bg-light rounded-start-pill ps-4"
-                                   placeholder="Type a message...">
-                            <button class="btn btn-primary rounded-end-pill px-4" type="button">
-                                <i class="bi bi-send-fill"></i>
+                    <div class="card-body" id="chatBox"
+                         style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
+                        @if (ViewBag.ChatHistory != null &&
+                                                                        ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
+                        {
+                            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                            foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                            {
+                                bool isMine = msg.SenderId == currentUserId;
+                                <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                    <div class="p-3 shadow-sm"
+                                         style="max-width: 85%; font-size: 0.85rem; border-radius: 15px; 
+                                        @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                       : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
+                                        <p class="mb-1">@msg.Content</p>
+                                        <div class="text-end" style="font-size: 0.6rem; opacity: 0.7;">
+                                            @msg.Timestamp.ToString("HH:mm")
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                <i class="bi bi-chat-left-dots text-muted opacity-25 mb-2" style="font-size: 2.5rem;"></i>
+                                <p class="text-muted small">No messages yet.<br>Start the conversation below!</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-white border-0 p-3">
+                        <form asp-controller="Messages" asp-action="SendMessage" method="post" class="input-group">
+                            <input type="hidden" name="receiverId" value="@Model.TutorId" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+                            <input type="text" name="content"
+                                   class="form-control border-0 bg-light rounded-pill ps-4 py-2"
+                                   placeholder="Type a message..." required autocomplete="off" style="font-size: 0.9rem;">
+
+                            <button
+                                class="btn btn-primary rounded-circle ms-2 d-flex align-items-center justify-content-center"
+                                type="submit"
+                                style="width: 40px; height: 40px; background-color: var(--petlink-primary); border: none;">
+                                <i class="bi bi-send-fill" style="font-size: 1rem;"></i>
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -184,21 +239,102 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
-                    <img src="~/images/@(Model.Name.ToLower()).jpg" alt="@Model.Name's photo"
-                         class="img-fluid rounded-4 shadow-sm mb-4 w-100"
-                         style="max-height: 500px; object-fit: cover;" />
-                    
-                    <div class="card-body">
-                        <h3 class="h5 text-primary-darkblue fw-bold mb-2">Cooper</h3>
-                        <div class="text-muted small">
-                            <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> Lisbon</p>
-                            <p class="mb-1"><i class="bi bi-calendar me-1"></i> 4 months</p>
+            @foreach (var pet in ViewBag.OtherPets as IEnumerable<PetLink.Models.AnimalListing>)
+            {
+                <div class="col-md-6 col-lg-3">
+                    <a asp-action="Details" asp-route-id="@pet.Id" class="text-decoration-none text-dark">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card">
+                            <!-- Verificar se a imagem existe -->
+                            @{
+                                var petImageName = pet.Name.ToLower() + ".jpg";
+                                var petImagePath = "/images/" + petImageName;
+                                var petImageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",
+                        "images", petImageName);
+                                var petImageExists = System.IO.File.Exists(petImageFullPath);
+                            }
+
+                            @if (petImageExists)
+                            {
+                                <img src="@petImagePath" alt="@pet.Name's photo" class="img-fluid w-100"
+                                     style="height: 200px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center w-100"
+                                     style="height: 200px;">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                </div>
+                            }
+
+                            <div class="card-body">
+                                <h3 class="h5 text-primary-darkblue fw-bold mb-2">@pet.Name</h3>
+                                <div class="text-muted small">
+                                    <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> @pet.Location</p>
+                                    <p class="mb-1"><i class="bi bi-info-circle me-1"></i> @pet.Species • @pet.AgeMonths mo.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-            </div>
+            }
+
+            @if (((IEnumerable<PetLink.Models.AnimalListing>)ViewBag.OtherPets).Count() == 0)
+            {
+                <div class="col-12 text-center text-muted">
+                    <p>No other pets available for adoption right now.</p>
+                </div>
+            }
         </div>
     </div>
 </section>
+
+<section class="pop-up-adopt p-3 m-2">
+    <!-- Adoption Confirmation Modal -->
+    <div id="adoptModal" class="adopt-modal-overlay" style="display: none;">
+        <div class="adopt-modal-container">
+            <div class="adopt-modal-header">
+                <h3>Adopt @Model.Name</h3>
+            </div>
+            <div class="adopt-modal-body">
+                <p>Thank you for choosing responsible adoption, and for choosing our lovely @Model.Name! Before proceeding, please confirm the following:</p>
+                <div class="adopt-confirmation-items">
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead1" class="adopt-checkbox">
+                        <label for="confirmRead1">
+                            I understand the responsibility of pet ownership and am ready to provide a loving home.
+                        </label>
+                    </div>
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead2" class="adopt-checkbox">
+                        <label for="confirmRead2">
+                            I have read and agree to the adoption terms and conditions.
+                        </label>
+                    </div>
+                    <div class="adopt-confirm-item">
+                        <input type="checkbox" id="confirmRead3" class="adopt-checkbox">
+                        <label for="confirmRead3">
+                            I confirm that I have the time, resources, and space to care for @Model.Name.
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="adopt-modal-footer">
+                <button class="adopt-cancel-btn">Cancel</button>
+                <button class="adopt-confirm-btn" disabled>Confirm Adoption</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Notification  -->
+    <div id="adoptSuccessNotification" class="adopt-success-notification" style="display: none;">
+        <div class="adopt-success-content">
+            <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28a745;"></i>
+            <h4>Adoption Request Sent!</h4>
+            <p>Thank you for wanting to adopt @Model.Name. The pet's tutor will contact you soon to discuss the next steps.</p>
+        </div>
+    </div>
+</section>
+
+<script src="~/js/adopt.js" asp-append-version="true"></script>
+<script src="~/js/favorite.js" asp-append-version="true"></script>

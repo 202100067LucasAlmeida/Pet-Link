@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using PetLink.Models.Enums;
+using System.Collections.Generic;
 
 namespace PetLink.Models
 {
     public class User
     {
-        [Key] // Define que é a primary key
+        [Key] 
         public int Id { get; set; }
 
         [RegularExpression(@"^[\p{L}\s\-']+$", ErrorMessage = "O nome não pode conter simbolos ou números!")]
@@ -26,6 +27,17 @@ namespace PetLink.Models
         public bool IsVerified { get; set; } = false; 
 
         
+        public string Phone { get; set; }
+        public string Location { get; set; }
+        public string Bio { get; set; }
+        public string ProfilePicture { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         public ICollection<AnimalListing> Listings { get; set; }
+        public ICollection<FavoritePet> FavoritePets {get; set;}
+        public ICollection<Application> Applications { get; set; }
+        public ICollection<Message> SentMessages { get; set; }
+        public ICollection<Message> ReceivedMessages { get; set; }
     }
 }
