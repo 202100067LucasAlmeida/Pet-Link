@@ -1,42 +1,106 @@
 "use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+if (typeof signalR === "undefined") {
+  console.error("SignalR library not loaded! Check your script paths.");
+}
 
-connection.on("ReceiveMessage", function (senderId, content, time) {
-    // 1. Verifica se esta mensagem pertence à conversa aberta
-    var activeChatId = $("input[name='receiverId']").val();
-    var currentUserId = $("#currentUserId").val(); // Precisas de um input hidden com o teu ID
+let connection;
 
-    var isMine = senderId == currentUserId;
+function initChat(currentUserId) {
+  connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-    // 2. Cria o HTML do balão (usa as mesmas classes que já tens no CSHTML)
-    var alignment = isMine ? "justify-content-end" : "justify-content-start";
-    var bg = isMine ? "background-color: var(--petlink-primary); color: white;" : "background-color: white; color: var(--petlink-dark);";
+  // 1. Prepara o ouvido para receber mensagens
+  connection.on("ReceiveMessage", function (senderId, content, timeStr) {
+    console.log("Recebi uma mensagem do servidor!", content); // Log para ajudar a testar
+    const isMine = parseInt(senderId) === parseInt(currentUserId);
+    const msgHtml = generateMessageHtml(content, timeStr, isMine);
+    appendToChatContainer(msgHtml);
+  });
 
-    var msgHtml = `
-        <div class="message-sent d-flex justify-content-end mb-3">
-            <div class="message-bubble text-white p-3 rounded-4 shadow-sm" 
-                style="max-width: 85%; background-color: var(--petlink-primary);">
-                <div class="fw-bold small text-primary-white mb-1">${user}</div>
-                <p class="mb-0 small">${message}</p>
-            </div>
-        </div>`;
+  // 2. PRIMEIRO liga, e SÓ DEPOIS entra na sala
+  connection
+    .start()
+    .then(() => {
+      console.log("SignalR connected");
 
-    // 3. Adiciona ao chat e faz scroll
-    $("#chatWindow").append(messageHtml);
-    $("#chatWindow").scrollTop($("#chatWindow")[0].scrollHeight);
+      // Verifica se usaste ID ou Name no HTML. Tenta os dois por segurança:
+      const receiverId =
+        $("#receiverId").val() || $('input[name="receiverId"]').val();
+
+      if (receiverId) {
+        // Agora sim, a ligação está aberta, podemos pedir para entrar na sala!
+        connection
+          .invoke("JoinChat", parseInt(currentUserId), parseInt(receiverId))
+          .then(() => console.log("Entrei na sala de chat!"))
+          .catch((err) => console.error("Erro ao entrar na sala:", err));
+      }
+    })
+    .catch((err) => console.error("SignalR Error:", err));
+
+  connection.onclose(() => setTimeout(() => connection.start(), 5000));
+}
+
+function generateMessageHtml(content, time, isMine) {
+  const alignment = isMine ? "justify-content-end" : "justify-content-start";
+  const bubbleStyle = isMine
+    ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
+    : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;";
+
+  return `
+    <div class="d-flex mb-4 ${alignment}">
+      ${!isMine ? '<img src="/images/default-avatar.jpg" class="rounded-circle me-2 align-self-end mb-1" width="28" height="28">' : ""}
+      <div class="p-3 shadow-sm" style="max-width: 75%; border-radius: 18px; ${bubbleStyle}">
+        <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">${content}</p>
+        <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">${time}</div>
+      </div>
+    </div>
+  `;
+}
+
+function appendToChatContainer(html) {
+  const chatContainer =
+    document.getElementById("chatWindow") ||
+    document.querySelector(".chat-container, #chatBox");
+  if (chatContainer) {
+    chatContainer.insertAdjacentHTML("beforeend", html);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+}
+
+function sendMessage(receiverId, content, currentUserId) {
+  if (!connection || !content.trim()) return;
+
+  // Apenas invocamos o servidor.
+  // O servidor responderá via "ReceiveMessage" para nós e para o outro.
+  connection
+    .invoke("SendChatMessage", parseInt(receiverId), content.trim())
+    .then(() => {
+      $("#messageInput").val("").focus();
+    })
+    .catch((err) => console.error("SignalR Invoke Error:", err));
+}
+
+// Form handler
+$(document).on("submit", "#sendMessageForm", function (e) {
+  e.preventDefault();
+  const receiverId = $("#receiverId").val();
+  const content = $("#messageInput").val();
+  const currentUserId = $("#currentUserId").val();
+
+  if (content.trim() && receiverId) {
+    sendMessage(receiverId, content, currentUserId);
+    $("#messageInput").val("").focus();
+  }
 });
 
-connection.start();
-
-// Intercetar o formulário para enviar via SignalR em vez de POST normal
-$('#sendMessageForm').on('submit', function (e) {
-    e.preventDefault();
-    var receiverId = $("input[name='receiverId']").val();
-    var content = $("#messageInput").val();
-
-    if (content.trim() !== "") {
-        connection.invoke("SendChatMessage", parseInt(receiverId), content);
-        $("#messageInput").val("").focus();
-    }
+// Init on load
+$(document).ready(function () {
+  const currentUserId = $("#currentUserId").val();
+  if (currentUserId) {
+    initChat(currentUserId);
+  }
+  // Scroll initial
+  const chatCont =
+    document.getElementById("chatWindow") || document.querySelector("#chatBox");
+  if (chatCont) chatCont.scrollTop = chatCont.scrollHeight;
 });

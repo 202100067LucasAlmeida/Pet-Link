@@ -5,7 +5,7 @@ using PetLink.Models;
 
 namespace PetLink.Controllers
 {
-    public class PetsitterController : Controller
+    public class PetsitterController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -31,21 +31,34 @@ namespace PetLink.Controllers
 
             if (sitter == null) return NotFound();
 
-            // Carregar histórico de mensagens
+            // 1. Verificar se o utilizador logado está a ver o seu próprio perfil
+            bool isSelf = false;
             var userIdClaim = User.FindFirst("UserId")?.Value;
+
             if (!string.IsNullOrEmpty(userIdClaim))
             {
                 int currentUserId = int.Parse(userIdClaim);
+                isSelf = (sitter.UserId == currentUserId);
 
-                ViewBag.ChatHistory = await _context.Messages
-                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == sitter.UserId) ||
-                                (m.SenderId == sitter.UserId && m.ReceiverId == currentUserId))
-                    .OrderBy(m => m.Timestamp)
-                    .ToListAsync();
+                // 2. Só carrega o histórico de mensagens se NÃO for o próprio
+                if (!isSelf)
+                {
+                    ViewBag.ChatHistory = await _context.Messages
+                        .Where(m => (m.SenderId == currentUserId && m.ReceiverId == sitter.UserId) ||
+                                    (m.SenderId == sitter.UserId && m.ReceiverId == currentUserId))
+                        .OrderBy(m => m.Timestamp)
+                        .ToListAsync();
+                }
             }
 
-            // Carregar outros sitters para a ViewBag 
-            ViewBag.OtherSitters = await _context.Petsitters.Include(p => p.User).Where(p => p.Id != id).Take(4).ToListAsync();
+            ViewBag.IsSelf = isSelf;
+
+            // Carregar outros sitters para a secção de baixo (excluindo o atual)
+            ViewBag.OtherSitters = await _context.Petsitters
+                .Include(p => p.User)
+                .Where(p => p.Id != id)
+                .Take(4)
+                .ToListAsync();
 
             return View(sitter);
         }

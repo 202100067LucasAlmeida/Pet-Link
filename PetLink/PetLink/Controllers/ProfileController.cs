@@ -21,7 +21,7 @@ namespace PetLink.Controllers
         public string Email { get; set; }
     }
 
-    public class ProfileController : Controller
+    public class ProfileController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -30,11 +30,13 @@ namespace PetLink.Controllers
             _context = context;
         }
 
-        //Mostra a página de Login 
+        /// <summary>
+        /// GET: Profile/LoginForm - Displays login form
+        /// Redirects authenticated users to Home/Index
+        /// </summary>
         [HttpGet]
         public IActionResult LoginForm()
         {
-            // Se já tiver login feito, manda para a Home
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
@@ -49,9 +51,9 @@ namespace PetLink.Controllers
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
+                .FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user == null)
+            if (user == null || !UserHashHelpers.VerifyPassword(password, user.PasswordHash))
             {
                 return Json(new { success = false, message = "Invalid email or password." });
             }
@@ -77,6 +79,11 @@ namespace PetLink.Controllers
         public IActionResult SignUpForm()
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        public IActionResult ForgotPasswordForm()
+        {
             return View();
         }
 
@@ -167,9 +174,11 @@ namespace PetLink.Controllers
             {
                 Name = model.FullName,
                 Email = model.Email,
-                PasswordHash = model.Password,
+                PasswordHash = UserHashHelpers.HashPassword(model.Password),
                 Role = role,
-                IsVerified = false // Requer verificação do admin para Associações e PetSitters
+                IsVerified = false, // Requer verificação do admin para Associações e PetSitters
+                Phone = model.Phone,
+                CreatedAt = DateTime.Now
             };
 
             _context.Users.Add(newUser);

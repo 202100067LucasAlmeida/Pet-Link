@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using PetLink.Models.Enums;
 using System.Collections.Generic;
+using PetLink.Models;
 
 namespace PetLink.Models
 {

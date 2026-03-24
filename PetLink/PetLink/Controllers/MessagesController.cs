@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
-using PetLink.ViewModels;
+using PetLink.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -46,7 +46,7 @@ namespace PetLink.Controllers
                     LastMessagePreview = g.First().Content,
                     LastMessageTimestamp = g.First().Timestamp,
                     IsActive = (id.HasValue && g.Key == id.Value),
-                    IsOnline = true 
+                    IsOnline = true
                 })
                 .ToList();
 
@@ -58,6 +58,7 @@ namespace PetLink.Controllers
                 var otherUser = await _context.Users.FindAsync(id.Value);
                 if (otherUser != null)
                 {
+                    // 1. Prepara a janela da direita (mensagens vazias se for novo)
                     viewModel.ActiveConversation = new ConversationDetail
                     {
                         OtherUserId = id.Value,
@@ -65,9 +66,23 @@ namespace PetLink.Controllers
                         Messages = allMessages
                             .Where(m => (m.SenderId == currentUserId && m.ReceiverId == id.Value) ||
                                         (m.SenderId == id.Value && m.ReceiverId == currentUserId))
-                            .OrderBy(m => m.Timestamp) 
+                            .OrderBy(m => m.Timestamp)
                             .ToList()
                     };
+
+                    // 2. Se for um chat novo, adiciona-o ao topo da barra lateral!
+                    if (!conversations.Any(c => c.OtherUserId == id.Value))
+                    {
+                        conversations.Insert(0, new ConversationSummary
+                        {
+                            OtherUserId = id.Value,
+                            OtherUserName = otherUser.Name,
+                            LastMessagePreview = "Start a conversation...", // Mensagem de incentivo
+                            LastMessageTimestamp = DateTime.Now,
+                            IsActive = true,
+                            IsOnline = true
+                        });
+                    }
                 }
             }
 
@@ -82,10 +97,15 @@ namespace PetLink.Controllers
             var senderIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(senderIdClaim) || string.IsNullOrWhiteSpace(content))
             {
-                return RedirectToAction("Index", new { id = receiverId });
+                return Json(new { success = false, message = "Invalid sender or empty content" });
             }
 
             int senderId = int.Parse(senderIdClaim);
+
+            if (senderId == receiverId)
+            {
+                return Json(new { success = false, message = "You cannot message yourself." });
+            }
 
             // Cria o objeto da mensagem
             var newMessage = new Message
@@ -101,11 +121,11 @@ namespace PetLink.Controllers
             _context.Messages.Add(newMessage);
             await _context.SaveChangesAsync();
 
-            // Redireciona de volta para a conversa para mostrar a nova mensagem
-            return RedirectToAction("Index", new { id = receiverId });
+            return Json(new { success = true, messageId = newMessage.Id, timestamp = newMessage.Timestamp.ToString("HH:mm") });
         }
-        
 
-        
+
+
+
     }
 }
