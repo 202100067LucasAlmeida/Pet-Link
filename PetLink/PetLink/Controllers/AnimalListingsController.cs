@@ -20,8 +20,7 @@ namespace PetLink
         // GET: AnimalListings
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.AnimalListings.Include(a => a.Tutor);
-            return View(await applicationDbContext.ToListAsync());
+            return await FilteredSearch(null, null, null, null);
         }
 
         // GET: AnimalListings/Details/5
@@ -145,35 +144,12 @@ namespace PetLink
             return View(animalListing);
         }
 
-        public async Task<IActionResult> Search(Species? species, 
-                                                string? location, 
-                                                Age? age)
+        public async Task<IActionResult> Search(Species? species,
+                                        string? location,
+                                        Age? age,
+                                        string? range)
         {
-            var query = _context.AnimalListings
-                        .Include(t => t.Tutor)
-                        .AsQueryable();
-
-            // Apenas animais publicados, autorizados pelo administrador
-            query = query.Where(p => p.Status == ListingStatus.Published);
-
-            if (species.HasValue)
-            {
-                query = query.Where(p => p.Species == species.Value);
-            }
-
-            if (!string.IsNullOrWhiteSpace(location))
-            {
-                query = query.Where(p => p.Location.ToLower().Contains(location.ToLower()));
-            }
-
-            if (age.HasValue)
-            {
-                query = query.Where(p => p.Age == age.Value);
-            }
-
-            var results = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
-
-            return View("Index", results);
+            return await FilteredSearch(species, location, age, range);
         }
 
         // POST: AnimalListings/Delete/5
@@ -207,6 +183,56 @@ namespace PetLink
                 .ToListAsync();
 
             return View(allListings);
+        }
+
+
+
+        private async Task<IActionResult> FilteredSearch(Species? species,
+                                                  string? location,
+                                                  Age? age,
+                                                  string? range)
+        {
+            var query = _context.AnimalListings
+                        .Include(t => t.Tutor)
+                        .Where(p => p.Status == ListingStatus.Published)
+                        .AsQueryable();
+
+            // Store active filters in ViewBag for the view
+            ViewBag.ActiveFilters = new Dictionary<string, object>();
+
+            if (species.HasValue)
+            {
+                query = query.Where(p => p.Species == species.Value);
+                ViewBag.ActiveFilters["Species"] = species.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                query = query.Where(p => p.Location.ToLower().Contains(location.ToLower()));
+                ViewBag.ActiveFilters["Location"] = location;
+            }
+
+            if (age.HasValue)
+            {
+                query = query.Where(p => p.Age == age.Value);
+                ViewBag.ActiveFilters["Age"] = age.Value;
+            }
+
+            // Store range if needed for distance filtering
+            if (!string.IsNullOrWhiteSpace(range) && int.TryParse(range, out int rangeValue))
+            {
+                ViewBag.ActiveFilters["Range"] = rangeValue;
+            }
+
+            var results = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+
+            // Store current filter values to repopulate the form
+            ViewBag.CurrentSpecies = species;
+            ViewBag.CurrentLocation = location;
+            ViewBag.CurrentAge = age;
+            ViewBag.CurrentRange = range;
+
+            return View("Index", results);
         }
     }
 }
