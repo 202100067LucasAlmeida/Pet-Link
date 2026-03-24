@@ -6,9 +6,10 @@ using PetLink.Models;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models.Enums;
 
+using PetLink.Controllers;
 namespace PetLink
 {
-    public class AnimalListingsController : Controller
+    public class AnimalListingsController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -32,20 +33,29 @@ namespace PetLink
 
             if (listing == null) return NotFound();
 
-            // Carregar histórico de mensagens entre o User atual e o Tutor deste animal
+            // 1. Verificar se o utilizador logado é o dono do anúncio
+            bool isOwner = false;
             var userIdClaim = User.FindFirst("UserId")?.Value;
+
             if (!string.IsNullOrEmpty(userIdClaim))
             {
                 int currentUserId = int.Parse(userIdClaim);
+                isOwner = (listing.TutorId == currentUserId);
 
-                ViewBag.ChatHistory = await _context.Messages
-                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
-                                (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
-                    .OrderBy(m => m.Timestamp)
-                    .ToListAsync();
+                // Só carrega o histórico de mensagens se NÃO for o dono
+                if (!isOwner)
+                {
+                    ViewBag.ChatHistory = await _context.Messages
+                        .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
+                                    (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
+                        .OrderBy(m => m.Timestamp)
+                        .ToListAsync();
+                }
             }
 
-            // carregar OtherPets
+            // 2. Passar a variável limpa para a View
+            ViewBag.IsOwner = isOwner;
+
             ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
 
             return View(listing);

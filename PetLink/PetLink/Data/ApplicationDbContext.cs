@@ -48,13 +48,13 @@ namespace PetLink.Data
             {
                 // Define quem envia
                 entity.HasOne(m => m.Sender)
-                      .WithMany()
+                      .WithMany(u => u.SentMessages)
                       .HasForeignKey(m => m.SenderId)
-                      .OnDelete(DeleteBehavior.Restrict); // Evita erros de cascata apagar users
+                      .OnDelete(DeleteBehavior.Restrict);
 
                 // Define quem recebe
                 entity.HasOne(m => m.Receiver)
-                      .WithMany()
+                      .WithMany(u => u.ReceivedMessages)
                       .HasForeignKey(m => m.ReceiverId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
