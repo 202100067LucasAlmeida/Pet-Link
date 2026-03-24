@@ -46,7 +46,6 @@
                             </p>
                         </div>
 
-                        <!-- REMOVER O BOTÃO DAQUI -->
                     </div>
                 </div>
 
@@ -73,7 +72,6 @@
                         </div>
                     }
                     
-                    <!-- BOTÃO DE FAVORITO DENTRO DA IMAGEM -->
                     @if (User.IsInRole("User") || User.IsInRole("PetSitter"))
                     {
                         <button class="btn-heart position-absolute top-0 end-0 m-3" data-pet-id="@Model.Id" id="favoriteBtn">
