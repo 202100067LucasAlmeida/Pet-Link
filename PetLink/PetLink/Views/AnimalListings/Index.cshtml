@@ -94,7 +94,7 @@
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Adult" id="ageAdult"
-                                   @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Adult.ToString() ? "checked" : (ViewBag.CurrentAge == null ? "checked" : ""))>
+                                   @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Adult.ToString() ? "checked" : ""))>
                             <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7 yrs)</label>
                         </div>
                         <div class="form-check">
@@ -118,10 +118,10 @@
                     <div class="mb-5">
                         <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
                         <input type="range" name="range" class="form-range" min="0" max="500"
-                               id="rangeInput" value="@(ViewBag.CurrentRange ?? "50")">
+                               id="rangeInput" value="@(ViewBag.CurrentRange ?? "0")">
                         <div class="d-flex justify-content-between text-muted small mt-1">
                             <span>0km</span>
-                            <span class="current-range-filter" id="rangeValue">@(ViewBag.CurrentRange ?? "50") km</span>
+                            <span class="current-range-filter" id="rangeValue">@(ViewBag.CurrentRange ?? "0") km</span>
                             <span>500km</span>
                         </div>
                     </div>

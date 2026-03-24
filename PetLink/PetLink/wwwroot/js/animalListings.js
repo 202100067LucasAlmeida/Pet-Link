@@ -77,9 +77,6 @@ $(document).ready(function () {
         });
     }
 
-    // Existing favorite handling code...
-    console.log("Index carregado - a inicializar favoritos");
-
     // Verifica estado inicial de cada coração
     $('.btn-heart').each(function () {
         var button = $(this);
@@ -175,9 +172,9 @@ function removeFilter(element) {
             break;
         case 'Age':
             $('input[name="age"][value="' + filterValue + '"]').prop('checked', false);
-            // Reset adult as default if no age selected
+            // Reset, not as an adult for default if no age selected
             if ($('input[name="age"]:checked').length === 0) {
-                $('#ageAdult').prop('checked', true);
+                $('#ageAdult').prop('checked', false);
             }
             // Update visual state
             $('.form-check-label').removeClass('fw-bold text-primary');
