@@ -46,36 +46,41 @@
                             </p>
                         </div>
 
-                        @if (User.IsInRole("User"))
-                        {
-                            <button class="btn-heart favorite-toggle" data-pet-id="@Model.Id" id="favoriteBtn">
-                                <i class="bi bi-heart" id="favoriteIcon"></i>
-                            </button>
-                        }
+                        <!-- REMOVER O BOTÃO DAQUI -->
                     </div>
                 </div>
 
-                <!-- Verificar se a imagem existe -->
-                @{
-                    var imageName = Model.Name.ToLower() + ".jpg";
-                    var imagePath = "/images/" + imageName;
-                    var imageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
-                imageName);
-                    var imageExists = System.IO.File.Exists(imageFullPath);
-                }
+                <!-- IMAGEM COM O BOTÃO DE CORAÇÃO DENTRO -->
+                <div class="position-relative mb-4" style="max-height: 500px; border-radius: 1rem; overflow: hidden;">
+                    @{
+                        var imageName = Model.Name.ToLower() + ".jpg";
+                        var imagePath = "/images/" + imageName;
+                        var imageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
+                    imageName);
+                        var imageExists = System.IO.File.Exists(imageFullPath);
+                    }
 
-                @if (imageExists)
-                {
-                    <img src="@imagePath" alt="@Model.Name's photo" class="img-fluid rounded-4 shadow-sm mb-4 w-100"
-                         style="max-height: 500px; object-fit: cover;" />
-                }
-                else
-                {
-                    <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center rounded-4 mb-4 w-100"
-                         style="height: 400px; max-height: 500px;">
-                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
-                    </div>
-                }
+                    @if (imageExists)
+                    {
+                        <img src="@imagePath" alt="@Model.Name's photo" class="img-fluid w-100"
+                             style="max-height: 500px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center w-100"
+                             style="height: 400px; max-height: 500px;">
+                            <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                        </div>
+                    }
+                    
+                    <!-- BOTÃO DE FAVORITO DENTRO DA IMAGEM -->
+                    @if (User.IsInRole("User") || User.IsInRole("PetSitter"))
+                    {
+                        <button class="btn-heart position-absolute top-0 end-0 m-3" data-pet-id="@Model.Id" id="favoriteBtn">
+                            <i class="bi bi-heart" id="favoriteIcon"></i>
+                        </button>
+                    }
+                </div>
 
                 <div class="m-3 shadow-sm card border-0 rounded-4 mb-5">
                     <div
@@ -337,4 +342,72 @@
 </section>
 
 <script src="~/js/adopt.js" asp-append-version="true"></script>
-<script src="~/js/favorite.js" asp-append-version="true"></script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var petId = @Model.Id;
+            var favoriteBtn = $('#favoriteBtn');
+            var favoriteIcon = $('#favoriteIcon');
+            
+            // Verificar estado inicial
+            $.ajax({
+                url: '@Url.Action("Check", "Favorites")',
+                type: 'GET',
+                data: { animalListingId: petId },
+                success: function(isFavorited) {
+                    if (isFavorited) {
+                        favoriteIcon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                        favoriteBtn.addClass('active');
+                    }
+                },
+                error: function() {
+                    console.log('Erro ao verificar favorito');
+                }
+            });
+            
+            // Clique no coração
+            favoriteBtn.click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                $.ajax({
+                    url: '@Url.Action("Toggle", "Favorites")',
+                    type: 'POST',
+                    data: { animalListingId: petId },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.isFavorited) {
+                                favoriteIcon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                                favoriteBtn.addClass('active');
+                                showNotification('Added to favorites!');
+                            } else {
+                                favoriteIcon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
+                                favoriteBtn.removeClass('active');
+                                showNotification('Removed from favorites!');
+                            }
+                        } else {
+                            showNotification(response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        showNotification('Error updating favorite. Please try again.', 'error');
+                    }
+                });
+            });
+            
+            function showNotification(message) {
+                // Remove notificações anteriores
+                $('.toast-notification').remove();
+                
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                setTimeout(() => {
+                    toast.fadeOut(300, function() { 
+                        $(this).remove(); 
+                    });
+                }, 2000);
+            }
+        });
+    </script>
+}
