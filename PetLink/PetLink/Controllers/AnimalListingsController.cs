@@ -178,7 +178,7 @@ namespace PetLink
 
             if (!string.IsNullOrWhiteSpace(location))
             {
-                query = query.Where(p => p.Location.ToLower().Contains(location.ToLower()));
+                query = query.Where(p => p.Location.Contains(location));
                 ViewBag.ActiveFilters["Location"] = location;
             }
 

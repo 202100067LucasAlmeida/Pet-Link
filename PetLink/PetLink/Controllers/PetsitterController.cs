@@ -62,5 +62,12 @@ namespace PetLink.Controllers
 
             return View(sitter);
         }
+
+        public async Task<IActionResult> Search()
+        {
+
+
+            return View();
+        }
     }
 }
