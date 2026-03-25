@@ -147,7 +147,8 @@ namespace PetLink
 
         public async Task<IActionResult> Search(Species? species, 
                                                 string? location, 
-                                                Age? age)
+                                                Age? age,
+                                                string? sort)
         {
             var query = _context.AnimalListings
                         .Include(t => t.Tutor)
@@ -171,7 +172,13 @@ namespace PetLink
                 query = query.Where(p => p.Age == age.Value);
             }
 
-            var results = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+            query = sort switch
+            {
+                "oldest" => query.OrderBy(p => p.CreatedAt),
+                _ => query.OrderByDescending(p => p.CreatedAt)
+            };
+
+            var results = await query.ToListAsync();
 
             return View("Index", results);
         }
