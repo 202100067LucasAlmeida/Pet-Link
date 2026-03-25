@@ -21,7 +21,7 @@ namespace PetLink
         // GET: AnimalListings
         public async Task<IActionResult> Index()
         {
-            return await FilteredSearch(null, null, null, null);
+            return await Search(null, null, null, null, null);
         }
 
         // GET: AnimalListings/Details/5
@@ -157,7 +157,8 @@ namespace PetLink
         public async Task<IActionResult> Search(Species? species, 
                                                 string? location, 
                                                 Age? age,
-                                                string? sort)
+                                                string? sort,
+                                                string? range)
         {
             var query = _context.AnimalListings
                         .Include(t => t.Tutor)
