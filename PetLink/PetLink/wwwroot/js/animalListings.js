@@ -35,9 +35,6 @@ $(document).ready(function () {
                 currentBtn.removeClass('active');
             }
         });
-
-        // Optional: Auto-submit if you want instant filtering
-        // $('#filterForm').submit();
     });
 
     // Handle age radio button clicks for visual feedback
@@ -47,9 +44,6 @@ $(document).ready(function () {
 
         // Add bold to selected label
         $(this).next('.form-check-label').addClass('fw-bold text-primary');
-
-        // Optional: Auto-submit if you want instant filtering
-        // $('#filterForm').submit();
     });
 
     // Initial load - set visual state for pre-selected filters
@@ -79,6 +73,7 @@ $(document).ready(function () {
 });
 
 // Global function for removing filters
+// Global function for removing filters
 function removeFilter(element) {
     var filterKey = $(element).data('filter-key');
     var filterValue = $(element).data('filter-value');
@@ -105,11 +100,7 @@ function removeFilter(element) {
             break;
         case 'Age':
             $('input[name="age"][value="' + filterValue + '"]').prop('checked', false);
-            // Reset, not as an adult for default if no age selected
-            if ($('input[name="age"]:checked').length === 0) {
-                $('#ageAdult').prop('checked', false);
-            }
-            // Update visual state
+            // Update visual state for age filters
             $('.form-check-label').removeClass('fw-bold text-primary');
             $('input[name="age"]:checked').each(function () {
                 $(this).next('.form-check-label').addClass('fw-bold text-primary');
@@ -119,10 +110,16 @@ function removeFilter(element) {
             $('input[name="location"]').val('');
             break;
         case 'Range':
-            $('#rangeInput').val('50');
-            $('#rangeValue').text('50 km');
+            $('#rangeInput').val('0');
+            $('#rangeValue').text('0 km');
             break;
     }
+
+    // CRITICAL FIX: Preserve age filter visual state after range removal
+    // Re-apply age filter visual styling to ensure it's maintained
+    $('input[name="age"]:checked').each(function () {
+        $(this).next('.form-check-label').addClass('fw-bold text-primary');
+    });
 
     // Submit the form to refresh the results
     $('#filterForm').submit();

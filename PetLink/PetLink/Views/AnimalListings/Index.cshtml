@@ -59,7 +59,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Cat" id="cat"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Cat.ToString() ? "checked" : "") hidden>
+                                               Species.Cat.ToString() ? "checked" : "") hidden>
                                 <label for="cat" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Cats
                                 </label>
@@ -67,7 +67,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Bird" id="bird"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Bird.ToString() ? "checked" : "") hidden>
+                                              Species.Bird.ToString() ? "checked" : "") hidden>
                                 <label for="bird" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Birds
                                 </label>
@@ -75,7 +75,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Other" id="other"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Other.ToString() ? "checked" : "") hidden>
+                                                Species.Other.ToString() ? "checked" : "") hidden>
                                 <label for="other" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Others
                                 </label>
@@ -98,7 +98,7 @@
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Puppy" id="agePuppy"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Puppy.ToString() ?
-                                                                                                                                                                                                                                           "checked" : "")>
+                                               "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1
                                 yr)
                             </label>
@@ -106,7 +106,7 @@
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Adult" id="ageAdult"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Adult.ToString() ?
-                                                                                                                                                                                                                                                       "checked" : ""))>
+                                         "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7
                                 yrs)
                             </label>
@@ -114,7 +114,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Senior" id="ageSenior"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Senior.ToString() ?
-                                                                                                                                                                                                                                                                   "checked" : "")>
+                                           "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+
                                 yrs)
                             </label>
