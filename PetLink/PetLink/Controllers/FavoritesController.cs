@@ -7,11 +7,15 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
-    [Authorize(Roles =  "User, PetSitter")]
-    public class FavoritesController : Controller
+    [Authorize(Roles = "User, PetSitter")]
+    public class FavoritesController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<FavoritesController> _logger;
+
+        /// <summary>
+        /// Extracts authenticated user ID from claims with null safety
+        /// </summary>
 
         public FavoritesController(ApplicationDbContext context, ILogger<FavoritesController> logger)
         {
@@ -19,11 +23,12 @@ namespace PetLink.Controllers
             _logger = logger;
         }
 
-        // GET: Favorites
+        /// <summary>
+        /// GET: Favorites/Index - Shows user's favorited listings
+        /// </summary>
         public async Task<IActionResult> Index()
         {
-            var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            if (!GetCurrentUserId(out int userId))
             {
                 return Challenge();
             }

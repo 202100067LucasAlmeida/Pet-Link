@@ -511,3 +511,31 @@ hr {
         padding-bottom: 10px;
     }
 }
+
+
+
+/*FILTERS TAGS*/
+/* Selected State */
+.animal-type-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+    transition: all 0.2s ease;
+}
+
+input[type="radio"]:checked + .animal-type-btn {
+    background-color: var(--petlink-primary);
+    border-color: var(--petlink-primary);
+    color: white;
+}
+
+.animal-type-btn:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+.form-check-input:checked + .form-check-label {
+    font-weight: bold;
+    color: var(--petlink-dark, #0a58ca);
+}

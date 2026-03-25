@@ -1,5 +1,5 @@
 @using PetLink.Models
-@using PetLink.ViewModels
+@using PetLink.Models.ViewModels
 @model MessagesViewModel
 @{
     ViewData["Title"] = "Messages";
@@ -97,14 +97,13 @@
                                 <div class="p-3 border-top bg-white">
                                     <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
-                                        <input type="hidden" name="receiverId" value="@Model.ActiveConversation.OtherUserId" />
-                                        
-                                        <input type="text" name="content" id="messageInput" class="form-control rounded-pill border-0 py-2" 
+                                        <input type="hidden" id="receiverId" value="@Model.ActiveConversation?.OtherUserId" />
+                                        <input type="text" name="content" id="messageInput" class="form-control rounded-pill border-0 py-2 flex-grow-1" 
                                             style="background-color: var(--petlink-grey-bg);" placeholder="Type your message here..." 
                                             required autocomplete="off">
                                         
                                         <button type="submit" class="btn border-0 rounded-circle d-flex align-items-center justify-content-center" 
-                                                style="background-color: var(--petlink-primary); color: white; width: 40px; height: 40px;">
+                                                style="background-color: var(--petlink-primary); color: white; width: 44px; height: 44px; flex-shrink: 0;">
                                             <i class="bi bi-send-fill"></i>
                                         </button>
                                     </form>
@@ -130,14 +129,7 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            var chatWindow = document.getElementById("chatWindow");
-            if (chatWindow) {
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-            }
-
-            $('#messageInput').focus();
-        });
-    </script>
+    @* Usa este link do CDN para testar agora *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
 }
