@@ -1,4 +1,5 @@
-﻿@model IEnumerable<PetLink.Models.AnimalListing>
+﻿@using PetLink.Models.Enums
+@model IEnumerable<PetLink.Models.AnimalListing>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -40,9 +41,9 @@
                                 <label class="form-label text-primary-blue small fw-bold mb-1">AGE RANGE</label>
                                 <select name="age" class="form-select text-highlight-blue border-0 bg-light">
                                     <option value="">Any Age</option>
-                                    <option value="0-1">Puppy (0-1 yr)</option>
-                                    <option value="1-3">Young (1-3 yrs)</option>
-                                    <option value="3-7">Adult (3-7 yrs)</option>
+                                    <option value=@Age.Puppy>Puppy (0-1 yr)</option>
+                                    <option value=@Age.Adult>Adult (1-3 yrs)</option>
+                                    <option value=@Age.Senior">Senior (3-7 yrs)</option>
                                 </select>
                             </div>
 
