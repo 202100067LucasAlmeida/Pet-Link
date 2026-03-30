@@ -17,6 +17,10 @@
                     homes.<br>Trustworthy, safe, and dedicated to animal welfare.
                 </p>
 
+                <a asp-controller="Errors" asp-action="AccessDenied" class="btn-home">
+                    <i class="fas fa-home"></i> 403
+                </a>
+
                 <form asp-controller="AnimalListings" asp-action="Search" method="get">
                     <div class="search-card p-3 shadow-sm bg-white">
                         <div class="row g-4 align-items-end">

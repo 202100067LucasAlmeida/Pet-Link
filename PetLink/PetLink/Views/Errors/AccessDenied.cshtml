@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<link rel="stylesheet" href="~/css/errors.css" asp-append-version="true" />
+
+<div class="error-page-container">
+    <div class="error-content">
+        <div class="error-number">
+            <span class="digit">4</span>
+            <img src="~/images/error403.png" alt="0" class="error-zero-image" />
+            <span class="digit">3</span>
+        </div>
+
+        <h1 class="error-title">Access Denied</h1>
+
+        <p class="error-description">
+            Sorry, it looks like you don't have the necessary permissions to access this page.<br />
+            Please contact an administrator if you believe this is a mistake.
+        </p>
+
+        <a asp-controller="Home" asp-action="Index" class="btn-home">
+            <i class="fas fa-home"></i> Return to Main Page
+        </a>
+    </div>
+</div>
