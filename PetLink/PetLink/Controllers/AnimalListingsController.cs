@@ -5,7 +5,6 @@ using PetLink.Data;
 using PetLink.Models;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models.Enums;
-using HashidsNet;
 
 using PetLink.Controllers;
 namespace PetLink
@@ -13,12 +12,10 @@ namespace PetLink
     public class AnimalListingsController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHashids _hashids;
 
-        public AnimalListingsController(ApplicationDbContext context, IHashids hashids)
+        public AnimalListingsController(ApplicationDbContext context)
         {
             _context = context;
-            _hashids = hashids;
         }
 
         // GET: AnimalListings
@@ -28,28 +25,11 @@ namespace PetLink
         }
 
         // GET: AnimalListings/Details/5
-        public async Task<IActionResult> Details(string? id) // 1. Mudou de int para string?
+        public async Task<IActionResult> Details(int id)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
-
-            int realId;
-
-            // 2. O Truque Mágico: É um número normal (Admin) ou um Hash (Público)?
-            if (!int.TryParse(id, out realId))
-            {
-                // Se falhou o Parse, é porque é uma string tipo "Vb9KxA". Vamos descodificar!
-                var decodedIds = _hashids.Decode(id);
-
-                // Se alguém puser letras à toa no URL, dá NotFound
-                if (decodedIds.Length == 0) return NotFound();
-
-                realId = decodedIds[0];
-            }
-
-            // 3. A partir daqui, usamos o realId. O resto do teu código fica EXATAMENTE igual!
             var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
-                .FirstOrDefaultAsync(m => m.Id == realId);
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (listing == null) return NotFound();
 
@@ -77,7 +57,7 @@ namespace PetLink
             ViewBag.IsOwner = isOwner;
 
             // Atenção aqui: também mudei para usar o realId
-            ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != realId).Take(4).ToList();
+            ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
 
             return View(listing);
         }
@@ -263,6 +243,40 @@ namespace PetLink
                 .ToListAsync();
 
             return View(allListings);
+        }
+        [Authorize]
+        public async Task<IActionResult> MyListings()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return RedirectToAction("LoginForm", "Profile");
+
+            int currentUserId = int.Parse(userIdClaim);
+
+            var myListings = await _context.AnimalListings
+                .Where(a => a.TutorId == currentUserId)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View(myListings);
+        }
+
+        private async Task<string> UploadImage(IFormFile file, string subFolder)
+        {
+            if (file == null || file.Length == 0) return null;
+
+            // Criar um nome único para evitar ficheiros repetidos
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // Caminho físico: wwwroot/images/subFolder/nome.jpg
+            string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", subFolder, fileName);
+
+            using (var stream = new FileStream(uploadPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Caminho para guardar na BD (URL relativa)
+            return $"/images/{subFolder}/{fileName}";
         }
     }
 }

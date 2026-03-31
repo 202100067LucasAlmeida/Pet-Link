@@ -28,6 +28,14 @@
         
         <hr class="my-2" />
     }
+
+    @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString() || userRole == UserRole.Shelter.ToString())
+    {
+        <a asp-controller="AnimalListings" asp-action="MyListings"
+               class="list-group-item list-group-item-action mb-1 @(currentAction == "MyListings" ? "active" : "")">
+            <i class="bi bi-list-stars me-2"></i>My Listings
+        </a>
+    }
     
     @* Secção visível para Users e PetSitters *@
     @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())

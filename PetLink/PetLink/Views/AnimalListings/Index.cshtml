@@ -1,7 +1,5 @@
 @using PetLink.Models.Enums
 @model IEnumerable<PetLink.Models.AnimalListing>
-@using HashidsNet
-@inject IHashids Hashids
 
 @{
     ViewData["Title"] = "Find Your New Best Friend";
@@ -235,7 +233,7 @@
                                         var imageExists = System.IO.File.Exists(imageFullPath);
                                     }
 
-                                    <a asp-action="Details" asp-route-id="@Hashids.Encode(item.Id)">
+                                    <a asp-action="Details" asp-route-id="@item.Id">
                                         @if (imageExists)
                                         {
                                             <img src="@imagePath" alt="@item.Name's photo" class="w-100"

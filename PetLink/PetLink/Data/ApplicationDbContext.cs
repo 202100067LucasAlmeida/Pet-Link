@@ -12,6 +12,7 @@ namespace PetLink.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<AnimalListing> AnimalListings { get; set; }
+        public DbSet<AnimalPhoto> AnimalPhotos { get; set; }
         public DbSet<FavoritePet> FavoritePets { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }

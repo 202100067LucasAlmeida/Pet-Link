@@ -1,6 +1,4 @@
 @model IEnumerable<PetLink.Models.AnimalListing>
-@using HashidsNet
-@inject IHashids Hashids
 
 @{
     ViewData["Title"] = "Manage Listings";
@@ -43,7 +41,7 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr onclick="window.location.href='@Url.Action("Details", new { id = Hashids.Encode(item.Id) })';"
+                                <tr onclick="window.location.href='@Url.Action("Details", new { id = item.Id })';"
                                     style="cursor: pointer;">
                                     
                                     <td class="ps-4 fw-bold text-dark">
