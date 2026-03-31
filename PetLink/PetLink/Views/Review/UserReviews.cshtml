@@ -1,0 +1,96 @@
+@model PetLink.Models.ViewModels.UserReviewsViewModel
+
+@{
+    ViewData["Title"] = $"Reviews for {Model.User.Name}";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="text-center">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 80px; height: 80px;">
+                                <i class="bi bi-person-circle text-primary fs-1"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold text-primary-darkblue mb-1">@Model.User.Name</h2>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rating-display">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Math.Round(Model.AverageRating))
+                                        {
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        }
+                                        else if (i <= Math.Round(Model.AverageRating) + 0.5)
+                                        {
+                                            <i class="bi bi-star-half text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-warning"></i>
+                                        }
+                                    }
+                                </div>
+                                <span class="fw-bold">@Model.AverageRating.ToString("0.0")</span>
+                                <span class="text-muted">(@Model.TotalReviews reviews)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="fw-bold text-primary-darkblue mb-3">Reviews</h4>
+                    
+                    @if (!Model.Reviews.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-chat-dots fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No reviews yet</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="rating-display mb-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= review.Rating)
+                                                {
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star text-warning"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <p class="text-muted mb-1">@review.Comment</p>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person-circle me-1"></i> @review.Reviewer?.Name
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-calendar me-1"></i> @review.CreatedAt.ToString("MMM dd, yyyy")
+                                            <span class="mx-2">•</span>
+                                            <i class="bi bi-paw me-1"></i> @review.AnimalListing?.Name
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
