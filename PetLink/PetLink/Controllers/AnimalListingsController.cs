@@ -244,5 +244,39 @@ namespace PetLink
 
             return View(allListings);
         }
+        [Authorize]
+        public async Task<IActionResult> MyListings()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return RedirectToAction("LoginForm", "Profile");
+
+            int currentUserId = int.Parse(userIdClaim);
+
+            var myListings = await _context.AnimalListings
+                .Where(a => a.TutorId == currentUserId)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View(myListings);
+        }
+
+        private async Task<string> UploadImage(IFormFile file, string subFolder)
+        {
+            if (file == null || file.Length == 0) return null;
+
+            // Criar um nome único para evitar ficheiros repetidos
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // Caminho físico: wwwroot/images/subFolder/nome.jpg
+            string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", subFolder, fileName);
+
+            using (var stream = new FileStream(uploadPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Caminho para guardar na BD (URL relativa)
+            return $"/images/{subFolder}/{fileName}";
+        }
     }
 }
