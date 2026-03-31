@@ -2,3 +2,26 @@
     ViewData["Title"] = "Server Fault";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<link rel="stylesheet" href="~/css/errors.css" asp-append-version="true" />
+
+<div class="error-page-container">
+    <div class="error-content">
+        <div class="error-number">
+            <span class="digit">5</span>
+            <img src="~/images/error500.png" alt="0" class="error-zero-image" />
+            <img src="~/images/error500.png" alt="0" class="error-zero-image" />
+        </div>
+
+        <h1 class="error-title">Server Fault</h1>
+
+        <p class="error-description">
+            Sorry, there's something wrong with our server.
+            Please try this page later.
+        </p>
+
+        <a asp-controller="Home" asp-action="Index" class="btn-home">
+            <i class="fas fa-home"></i> Return to Main Page
+        </a>
+    </div>
+</div>
