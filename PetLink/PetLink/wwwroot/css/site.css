@@ -18,7 +18,8 @@ body {
     min-height: 100vh;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
 }
@@ -126,7 +127,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: all 0.2s;
     cursor: pointer;
 }
@@ -161,7 +162,7 @@ footer {
 
 .pet-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 .pet-card .card-body {
@@ -289,7 +290,7 @@ footer {
     border-color: var(--petlink-primary);
 }
 
-.list-group-flush > .list-group-item {
+.list-group-flush>.list-group-item {
     border-width: 0 0 1px;
     padding-left: 0;
     padding-right: 0;
@@ -330,7 +331,7 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, rgba(10,31,53,0.85) 0%, rgba(10,31,53,0.95) 100%);
+    background: linear-gradient(180deg, rgba(10, 31, 53, 0.85) 0%, rgba(10, 31, 53, 0.95) 100%);
     z-index: 0;
 }
 
@@ -346,7 +347,7 @@ footer {
     margin-top: 50px;
 }
 
-.search-field input:focus, 
+.search-field input:focus,
 .search-field select:focus {
     outline: none;
     box-shadow: none;
@@ -370,7 +371,8 @@ footer {
     transition: all 0.2s;
 }
 
-.animal-type-btn.active, .animal-type-btn:hover {
+.animal-type-btn.active,
+.animal-type-btn:hover {
     background-color: var(--petlink-primary);
     color: white;
     border-color: var(--petlink-primary);
@@ -390,7 +392,7 @@ footer {
 
 .features-section .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
 }
 
 /*  CARROSSEL SAVED PETS  */
@@ -442,6 +444,22 @@ footer {
     transition: all 0.2s ease;
 }
 
+#chatWindow {
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Garante que as mensagens não "saltem" ao carregar */
+#chatWindow::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatWindow::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
 /*  NOTIFICAÇÃO  */
 .toast-notification {
     position: fixed;
@@ -451,7 +469,7 @@ footer {
     color: white;
     padding: 12px 24px;
     border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 9999;
     animation: slideIn 0.3s ease;
 }
@@ -461,6 +479,7 @@ footer {
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -523,7 +542,7 @@ hr {
     transition: all 0.2s ease;
 }
 
-input[type="radio"]:checked + .animal-type-btn {
+input[type="radio"]:checked+.animal-type-btn {
     background-color: var(--petlink-primary);
     border-color: var(--petlink-primary);
     color: white;
@@ -535,7 +554,7 @@ input[type="radio"]:checked + .animal-type-btn {
     color: #495057;
 }
 
-.form-check-input:checked + .form-check-label {
+.form-check-input:checked+.form-check-label {
     font-weight: bold;
     color: var(--petlink-dark, #0a58ca);
 }
