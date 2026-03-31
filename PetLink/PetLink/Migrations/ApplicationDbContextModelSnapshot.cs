@@ -171,12 +171,6 @@ namespace PetLink.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalListingId");
@@ -184,10 +178,6 @@ namespace PetLink.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Messages");
                 });
@@ -337,24 +327,16 @@ namespace PetLink.Migrations
                         .HasForeignKey("AnimalListingId");
 
                     b.HasOne("PetLink.Models.User", "Receiver")
-                        .WithMany()
+                        .WithMany("ReceivedMessages")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PetLink.Models.User", "Sender")
-                        .WithMany()
+                        .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("PetLink.Models.User", null)
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("PetLink.Models.User", null)
-                        .WithMany("SentMessages")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("AnimalListing");
 

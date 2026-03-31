@@ -72,7 +72,7 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <li class="nav-item me-3">
-                                    <a class="nav-link text-dark fw-bold" asp-controller="Profile" asp-action="AccountSettings" style="cursor: pointer; text-decoration: none;">
+                                    <a class="nav-link text-dark fw-bold" asp-controller="Profile" asp-action="MyProfile" style="cursor: pointer; text-decoration: none;">
                                         <i class="bi bi-person-circle me-1"></i>
                                         Hey, @User.Identity.Name.Split(' ')[0]!
                                     </a>
