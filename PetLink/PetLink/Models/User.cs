@@ -44,12 +44,12 @@ namespace PetLink.Models
         public virtual ICollection<Review> ReviewsReceived { get; set; } // Avaliações recebidas
         public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
 
-        //[NotMapped]
+        [NotMapped]
         public double AverageRating => ReviewsReceived != null && ReviewsReceived.Any() 
         ? ReviewsReceived.Average(r => r.Rating) 
         : 0;
 
-        //[NotMapped]
+        [NotMapped]
         public int TotalReviews => ReviewsReceived?.Count ?? 0;
     }
 }
