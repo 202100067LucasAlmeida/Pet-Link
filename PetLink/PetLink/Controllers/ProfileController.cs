@@ -290,7 +290,7 @@ namespace PetLink.Controllers
         // My profile
 
         // GET: Profile/MyProfile
-        [Authorize(Roles = "User,PetSitter")]
+        [Authorize]
         public async Task<IActionResult> MyProfile()
         {
             // Obtem o ID do utilizador logado

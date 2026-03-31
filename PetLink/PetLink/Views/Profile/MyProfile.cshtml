@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "My Profile";
+    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
 }
 
 <div class="container py-4">
@@ -15,30 +16,74 @@
         <!-- Main Content -->
         <div class="col-lg-9">
             <!-- Welcome Header -->
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            @if (!string.IsNullOrEmpty(Model.User.ProfilePicture))
-                            {
-                                <img src="@Model.User.ProfilePicture" alt="@Model.User.Name" 
-                                     class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
-                            }
-                            else
-                            {
-                                <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
-                                     style="width: 80px; height: 80px;">
-                                    <i class="bi bi-person-circle text-primary fs-1"></i>
+            @if (userRole == "Admin")
+            {
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h3 class="text-primary-darkblue mb-1">Admin Dashboard</h3>
+                        <p class="text-muted">Welcome to the PetLink control center.</p>
+                        
+                        <div class="row g-3 mt-3">
+                            <!-- Cartão 1: Users -->
+                            <div class="col-md-4">
+                                <div class="p-4 bg-light rounded-4 text-center border">
+                                    <i class="bi bi-people-fill text-primary fs-1 mb-2"></i>
+                                    <h2 class="fw-bold mb-0">Manage</h2>
+                                    <p class="text-muted small">Users</p>
+                                    <a asp-controller="Users" asp-action="Index" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-2">Go to Users</a>
                                 </div>
-                            }
-                        </div>
-                        <div class="flex-grow-1 ms-4">
-                            <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
-                            <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
+                            </div>
+                            
+                            <!-- Cartão 2: Listings -->
+                            <div class="col-md-4">
+                                <div class="p-4 bg-light rounded-4 text-center border">
+                                    <i class="bi bi-card-list text-primary fs-1 mb-2"></i>
+                                    <h2 class="fw-bold mb-0">Approve</h2>
+                                    <p class="text-muted small">Listings</p>
+                                    <a asp-controller="AnimalListings" asp-action="Manage" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-2">Go to Listings</a>
+                                </div>
+                            </div>
+
+                            <!-- Cartão 3: Reports / Petsitters -->
+                            <div class="col-md-4">
+                                <div class="p-4 bg-light rounded-4 text-center border">
+                                    <i class="bi bi-shield-check text-primary fs-1 mb-2"></i>
+                                    <h2 class="fw-bold mb-0">Verify</h2>
+                                    <p class="text-muted small">PetSitters</p>
+                                    <a href="#" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-2">Go to Approvals</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                @if (!string.IsNullOrEmpty(Model.User.ProfilePicture))
+                                {
+                                    <img src="@Model.User.ProfilePicture" alt="@Model.User.Name" 
+                                        class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" 
+                                        style="width: 80px; height: 80px;">
+                                        <i class="bi bi-person-circle text-primary fs-1"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
+                                <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
 
             <!-- Active Applications Section -->
             <div class="card border-0 shadow-sm rounded-4 mb-4">

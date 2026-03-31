@@ -1,4 +1,6 @@
 @model PetLink.Models.AnimalListing
+@using HashidsNet
+@inject IHashids Hashids
 
 @{
     ViewData["Title"] = Model.Name + " - Pet Details";
