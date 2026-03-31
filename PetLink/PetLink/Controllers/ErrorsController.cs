@@ -16,5 +16,15 @@ namespace PetLink.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> FileMissing()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ServerFault()
+        {
+            return View();
+        }
     }
 }
