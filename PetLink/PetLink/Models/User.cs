@@ -42,14 +42,15 @@ namespace PetLink.Models
         public ICollection<Message> SentMessages { get; set; }
         public ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Review> ReviewsReceived { get; set; } // Avaliações recebidas
-        public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
 
-        [NotMapped]
-        public double AverageRating => ReviewsReceived != null && ReviewsReceived.Any() 
-        ? ReviewsReceived.Average(r => r.Rating) 
-        : 0;
+// Propriedades calculadas (não mapeadas na BD)
+[NotMapped]
+public double AverageRating => ReviewsReceived != null && ReviewsReceived.Any() 
+    ? ReviewsReceived.Average(r => r.Rating) 
+    : 0;
 
-        [NotMapped]
-        public int TotalReviews => ReviewsReceived?.Count ?? 0;
+[NotMapped]
+public int TotalReviews => ReviewsReceived?.Count ?? 0;
     }
 }

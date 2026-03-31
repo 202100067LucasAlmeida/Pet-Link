@@ -13,7 +13,7 @@ namespace PetLink.Models.Enums
 
     public enum Breed
     {
-
+        
     }
 
     public enum ListingStatus

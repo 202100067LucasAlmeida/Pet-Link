@@ -364,34 +364,34 @@ namespace PetLink.Controllers
         }
 
         // GET: Profile/TutorProfile/5
-        [HttpGet]
-        public async Task<IActionResult> TutorProfile(int id)
-        {
-            var tutor = await _context.Users
-            .Include(u => u.ReviewsReceived)
-            .Include(u => u.Listings)
-            .FirstOrDefaultAsync(u => u.Id == id && (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter));
+[HttpGet]
+public async Task<IActionResult> TutorProfile(int id)
+{
+    var tutor = await _context.Users
+        .Include(u => u.ReviewsReceived)
+        .Include(u => u.Listings)
+        .FirstOrDefaultAsync(u => u.Id == id && (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter));
 
-            if (tutor == null) return NotFound();
+    if (tutor == null) return NotFound();
 
-            var reviews = await _context.Reviews
-            .Where(r => r.ReviewedId == id && r.IsApproved)
-            .Include(r => r.Reviewer)
-            .Include(r => r.AnimalListing)
-            .OrderByDescending(r => r.CreatedAt)
-            .Take(5)
-            .ToListAsync();
+    var reviews = await _context.Reviews
+        .Where(r => r.ReviewedId == id && r.IsApproved)
+        .Include(r => r.Reviewer)
+        .Include(r => r.AnimalListing)
+        .OrderByDescending(r => r.CreatedAt)
+        .Take(5)
+        .ToListAsync();
 
-            var viewModel = new TutorProfileViewModel
-            {
-                Tutor = tutor,
-                AverageRating = tutor.ReviewsReceived.Any() ? tutor.ReviewsReceived.Average(r => r.Rating) : 0,
-                TotalReviews = tutor.ReviewsReceived.Count,
-                RecentReviews = reviews,
-                Listings = tutor.Listings.Where(l => l.Status == ListingStatus.Published).ToList()
-            };
+    var viewModel = new TutorProfileViewModel
+    {
+        Tutor = tutor,
+        AverageRating = tutor.ReviewsReceived.Any() ? tutor.ReviewsReceived.Average(r => r.Rating) : 0,
+        TotalReviews = tutor.ReviewsReceived.Count,
+        RecentReviews = reviews,
+        Listings = tutor.Listings.Where(l => l.Status == ListingStatus.Published).ToList()
+    };
 
-            return View(viewModel);
+    return View(viewModel);
+}
         }
-    }
 }

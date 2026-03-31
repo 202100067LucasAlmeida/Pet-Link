@@ -10,7 +10,7 @@ namespace PetLink.Models
         public int Id { get; set; }
 
         [Required]
-        public int ReviewerId { get; set; } // Quem fez a avaliação (user)
+        public int ReviewerId { get; set; } // Quem fez a avaliação (adotante)
 
         [Required]
         public int ReviewedId { get; set; } // Quem foi avaliado (Tutor/PetSitter)
@@ -23,11 +23,11 @@ namespace PetLink.Models
         public int Rating { get; set; } // Nota de 1 a 5 estrelas
 
         [MaxLength(500)]
-        public string Comment { get; set; } 
+        public string Comment { get; set; } // Comentário da avaliação
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public bool IsApproved { get; set; } = false; 
+        public bool IsApproved { get; set; } = false; // Admin precisa aprovar?
 
         // Navigation properties
         [ForeignKey("ReviewerId")]
