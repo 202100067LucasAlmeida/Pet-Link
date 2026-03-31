@@ -13,6 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using PetLink.Models.ViewModels;
+using Microsoft.AspNetCore.Hosting; // Precisa disto para o IWebHostEnvironment
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace PetLink.Controllers
 {
@@ -24,10 +27,13 @@ namespace PetLink.Controllers
     public class ProfileController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment; // 1. Declara a variável aqui
 
-        public ProfileController(ApplicationDbContext context)
+        // 2. Adiciona ao construtor
+        public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment; // 3. Guarda o valor
         }
 
         /// <summary>
@@ -256,15 +262,35 @@ namespace PetLink.Controllers
 
 
         //account settings
-        public IActionResult AccountSettings()
+        [HttpGet]
+        public async Task<IActionResult> AccountSettings()
         {
-            return View();
+            // 1. Descobrir quem é o utilizador logado
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            int userId = int.Parse(userIdClaim);
+
+            // 2. Ir buscar TODOS os dados dele à Base de Dados
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // 3. Enviar o utilizador carregado para a View!
+            return View(user);
         }
 
         // My profile
-        
+
         // GET: Profile/MyProfile
-        [Authorize(Roles = "User,PetSitter")]
+        [Authorize]
         public async Task<IActionResult> MyProfile()
         {
             // Obtem o ID do utilizador logado
@@ -293,7 +319,7 @@ namespace PetLink.Controllers
 
             // vai buscar active applications 
             var activeApplications = await _context.Applications
-                .Where(a => a.UserId == userId && 
+                .Where(a => a.UserId == userId &&
                        (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.Approved))
                 .Include(a => a.AnimalListing)
                 .ThenInclude(a => a.Tutor)
@@ -324,7 +350,7 @@ namespace PetLink.Controllers
             // Calcular estatísticas
             var totalApplications = await _context.Applications
                 .CountAsync(a => a.UserId == userId);
-                
+
             var unreadMessages = await _context.Messages
                 .CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
@@ -332,13 +358,13 @@ namespace PetLink.Controllers
 
             var viewModel = new ProfileViewModel
             {
-            User= user,
-            SavedPets = savedPets,
-            ActiveApplications = activeApplications,
-            RecentConversations = recentConversations,
-            TotalApplications = totalApplications,
-            UnreadMessages = unreadMessages,
-            DaysSinceJoined = daysSinceJoined 
+                User = user,
+                SavedPets = savedPets,
+                ActiveApplications = activeApplications,
+                RecentConversations = recentConversations,
+                TotalApplications = totalApplications,
+                UnreadMessages = unreadMessages,
+                DaysSinceJoined = daysSinceJoined
             };
 
             return View(viewModel);
@@ -366,6 +392,41 @@ namespace PetLink.Controllers
 
             await _context.SaveChangesAsync();
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAccount(User updatedUser, IFormFile profilePicture)
+        {
+            var user = await _context.Users.FindAsync(updatedUser.Id);
+            if (user == null) return NotFound();
+
+            // Atualiza os campos de texto usando as propriedades corretas do teu User.cs
+            user.Name = updatedUser.Name;
+            user.Phone = updatedUser.Phone;
+            user.Location = updatedUser.Location;
+            user.Bio = updatedUser.Bio;
+
+            // 2. Se o utilizador enviou uma foto nova, guarda-a
+            if (profilePicture != null && profilePicture.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + profilePicture.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profilePicture.CopyToAsync(fileStream);
+                }
+
+                user.ProfilePicture = "/images/avatars/" + uniqueFileName;
+            }
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("AccountSettings");
         }
     }
 }

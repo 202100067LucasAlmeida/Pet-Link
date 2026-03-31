@@ -4,6 +4,8 @@ using PetLink.Hubs;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+using HashidsNet;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,6 +23,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddSignalR();
+
+// Configura o gerador de Hashids
+builder.Services.AddSingleton<IHashids>(new Hashids("O_Teu_Segredo_PetLink_2026", minHashLength: 6));
 
 var app = builder.Build();
 

@@ -3,10 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models;
-
 namespace PetLink.Controllers
 {
-[Authorize]
+    [Authorize]
     public class UsersController : BaseController
     {
         private readonly ApplicationDbContext _context;
