@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using PetLink.Models.ViewModels;
-using Microsoft.AspNetCore.Hosting; // Precisa disto para o IWebHostEnvironment
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 
@@ -27,13 +27,13 @@ namespace PetLink.Controllers
     public class ProfileController : BaseController
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment; // 1. Declara a variável aqui
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         // 2. Adiciona ao construtor
         public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
-            _webHostEnvironment = webHostEnvironment; // 3. Guarda o valor
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -184,7 +184,8 @@ namespace PetLink.Controllers
                 Role = role,
                 IsVerified = false, // Requer verificação do admin para Associações e PetSitters
                 Phone = model.Phone,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                ProfilePicture = "/images/default-avatar.jpg"
             };
 
             _context.Users.Add(newUser);
@@ -395,38 +396,107 @@ namespace PetLink.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateAccount(User updatedUser, IFormFile profilePicture)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAccount(User updatedUser, IFormFile? profilePicture, bool removePhoto)
         {
-            var user = await _context.Users.FindAsync(updatedUser.Id);
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+            int currentUserId = int.Parse(userIdClaim);
+
+            // 1. Buscar o utilizador original para garantir que editamos o nosso próprio perfil
+            var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
+            if (userInDb == null) return NotFound();
+
+            // 2. Atualizar apenas os campos permitidos
+            userInDb.Name = updatedUser.Name;
+            userInDb.Phone = updatedUser.Phone;
+            userInDb.Location = updatedUser.Location;
+            userInDb.Bio = updatedUser.Bio;
+
+            // 3. Lógica de Foto
+            if (removePhoto)
+            {
+                if (!string.IsNullOrEmpty(userInDb.ProfilePicture) && !userInDb.ProfilePicture.Contains("default-avatar.jpg"))
+                {
+                    var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, userInDb.ProfilePicture.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                }
+                userInDb.ProfilePicture = "/images/default-avatar.jpg";
+            }
+            else if (profilePicture != null && profilePicture.Length > 0)
+            {
+                // Se já tinha foto, apaga a antiga antes de subir a nova para não acumular lixo
+                if (!string.IsNullOrEmpty(userInDb.ProfilePicture) && !userInDb.ProfilePicture.Contains("default-avatar.jpg"))
+                {
+                    var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, userInDb.ProfilePicture.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                }
+                userInDb.ProfilePicture = await SaveProfileFile(profilePicture);
+            }
+
+            _context.Users.Update(userInDb);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Profile updated successfully!";
+            return RedirectToAction(nameof(AccountSettings));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveProfilePicture()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
+            int userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FindAsync(userId);
+
             if (user == null) return NotFound();
 
-            // Atualiza os campos de texto usando as propriedades corretas do teu User.cs
-            user.Name = updatedUser.Name;
-            user.Phone = updatedUser.Phone;
-            user.Location = updatedUser.Location;
-            user.Bio = updatedUser.Bio;
-
-            // 2. Se o utilizador enviou uma foto nova, guarda-a
-            if (profilePicture != null && profilePicture.Length > 0)
+            // 1. Se a foto atual não for a default, vamos apagar o ficheiro físico
+            if (!string.IsNullOrEmpty(user.ProfilePicture) && !user.ProfilePicture.Contains("default-avatar.jpg"))
             {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + profilePicture.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfilePicture.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
                 {
-                    await profilePicture.CopyToAsync(fileStream);
+                    System.IO.File.Delete(filePath);
                 }
-
-                user.ProfilePicture = "/images/avatars/" + uniqueFileName;
             }
+
+            // 2. Voltamos o caminho para a foto default ou null
+            user.ProfilePicture = "/images/default-avatar.jpg";
 
             _context.Update(user);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("AccountSettings");
+            TempData["Success"] = "Profile picture removed successfully!";
+            return RedirectToAction(nameof(AccountSettings));
+        }
+
+        private async Task<string> SaveProfileFile(IFormFile file)
+        {
+            // 1. Criar um nome único (Ex: 550e8400-e29b-41d4.jpg)
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // 2. Definir o caminho da pasta: wwwroot/images/avatars
+            string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
+
+            // 3. Garantir que a pasta existe
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            string filePath = Path.Combine(uploadDir, fileName);
+
+            // 4. Guardar o ficheiro no disco
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // 5. Retornar o caminho relativo para a Base de Dados
+            return $"/images/avatars/{fileName}";
         }
     }
 }

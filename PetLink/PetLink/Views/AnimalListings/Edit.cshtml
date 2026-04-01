@@ -12,6 +12,7 @@
                 <h2 class="text-primary-blue fw-bold mb-0">
                     <i class="bi bi-pencil-square me-2"></i> Edit Animal Listing
                 </h2>
+                @* Redirecionamento inteligente dependendo de quem edita *@
                 <a asp-action="@(User.IsInRole("Admin") ? "Manage" : "MyListings")"
                        class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
                     <i class="bi bi-arrow-left me-1"></i> Back
@@ -21,14 +22,21 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4 p-md-5">
 
-                    @* IMPORTANTE: Adicionado enctype e o ID agora usa o Hashid *@
-                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post"
-                          enctype="multipart/form-data">
+                    @* Importante: ID numérico e enctype para upload *@
+                    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-semibold small"></div>
+                        
+                        @* Campos escondidos para não perder dados que não estão no form *@
                         <input type="hidden" asp-for="Id" />
-                        <input type="hidden" asp-for="TutorId" />
                         <input type="hidden" asp-for="CreatedAt" />
                         <input type="hidden" asp-for="ImageUrl" />
+
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            @* Se não é admin, enviamos os campos originais escondidos *@
+                            <input type="hidden" asp-for="TutorId" />
+                            <input type="hidden" asp-for="Status" />
+                        }
 
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Basic Information</h5>
                         <div class="row">
@@ -68,15 +76,19 @@
 
                         @* GESTÃO DE IMAGENS NO EDIT *@
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Update Photos</h5>
-                        <div class="row align-items-center mb-4">
-                            <div class="col-md-3">
+                        <div class="row align-items-center mb-4 bg-light p-3 rounded-3 mx-0">
+                            <div class="col-md-3 text-center">
                                 <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-pet.jpg" : Model.ImageUrl)"
-                                     class="img-thumbnail rounded-3 shadow-sm mb-2" style="max-height: 120px;" />
+                                     class="img-thumbnail rounded-3 shadow-sm mb-2"
+                                     style="max-height: 120px; width: 100%; object-fit: cover;"
+                                     onerror="this.src='/images/default-pet.jpg'" />
+                                <span class="badge bg-secondary">Current</span>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-9 mt-3 mt-md-0">
                                 <label class="form-label fw-semibold small">Replace Main Photo</label>
                                 <input type="file" name="mainPhoto" class="form-control form-control-sm"
                                        accept="image/*" />
+                                <p class="text-muted small mt-1 mb-0">Leave empty to keep the current photo.</p>
                             </div>
                         </div>
 
@@ -99,26 +111,29 @@
                             </div>
                         </div>
 
-                        @* SÓ O ADMIN PODE MUDAR O STATUS E O TUTOR *@
+                        @* Controlos exclusivos de Admin *@
                         @if (User.IsInRole("Admin"))
                         {
-                            <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Admin Controls</h5>
+                            <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4 text-danger">Admin Controls</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Status" class="form-label fw-semibold">Status</label>
-                                    <select asp-for="Status" class="form-select py-2"
+                                    <select asp-for="Status" class="form-select py-2 border-danger"
                                             asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.ListingStatus>()">
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label asp-for="TutorId" class="form-label fw-semibold">Tutor</label>
-                                    <select asp-for="TutorId" class="form-select py-2" asp-items="ViewBag.TutorId"></select>
+                                    <label asp-for="TutorId" class="form-label fw-semibold">Transfer Tutor</label>
+                                    @* O asp-items deve apontar para o ViewBag preenchido no Controller *@
+                                    <select asp-for="TutorId" class="form-select py-2 border-danger"
+                                            asp-items="ViewBag.TutorId">
+                                    </select>
                                 </div>
                             </div>
                         }
 
-                        <div class="d-grid gap-2 mt-2">
-                            <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3">
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3 shadow">
                                 <i class="bi bi-save me-2"></i> Save Changes
                             </button>
                         </div>
@@ -128,3 +143,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -21,14 +21,10 @@ namespace PetLink.Controllers
         // GET: /Messages/Index ou /Messages/Index/5
         public async Task<IActionResult> Index(int? id)
         {
-            // Obter o ID do utilizador logado com segurança
-            var userIdClaim = User.FindFirst("UserId")?.Value
-               ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+            var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
             int currentUserId = int.Parse(userIdClaim);
 
-            // Procurar todas as mensagens onde o user participa
             var allMessages = await _context.Messages
                 .Include(m => m.Sender)
                 .Include(m => m.Receiver)
@@ -36,33 +32,38 @@ namespace PetLink.Controllers
                 .OrderByDescending(m => m.Timestamp)
                 .ToListAsync();
 
-            // 3Criar a lista de conversas 
+            // Criar a lista de conversas com IMAGEM
             var conversations = allMessages
                 .GroupBy(m => m.SenderId == currentUserId ? m.ReceiverId : m.SenderId)
-                .Select(g => new ConversationSummary
+                .Select(g =>
                 {
-                    OtherUserId = g.Key,
-                    OtherUserName = g.First().SenderId == currentUserId ? g.First().Receiver.Name : g.First().Sender.Name,
-                    LastMessagePreview = g.First().Content,
-                    LastMessageTimestamp = g.First().Timestamp,
-                    IsActive = (id.HasValue && g.Key == id.Value),
-                    IsOnline = true
+                    var firstMsg = g.First();
+                    var otherUser = firstMsg.SenderId == currentUserId ? firstMsg.Receiver : firstMsg.Sender;
+                    return new ConversationSummary
+                    {
+                        OtherUserId = g.Key,
+                        OtherUserName = otherUser.Name,
+                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
+                        LastMessagePreview = firstMsg.Content,
+                        LastMessageTimestamp = firstMsg.Timestamp,
+                        IsActive = (id.HasValue && g.Key == id.Value),
+                        IsOnline = true
+                    };
                 })
                 .ToList();
 
             var viewModel = new MessagesViewModel { Conversations = conversations };
 
-            // Se houver um ID na URL, os detalhes dessa conversa são carregados
             if (id.HasValue)
             {
                 var otherUser = await _context.Users.FindAsync(id.Value);
                 if (otherUser != null)
                 {
-                    // 1. Prepara a janela da direita (mensagens vazias se for novo)
                     viewModel.ActiveConversation = new ConversationDetail
                     {
                         OtherUserId = id.Value,
                         OtherUserName = otherUser.Name,
+                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
                         Messages = allMessages
                             .Where(m => (m.SenderId == currentUserId && m.ReceiverId == id.Value) ||
                                         (m.SenderId == id.Value && m.ReceiverId == currentUserId))
@@ -70,19 +71,7 @@ namespace PetLink.Controllers
                             .ToList()
                     };
 
-                    // 2. Se for um chat novo, adiciona-o ao topo da barra lateral!
-                    if (!conversations.Any(c => c.OtherUserId == id.Value))
-                    {
-                        conversations.Insert(0, new ConversationSummary
-                        {
-                            OtherUserId = id.Value,
-                            OtherUserName = otherUser.Name,
-                            LastMessagePreview = "Start a conversation...", // Mensagem de incentivo
-                            LastMessageTimestamp = DateTime.Now,
-                            IsActive = true,
-                            IsOnline = true
-                        });
-                    }
+                    // Lógica de inserir chat novo no topo se não existir...
                 }
             }
 
@@ -123,9 +112,5 @@ namespace PetLink.Controllers
 
             return Json(new { success = true, messageId = newMessage.Id, timestamp = newMessage.Timestamp.ToString("HH:mm") });
         }
-
-
-
-
     }
 }

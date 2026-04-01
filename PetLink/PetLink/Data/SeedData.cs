@@ -31,7 +31,7 @@ namespace PetLink.Data
                     Phone = "+351 912 345 678",
                     Location = "Lisbon",
                     Bio = "Admin system user",
-                    ProfilePicture = "/images/default-avatar.jpg",
+                    ProfilePicture = "/images/logo.png",
                     CreatedAt = DateTime.Now.AddDays(-365)
                 };
 
@@ -45,7 +45,7 @@ namespace PetLink.Data
                     Phone = "+351 234 567 890",
                     Location = "Lisbon",
                     Bio = "Animal shelter specializing in rescue dogs and cats",
-                    ProfilePicture = "/images/sarahjenkins.jpg",
+                    ProfilePicture = "/images/avatars/sunnypaws.jpg",
                     CreatedAt = DateTime.Now.AddDays(-180)
                 };
 
@@ -59,7 +59,7 @@ namespace PetLink.Data
                     Phone = "+351 912 345 679",
                     Location = "Lisbon",
                     Bio = "Pet lover looking for adoption",
-                    ProfilePicture = "/images/default-avatar.jpg",
+                    ProfilePicture = "/images/avatars/joaosilva.jpg",
                     CreatedAt = DateTime.Now.AddDays(-30)
                 };
 
@@ -74,7 +74,7 @@ namespace PetLink.Data
                     Phone = "+351 923 456 789",
                     Location = "Downtown Lisbon",
                     Bio = "Experienced dog walker",
-                    ProfilePicture = "/images/sarahjenkins.jpg",
+                    ProfilePicture = "/images/avatars/sarahjenkins.jpg",
                     CreatedAt = DateTime.Now.AddDays(-90)
                 };
                 var sitter2 = new User
@@ -87,7 +87,7 @@ namespace PetLink.Data
                     Phone = "+351 934 567 890",
                     Location = "Westside Lisbon",
                     Bio = "Cat specialist",
-                    ProfilePicture = "/images/marcuschen.jpg",
+                    ProfilePicture = "/images/avatars/marcuschen.jpg",
                     CreatedAt = DateTime.Now.AddDays(-120)
                 };
                 var sitter3 = new User
@@ -100,7 +100,7 @@ namespace PetLink.Data
                     Phone = "+351 945 678 901",
                     Location = "North Lisbon",
                     Bio = "Exotic pets expert",
-                    ProfilePicture = "/images/elenasmith.jpg",
+                    ProfilePicture = "/images/avatars/elenasmith.jpg",
                     CreatedAt = DateTime.Now.AddDays(-60)
                 };
 
@@ -147,26 +147,170 @@ namespace PetLink.Data
 
                 // 3. Animal Listings completos (8 animais)
                 context.AnimalListings.AddRange(
-                    new AnimalListing { Name = "Cooper", Species = Species.Dog, Age = Age.Puppy, AgeMonths = 4, Location = "Lisbon", Description = "Energetic puppy loves playing!", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-1), TutorId = shelter.Id },
-                    new AnimalListing { Name = "Luna", Species = Species.Cat, Age = Age.Adult, AgeMonths = 24, Location = "Setúbal", Description = "Calm apartment cat", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-2), TutorId = shelter.Id },
-                    new AnimalListing { Name = "Rio", Species = Species.Bird, Age = Age.Puppy, AgeMonths = 12, Location = "Leiria", Description = "Talkative macaw parrot", IsVaccinated = false, IsDewormed = false, IsSterilized = false, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-3), TutorId = particular.Id },
-                    new AnimalListing { Name = "Shadow", Species = Species.Dog, Age = Age.Adult, AgeMonths = 60, Location = "Algarve", Description = "Loyal companion for quiet home", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-4), TutorId = shelter.Id },
-                    new AnimalListing { Name = "Rex", Species = Species.Dog, Age = Age.Adult, AgeMonths = 36, Location = "Porto", Description = "Friendly French Bulldog", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-5), TutorId = shelter.Id },
-                    new AnimalListing { Name = "Max", Species = Species.Dog, Age = Age.Senior, AgeMonths = 96, Location = "Coimbra", Description = "Trained senior German Shepherd", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-6), TutorId = particular.Id },
-                    new AnimalListing { Name = "Daisy", Species = Species.Dog, Age = Age.Adult, AgeMonths = 48, Location = "Braga", Description = "Active Beagle needs exercise", IsVaccinated = true, IsDewormed = true, IsSterilized = false, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-7), TutorId = shelter.Id },
-                    new AnimalListing { Name = "Misty", Species = Species.Cat, Age = Age.Adult, AgeMonths = 60, Location = "Aveiro", Description = "Independent longhair cat", IsVaccinated = true, IsDewormed = true, IsSterilized = true, Status = ListingStatus.Published, CreatedAt = DateTime.Now.AddDays(-8), TutorId = particular.Id }
+                    new AnimalListing
+                    {
+                        Name = "Cooper",
+                        Species = Species.Dog,
+                        Age = Age.Puppy,
+                        AgeMonths = 4,
+                        Location = "Lisbon",
+                        Description = "Energetic puppy loves playing!",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-1),
+                        TutorId = shelter.Id,
+                        ImageUrl = "/images/animals/cooper.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Luna",
+                        Species = Species.Cat,
+                        Age = Age.Adult,
+                        AgeMonths = 24,
+                        Location = "Setúbal",
+                        Description = "Calm apartment cat",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-2),
+                        TutorId = shelter.Id,
+                        ImageUrl = "/images/animals/luna.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Rio",
+                        Species = Species.Bird,
+                        Age = Age.Puppy,
+                        AgeMonths = 12,
+                        Location = "Leiria",
+                        Description = "Talkative macaw parrot",
+                        IsVaccinated = false,
+                        IsDewormed = false,
+                        IsSterilized = false,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-3),
+                        TutorId = particular.Id,
+                        ImageUrl = "/images/animals/rio.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Shadow",
+                        Species = Species.Dog,
+                        Age = Age.Adult,
+                        AgeMonths = 60,
+                        Location = "Algarve",
+                        Description = "Loyal companion for quiet home",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-4),
+                        TutorId = shelter.Id,
+                        ImageUrl = "/images/animals/shadow.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Rex",
+                        Species = Species.Dog,
+                        Age = Age.Adult,
+                        AgeMonths = 36,
+                        Location = "Porto",
+                        Description = "Friendly French Bulldog",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-5),
+                        TutorId = shelter.Id,
+                        ImageUrl = "/images/animals/rex.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Max",
+                        Species = Species.Dog,
+                        Age = Age.Senior,
+                        AgeMonths = 96,
+                        Location = "Coimbra",
+                        Description = "Trained senior German Shepherd",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-6),
+                        TutorId = particular.Id,
+                        ImageUrl = "/images/animals/max.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Daisy",
+                        Species = Species.Dog,
+                        Age = Age.Adult,
+                        AgeMonths = 48,
+                        Location = "Braga",
+                        Description = "Active Beagle needs exercise",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = false,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-7),
+                        TutorId = shelter.Id,
+                        ImageUrl = "/images/animals/daisy.jpg"
+                    },
+                    new AnimalListing
+                    {
+                        Name = "Misty",
+                        Species = Species.Cat,
+                        Age = Age.Adult,
+                        AgeMonths = 60,
+                        Location = "Aveiro",
+                        Description = "Independent longhair cat",
+                        IsVaccinated = true,
+                        IsDewormed = true,
+                        IsSterilized = true,
+                        Status = ListingStatus.Published,
+                        CreatedAt = DateTime.Now.AddDays(-8),
+                        TutorId = particular.Id,
+                        ImageUrl = "/images/animals/misty.jpg"
+                    }
                 );
 
                 // 4. Sample FavoritePets
                 context.FavoritePets.AddRange(
-                    new FavoritePet { UserId = particular.Id, AnimalListingId = 1, CreatedAt = DateTime.Now.AddDays(-2) }, // João favorited Cooper
-                    new FavoritePet { UserId = particular.Id, AnimalListingId = 4, CreatedAt = DateTime.Now.AddDays(-1) }  // João favorited Shadow
+                    new FavoritePet
+                    {
+                        UserId = particular.Id,
+                        AnimalListingId = 1,
+                        CreatedAt = DateTime.Now.AddDays(-2)
+                    }, // João favorited Cooper
+                    new FavoritePet
+                    {
+                        UserId = particular.Id,
+                        AnimalListingId = 4,
+                        CreatedAt = DateTime.Now.AddDays(-1)
+                    }  // João favorited Shadow
                 );
 
                 // 5. Sample Applications
                 context.Applications.AddRange(
-                    new Application { UserId = particular.Id, AnimalListingId = 1, Message = "Interested in adopting Cooper!", Status = ApplicationStatus.Approved, SubmittedAt = DateTime.Now.AddDays(-1) },
-                    new Application { UserId = particular.Id, AnimalListingId = 2, Message = "Love Luna, is she good with kids?", Status = ApplicationStatus.Pending, SubmittedAt = DateTime.Now }
+                    new Application
+                    {
+                        UserId = particular.Id,
+                        AnimalListingId = 1,
+                        Message = "Interested in adopting Cooper!",
+                        Status = ApplicationStatus.Approved,
+                        SubmittedAt = DateTime.Now.AddDays(-1)
+                    },
+                    new Application
+                    {
+                        UserId = particular.Id,
+                        AnimalListingId = 2,
+                        Message = "Love Luna, is she good with kids?",
+                        Status = ApplicationStatus.Pending,
+                        SubmittedAt = DateTime.Now
+                    }
                 );
 
                 // 6. Messages de teste (3 conversas)
@@ -174,14 +318,42 @@ namespace PetLink.Data
                 {
                     context.Messages.AddRange(
                         // João <-> Sarah (PetSitter)
-                        new Message { SenderId = particular.Id, ReceiverId = sitter1.Id, Content = "Olá Sarah! Preciso de alguém para passear o meu cão na próxima semana.", Timestamp = DateTime.Now.AddDays(-3), IsRead = true },
-                        new Message { SenderId = sitter1.Id, ReceiverId = particular.Id, Content = "Olá João! Tenho disponibilidade. Qual a raça e tamanho?", Timestamp = DateTime.Now.AddDays(-3).AddHours(2), IsRead = false },
+                        new Message
+                        {
+                            SenderId = particular.Id,
+                            ReceiverId = sitter1.Id,
+                            Content = "Olá Sarah! Preciso de alguém para passear o meu cão na próxima semana.",
+                            Timestamp = DateTime.Now.AddDays(-3),
+                            IsRead = true
+                        },
+                        new Message
+                        {
+                            SenderId = sitter1.Id,
+                            ReceiverId = particular.Id,
+                            Content = "Olá João! Tenho disponibilidade. Qual a raça e tamanho?",
+                            Timestamp = DateTime.Now.AddDays(-3).AddHours(2),
+                            IsRead = false
+                        },
 
                         // João <-> Shelter (Cooper)
-                        new Message { SenderId = particular.Id, ReceiverId = shelter.Id, Content = "Olá! O Cooper dá-se bem com outros cães?", Timestamp = DateTime.Now.AddDays(-1), IsRead = false },
+                        new Message
+                        {
+                            SenderId = particular.Id,
+                            ReceiverId = shelter.Id,
+                            Content = "Olá! O Cooper dá-se bem com outros cães?",
+                            Timestamp = DateTime.Now.AddDays(-1),
+                            IsRead = false
+                        },
 
                         // Shelter -> João (resposta)
-                        new Message { SenderId = shelter.Id, ReceiverId = particular.Id, Content = "Sim, o Cooper é muito sociável!", Timestamp = DateTime.Now.AddHours(-4), IsRead = true }
+                        new Message
+                        {
+                            SenderId = shelter.Id,
+                            ReceiverId = particular.Id,
+                            Content = "Sim, o Cooper é muito sociável!",
+                            Timestamp = DateTime.Now.AddHours(-4),
+                            IsRead = true
+                        }
                     );
                 }
 
