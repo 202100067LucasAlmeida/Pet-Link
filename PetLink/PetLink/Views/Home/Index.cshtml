@@ -117,37 +117,35 @@
                 {
                     <div class="col-md-6 col-lg-3">
                         <div class="animal-card card h-100 shadow-sm border-0">
-                            <img src="~/images/@(item.Name.ToLower()).jpg" alt="@item.Name's photo" class="card-img-top">
-                                <div class="card-body">
-                                    <h3 class="h5 text-primary-darkblue mb-2 fw-bold">@item.Name</h3>
-                                    <div class="animal-details small text-muted">
-                                        <p class="mb-1"><i class="bi bi-geo-alt"></i> @item.Location</p>
-                                        <p class="mb-1"><i class="bi bi-calendar"></i> @item.AgeMonths months</p>
-                                        <p class="mb-1"><i class="bi bi-tag"></i> @item.Species</p>
-                                    </div>
-                                </div>
-
-                                <div class="card-footer bg-transparent border-0 pb-3">
-                                    <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@item.Id"
-                                           class="btn btn-secondary rounded-pill w-100 fw-bold">View Details
-                                    </a>
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)"
+                                 class="card-img-top" style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='/images/default-pet.jpg'">
+                            <div class="card-body">
+                                <h3 class="h5 text-primary-darkblue mb-2 fw-bold">@item.Name</h3>
+                                <div class="animal-details small text-muted">
+                                    <p class="mb-1"><i class="bi bi-geo-alt"></i> @item.Location</p>
+                                    <p class="mb-1"><i class="bi bi-calendar"></i> @item.AgeMonths months</p>
+                                    <p class="mb-1"><i class="bi bi-tag"></i> @item.Species</p>
                                 </div>
                             </div>
+
+                            <div class="card-footer bg-transparent border-0 pb-3">
+                                <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-secondary rounded-pill w-100 fw-bold">View Details
+                                </a>
+                            </div>
                         </div>
-                    }
-                }
-            else
-                {
-                    <div class="col-12 text-center py-4">
-                        <p class="text-muted">Nenhum animal listado recentemente.</p>
                     </div>
                 }
-            </div>
+            }
+            else
+            {
+                <div class="col-12 text-center py-4">
+                    <p class="text-muted">Nenhum animal listado recentemente.</p>
+                </div>
+            }
         </div>
     </div>
-</div>
-</div>
-</div>
 </section>
 
 <!-- Footer -->
