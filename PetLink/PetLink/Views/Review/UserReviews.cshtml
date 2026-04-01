@@ -22,34 +22,60 @@
                         </div>
                         <div>
                             <h2 class="fw-bold text-primary-darkblue mb-1">@Model.User.Name</h2>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rating-display">
-                                    @for (int i = 1; i <= 5; i++)
-                                    {
-                                        if (i <= Math.Round(Model.AverageRating))
-                                        {
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                        }
-                                        else if (i <= Math.Round(Model.AverageRating) + 0.5)
-                                        {
-                                            <i class="bi bi-star-half text-warning"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="bi bi-star text-warning"></i>
-                                        }
-                                    }
+                            <p class="text-muted small mb-1">@Model.User.Role</p>
+                            
+                            @if (Model.CanReceiveReviews)
+                            {
+                                @if (Model.TotalReviews > 0)
+                                {
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rating-display">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= Math.Round(Model.AverageRating))
+                                                {
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                }
+                                                else if (i <= Math.Round(Model.AverageRating) + 0.5)
+                                                {
+                                                    <i class="bi bi-star-half text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star text-warning"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <span class="fw-bold">@Model.AverageRating.ToString("0.0")</span>
+                                        <span class="text-muted">(@Model.TotalReviews reviews)</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-muted small">No reviews yet</div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted small">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    @Model.User.Role does not receive reviews
                                 </div>
-                                <span class="fw-bold">@Model.AverageRating.ToString("0.0")</span>
-                                <span class="text-muted">(@Model.TotalReviews reviews)</span>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
                 <div class="card-body p-4">
                     <h4 class="fw-bold text-primary-darkblue mb-3">Reviews</h4>
                     
-                    @if (!Model.Reviews.Any())
+                    @if (!Model.CanReceiveReviews)
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-info-circle fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">@Model.User.Role accounts do not receive reviews</p>
+                        </div>
+                    }
+                    else if (!Model.Reviews.Any())
                     {
                         <div class="text-center py-5">
                             <i class="bi bi-chat-dots fs-1 text-muted"></i>

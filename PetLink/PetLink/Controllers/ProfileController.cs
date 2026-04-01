@@ -327,14 +327,33 @@ namespace PetLink.Controllers
 
             var viewModel = new ProfileViewModel
             {
-            User= user,
-            SavedPets = savedPets,
-            ActiveApplications = activeApplications,
-            RecentConversations = recentConversations,
-            TotalApplications = totalApplications,
-            UnreadMessages = unreadMessages,
-            DaysSinceJoined = daysSinceJoined 
+                User = user,
+                SavedPets = savedPets,
+                ActiveApplications = activeApplications,
+                RecentConversations = recentConversations,
+                TotalApplications = totalApplications,
+                UnreadMessages = unreadMessages,
+                DaysSinceJoined = daysSinceJoined 
             };
+
+            // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
+            var averageRating = 0.0;
+            var totalReviews = 0;
+            var canReceiveReviews = (user.Role == UserRole.User || user.Role == UserRole.PetSitter);
+
+            if (canReceiveReviews)
+            {
+                var reviews = await _context.Reviews
+                    .Where(r => r.ReviewedId == userId && r.IsApproved)
+                    .ToListAsync();
+                
+                totalReviews = reviews.Count;
+                averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
+            }
+
+            ViewBag.AverageRating = averageRating;
+            ViewBag.TotalReviews = totalReviews;
+            ViewBag.CanReceiveReviews = canReceiveReviews;
 
             return View(viewModel);
         }
@@ -362,36 +381,5 @@ namespace PetLink.Controllers
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
-
-        // GET: Profile/TutorProfile/5
-[HttpGet]
-public async Task<IActionResult> TutorProfile(int id)
-{
-    var tutor = await _context.Users
-        .Include(u => u.ReviewsReceived)
-        .Include(u => u.Listings)
-        .FirstOrDefaultAsync(u => u.Id == id && (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter));
-
-    if (tutor == null) return NotFound();
-
-    var reviews = await _context.Reviews
-        .Where(r => r.ReviewedId == id && r.IsApproved)
-        .Include(r => r.Reviewer)
-        .Include(r => r.AnimalListing)
-        .OrderByDescending(r => r.CreatedAt)
-        .Take(5)
-        .ToListAsync();
-
-    var viewModel = new TutorProfileViewModel
-    {
-        Tutor = tutor,
-        AverageRating = tutor.ReviewsReceived.Any() ? tutor.ReviewsReceived.Average(r => r.Rating) : 0,
-        TotalReviews = tutor.ReviewsReceived.Count,
-        RecentReviews = reviews,
-        Listings = tutor.Listings.Where(l => l.Status == ListingStatus.Published).ToList()
-    };
-
-    return View(viewModel);
-}
-        }
+    }
 }

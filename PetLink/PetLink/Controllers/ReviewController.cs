@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
+using PetLink.Models.Enums;
 using PetLink.Models.ViewModels;
 using System;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace PetLink.Controllers
             _context = context;
         }
 
-        // GET: Review/Create/5 (para avaliar um tutor/petsitter após adoção)
+        // GET: Review/Create/5
         [HttpGet]
         public async Task<IActionResult> Create(int animalListingId)
         {
@@ -55,6 +56,13 @@ namespace PetLink.Controllers
                 .FirstOrDefaultAsync(a => a.Id == animalListingId);
 
             if (animal == null) return NotFound();
+
+            // Verificar se o tutor pode receber avaliações
+            if (animal.Tutor != null && animal.Tutor.Role != UserRole.User && animal.Tutor.Role != UserRole.PetSitter)
+            {
+                TempData["Error"] = "This user cannot receive reviews.";
+                return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
+            }
 
             var viewModel = new CreateReviewViewModel
             {
@@ -102,6 +110,14 @@ namespace PetLink.Controllers
                 return RedirectToAction("Details", "AnimalListings", new { id = model.AnimalListingId });
             }
 
+            // Verificar se o tutor pode receber avaliações
+            var tutor = await _context.Users.FindAsync(model.ReviewedId);
+            if (tutor != null && tutor.Role != UserRole.User && tutor.Role != UserRole.PetSitter)
+            {
+                TempData["Error"] = "This user cannot receive reviews.";
+                return RedirectToAction("Details", "AnimalListings", new { id = model.AnimalListingId });
+            }
+
             var review = new Review
             {
                 ReviewerId = currentUserId,
@@ -110,7 +126,7 @@ namespace PetLink.Controllers
                 Rating = model.Rating,
                 Comment = model.Comment,
                 CreatedAt = DateTime.Now,
-                IsApproved = true // Pode ser false se precisar de moderação
+                IsApproved = true
             };
 
             _context.Reviews.Add(review);
@@ -120,7 +136,7 @@ namespace PetLink.Controllers
             return RedirectToAction("Details", "AnimalListings", new { id = model.AnimalListingId });
         }
 
-        // GET: Review/UserReviews/5 (ver avaliações de um utilizador)
+        // GET: Review/UserReviews/5
         [HttpGet]
         public async Task<IActionResult> UserReviews(int userId)
         {
@@ -129,19 +145,33 @@ namespace PetLink.Controllers
 
             if (user == null) return NotFound();
 
-            var reviews = await _context.Reviews
-                .Where(r => r.ReviewedId == userId && r.IsApproved)
-                .Include(r => r.Reviewer)
-                .Include(r => r.AnimalListing)
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
+            // Verificar se este user pode receber avaliações
+            var canReceiveReviews = (user.Role == UserRole.User || user.Role == UserRole.PetSitter);
+            
+            var reviews = new List<Review>();
+            var averageRating = 0.0;
+            var totalReviews = 0;
+            
+            if (canReceiveReviews)
+            {
+                reviews = await _context.Reviews
+                    .Where(r => r.ReviewedId == userId && r.IsApproved)
+                    .Include(r => r.Reviewer)
+                    .Include(r => r.AnimalListing)
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
+                
+                totalReviews = reviews.Count;
+                averageRating = totalReviews > 0 ? reviews.Average(r => r.Rating) : 0;
+            }
 
             var viewModel = new UserReviewsViewModel
             {
                 User = user,
                 Reviews = reviews,
-                AverageRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0,
-                TotalReviews = reviews.Count
+                AverageRating = averageRating,
+                TotalReviews = totalReviews,
+                CanReceiveReviews = canReceiveReviews
             };
 
             return View(viewModel);

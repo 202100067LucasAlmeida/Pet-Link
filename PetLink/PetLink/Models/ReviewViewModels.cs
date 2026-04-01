@@ -24,6 +24,7 @@ namespace PetLink.Models.ViewModels
         public List<Review> Reviews { get; set; }
         public double AverageRating { get; set; }
         public int TotalReviews { get; set; }
+        public bool CanReceiveReviews { get; set; }  // Adicionado
     }
 
     public class TutorProfileViewModel
@@ -33,5 +34,15 @@ namespace PetLink.Models.ViewModels
         public int TotalReviews { get; set; }
         public List<Review> RecentReviews { get; set; }
         public List<AnimalListing> Listings { get; set; }
+    }
+
+    public class ReviewDisplayViewModel
+    {
+        public int Id { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string ReviewerName { get; set; }
+        public string AnimalName { get; set; }
     }
 }

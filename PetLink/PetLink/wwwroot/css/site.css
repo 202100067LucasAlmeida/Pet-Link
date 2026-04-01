@@ -499,3 +499,71 @@ footer {
 .transition-all {
     transition: all 0.2s ease;
 }
+
+/* ==================== ESTILOS DO PERFIL ==================== */
+
+/* Hover effect for messages */
+.hover-message {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.hover-message:hover {
+    background-color: var(--petlink-light-bg);
+    transform: translateX(5px);
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}
+
+/* Carrossel de Saved Pets */
+#savedPetsCarousel {
+    overflow: hidden;
+}
+
+#carouselTrack {
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.carousel-card {
+    flex: 0 0 calc(50% - 0.5rem);
+    min-width: calc(50% - 0.5rem);
+}
+
+.carousel-card .position-relative {
+    height: 140px;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+}
+
+.carousel-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Botões desabilitados do carrossel */
+#scrollLeftBtn:disabled,
+#scrollRightBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Rating stars */
+.rating-display i,
+.rating-stars i {
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.rating-stars i {
+    font-size: 2rem;
+    transition: all 0.2s;
+}
+
+.rating-stars i:hover {
+    transform: scale(1.1);
+}
