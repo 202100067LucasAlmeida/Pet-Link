@@ -27,11 +27,13 @@
                             <li class="nav-item"><a class="nav-link" href="#">Payment Methods</a></li>
                         </ul>
 
-                        @* Envolvemos tudo num FORM para enviar para o backend de uma só vez *@
                         <form asp-controller="Profile" asp-action="UpdateAccount" method="post"
                               enctype="multipart/form-data">
                             <input type="hidden" asp-for="Id" />
                         
+                            @* CAMPO ESCONDIDO PARA A REMOÇÃO *@
+                            <input type="hidden" id="removePhotoFlag" name="removePhoto" value="false" />
+
                             <div class="mb-5 details-sec">
                                 <h4 class="mb-4 text-primary-darkblue">Personal Details</h4>
 
@@ -85,40 +87,33 @@
 
                                                     <div class="d-flex align-items-start gap-4">
                                                         <div class="position-relative">
-                                                            @* Mostra a foto da BD ou o icon padrão *@
-                                                            @if (!string.IsNullOrEmpty(Model?.ProfilePicture))
-                                                            {
-                                                                <img id="profilePreview" src="@Model.ProfilePicture"
-                                                                     class="rounded-circle shadow-sm"
-                                                                     style="width: 100px; height: 100px; object-fit: cover;" />
-                                                            }
-                                                            else
-                                                            {
-                                                                <div id="defaultAvatarIcon"
-                                                                     class="bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                                                                     style="width: 100px; height: 100px;">
-                                                                    <i class="bi bi-person-circle fs-1 text-secondary"></i>
-                                                                </div>
-                                                                <img id="profilePreview" src="" class="rounded-circle shadow-sm d-none"
-                                                                     style="width: 100px; height: 100px; object-fit: cover;" />
-                                                            }
+                                                            @* Lógica de Preview ajustada *@
+                                                            <div id="defaultAvatarIcon"
+                                                                 class="@(!string.IsNullOrEmpty(Model?.ProfilePicture) && Model.ProfilePicture != "/images/default-avatar.jpg" ? "d-none" : "") bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                                                 style="width: 100px; height: 100px;">
+                                                                <i class="bi bi-person-circle fs-1 text-secondary"></i>
+                                                            </div>
+                                    
+                                                            <img id="profilePreview"
+                                                                 src="@(string.IsNullOrEmpty(Model?.ProfilePicture) ? "" : Model.ProfilePicture)"
+                                                                 class="@(string.IsNullOrEmpty(Model?.ProfilePicture) || Model.ProfilePicture == "/images/default-avatar.jpg" ? "d-none" : "") rounded-circle shadow-sm"
+                                                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                                                 onerror="this.style.display='none'" />
                                                         </div>
 
                                                         <div class="flex-grow-1">
                                                             <div class="mb-3">
-                                                                @* Campo de ficheiro escondido *@
                                                                 <input type="file" id="profilePictureInput" name="profilePicture"
                                                                        accept="image/jpeg, image/png, image/gif" class="d-none"
                                                                        onchange="previewImage(event)">
-                                        
-                                                                @* Botão bonito que clica no campo escondido *@
+                
                                                                 <button type="button" class="btn btn-primary btn-sm me-2"
                                                                         onclick="document.getElementById('profilePictureInput').click()">
                                                                     <i class="bi bi-upload me-1"></i>Upload New Photo
                                                                 </button>
-                                        
+                
                                                                 <button type="button" class="btn btn-outline-danger btn-sm"
-                                                                        onclick="removePreview()">
+                                                                        onclick="handleRemovePhoto()">
                                                                     <i class="bi bi-trash me-1"></i>Remove
                                                                 </button>
                                                             </div>
@@ -137,7 +132,6 @@
 
                                                     <div class="mb-4">
                                                         <label class="form-label fw-medium">Bio</label>
-                                                        @* Aqui sim usamos Textarea *@
                                                         <textarea asp-for="Bio" class="form-control" rows="4"
                                                                   placeholder="Tell us a bit about yourself..."></textarea>
                                                         <div class="form-text">
@@ -149,13 +143,10 @@
                                                         <button type="submit" class="btn btn-primary px-4 fw-bold">
                                                             <i class="bi bi-check-lg me-1"></i>Save Changes
                                                         </button>
-                                                        <a asp-action="AccountSettings" class="btn btn-outline-secondary px-4">
-                                                            Cancel
-                                                        </a>
+                                                        <a asp-action="AccountSettings" class="btn btn-outline-secondary px-4">Cancel</a>
                                                     </div>
                                                 </div>
                                             </form>
-
                                         </div>
                                     </div>
                                 </div>
@@ -164,37 +155,40 @@
 
                         @section Scripts {
                             <script>
-                                // Função para mostrar a imagem assim que o utilizador escolhe o ficheiro
                                 function previewImage(event) {
                                     var reader = new FileReader();
                                     reader.onload = function () {
                                         var output = document.getElementById('profilePreview');
                                         var icon = document.getElementById('defaultAvatarIcon');
-                
+                                        var removeFlag = document.getElementById('removePhotoFlag');
+
                                         output.src = reader.result;
                                         output.classList.remove('d-none');
+                                        output.style.display = 'block';
+                                        icon.classList.add('d-none');
                 
-                                        if (icon) {
-                                            icon.classList.add('d-none');
-                                        }
+                                        // Se ele carregou uma nova, não queremos remover
+                                        removeFlag.value = "false";
                                     }
                                     if (event.target.files[0]) {
                                         reader.readAsDataURL(event.target.files[0]);
                                     }
                                 }
 
-                                // Função para limpar a imagem selecionada
-                                function removePreview() {
+                                function handleRemovePhoto() {
+                                    // 1. Limpa o input de ficheiro
                                     document.getElementById('profilePictureInput').value = "";
-                                    document.getElementById('profilePreview').src = "@(!string.IsNullOrEmpty(Model?.ProfilePicture) ? Model.ProfilePicture : "")";
             
-                                    @if (string.IsNullOrEmpty(Model?.ProfilePicture))
-                                        {
-                                            <text>
-                                                    document.getElementById('profilePreview').classList.add('d-none');
-                                                    document.getElementById('defaultAvatarIcon').classList.remove('d-none');
-                                            </text>
-                                    }
-                                                            }
+                                    // 2. Esconde o preview da imagem e mostra o ícone default
+                                    var output = document.getElementById('profilePreview');
+                                    var icon = document.getElementById('defaultAvatarIcon');
+            
+                                    output.src = "";
+                                    output.classList.add('d-none');
+                                    icon.classList.remove('d-none');
+
+                                    // 3. ATIVA A FLAG PARA O BACKEND
+                                    document.getElementById('removePhotoFlag').value = "true";
+                                }
                             </script>
                         }

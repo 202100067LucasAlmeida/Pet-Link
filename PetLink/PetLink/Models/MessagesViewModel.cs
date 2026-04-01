@@ -1,6 +1,3 @@
-using PetLink.Models;
-using System.Collections.Generic;
-
 namespace PetLink.Models.ViewModels
 {
     public class MessagesViewModel
@@ -13,6 +10,7 @@ namespace PetLink.Models.ViewModels
     {
         public int OtherUserId { get; set; }
         public string OtherUserName { get; set; } = string.Empty;
+        public string? OtherUserImagePath { get; set; }
         public string LastMessagePreview { get; set; } = string.Empty;
         public DateTime LastMessageTimestamp { get; set; }
         public bool IsActive { get; set; }
@@ -24,7 +22,7 @@ namespace PetLink.Models.ViewModels
     {
         public int OtherUserId { get; set; }
         public string OtherUserName { get; set; } = string.Empty;
+        public string? OtherUserImagePath { get; set; }
         public List<Message> Messages { get; set; } = new List<Message>();
     }
 }
-

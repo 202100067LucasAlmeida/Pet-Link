@@ -64,74 +64,134 @@ namespace PetLink
 
 
         // GET: AnimalListings/Create
+        [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
-            ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email");
             return View();
         }
 
         // POST: AnimalListings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized,Status,CreatedAt,TutorId")] AnimalListing animalListing)
+        [Authorize]
+        public async Task<IActionResult> Create([Bind("Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized")] AnimalListing animalListing, IFormFile? mainPhoto)
         {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
             if (ModelState.IsValid)
             {
+                // Forçar dados automáticos
+                animalListing.TutorId = int.Parse(userIdClaim);
+                animalListing.Status = ListingStatus.Pendent;
+                animalListing.CreatedAt = DateTime.Now;
+
+                // Upload da Imagem Principal
+                if (mainPhoto != null && mainPhoto.Length > 0)
+                {
+                    animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
+                }
+
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Manage));
+
+                return RedirectToAction(nameof(MyListings));
             }
-            ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
             return View(animalListing);
         }
 
-        // GET: AnimalListings/Edit/5
+        // GET: Responsável por abrir a página de edição
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var animalListing = await _context.AnimalListings.FindAsync(id);
-            if (animalListing == null)
-            {
-                return NotFound();
-            }
+            if (animalListing == null) return NotFound();
+
+            // Segurança: Só o dono ou Admin edita
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            if (animalListing.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
+
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
+
             return View(animalListing);
         }
 
         // POST: AnimalListings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized,Status,CreatedAt,TutorId")] AnimalListing animalListing)
+        [Authorize]
+        public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto)
         {
-            if (id != animalListing.Id)
-            {
-                return NotFound();
-            }
+            if (id != animalListing.Id) return NotFound();
+
+            // 1. Procurar o animal original na base de dados
+            var animalInDb = await _context.AnimalListings.FirstOrDefaultAsync(a => a.Id == id);
+            if (animalInDb == null) return NotFound();
+
+            // 2. Segurança: Só o Dono ou Admin podem editar
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+            int userId = int.Parse(userIdClaim);
+
+            if (animalInDb.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
+
+            // 3. Limpar validações de propriedades de navegação que não vêm do Form
+            ModelState.Remove("Tutor");
+            ModelState.Remove("Favorites");
+            ModelState.Remove("Photos");
+            ModelState.Remove("mainPhoto");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(animalListing);
+                    // 4. Mapear manualmente os campos para garantir que o EF rastreia as mudanças
+                    animalInDb.Name = animalListing.Name;
+                    animalInDb.Species = animalListing.Species;
+                    animalInDb.AgeMonths = animalListing.AgeMonths;
+                    animalInDb.Location = animalListing.Location;
+                    animalInDb.Description = animalListing.Description;
+                    animalInDb.IsVaccinated = animalListing.IsVaccinated;
+                    animalInDb.IsDewormed = animalListing.IsDewormed;
+                    animalInDb.IsSterilized = animalListing.IsSterilized;
+
+                    // 5. Lógica de ADMIN: Apenas Admin altera Status e Tutor
+                    if (User.IsInRole("Admin"))
+                    {
+                        animalInDb.Status = animalListing.Status;
+                        animalInDb.TutorId = animalListing.TutorId;
+                    }
+
+                    // 6. Lógica de Imagem
+                    if (mainPhoto != null && mainPhoto.Length > 0)
+                    {
+                        // Opcional: Apagar a imagem antiga do servidor antes de salvar a nova
+                        animalInDb.ImageUrl = await UploadImage(mainPhoto, "animals");
+                    }
+
+                    // 7. Salvar as alterações
+                    _context.Update(animalInDb);
                     await _context.SaveChangesAsync();
+
+                    TempData["Success"] = "Changes saved successfully!";
+                    return User.IsInRole("Admin") ? RedirectToAction(nameof(Manage)) : RedirectToAction(nameof(MyListings));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AnimalListingExists(animalListing.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AnimalListingExists(animalListing.Id)) return NotFound();
+                    else throw;
                 }
-                return RedirectToAction(nameof(Manage));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving: " + ex.Message);
+                }
             }
+
+            // Se falhar, repopula os dados necessários para a View
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
             return View(animalListing);
         }
