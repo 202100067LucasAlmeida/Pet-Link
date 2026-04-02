@@ -49,6 +49,7 @@
                                 <select asp-for="Species" class="form-select py-2"
                                         style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
                                         asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.Species>()">
+                                    <option value="">Select a species</option>
                                 </select>
                                 <span asp-validation-for="Species" class="text-danger small"></span>
                             </div>
@@ -63,6 +64,7 @@
                                        style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
                                        placeholder="Ex: 12" />
                                 <span asp-validation-for="AgeMonths" class="text-danger small"></span>
+                                <div id="ageError" class="invalid-feedback">Please enter a valid age (0 or greater)</div>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -130,7 +132,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3 shadow-sm">
+                            <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3 shadow-sm" id="submitBtn">
                                 <i class="bi bi-cloud-upload me-2"></i> Submit Listing
                             </button>
                         </div>
@@ -140,3 +142,11 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/createListing.js" asp-append-version="true"></script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
