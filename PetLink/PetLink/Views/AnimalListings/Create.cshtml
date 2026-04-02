@@ -21,7 +21,7 @@
                 <div class="card-body p-4 p-md-5">
 
                     @* IMPORTANTE: Adicionado enctype para permitir upload de ficheiros *@
-                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data" id="createListingForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-semibold small"></div>
 
                         <!-- Warning Banner that appears when validation fails -->
