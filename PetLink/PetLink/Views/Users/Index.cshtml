@@ -6,12 +6,10 @@
 
 <div class="container py-4">
     <div class="row">
-        <!-- Barra Lateral à Esquerda -->
         <div class="col-lg-3 mb-4">
             @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
         </div>
 
-        <!-- Conteúdo Principal à Direita -->
         <div class="col-lg-9">
             
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -23,70 +21,79 @@
                 </a>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            @* Card com fundo dinâmico *@
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden"
+                 style="background-color: var(--petlink-card-bg);">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light text-muted small text-uppercase">
-                            <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Verified?</th>
-                                <th class="text-end pe-4">Actions</th>
+                    <table class="table table-hover align-middle mb-0" style="color: var(--petlink-dark);">
+                        @* Cabeçalho Dinâmico: Substituído table-light por var(--petlink-grey-bg) *@
+                        <thead style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);">
+                            <tr style="border-bottom: 1px solid var(--petlink-border);">
+                                <th class="ps-4 py-3 small text-uppercase opacity-75">ID</th>
+                                <th class="py-3 small text-uppercase opacity-75">Name</th>
+                                <th class="py-3 small text-uppercase opacity-75">Email</th>
+                                <th class="py-3 small text-uppercase opacity-75">Role</th>
+                                <th class="py-3 small text-uppercase opacity-75">Verified?</th>
+                                <th class="text-end pe-4 py-3 small text-uppercase opacity-75">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr onclick="window.location.href='@Url.Action("Details", new { id = item.Id })';"
-                                    style="cursor: pointer;">
+                                    style="cursor: pointer; border-bottom: 1px solid var(--petlink-border);">
                                     
-                                    <td class="ps-4 text-muted small">#@item.Id</td>
-                                    <td class="fw-bold text-dark">@item.Name</td>
-                                    <td>@item.Email</td>
+                                    <td class="ps-4 small opacity-50">#@item.Id</td>
+                                    <td class="fw-bold">@item.Name</td>
+                                    <td class="small opacity-75">@item.Email</td>
 
                                     <td>
                                         @if (item.Role.ToString() == "Admin")
                                         {
-                                            <span class="badge bg-danger rounded-pill fw-normal px-3">@item.Role</span>
-                                        }
-                                        else if (item.Role.ToString() == "User")
-                                        {
-                                            <span class="badge bg-primary rounded-pill fw-normal px-3">@item.Role</span>
+                                            <span class="badge rounded-pill fw-bold px-3 border"
+                                                  style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: rgba(220, 53, 69, 0.2) !important;">
+                                                @item.Role
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-info text-dark rounded-pill fw-normal px-3">@item.Role</span>
+                                            <span class="badge rounded-pill fw-bold px-3 border"
+                                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
+                                                @item.Role
+                                            </span>
                                         }
                                     </td>
 
                                     <td>
                                         @if (item.IsVerified)
                                         {
-                                            <span class="badge bg-success rounded-pill fw-normal px-3">
+                                            <span class="badge rounded-pill fw-bold px-3 border"
+                                                  style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.2) !important;">
                                                 <i class="bi bi-check-circle me-1"></i> Yes
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-warning text-dark rounded-pill fw-normal px-3">
+                                            <span class="badge rounded-pill fw-bold px-3 border"
+                                                  style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107; border-color: rgba(255, 193, 7, 0.2) !important;">
                                                 <i class="bi bi-hourglass-split me-1"></i> Pending
                                             </span>
                                         }
                                     </td>
 
                                     <td class="text-end pe-4">
-                                        <div class="btn-group shadow-sm rounded-pill" role="group">
-                                            <!-- event.stopPropagation() aplicado aqui também -->
-                                            <a asp-action="Edit" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-primary py-1 px-2" title="Edit"
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden"
+                                             style="border: 1px solid var(--petlink-border);">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm py-1 px-3"
+                                                   title="Edit"
+                                                   style="background-color: var(--petlink-card-bg); color: var(--petlink-primary);"
                                                    onclick="event.stopPropagation();">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             
-                                            <a asp-action="Delete" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete"
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm py-1 px-3"
+                                                   title="Delete"
+                                                   style="background-color: var(--petlink-card-bg); color: #dc3545;"
                                                    onclick="event.stopPropagation();">
                                                 <i class="bi bi-trash"></i>
                                             </a>
@@ -101,7 +108,8 @@
 
             @if (!Model.Any())
             {
-                <div class="alert alert-info mt-4 rounded-4" role="alert">
+                <div class="alert mt-4 rounded-4 border-0 shadow-sm" role="alert"
+                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
                     <i class="bi bi-info-circle me-2"></i> No users found in the database.
                 </div>
             }

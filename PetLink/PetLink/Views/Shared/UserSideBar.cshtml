@@ -6,6 +6,7 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
+@* Container da Sidebar com fundo dinâmico opcional ou transparente para herdar do pai *@
 <div class="list-group list-group-flush mb-3 sidebar-profile">
     <a asp-controller="Profile" asp-action="MyProfile"
            class="list-group-item list-group-item-action mb-1 @(currentAction == "MyProfile" && currentController == "Profile" ? "active" : "")">
@@ -14,7 +15,10 @@
 
     @if (userRole == UserRole.Admin.ToString())
     {
-        <p class="text-muted small mb-2 mt-2">ADMIN DASHBOARD</p>
+        @* Mudado text-muted para uma opacidade dinâmica do dark blue *@
+        <p class="small mb-2 mt-2 px-3 fw-bold opacity-50 text-primary-darkblue" style="letter-spacing: 1px;">ADMIN
+            DASHBOARD
+        </p>
         
         <a asp-controller="Users" asp-action="Index"
                class="list-group-item list-group-item-action mb-1 @(currentController == "Users" ? "active" : "")">
@@ -26,10 +30,11 @@
             <i class="bi bi-card-list me-2"></i>Manage Listings
         </a>
         
-        <hr class="my-2" />
+        <hr class="my-2" style="border-color: var(--petlink-border); opacity: 0.2;" />
     }
 
-    @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString() || userRole == UserRole.Shelter.ToString())
+    @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString() || userRole ==
+        UserRole.Shelter.ToString())
     {
         <a asp-controller="AnimalListings" asp-action="MyListings"
                class="list-group-item list-group-item-action mb-1 @(currentAction == "MyListings" ? "active" : "")">
@@ -37,27 +42,25 @@
         </a>
     }
     
-    @* Secção visível para Users e PetSitters *@
     @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
     {
-
-        <a asp-controller="Favorites" asp-action="Index" class="list-group-item list-group-item-action mb-1">
+        <a asp-controller="Favorites" asp-action="Index"
+               class="list-group-item list-group-item-action mb-1 @(currentController == "Favorites" ? "active" : "")">
             <i class="bi bi-heart me-2"></i>My Favorites
         </a>
     }
     
-    @* Secção visível para todos os utilizadores autenticados *@
     <a href="#" class="list-group-item list-group-item-action mb-1">
         <i class="bi bi-file-ruled me-2"></i>Applications
     </a>
 
     <a asp-controller="Messages" asp-action="Index"
-           class="list-group-item list-group-item-action mb-1 @(currentAction == "Index" ? "active" : "")">
+           class="list-group-item list-group-item-action mb-1 @(currentController == "Messages" ? "active" : "")">
         <i class="bi bi-chat-left me-2"></i>Messages
     </a>
 </div>
 
-<p class="text-muted small mt-4 mb-2">SUPPORT</p>
+<p class="small mt-4 mb-2 px-3 fw-bold opacity-50 text-primary-darkblue" style="letter-spacing: 1px;">SUPPORT</p>
 <div class="list-group list-group-flush sidebar-profile">
     <a href="#" class="list-group-item list-group-item-action mb-1">
         <i class="bi bi-question-circle me-2"></i>Help Center

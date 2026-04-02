@@ -5,6 +5,7 @@
     justify-content: center;
     padding: 2rem;
     text-align: center;
+    background-color: var(--petlink-grey-bg);
 }
 
 .error-content {
@@ -20,12 +21,13 @@
     justify-content: center;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-    color: #022845;
+    color: var(--petlink-dark);
 }
 
 .digit {
     font-family: var(--font-primary);
     color: var(--petlink-primary);
+    /* Já estava dinâmico */
     font-size: 8rem;
     line-height: 1;
 }
@@ -58,20 +60,20 @@
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     background-color: var(--petlink-primary);
-    color: white;
+    color: var(--petlink-grey-bg);
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 50px;
     font-size: 1rem;
     transition: background-color 0.3s ease;
 }
 
-    .btn-home:hover {
-        background-color: var(--petlink-highlight);
-        color: white;
-        text-decoration: none;
-    }
+.btn-home:hover {
+    background-color: var(--petlink-highlight);
+    color: var(--petlink-grey-bg);
+    text-decoration: none;
+}
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .error-number {
         font-size: 5rem;
     }
@@ -92,3 +94,4 @@
     .error-description {
         font-size: 1rem;
     }
+}

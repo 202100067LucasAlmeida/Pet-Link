@@ -22,10 +22,10 @@
             {
                 <div class="text-center py-5 bg-light rounded-4 border-dashed">
                     <div class="mb-3">
-                        <i class="bi bi-heart text-muted opacity-25" style="font-size: 4rem;"></i>
+                        <i class="bi bi-heart text-secondary-grey opacity-25" style="font-size: 4rem;"></i>
                     </div>
-                    <h4 class="fw-bold text-muted">Your favorites list is empty</h4>
-                    <p class="text-muted px-3">Start adding pets to your favorites by clicking the heart icon on pet
+                    <h4 class="fw-bold text-secondary-grey">Your favorites list is empty</h4>
+                    <p class="text-secondary-grey px-3">Start adding pets to your favorites by clicking the heart icon on pet
                         listings!
                     </p>
                     <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-primary rounded-pill px-4 mt-2">
@@ -64,10 +64,10 @@
                                            class="text-decoration-none">
                                         <h4 class="h5 fw-bold mb-0 text-primary-darkblue">@item.Name</h4>
                                     </a>
-                                    <p class="text-muted small mb-1">
+                                    <p class="text-secondary-grey small mb-1">
                                         <i class="bi bi-geo-alt"></i> @item.Location
                                     </p>
-                                    <p class="text-muted small mb-3">@item.Species • @item.AgeMonths mo.</p>
+                                    <p class="text-secondary-grey small mb-3">@item.Species • @item.AgeMonths mo.</p>
 
                                     <div class="d-flex flex-wrap gap-2 mt-auto">
                                         @if (item.IsVaccinated)

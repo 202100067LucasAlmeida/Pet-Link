@@ -13,29 +13,30 @@
                     <i class="bi bi-exclamation-triangle-fill me-2"></i> Delete User
                 </h2>
                 
-                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
+                <a asp-action="Index"
+                       class="btn btn-outline-secondary rounded-pill btn-sm fw-bold text-primary-darkblue"
+                       style="border-color: var(--petlink-border) !important;">
                     <i class="bi bi-arrow-left me-1"></i> Cancel
                 </a>
             </div>
 
-            <div class="alert alert-danger rounded-4 shadow-sm border-0 mb-4 p-4">
+            @* Alerta de perigo dinâmico *@
+            <div class="alert rounded-4 shadow-sm border-0 mb-4 p-4"
+                 style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2) !important;">
                 <h5 class="fw-bold"><i class="bi bi-trash3 me-2"></i> Are you absolutely sure?</h5>
-                
-                <p class="mb-0">You are about to permanently delete the account of <strong>@Model.Name</strong>.
-                    This action cannot be undone and will remove all associated data.
-                </p>
+                <p class="mb-0">Permanently delete <strong>@Model.Name</strong>. This cannot be undone.</p>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
                 <div class="card-body p-4">
-                    <dl class="row mb-0">
-                        <dt class="col-sm-4 text-muted fw-semibold">Name</dt>
+                    <dl class="row mb-0" style="color: var(--petlink-dark);">
+                        <dt class="col-sm-4 opacity-75 fw-semibold">Name</dt>
                         <dd class="col-sm-8">@Model.Name</dd>
 
-                        <dt class="col-sm-4 text-muted fw-semibold">Email</dt>
+                        <dt class="col-sm-4 opacity-75 fw-semibold">Email</dt>
                         <dd class="col-sm-8">@Model.Email</dd>
 
-                        <dt class="col-sm-4 text-muted fw-semibold">Role</dt>
+                        <dt class="col-sm-4 opacity-75 fw-semibold">Role</dt>
                         <dd class="col-sm-8">@Model.Role</dd>
                     </dl>
                 </div>
@@ -43,7 +44,7 @@
 
             <form asp-action="Delete" class="d-grid gap-2">
                 <input type="hidden" asp-for="Id" />
-                <button type="submit" class="btn btn-danger fw-bold rounded-pill py-2">
+                <button type="submit" class="btn btn-danger fw-bold rounded-pill py-2 shadow">
                     <i class="bi bi-trash-fill me-2"></i> Yes, Delete This User
                 </button>
             </form>
