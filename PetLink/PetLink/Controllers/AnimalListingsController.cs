@@ -80,7 +80,31 @@ namespace PetLink
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
 
-            if (ModelState.IsValid)
+            // validação Server-side
+            bool hasValidationErrors = false;
+
+            // idade
+            if (animalListing.AgeMonths < 0)
+            {
+                ModelState.AddModelError("AgeMonths", "Age must be 0 or greater");
+                hasValidationErrors = true;
+            }
+
+            // vacinas
+            if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
+            {
+                ModelState.AddModelError("IsVaccinated", "At least one of the three (Vaccinated, Dewormed, or Sterilized) must be selected");
+                hasValidationErrors = true;
+            }
+
+            // foto
+            if (mainPhoto == null || mainPhoto.Length == 0)
+            {
+                ModelState.AddModelError("mainPhoto", "At least one photo, for the main display, is required");
+                hasValidationErrors = true;
+            }
+
+            if (ModelState.IsValid && !hasValidationErrors)
             {
                 // Forçar dados automáticos
                 animalListing.TutorId = int.Parse(userIdClaim);

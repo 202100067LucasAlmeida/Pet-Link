@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label asp-for="AgeMonths" class="form-label fw-semibold">Age (in months)</label>
-                                <input asp-for="AgeMonths" class="form-control py-2" placeholder="Ex: 12" />
+                                <input asp-for="AgeMonths" class="form-control py-2" placeholder="Ex: 12" type="number" min="0" step="1" required/>
                                 <span asp-validation-for="AgeMonths" class="text-danger small"></span>
                             </div>
 
@@ -68,8 +68,9 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Main Photo (Card Display)</label>
-                                <input type="file" name="mainPhoto" class="form-control" accept="image/*" required />
+                                <input type="file" name="mainPhoto" class="form-control" accept="image/*" id="mainPhoto" required />
                                 <small class="text-muted">This image will be shown in the search results.</small>
+                                <div class="invalid-feedback">You must upload a main photo.</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Additional Photos (Gallery)</label>
@@ -80,11 +81,18 @@
                         </div>
 
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Health Information</h5>
+
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Required:</strong> At least one of the following options must be selected.
+                        </div>
+                        
                         <div class="d-flex flex-wrap gap-4 mb-4 bg-light p-3 rounded-3">
                             <div class="form-check form-switch fs-6">
                                 <input class="form-check-input" type="checkbox" asp-for="IsVaccinated" />
                                 <label class="form-check-label fw-semibold text-success"
                                        asp-for="IsVaccinated">Vaccinated
+                                       <span class="text-danger">*</span>
                                 </label>
                             </div>
 
@@ -97,7 +105,12 @@
                             <div class="form-check form-switch fs-6">
                                 <input class="form-check-input" type="checkbox" asp-for="IsSterilized" />
                                 <label class="form-check-label fw-semibold text-success"
-                                       asp-for="IsSterilized">Sterilized</label>
+                                       asp-for="IsSterilized">Sterilized
+                                </label>
+                            </div>
+
+                            <div id="healthError" class="text-danger small mt-2" style="display: none;">
+                                Please select at least one of the three (Vaccinated, Dewormed, or Sterilized).
                             </div>
                         </div>
 
@@ -112,6 +125,8 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/createListing.js" asp-append-version="true"></script>
 
 @section Scripts {
     @{
