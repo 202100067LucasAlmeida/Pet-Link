@@ -13,20 +13,26 @@
         </div>
 
         <div class="col-lg-9">
-            <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 15px;">
+            @* Card principal: background dinâmico *@
+            <div class="card border-0 shadow-sm overflow-hidden"
+                 style="border-radius: 15px; background-color: var(--petlink-card-bg);">
                 <div class="card-body p-0">
                     <div class="row g-0" style="height: 75vh; min-height: 600px;">
-                        <div class="col-md-4 border-end d-flex flex-column bg-white">
-                            <div class="p-4 border-bottom">
+                        
+                        <div class="col-md-4 border-end d-flex flex-column"
+                             style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
+                            <div class="p-4 border-bottom" style="border-color: var(--petlink-border) !important;">
                                 <h3 class="mb-3 text-primary-darkblue" style="font-family: var(--font-primary);">
                                     Messages
                                 </h3>
-                                <div class="input-group input-group-sm rounded-pill border bg-light">
+                                @* Barra de Pesquisa Dinâmica *@
+                                <div class="input-group input-group-sm rounded-pill border"
+                                     style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <span class="input-group-text bg-transparent border-0"><i
                                         class="bi bi-search text-muted"></i>
                                     </span>
                                     <input type="text" class="form-control border-0 bg-transparent ps-1"
-                                           placeholder="Search conversations...">
+                                           style="color: var(--petlink-dark);" placeholder="Search conversations...">
                                 </div>
                             </div>
 
@@ -37,19 +43,18 @@
                                         @foreach (var conv in Model.Conversations)
                                         {
                                             <a asp-action="Index" asp-route-id="@conv.OtherUserId"
-                                                   class="list-group-item list-group-item-action p-3 border-0"
-                                                   style="@(conv.IsActive ? "background-color: var(--petlink-light-bg); border-left: 4px solid var(--petlink-primary) !important;" : "")">
+                                                   class="list-group-item list-group-item-action p-3 border-0" style="background-color: @(conv.IsActive ? "var(--petlink-light-bg)" : "transparent"); 
+                                                border-left: @(conv.IsActive ? "4px solid var(--petlink-primary)" : "none") !important;
+                                                color: var(--petlink-dark);">
                                                 <div class="d-flex align-items-center">
                                                     <div class="position-relative me-3">
-                                                        @* Foto de perfil dinâmica da conversa *@
                                                         <img src="@(string.IsNullOrEmpty(conv.OtherUserImagePath) ? "/images/default-avatar.jpg" : conv.OtherUserImagePath)"
                                                              class="rounded-circle shadow-sm" width="45" height="45"
                                                              onerror="this.src='/images/default-avatar.jpg'">
                                                         @if (conv.IsOnline)
                                                         {
                                                             <span
-                                                                class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle">
-                                                            </span>
+                                                            class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
                                                         }
                                                     </div>
                                                     <div class="flex-grow-1 overflow-hidden">
@@ -76,11 +81,12 @@
                             </div>
                         </div>
 
-                        <div class="col-md-8 d-flex flex-column" style="background-color: white;">
+                        <div class="col-md-8 d-flex flex-column" style="background-color: var(--petlink-card-bg);">
                             @if (Model.ActiveConversation != null)
                             {
-                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white shadow-sm"
-                                     style="z-index: 10;">
+                                @* Header do Chat *@
+                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between shadow-sm"
+                                     style="z-index: 10; background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
                                     <div class="d-flex align-items-center ms-2">
                                         <img src="@(string.IsNullOrEmpty(Model.ActiveConversation.OtherUserImagePath) ? "/images/default-avatar.jpg" : Model.ActiveConversation.OtherUserImagePath)"
                                              class="rounded-circle me-3 shadow-sm" width="40" height="40"
@@ -89,18 +95,18 @@
                                             <h6 class="mb-0 fw-bold" style="color: var(--petlink-dark);">
                                                 @Model.ActiveConversation.OtherUserName
                                             </h6>
-                                            <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">● ACTIVE
-                                                NOW
+                                            <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">●
+                                                ONLINE
                                             </small>
                                         </div>
                                     </div>
                                     <div class="text-muted d-flex gap-3 me-2">
-                                        <i class="bi bi-telephone cursor-pointer hover-primary"></i>
-                                        <i class="bi bi-info-circle cursor-pointer hover-primary"></i>
+                                        <i class="bi bi-telephone cursor-pointer" style="color: var(--petlink-dark);"></i>
+                                        <i class="bi bi-info-circle cursor-pointer" style="color: var(--petlink-dark);"></i>
                                     </div>
                                 </div>
 
-                                @* ID chatWindow mantido para o JavaScript controlar o scroll *@
+                                @* Área de Mensagens *@
                                 <div class="flex-grow-1 p-4 overflow-auto" id="chatWindow"
                                      style="background-color: var(--petlink-grey-bg); scroll-behavior: smooth;">
                                     @foreach (var msg in Model.ActiveConversation.Messages)
@@ -115,7 +121,8 @@
                                             }
                                             <div class="p-3 shadow-sm"
                                                  style="max-width: 75%; border-radius: 18px; 
-                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;" : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
+                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                                                                                                                                                                                 : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
                                                 <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">@msg.Content</p>
                                                 <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">
                                                     @msg.Timestamp.ToString("HH:mm")
@@ -125,14 +132,17 @@
                                     }
                                 </div>
 
-                                <div class="p-3 border-top bg-white">
+                                @* Footer / Input de Mensagem *@
+                                <div class="p-3 border-top"
+                                     style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
                                     <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
                                         <input type="hidden" id="receiverId"
                                                value="@Model.ActiveConversation?.OtherUserId" />
+                                        
                                         <input type="text" name="content" id="messageInput"
                                                class="form-control rounded-pill border-0 py-2 flex-grow-1"
-                                               style="background-color: var(--petlink-grey-bg);"
+                                               style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);"
                                                placeholder="Type your message here..." required autocomplete="off">
                                         
                                         <button type="submit"
@@ -145,13 +155,13 @@
                             }
                             else
                             {
+                                @* Estado Vazio *@
                                 <div
                                     class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
                                     <div class="mb-3"
                                          style="background-color: var(--petlink-light-bg); padding: 25px; border-radius: 50%;">
                                         <i class="bi bi-chat-left-dots"
-                                               style="font-size: 2.5rem; color: var(--petlink-primary);">
-                                        </i>
+                                           style="font-size: 2.5rem; color: var(--petlink-primary);"></i>
                                     </div>
                                     <h4 style="font-family: var(--font-primary); color: var(--petlink-dark);">Select a
                                         conversation

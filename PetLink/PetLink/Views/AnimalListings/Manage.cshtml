@@ -21,18 +21,20 @@
                 </a>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            @* Card com fundo dinâmico *@
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden"
+                 style="background-color: var(--petlink-card-bg);">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light text-muted small text-uppercase">
-                            <tr>
-                                <th class="ps-4">Pet Name</th>
-                                <th>Species</th>
-                                <th>Health Info</th>
-                                <th>Status</th>
-                                <th>Added On</th>
-                                <th>Tutor / Shelter</th>
-                                <th class="text-end pe-4">Actions</th>
+                    <table class="table table-hover align-middle mb-0" style="color: var(--petlink-dark);">
+                        <thead style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);">
+                            <tr style="border-bottom: 1px solid var(--petlink-border);">
+                                <th class="ps-4 py-3 small text-uppercase opacity-75">Pet Name</th>
+                                <th class="py-3 small text-uppercase opacity-75">Species</th>
+                                <th class="py-3 small text-uppercase opacity-75">Health</th>
+                                <th class="py-3 small text-uppercase opacity-75">Status</th>
+                                <th class="py-3 small text-uppercase opacity-75">Added On</th>
+                                <th class="py-3 small text-uppercase opacity-75">Tutor / Shelter</th>
+                                <th class="text-end pe-4 py-3 small text-uppercase opacity-75">Actions</th>
                             </tr>
                         </thead>
                         
@@ -40,84 +42,85 @@
                             @foreach (var item in Model)
                             {
                                 <tr onclick="window.location.href='@Url.Action("Details", new { id = item.Id })';"
-                                    style="cursor: pointer;">
+                                    style="cursor: pointer; border-bottom: 1px solid var(--petlink-border);">
                                     
-                                    <td class="ps-4 fw-bold text-dark">
-                                        @* Lógica de imagem atualizada: usa MainImageUrl e fallback para default-pet *@
+                                    <td class="ps-4 fw-bold">
                                         <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)"
-                                             alt="Pet" class="rounded-circle me-2 object-fit-cover shadow-sm"
-                                             style="width: 35px; height: 35px;"
+                                             alt="Pet" class="rounded-circle me-2 shadow-sm"
+                                             style="width: 35px; height: 35px; object-fit: cover; border: 1px solid var(--petlink-border);"
                                              onerror="this.src='/images/default-pet.jpg'" />
                                         @item.Name
                                     </td>
                                     
                                     <td>
-                                        <span class="badge bg-light text-dark border rounded-pill fw-semibold px-3">
+                                        @* Badge de espécie com fundo dinâmico *@
+                                        <span class="badge rounded-pill px-3 fw-bold"
+                                              style="background-color: var(--petlink-light-bg); color: var(--petlink-primary); border: 1px solid var(--petlink-border);">
                                             @item.Species
                                         </span>
                                     </td>
                                     
                                     <td>
-                                        @if (item.IsVaccinated)
-                                        {
-                                            <i class="bi bi-capsule text-success me-1" title="Vaccinated"></i>
-                                        }
-                                        @if (item.IsDewormed)
-                                        {
-                                            <i class="bi bi-bug-fill text-success me-1" title="Dewormed"></i>
-                                        }
-                                        @if (item.IsSterilized)
-                                        {
-                                            <i class="bi bi-scissors text-success" title="Sterilized"></i>
-                                        }
-                                        @if (!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized)
-                                        {
-                                            <span class="text-muted small" style="font-size: 0.7rem;">No records</span>
-                                        }
+                                        <div class="d-flex gap-1">
+                                            @if (item.IsVaccinated)
+                                            {
+                                                <i class="bi bi-capsule text-success"
+                                                   title="Vaccinated"></i>
+                                            }
+                                            @if (item.IsDewormed)
+                                            {
+                                                <i class="bi bi-bug-fill text-success"
+                                                   title="Dewormed"></i>
+                                            }
+                                            @if (item.IsSterilized)
+                                            {
+                                                <i class="bi bi-scissors text-success"
+                                                   title="Sterilized"></i>
+                                            }
+                                            @if (!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized)
+                                            {
+                                                <span class="opacity-50 small" style="font-size: 0.7rem;">None</span>
+                                            }
+                                        </div>
                                     </td>
                                     
                                     <td>
-                                        @* Verificação de Status corrigida para bater com o Enum (Published / Pendent) *@
                                         @if (item.Status.ToString() == "Published")
                                         {
-                                            <span
-                                                class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold px-3 border border-success border-opacity-25">
+                                            <span class="badge rounded-pill px-3 border fw-bold"
+                                                  style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.2) !important;">
                                                 <i class="bi bi-check-circle me-1"></i> @item.Status
                                             </span>
                                         }
                                         else if (item.Status.ToString() == "Pendent")
                                         {
-                                            <span
-                                                class="badge bg-warning bg-opacity-10 text-warning rounded-pill fw-bold px-3 border border-warning border-opacity-25">
+                                            <span class="badge rounded-pill px-3 border fw-bold"
+                                                  style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107; border-color: rgba(255, 193, 7, 0.2) !important;">
                                                 <i class="bi bi-hourglass-split me-1"></i> @item.Status
                                             </span>
                                         }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-pill fw-normal px-3">@item.Status</span>
-                                        }
                                     </td>
                                     
-                                    <td class="text-muted small">
+                                    <td class="small opacity-75">
                                         @item.CreatedAt.ToString("dd MMM yyyy")
                                     </td>
 
-                                    <td class="text-muted small">
-                                        @* Mostra o nome do Tutor se disponível, caso contrário o email *@
+                                    <td class="small opacity-75">
                                         @(item.Tutor != null ? (string.IsNullOrEmpty(item.Tutor.Name) ? item.Tutor.Email :
                                     item.Tutor.Name) : "Unknown")
                                     </td>
                                     
                                     <td class="text-end pe-4">
-                                        <div class="btn-group shadow-sm rounded-pill" role="group">
-                                            <a asp-action="Edit" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-primary py-1 px-3" title="Edit"
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden"
+                                             style="border: 1px solid var(--petlink-border);">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm py-1 px-3"
+                                                   style="background-color: var(--petlink-card-bg); color: var(--petlink-primary);"
                                                    onclick="event.stopPropagation();">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             
-                                            <a asp-action="Delete" asp-route-id="@item.Id"
-                                                   class="btn btn-sm btn-outline-danger py-1 px-3" title="Delete"
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm py-1 px-3"
+                                                   style="background-color: var(--petlink-card-bg); color: #dc3545;"
                                                    onclick="event.stopPropagation();">
                                                 <i class="bi bi-trash"></i>
                                             </a>
@@ -132,7 +135,8 @@
 
             @if (!Model.Any())
             {
-                <div class="alert alert-info mt-4 rounded-4 border-0 shadow-sm" role="alert">
+                <div class="alert mt-4 rounded-4 border-0 shadow-sm" role="alert"
+                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
                     <i class="bi bi-info-circle me-2"></i> No animal listings found in the database.
                 </div>
             }

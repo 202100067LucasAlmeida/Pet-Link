@@ -15,10 +15,10 @@
         <div class="col-lg-9">
             @if (userRole == "Admin")
             {
-                <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
-                    <div class="card-body p-4 p-md-5 bg-white">
+                <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                    <div class="card-body p-4 p-md-5">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <div class="p-3 rounded-circle me-3" style="background-color: var(--petlink-light-bg);">
                                 <i class="bi bi-shield-lock text-primary fs-3"></i>
                             </div>
                             <div>
@@ -28,29 +28,28 @@
                         </div>
                         
                         <div class="row g-3">
+                            @* Cartões de Admin com fundo dinâmico *@
+                            @{ string[] adminTools = { "Users", "Listings", "Verify" }; }
                             <div class="col-md-4">
-                                <div class="p-4 bg-light rounded-4 text-center border hover-shadow transition-all">
+                                <div class="p-4 rounded-4 text-center border hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <i class="bi bi-people-fill text-primary fs-1 mb-2 d-block"></i>
-                                    <h5 class="fw-bold mb-1">Users</h5>
-                                    <p class="text-muted small">Manage accounts</p>
+                                    <h5 class="fw-bold mb-1 text-primary-darkblue">Users</h5>
                                     <a asp-controller="Users" asp-action="Index" class="btn btn-sm btn-primary rounded-pill w-100 mt-2">Go to Users</a>
                                 </div>
                             </div>
                             
                             <div class="col-md-4">
-                                <div class="p-4 bg-light rounded-4 text-center border hover-shadow transition-all">
+                                <div class="p-4 rounded-4 text-center border hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <i class="bi bi-card-list text-primary fs-1 mb-2 d-block"></i>
-                                    <h5 class="fw-bold mb-1">Listings</h5>
-                                    <p class="text-muted small">Moderate ads</p>
+                                    <h5 class="fw-bold mb-1 text-primary-darkblue">Listings</h5>
                                     <a asp-controller="AnimalListings" asp-action="Manage" class="btn btn-sm btn-primary rounded-pill w-100 mt-2">Go to Listings</a>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
-                                <div class="p-4 bg-light rounded-4 text-center border hover-shadow transition-all">
+                                <div class="p-4 rounded-4 text-center border hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <i class="bi bi-shield-check text-primary fs-1 mb-2 d-block"></i>
-                                    <h5 class="fw-bold mb-1">Verify</h5>
-                                    <p class="text-muted small">PetSitters status</p>
+                                    <h5 class="fw-bold mb-1 text-primary-darkblue">Verify</h5>
                                     <a href="#" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-2">Check All</a>
                                 </div>
                             </div>
@@ -60,15 +59,14 @@
             }
             else
             {
-                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                @* Uso de fallback para fotos de perfil *@
                                 <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)" 
                                      alt="@Model.User.Name" 
-                                     class="rounded-circle shadow-sm border border-2 border-white" 
-                                     style="width: 90px; height: 90px; object-fit: cover;"
+                                     class="rounded-circle shadow-sm border border-2" 
+                                     style="width: 90px; height: 90px; object-fit: cover; border-color: var(--petlink-primary) !important;"
                                      onerror="this.src='/images/default-avatar.jpg'">
                             </div>
                             <div class="flex-grow-1 ms-4">
@@ -80,8 +78,9 @@
                 </div>
             }
 
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+            @* SECÇÃO DE CANDIDATURAS *@
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
+                <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
                     <h4 class="fw-bold text-primary-darkblue mb-0">
                         <i class="bi bi-file-earmark-text text-primary me-2"></i>My Applications
                     </h4>
@@ -89,22 +88,20 @@
                 <div class="card-body p-4">
                     @if (Model.ActiveApplications == null || !Model.ActiveApplications.Any())
                     {
-                        <div class="text-center py-4 bg-light rounded-4">
+                        <div class="text-center py-4 rounded-4" style="background-color: var(--petlink-grey-bg);">
                             <i class="bi bi-send-dash fs-1 text-muted opacity-50"></i>
                             <p class="text-muted mt-2">No active adoption requests yet.</p>
-                            <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-sm btn-primary rounded-pill px-4">
-                                Browse Pets
-                            </a>
+                            <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-sm btn-primary rounded-pill px-4">Browse Pets</a>
                         </div>
                     }
                     else
                     {
                         @foreach (var app in Model.ActiveApplications)
                         {
-                            <div class="p-3 mb-3 bg-light rounded-4 border-0 hover-shadow transition-all">
+                            <div class="p-3 mb-3 rounded-4 border-0 hover-shadow transition-all" style="background-color: var(--petlink-grey-bg);">
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-white p-2 rounded-3 me-3 shadow-sm text-center" style="width: 50px;">
+                                        <div class="p-2 rounded-3 me-3 shadow-sm text-center" style="width: 50px; background-color: var(--petlink-card-bg);">
                                             <i class="bi bi-paw-fill text-primary"></i>
                                         </div>
                                         <div>
@@ -113,16 +110,17 @@
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center gap-3">
+                                        @* Badges dinâmicas *@
                                         @if (app.Status == ApplicationStatus.Pending)
                                         {
-                                            <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-3 border border-warning border-opacity-25">In Review</span>
+                                            <span class="badge rounded-pill px-3 border fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107; border-color: rgba(255, 193, 7, 0.3) !important;">In Review</span>
                                         }
                                         else if (app.Status == ApplicationStatus.Approved)
                                         {
-                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 border border-success border-opacity-25">Approved</span>
+                                            <span class="badge rounded-pill px-3 border fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.3) !important;">Approved</span>
                                         }
                                         <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId" 
-                                           class="btn btn-sm btn-white bg-white shadow-sm rounded-pill border">Details</a>
+                                           class="btn btn-sm rounded-pill border fw-bold" style="background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">Details</a>
                                     </div>
                                 </div>
                             </div>
@@ -132,9 +130,10 @@
             </div>
 
             <div class="row">
+                @* FAVOURITES CAROUSEL *@
                 <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-                        <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <div class="card-header border-0 pt-4 px-4 pb-2" style="background-color: transparent;">
                             <h4 class="fw-bold text-primary-darkblue mb-0">
                                 <i class="bi bi-heart-fill text-danger me-2"></i>Saved Pets
                             </h4>
@@ -142,34 +141,26 @@
                         <div class="card-body p-4 pt-2">
                             @if (Model.SavedPets == null || !Model.SavedPets.Any())
                             {
-                                <div class="text-center py-5 bg-light rounded-4">
+                                <div class="text-center py-5 rounded-4" style="background-color: var(--petlink-grey-bg);">
                                     <i class="bi bi-heart fs-1 text-muted opacity-25"></i>
                                     <p class="text-muted mt-2">Your favorites list is empty.</p>
-                                    <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-sm btn-outline-primary rounded-pill">Find Pets</a>
                                 </div>
                             }
                             else
                             {
                                 <div class="position-relative">
                                     <div class="overflow-hidden" id="savedPetsCarousel">
-                                        <div class="d-flex" style="gap: 1rem; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);" id="carouselTrack">
+                                        <div class="d-flex" style="gap: 1rem; transition: transform 0.4s ease;" id="carouselTrack">
                                             @foreach (var pet in Model.SavedPets)
                                             {
                                                 <div class="carousel-card" style="flex: 0 0 calc(50% - 0.5rem); min-width: calc(50% - 0.5rem);">
-                                                    <div class="card border border-light shadow-none rounded-4 h-100 hover-shadow transition-all">
-                                                        <div class="position-relative" style="height: 120px; overflow: hidden; border-radius: 12px;">
-                                                            @* Lógica de imagem atualizada para a subpasta /animals/ *@
+                                                    <div class="card shadow-none rounded-4 h-100 hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border) !important;">
+                                                        <div class="position-relative" style="height: 120px; overflow: hidden; border-radius: 12px 12px 0 0;">
                                                             <img src="@(string.IsNullOrEmpty(pet.ImageUrl) ? "/images/default-pet.jpg" : pet.ImageUrl)" 
-                                                                 alt="@pet.Name" 
-                                                                 style="width: 100%; height: 100%; object-fit: cover;"
-                                                                 onerror="this.src='/images/default-pet.jpg'">
-                                                            <span class="badge bg-dark bg-opacity-75 position-absolute bottom-0 start-0 m-2 rounded-pill small">
-                                                                @pet.Species.ToString()
-                                                            </span>
+                                                                 style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/default-pet.jpg'">
                                                         </div>
-                                                        <div class="card-body p-2 pt-3">
-                                                            <h6 class="fw-bold text-primary-darkblue mb-0">@pet.Name</h6>
-                                                            <p class="text-muted extra-small mb-2"><i class="bi bi-geo-alt me-1"></i>@pet.Location</p>
+                                                        <div class="card-body p-2 pt-3 text-center">
+                                                            <h6 class="fw-bold text-primary-darkblue mb-1">@pet.Name</h6>
                                                             <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" 
                                                                class="btn btn-primary btn-sm rounded-pill w-100 py-1" style="font-size: 0.75rem;">View</a>
                                                         </div>
@@ -178,15 +169,15 @@
                                             }
                                         </div>
                                     </div>
-                                    
+                                    @* Botões de navegação adaptados *@
                                     @if (Model.SavedPets.Count() > 2)
                                     {
-                                        <button class="btn btn-white bg-white shadow-sm rounded-circle position-absolute start-0 top-50 translate-middle-y ms-n2 border" 
-                                                id="scrollLeftBtn" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 5;">
+                                        <button class="btn shadow-sm rounded-circle position-absolute start-0 top-50 translate-middle-y border" 
+                                                id="scrollLeftBtn" style="width: 32px; height: 32px; z-index: 5; background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">
                                             <i class="bi bi-chevron-left small"></i>
                                         </button>
-                                        <button class="btn btn-white bg-white shadow-sm rounded-circle position-absolute end-0 top-50 translate-middle-y me-n2 border" 
-                                                id="scrollRightBtn" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 5;">
+                                        <button class="btn shadow-sm rounded-circle position-absolute end-0 top-50 translate-middle-y border" 
+                                                id="scrollRightBtn" style="width: 32px; height: 32px; z-index: 5; background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">
                                             <i class="bi bi-chevron-right small"></i>
                                         </button>
                                     }
@@ -196,18 +187,19 @@
                     </div>
                 </div>
 
+                @* MESSAGES *@
                 <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-                        <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <div class="card-header border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center" style="background-color: transparent;">
                             <h4 class="fw-bold text-primary-darkblue mb-0">
                                 <i class="bi bi-chat-left-text text-primary me-2"></i>Messages
                             </h4>
-                            <a href="/Messages" class="btn btn-sm btn-link text-primary text-decoration-none p-0 fw-bold">View All</a>
+                            <a href="/Messages" class="btn btn-sm text-primary p-0 fw-bold">View All</a>
                         </div>
                         <div class="card-body p-4">
                             @if (Model.RecentConversations == null || !Model.RecentConversations.Any())
                             {
-                                <div class="text-center py-4 bg-light rounded-4 h-100 d-flex flex-column justify-content-center">
+                                <div class="text-center py-4 rounded-4 h-100 d-flex flex-column justify-content-center" style="background-color: var(--petlink-grey-bg);">
                                     <i class="bi bi-chat-dots fs-1 text-muted opacity-25"></i>
                                     <p class="text-muted mt-2">No conversations started.</p>
                                 </div>
@@ -219,23 +211,17 @@
                                     var otherPerson = msg.SenderId == Model.User.Id ? msg.Receiver : msg.Sender;
                                     var isUnread = msg.ReceiverId == Model.User.Id && !msg.IsRead;
                                     
-                                    <a asp-controller="Messages" asp-action="Index" asp-route-id="@otherPerson?.Id" 
-                                       class="text-decoration-none">
-                                        <div class="p-3 mb-2 rounded-4 transition-all @(isUnread ? "bg-primary bg-opacity-10 border border-primary border-opacity-10" : "bg-light border border-transparent") hover-shadow">
+                                    <a asp-controller="Messages" asp-action="Index" asp-route-id="@otherPerson?.Id" class="text-decoration-none">
+                                        <div class="p-3 mb-2 rounded-4 transition-all hover-shadow border" 
+                                             style="background-color: @(isUnread ? "rgba(8, 124, 217, 0.1)" : "var(--petlink-grey-bg)"); border-color: @(isUnread ? "var(--petlink-primary)" : "transparent") !important;">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center overflow-hidden">
                                                     <img src="@(string.IsNullOrEmpty(otherPerson?.ProfilePicture) ? "/images/default-avatar.jpg" : otherPerson.ProfilePicture)" 
-                                                         class="rounded-circle me-3 border border-white" style="width: 40px; height: 40px; object-fit: cover;">
+                                                         class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                                     <div class="overflow-hidden">
                                                         <h6 class="fw-bold text-primary-darkblue mb-0 text-truncate">@otherPerson?.Name</h6>
-                                                        <p class="text-muted extra-small mb-0 text-truncate">
-                                                            @(msg.SenderId == Model.User.Id ? "You: " : "")@msg.Content
-                                                        </p>
+                                                        <p class="text-muted extra-small mb-0 text-truncate">@msg.Content</p>
                                                     </div>
-                                                </div>
-                                                <div class="ms-2 text-end">
-                                                    <small class="text-muted extra-small d-block">@msg.CreatedAt.ToString("HH:mm")</small>
-                                                    @if (isUnread) { <span class="badge bg-primary rounded-pill p-1 ms-1" style="width: 8px; height: 8px; display: inline-block;"> </span> }
                                                 </div>
                                             </div>
                                         </div>
@@ -247,69 +233,20 @@
                 </div>
             </div>
 
+            @* QUICK STATS DINÂMICOS *@
             <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
-                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.TotalApplications</h2>
-                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Applications</small>
+                @{ string[] stats = { Model.TotalApplications.ToString(), Model.SavedPets.Count().ToString(), Model.RecentConversations.Count().ToString() };
+                   string[] labels = { "Applications", "Favorites", "Chats" }; }
+                
+                @for(int i=0; i<3; i++) {
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
+                            <h2 class="fw-bold text-primary-darkblue mb-0">@stats[i]</h2>
+                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">@labels[i]</small>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
-                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.SavedPets.Count()</h2>
-                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Favorites</small>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100">
-                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.RecentConversations.Count()</h2>
-                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Chats</small>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .extra-small { font-size: 0.75rem; }
-    .extra-small { font-size: 0.75rem; }
-    .transition-all { transition: all 0.3s ease; }
-    .hover-shadow:hover { transform: translateY(-3px); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important; }
-    .ms-n2 { margin-left: -1rem; }
-    .me-n2 { margin-right: -1rem; }
-</style>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            const track = document.getElementById('carouselTrack');
-            const scrollLeftBtn = document.getElementById('scrollLeftBtn');
-            const scrollRightBtn = document.getElementById('scrollRightBtn');
-            
-            if (track && scrollLeftBtn && scrollRightBtn) {
-                let currentPage = 0;
-                const cards = document.querySelectorAll('.carousel-card');
-                const totalCards = cards.length;
-                const cardsPerView = 2;
-                const totalPages = Math.ceil(totalCards / cardsPerView);
-                
-                function updateCarousel() {
-                    const cardWidth = cards[0]?.offsetWidth || 0;
-                    const gap = 16; 
-                    const offset = currentPage * (cardWidth + gap) * cardsPerView;
-                    track.style.transform = `translateX(-${offset}px)`;
-                    
-                    scrollLeftBtn.style.display = currentPage === 0 ? "none" : "flex";
-                    scrollRightBtn.style.display = currentPage >= totalPages - 1 ? "none" : "flex";
-                }
-                
-                scrollLeftBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateCarousel(); } });
-                scrollRightBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateCarousel(); } });
-                
-                window.addEventListener('resize', updateCarousel);
-                setTimeout(updateCarousel, 100);
-            }
-        });
-    </script>
-}

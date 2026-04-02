@@ -33,13 +33,26 @@
     }
 }
 
+<section class="breadcrumb-section py-3"
+         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-decoration-none text-highlight-darkblue">HOME</a>
+                </li>
+                <li class="breadcrumb-item active text-highlight-blue" aria-current="page">ADOPT</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-3 mb-4 mb-lg-0">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="fw-bold text-primary-darkblue mb-0">Filters</h4>
-                <a asp-controller="AnimalListings" asp-action="Index"
-                   class="text-decoration-none small fw-semibold text-muted">Reset All</a>
             </div>
 
             <div class="card filter-card rounded-4 shadow-sm p-4">
@@ -51,7 +64,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Dog" id="dog"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                    Species.Dog.ToString() ? "checked" : "") hidden>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Dog.ToString() ? "checked" : "") hidden>
                                 <label for="dog" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Dogs
                                 </label>
@@ -59,7 +72,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Cat" id="cat"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                    Species.Cat.ToString() ? "checked" : "") hidden>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Cat.ToString() ? "checked" : "") hidden>
                                 <label for="cat" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Cats
                                 </label>
@@ -67,7 +80,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Bird" id="bird"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                    Species.Bird.ToString() ? "checked" : "") hidden>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Bird.ToString() ? "checked" : "") hidden>
                                 <label for="bird" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Birds
                                 </label>
@@ -75,7 +88,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Other" id="other"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                    Species.Other.ToString() ? "checked" : "") hidden>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Other.ToString() ? "checked" : "") hidden>
                                 <label for="other" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Others
                                 </label>
@@ -87,7 +100,7 @@
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-tag me-2"></i> BREED</div>
                         <p style="color: red; font-size:x-small;">'BREED' filter is not available at this moment</p>
-                        <select class="form-select rounded-3 py-2 text-muted fw-semibold fs-6">
+                        <select class="form-select rounded-3 py-2 text-secondary-grey fw-semibold fs-6">
                             <option>All Breeds</option>
                         </select>
                     </div>
@@ -98,24 +111,27 @@
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Puppy" id="agePuppy"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Puppy.ToString() ?
-                                                                                                                                                                                           "checked" : "")>
-                            <label class="form-check-label text-muted small fw-semibold" for="agePuppy">Puppy (0-1
+                                                                                                                                                                                                                                                                                                                                                                                                                           "checked" : "")>
+                            <label class="form-check-label text-secondary-grey small fw-semibold" for="agePuppy">Puppy
+                                (0-1
                                 yr)
                             </label>
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Adult" id="ageAdult"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Adult.ToString() ?
-                                                                                                                                                                                     "checked" : "")>
-                            <label class="form-check-label text-muted small fw-semibold" for="ageAdult">Adult (1-7
+                                                                                                                                                                                                                                                                                                                                                                                                                     "checked" : "")>
+                            <label class="form-check-label text-secondary-grey small fw-semibold" for="ageAdult">Adult
+                                (1-7
                                 yrs)
                             </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Senior" id="ageSenior"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Senior.ToString() ?
-                                                                                                                                                                                       "checked" : "")>
-                            <label class="form-check-label text-muted small fw-semibold" for="ageSenior">Senior (7+
+                                                                                                                                                                                                                                                                                                                                                                                                                       "checked" : "")>
+                            <label class="form-check-label text-secondary-grey small fw-semibold" for="ageSenior">Senior
+                                (7+
                                 yrs)
                             </label>
                         </div>
@@ -125,7 +141,7 @@
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
                         <div class="input-group">
-                            <span class="input-group-text bg-white text-muted border-end-0"><i
+                            <span class="input-group-text bg-white text-secondary-grey border-end-0"><i
                                 class="bi bi-geo-alt"></i>
                             </span>
                             <input type="text" name="location" class="form-control border-start-0 ps-0"
@@ -138,14 +154,26 @@
                         <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
                         <input type="range" name="range" class="form-range" min="0" max="500" id="rangeInput"
                                value="@(ViewBag.CurrentRange ?? "0")">
-                        <div class="d-flex justify-content-between text-muted small mt-1">
+                        <div class="d-flex justify-content-between text-secondary-grey small mt-1">
                             <span>0km</span>
                             <span class="current-range-filter" id="rangeValue">@(ViewBag.CurrentRange ?? "0") km</span>
                             <span>500km</span>
                         </div>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">Apply Filters</button>
+
+                    <div class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a asp-controller="AnimalListings" asp-action="Index"
+                                   class="btn btn-primary w-100 fw-bold py-2 rounded-3">Reset All</a>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">Apply
+                                    Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -153,19 +181,11 @@
         <!--BADGES/TAGS ATIVAS-->
         <div class="col-lg-9">
             <div class="mb-4">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb small mb-2">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">Search Pets</li>
-                    </ol>
-                </nav>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3">
                     <div>
                         <h1 class="display-6 fw-bold mb-1 text-primary-darkblue">Find Your New Best Friend</h1>
-                        <p class="text-muted mb-0">Showing @Model.Count() adoptable pets near your location</p>
+                        <p class="text-secondary-grey mb-0">Showing @Model.Count() adoptable pets near your location</p>
                     </div>
                     
                     <form method="get" asp-action="Search" class="mt-3 mt-md-0 d-flex align-items-center">
@@ -173,7 +193,7 @@
                         <input type="hidden" name="age" value="@Context.Request.Query["age"]" />
                         <input type="hidden" name="location" value="@Context.Request.Query["location"]" />
 
-                        <span class="text-muted small me-2">Sort by:</span>
+                        <span class="text-secondary-grey small me-2">Sort by:</span>
 
                         <select name="sort"
                                 class="form-select form-select-sm rounded-3 border-0 shadow-sm fw-semibold text-dark"
@@ -214,7 +234,7 @@
                 else
                 {
                     <div class="d-flex gap-2 flex-wrap mb-4">
-                        <span class="text-muted small">No active filters</span>
+                        <span class="text-secondary-grey small">No active filters</span>
                     </div>
                 }
 
@@ -250,10 +270,10 @@
                                     <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
                                         <h4 class="h5 fw-bold mb-0 text-primary-darkblue">@item.Name</h4>
                                     </a>
-                                    <p class="text-muted small mb-1">
+                                    <p class="text-secondary-grey small mb-1">
                                         <i class="bi bi-geo-alt"></i> @item.Location
                                     </p>
-                                    <p class="text-muted small mb-3">@item.Species • @item.AgeMonths mo.</p>
+                                    <p class="text-secondary-grey small mb-3">@item.Species • @item.AgeMonths mo.</p>
 
                                     <div class="d-flex flex-wrap gap-2 mt-auto">
                                         @if (item.IsVaccinated)
@@ -277,9 +297,9 @@
                     @if (!Model.Any())
                     {
                         <div class="col-12 text-center py-5">
-                            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                            <i class="bi bi-search fs-1 text-secondary-grey mb-3 d-block"></i>
                             <h5 class="fw-bold">No pets found matching your criteria.</h5>
-                            <p class="text-muted">Try adjusting your filters or search location.</p>
+                            <p class="text-secondary-grey">Try adjusting your filters or search location.</p>
                         </div>
                     }
                 </div>
@@ -289,7 +309,7 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
                             <li class="page-item disabled">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-muted" href="#"><i
+                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-secondary-grey" href="#"><i
                                     class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
@@ -307,7 +327,7 @@
                                 </a>
                             </li>
                             <li class="page-item disabled">
-                                <span class="page-link border-0 bg-transparent text-muted">...
+                                <span class="page-link border-0 bg-transparent text-secondary-grey">...
                                 </span>
                             </li>
                             <li class="page-item">
