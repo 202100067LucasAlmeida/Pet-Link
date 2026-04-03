@@ -498,5 +498,10 @@ namespace PetLink.Controllers
             // 5. Retornar o caminho relativo para a Base de Dados
             return $"/images/avatars/{fileName}";
         }
+
+        public IActionResult HelpCenter()
+        {
+            return View();
+        }
     }
 }
