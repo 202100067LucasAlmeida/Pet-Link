@@ -29,7 +29,7 @@
                                 <div class="input-group input-group-sm rounded-pill border"
                                      style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <span class="input-group-text bg-transparent border-0"><i
-                                        class="bi bi-search text-muted"></i>
+                                        class="bi bi-search text-secondary-grey"></i>
                                     </span>
                                     <input type="text" class="form-control border-0 bg-transparent ps-1"
                                            style="color: var(--petlink-dark);" placeholder="Search conversations...">
@@ -63,10 +63,11 @@
                                                                 style="color: var(--petlink-dark); font-size: 0.9rem;">
                                                                 @conv.OtherUserName
                                                             </h6>
-                                                            <small class="text-muted"
+                                                            <small class="text-secondary-grey"
                                                                    style="font-size: 0.7rem;">@conv.LastMessageTimestamp.ToString("HH:mm")</small>
                                                         </div>
-                                                        <p class="text-muted small m-0 text-truncate">@conv.LastMessagePreview
+                                                        <p class="text-secondary-grey small m-0 text-truncate">
+                                                            @conv.LastMessagePreview
                                                         </p>
                                                     </div>
                                                 </div>
@@ -75,13 +76,13 @@
                                     }
                                     else
                                     {
-                                        <div class="text-center p-4 mt-5 text-muted small">No messages found.</div>
+                                        <div class="text-center p-4 mt-5 text-secondary-grey small">No messages found.</div>
                                     }
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-8 d-flex flex-column" style="background-color: var(--petlink-card-bg);">
+                        <div class="col-md-8 d-flex flex-column" style="background-color: var(--petlink-card-bg); height: 75vh; min-height: 600px;">
                             @if (Model.ActiveConversation != null)
                             {
                                 @* Header do Chat *@
@@ -100,7 +101,7 @@
                                             </small>
                                         </div>
                                     </div>
-                                    <div class="text-muted d-flex gap-3 me-2">
+                                    <div class="text-secondary-grey d-flex gap-3 me-2">
                                         <i class="bi bi-telephone cursor-pointer" style="color: var(--petlink-dark);"></i>
                                         <i class="bi bi-info-circle cursor-pointer" style="color: var(--petlink-dark);"></i>
                                     </div>
@@ -121,8 +122,8 @@
                                             }
                                             <div class="p-3 shadow-sm"
                                                  style="max-width: 75%; border-radius: 18px; 
-                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
-                                                                                                                                                                                                                                                                                 : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
+                                                @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                                                                                                                                                                                                                                                                                   : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
                                                 <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">@msg.Content</p>
                                                 <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">
                                                     @msg.Timestamp.ToString("HH:mm")
@@ -130,6 +131,7 @@
                                             </div>
                                         </div>
                                     }
+                                    <div id="chat-anchor" style="height: 1px;"></div>
                                 </div>
 
                                 @* Footer / Input de Mensagem *@
@@ -147,7 +149,7 @@
                                         
                                         <button type="submit"
                                                 class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                                                style="background-color: var(--petlink-primary); color: white; width: 44px; height: 44px; flex-shrink: 0;">
+                                                style="background-color: var(--petlink-primary); color: var(--petlink-grey-bg); width: 44px; height: 44px; flex-shrink: 0;">
                                             <i class="bi bi-send-fill"></i>
                                         </button>
                                     </form>
@@ -166,7 +168,8 @@
                                     <h4 style="font-family: var(--font-primary); color: var(--petlink-dark);">Select a
                                         conversation
                                     </h4>
-                                    <p class="text-muted small">Choose a contact from the left to start messaging.</p>
+                                    <p class="text-secondary-grey small">Choose a contact from the left to start messaging.
+                                    </p>
                                 </div>
                             }
                         </div>
