@@ -90,9 +90,115 @@
         @RenderBody()
     </main>
 
-    <footer class="footer text-secondary-grey">
-        <div class="container text-center small text-secondary-grey">
-            <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+    <footer class="pt-5 pb-3" style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);">
+        <div class="container">
+            <div class="row g-4">
+        
+                <div class="col-lg-3 col-md-6">
+                    <a class="navbar-brand fw-bold fs-4 text-primary-blue d-block mb-3" asp-controller="Home"
+                           asp-action="Index">
+                        <img src="~/images/logo.png" alt="PetLink" height="30" class="me-2" />PETLINK
+                    </a>
+                    <p class="small opacity-75">
+                        Connecting thousands of animals with loving homes.
+                        Dedicated to animal welfare and trustworthy adoption processes.
+                    </p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Platform</h6>
+                    <ul class="list-unstyled small d-grid gap-2">
+                        <li><a asp-controller="Home" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">How it works</a>
+                        </li>
+                        <li><a asp-controller="AnimalListings" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">Adopt a Pet</a>
+                        </li>
+                        <li><a asp-controller="Petsitter" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">Find a Sitter</a>
+                        </li>
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary">Success
+                            Stories</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Policies & Protections</h6>
+                    <div class="row g-0">
+                        <div class="col-6">
+                            <ul class="list-unstyled small d-grid gap-2">
+                                @* Usamos asp-fragment para gerar o # no URL automaticamente *@
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section1"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Introduction</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section2"
+                                           class="text-decoration-none text-secondary-grey hover-primary">User Accounts</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section3"
+                                       class="text-decoration-none text-secondary-grey hover-primary">Privacy
+                                    Practices</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled small d-grid gap-2">
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section4"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Data Usage</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section5"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Termination</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section6"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Cookie Policy</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Support</h6>
+                    <ul class="list-unstyled small d-grid gap-2 mb-4">
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary"><i
+                            class="bi bi-headset me-2"></i>Help Center</a>
+                        </li>
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary"><i
+                            class="bi bi-envelope me-2"></i>Contact Support</a>
+                        </li>
+                    </ul>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4">
+                        <p class="extra-small text-primary-blue fw-bold mb-2">NEWSLETTER</p>
+                        <div class="input-group input-group-sm">
+                            <input type="email" class="form-control border-0 bg-white" placeholder="Your email"
+                                   style="color: var(--petlink-primary-blue);" />
+                            <button class="btn btn-primary" type="button"><i class="bi bi-send"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.1;">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <p class="extra-small text-secondary-grey mb-0">
+                    &copy; @DateTime.Now.Year PetLink. All rights reserved. Built for animal lovers.
+                </p>
+                <div class="d-flex gap-4">
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section3"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Privacy Policy</a>
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section1"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Terms of Service</a>
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section6"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Cookie Settings</a>
+                </div>
+            </div>
         </div>
     </footer>
 
