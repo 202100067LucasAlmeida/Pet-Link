@@ -84,82 +84,132 @@
             @* NOTIFICAÇÕES RECENTES*@
             <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
 
-                <!--HEADER-->
-                <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
-                    <h6 class="fw-bold text-primary-darkblue mb-0">
-                        <i class="bi bi-bell text-primary-darkblue me-2"></i>Recent Notifications
-                    </h6>
-                </div>
+                <!--ADMIN-->
+                @if (userRole == "Admin")
+                {
+                    <!--HEADER-->
+                    <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
+                        <h6 class="fw-bold text-primary-darkblue mb-0">
+                            <i class="bi bi-clock-history text-primary-darkblue me-2"></i>Pending Approvals
+                        </h6>
+                    </div>
 
-                <!--NOTIFICATIONS-->
-                <div class="card-body p-4">
-                    @{
-                        var unreadNotifications = Model.RecentNotifications?.Where(n => !n.IsRead).ToList();
-                    }
-                    @if (unreadNotifications == null || !unreadNotifications.Any())
-                    {
-                        <div class="text-center py-4 rounded-4" style="background-color: var(--petlink-grey-bg);">
-                            <i class="bi bi-bell-slash fs-1 text-muted opacity-50"></i>
-                            <p class="text-muted mt-2 mb-0">You don't have any recent updates on your listings.</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="markAllRead mb-2">
-                            <form asp-controller="Profile" asp-action="MarkAllNotificationAsRead" method="post" style="display: inline;">
-                                <input type="hidden" name="userId" value="@Model.User.Id" />
-                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
-                                    <i class="bi bi-check2 me-1"></i>Mark all as read
-                                </button>
-                            </form>
-                        </div>
-
-                        @foreach (var notification in unreadNotifications)
+                    <!--NOTIFICATIONS-->
+                    <div class="card-body p-4">
+                        @{
+                            var pendingListings = Model.PendingListingsForAdmin ?? new List<AnimalListing>();
+                        }
+                        @if (!pendingListings.Any())
                         {
-                            <div class="notification-item mb-3 p-3 rounded-4 transition-all hover-shadow border
-                                        @(notification.IsRead ? "" : "border-primary")" style="background-color: var(--petlink-grey-bg);
-                                        @(notification.IsRead ? "border-color: var(--petlink-border) !important;" : "border-color: var(--petlink-primary) !important;")"
-                                 data-notification-id="@notification.Id">
-
-                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex align-items-center gap-2 mb-2">
-                                            <i class="bi bi-info-circle-fill text-primary"></i>
-                                            <h6 class="fw-bold text-primary-darkblue mb-0">@notification.Title</h6>
-                                            @if (!notification.IsRead)
-                                            {
-                                                <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.65rem;">!</span>
-                                            }
-                                        </div>
-                                        <p class="text-muted small mb-2">@notification.Message</p>
-                                        <small class="text-muted" style="font-size: 0.7rem;">
-                                            <i class="bi bi-clock me-1"></i>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")
-                                        </small>
-                                    </div>
-                                    <div class="d-flex gap-2">
-                                        @if (!notification.IsRead)
-                                        {
-                                            <form asp-controller="Profile" asp-action="MarkNotificationAsRead" method="post" style="display: inline;">
-                                                <input type="hidden" name="notificationId" value="@notification.Id" />
-                                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
-                                                    <i class="bi bi-check2 me-1"></i>Mark as read
-                                                </button>
-                                            </form>
-                                        }
-                                        @if (notification.AnimalListingId.HasValue)
-                                        {
-                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@notification.AnimalListingId"
-                                               class="btn btn-sm btn-primary rounded-pill"
-                                               style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
-                                                <i class="bi bi-eye me-1"></i>View Pet
-                                            </a>
-                                        }
-                                    </div>
-                                </div>
+                            <div class="text-center py-y rounded-4" style="background-color: var(--petlink-grey-bg);">
+                                <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                <p class="text-muted small mb-0 mt-2">No pending listings to review</p>
                             </div>
                         }
-                    }
-                </div>
+                        else
+                        {
+                            <div class="list-group">
+                                @foreach (var listing in pendingListings)
+                                {
+                                    <div class="p-3 mb-2 rounded-4 border" style="background-color: var(--petlink-grey-bg);">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-bold text-primary-darkblue mb-1">@listing.Name</h6>
+                                                <small class="text-muted">Submitted by: @listing.Tutor?.Name</small><br />
+                                                <small class="text-muted">Created: @listing.CreatedAt.ToString("dd MMM yyyy")</small>
+                                            </div>
+                                            <a asp-controller="AnimalListings" asp-action="Edit" asp-route-id="@listing.Id"
+                                               class="btn btn-sm btn-primary rounded-pill">
+                                                <i class="bi bi-eye me-1"></i>Review
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!--NORMAL USER-->
+                @if (userRole != "Admin")
+                {
+                    <!--HEADER-->
+                    <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
+                        <h6 class="fw-bold text-primary-darkblue mb-0">
+                            <i class="bi bi-bell text-primary-darkblue me-2"></i>Recent Notifications
+                        </h6>
+                    </div>
+
+                    <!--NOTIFICATIONS-->
+                    <div class="card-body p-4">
+                        @{
+                            var unreadNotifications = Model.RecentNotifications?.Where(n => !n.IsRead).ToList();
+                        }
+                        @if (unreadNotifications == null || !unreadNotifications.Any())
+                        {
+                            <div class="text-center py-4 rounded-4" style="background-color: var(--petlink-grey-bg);">
+                                <i class="bi bi-bell-slash fs-1 text-muted opacity-50"></i>
+                                <p class="text-muted mt-2 mb-0">You don't have any recent updates on your listings.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="markAllRead mb-2">
+                                <form asp-controller="Profile" asp-action="MarkAllNotificationAsRead" method="post" style="display: inline;">
+                                    <input type="hidden" name="userId" value="@Model.User.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                        <i class="bi bi-check2 me-1"></i>Mark all as read
+                                    </button>
+                                </form>
+                            </div>
+
+                            @foreach (var notification in unreadNotifications)
+                            {
+                                <div class="notification-item mb-3 p-3 rounded-4 transition-all hover-shadow border
+                                            @(notification.IsRead ? "" : "border-primary")" style="background-color: var(--petlink-grey-bg);
+                                            @(notification.IsRead ? "border-color: var(--petlink-border) !important;" : "border-color: var(--petlink-primary) !important;")"
+                                     data-notification-id="@notification.Id">
+
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <i class="bi bi-info-circle-fill text-primary"></i>
+                                                <h6 class="fw-bold text-primary-darkblue mb-0">@notification.Title</h6>
+                                                @if (!notification.IsRead)
+                                                {
+                                                    <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.65rem;">!</span>
+                                                }
+                                            </div>
+                                            <p class="text-muted small mb-2">@notification.Message</p>
+                                            <small class="text-muted" style="font-size: 0.7rem;">
+                                                <i class="bi bi-clock me-1"></i>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                                            </small>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            @if (!notification.IsRead)
+                                            {
+                                                <form asp-controller="Profile" asp-action="MarkNotificationAsRead" method="post" style="display: inline;">
+                                                    <input type="hidden" name="notificationId" value="@notification.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                                        <i class="bi bi-check2 me-1"></i>Mark as read
+                                                    </button>
+                                                </form>
+                                            }
+                                            @if (notification.AnimalListingId.HasValue)
+                                            {
+                                                <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@notification.AnimalListingId"
+                                                   class="btn btn-sm btn-primary rounded-pill"
+                                                   style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                                    <i class="bi bi-eye me-1"></i>View Pet
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
             </div>
 
             @* SECÇÃO DE CANDIDATURAS *@

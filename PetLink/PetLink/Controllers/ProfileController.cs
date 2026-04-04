@@ -360,6 +360,16 @@ namespace PetLink.Controllers
 
             var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
 
+            List<AnimalListing> pendingListingsForAdmin = null;
+            if (User.IsInRole("Admin"))
+            {
+                pendingListingsForAdmin = await _context.AnimalListings
+                    .Include(a => a.Tutor)
+                    .Where(a => a.Status == ListingStatus.Pendent)
+                    .OrderByDescending(a => a.CreatedAt)
+                    .ToListAsync();
+            }
+
             var viewModel = new ProfileViewModel
             {
                 User = user,
@@ -369,7 +379,8 @@ namespace PetLink.Controllers
                 TotalApplications = totalApplications,
                 UnreadMessages = unreadMessages,
                 DaysSinceJoined = daysSinceJoined,
-                RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5)
+                RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
+                PendingListingsForAdmin = pendingListingsForAdmin
             };
 
             return View(viewModel);

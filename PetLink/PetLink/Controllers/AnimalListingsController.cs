@@ -123,6 +123,13 @@ namespace PetLink
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();
 
+                await _notificationService.CreateNewListingNotificationForAdminsAsync(
+                    animalListing.Id,
+                    animalListing.Name,
+                    animalListing.TutorId
+                );
+
+
                 return RedirectToAction(nameof(MyListings));
             }
             return View(animalListing);

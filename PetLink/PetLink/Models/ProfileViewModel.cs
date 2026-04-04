@@ -19,5 +19,7 @@ namespace PetLink.Models.ViewModels
         public int DaysSinceJoined { get; set; }
 
         public List<ListingsNotification> RecentNotifications { get; set; }
+
+        public List<AnimalListing> PendingListingsForAdmin { get; set; }
     }
 }

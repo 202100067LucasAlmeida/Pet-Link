@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
+using PetLink.Models.Enums;
 
 namespace PetLink.Hubs
 {
@@ -84,5 +85,32 @@ namespace PetLink.Hubs
                 .CountAsync();
         }
 
+
+        //ADMIN NOTIFICATIONS
+
+        public async Task CreateNewListingNotificationForAdminsAsync(int listingId, string petName, int tutorId)
+        {
+            // Get all admin users
+            var admins = await _context.Users
+                .Where(u => u.Role == UserRole.Admin)
+                .ToListAsync();
+
+            foreach (var admin in admins)
+            {
+                var notification = new ListingsNotification
+                {
+                    UserId = admin.Id,
+                    AnimalListingId = listingId,
+                    Title = $"New Listing Awaiting Review: {petName}",
+                    Message = $"A new pet listing '{petName}' has been created and requires your review. Please approve or reject it.",
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.ListingsNotifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

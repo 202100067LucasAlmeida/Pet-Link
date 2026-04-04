@@ -12,5 +12,7 @@ namespace PetLink.Hubs
         Task MarkAllAsReadAsync(int userId);
         Task<int> GetUnreadCountAsync(int userId);
 
+        Task CreateNewListingNotificationForAdminsAsync(int listingId, string petName, int tutorId);
+
     }
 }
