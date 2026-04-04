@@ -19,7 +19,6 @@ function clearMainPhoto() {
     document.getElementById('mainPhotoPreview').style.display = 'none';
     document.getElementById('mainPhotoPlaceholder').style.display = 'block';
     document.getElementById('photoError').style.display = 'none';
-    updateValidationWarning();
 }
 
 // Real-time validation and feedback
@@ -69,44 +68,18 @@ function validateHealth() {
     return isValid;
 }
 
-function updateValidationWarning() {
-    const isAgeValid = validateAge();
-    const isPhotoValid = validatePhoto();
-    const isHealthValid = validateHealth();
-
-    const warning = document.getElementById('validationWarning');
-    const warnAge = document.getElementById('warnAge');
-    const warnPhoto = document.getElementById('warnPhoto');
-    const warnHealth = document.getElementById('warnHealth');
-
-    // Show/hide individual warning items
-    warnAge.style.display = isAgeValid ? 'none' : 'list-item';
-    warnPhoto.style.display = isPhotoValid ? 'none' : 'list-item';
-    warnHealth.style.display = isHealthValid ? 'none' : 'list-item';
-
-    // Show/hide the main warning banner
-    if (!isAgeValid || !isPhotoValid || !isHealthValid) {
-        warning.style.display = 'block';
-    } else {
-        warning.style.display = 'none';
-    }
-}
-
 // Add event listeners for real-time validation
 document.querySelector('input[name="AgeMonths"]').addEventListener('input', function () {
     validateAge();
-    updateValidationWarning();
 });
 
 document.getElementById('mainPhoto').addEventListener('change', function () {
     validatePhoto();
-    updateValidationWarning();
 });
 
 document.querySelectorAll('.health-check').forEach(checkbox => {
     checkbox.addEventListener('change', function () {
         validateHealth();
-        updateValidationWarning();
     });
 });
 
@@ -118,15 +91,8 @@ document.getElementById('createListingForm').addEventListener('submit', function
 
     if (!isAgeValid || !isPhotoValid || !isHealthValid) {
         e.preventDefault();
-        updateValidationWarning();
 
-        // Scroll to the warning banner
-        document.getElementById('validationWarning').scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-
-        // Highlight the first invalid field
+        // Scroll to the first invalid field
         if (!isAgeValid) {
             document.querySelector('input[name="AgeMonths"]').focus();
             document.querySelector('input[name="AgeMonths"]').classList.add('is-invalid');
