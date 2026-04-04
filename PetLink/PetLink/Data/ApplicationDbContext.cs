@@ -17,15 +17,31 @@ namespace PetLink.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         public DbSet<Application> Applications { get; set; }
+
+        public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ListingsNotification>().ToTable("ListingsNotifications");
 
             modelBuilder.Entity<AnimalListing>()
                 .HasOne(a => a.Tutor)
                 .WithMany(u => u.Listings)
                 .HasForeignKey(a => a.TutorId)
                 .OnDelete(DeleteBehavior.Cascade); // Se o user for apagado, os anúncios dele também são
+
+            modelBuilder.Entity<ListingsNotification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);// Se o user for apagado, as notificações dele também são
+
+            modelBuilder.Entity<ListingsNotification>()
+                .HasOne(n => n.AnimalListing)
+                .WithMany()
+                .HasForeignKey(n => n.AnimalListingId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<FavoritePet>()
                 .HasOne(f => f.User)

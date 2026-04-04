@@ -1,21 +1,22 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
+using PetLink.Hubs;
 using PetLink.Models;
 using PetLink.Models.Enums;
+using PetLink.Models.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using PetLink.Models.ViewModels;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System.IO;
 
 namespace PetLink.Controllers
 {
@@ -28,12 +29,14 @@ namespace PetLink.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly INotificationService _notificationService;
 
         // 2. Adiciona ao construtor
-        public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, INotificationService notificationService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -365,10 +368,19 @@ namespace PetLink.Controllers
                 RecentConversations = recentConversations,
                 TotalApplications = totalApplications,
                 UnreadMessages = unreadMessages,
-                DaysSinceJoined = daysSinceJoined
+                DaysSinceJoined = daysSinceJoined,
+                RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5)
             };
 
             return View(viewModel);
+        }
+
+        // POST: Profile/MarkNotificationAsRead
+        [HttpPost]
+        public async Task<IActionResult> MarkNotificationAsRead(int notificationId)
+        {
+            await _notificationService.MarkAsReadAsync(notificationId);
+            return Ok();
         }
 
         // POST: Profile/MarkMessagesAsRead

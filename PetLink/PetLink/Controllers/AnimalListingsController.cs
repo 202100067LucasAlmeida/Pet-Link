@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
+using PetLink.Hubs;
 using PetLink.Models;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models.Enums;
@@ -12,10 +13,12 @@ namespace PetLink
     public class AnimalListingsController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public AnimalListingsController(ApplicationDbContext context)
+        public AnimalListingsController(ApplicationDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // GET: AnimalListings
@@ -152,16 +155,19 @@ namespace PetLink
         {
             if (id != animalListing.Id) return NotFound();
 
-            // 1. Procurar o animal original na base de dados
-            var animalInDb = await _context.AnimalListings.FirstOrDefaultAsync(a => a.Id == id);
-            if (animalInDb == null) return NotFound();
+            // 1. Procurar o animal, e tutor, original na base de dados
+            var existingListing = await _context.AnimalListings
+                .Include(a => a.Tutor)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (existingListing == null) return NotFound();
 
             // 2. Segurança: Só o Dono ou Admin podem editar
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
             int userId = int.Parse(userIdClaim);
 
-            if (animalInDb.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
+            if (existingListing.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
 
             // 3. Limpar validações de propriedades de navegação que não vêm do Form
             ModelState.Remove("Tutor");
@@ -169,36 +175,53 @@ namespace PetLink
             ModelState.Remove("Photos");
             ModelState.Remove("mainPhoto");
 
+            // guardar o status original
+            var oldStatus = existingListing.Status.ToString();
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     // 4. Mapear manualmente os campos para garantir que o EF rastreia as mudanças
-                    animalInDb.Name = animalListing.Name;
-                    animalInDb.Species = animalListing.Species;
-                    animalInDb.AgeMonths = animalListing.AgeMonths;
-                    animalInDb.Location = animalListing.Location;
-                    animalInDb.Description = animalListing.Description;
-                    animalInDb.IsVaccinated = animalListing.IsVaccinated;
-                    animalInDb.IsDewormed = animalListing.IsDewormed;
-                    animalInDb.IsSterilized = animalListing.IsSterilized;
+                    existingListing.Name = animalListing.Name;
+                    existingListing.Species = animalListing.Species;
+                    existingListing.AgeMonths = animalListing.AgeMonths;
+                    existingListing.Location = animalListing.Location;
+                    existingListing.Description = animalListing.Description;
+                    existingListing.IsVaccinated = animalListing.IsVaccinated;
+                    existingListing.IsDewormed = animalListing.IsDewormed;
+                    existingListing.IsSterilized = animalListing.IsSterilized;
 
                     // 5. Lógica de ADMIN: Apenas Admin altera Status e Tutor
-                    if (User.IsInRole("Admin"))
+                    if (User.IsInRole("Admin") && existingListing.Status != animalListing.Status)
                     {
-                        animalInDb.Status = animalListing.Status;
-                        animalInDb.TutorId = animalListing.TutorId;
+                        existingListing.Status = animalListing.Status;
+
+                        // Create notification for the tutor about status change
+                        var newStatus = animalListing.Status.ToString();
+                        await _notificationService.CreateListingStatusNotificationAsync(
+                            existingListing.TutorId,
+                            existingListing.Name,
+                            existingListing.Id,
+                            oldStatus,
+                            newStatus
+                        );
+                    }
+
+                    if (User.IsInRole("Admin") && existingListing.TutorId != animalListing.TutorId)
+                    {
+                        existingListing.TutorId = animalListing.TutorId;
                     }
 
                     // 6. Lógica de Imagem
                     if (mainPhoto != null && mainPhoto.Length > 0)
                     {
                         // Opcional: Apagar a imagem antiga do servidor antes de salvar a nova
-                        animalInDb.ImageUrl = await UploadImage(mainPhoto, "animals");
+                        existingListing.ImageUrl = await UploadImage(mainPhoto, "animals");
                     }
 
                     // 7. Salvar as alterações
-                    _context.Update(animalInDb);
+                    _context.Update(existingListing);
                     await _context.SaveChangesAsync();
 
                     TempData["Success"] = "Changes saved successfully!";

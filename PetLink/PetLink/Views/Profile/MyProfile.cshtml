@@ -26,10 +26,12 @@
                                 <p class="text-muted mb-0">System management and moderation overview.</p>
                             </div>
                         </div>
-                        
+
                         <div class="row g-3">
                             @* Cartões de Admin com fundo dinâmico *@
-                            @{ string[] adminTools = { "Users", "Listings", "Verify" }; }
+                            @{
+                                string[] adminTools = { "Users", "Listings", "Verify" };
+                            }
                             <div class="col-md-4">
                                 <div class="p-4 rounded-4 text-center border hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <i class="bi bi-people-fill text-primary fs-1 mb-2 d-block"></i>
@@ -37,7 +39,7 @@
                                     <a asp-controller="Users" asp-action="Index" class="btn btn-sm btn-primary rounded-pill w-100 mt-2">Go to Users</a>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <div class="p-4 rounded-4 text-center border hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                                     <i class="bi bi-card-list text-primary fs-1 mb-2 d-block"></i>
@@ -63,9 +65,9 @@
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0">
-                                <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)" 
-                                     alt="@Model.User.Name" 
-                                     class="rounded-circle shadow-sm border border-2" 
+                                <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)"
+                                     alt="@Model.User.Name"
+                                     class="rounded-circle shadow-sm border border-2"
                                      style="width: 90px; height: 90px; object-fit: cover; border-color: var(--petlink-primary) !important;"
                                      onerror="this.src='/images/default-avatar.jpg'">
                             </div>
@@ -77,6 +79,75 @@
                     </div>
                 </div>
             }
+
+
+            @* NOTIFICAÇÕES RECENTES*@
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
+
+                <!--HEADER-->
+                <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
+                    <h6 class="fw-bold text-primary-darkblue mb-0">
+                        <i class="bi bi-bell text-primary-darkblue me-2"></i>Recent Notifications
+                    </h6>
+                </div>
+
+                <!--NOTIFICATIONS-->
+                <div class="card-body p-4">
+                    @if (Model.RecentNotifications == null || !Model.RecentNotifications.Any())
+                    {
+                        <div class="text-center py-4 rounded-4" style="background-color: var(--petlink-grey-bg);">
+                            <i class="bi bi-bell-slash fs-1 text-muted opacity-50"></i>
+                            <p class="text-muted mt-2 mb-0">You don't have any recent updates on your listings.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var notification in Model.RecentNotifications)
+                        {
+                            <div class="notification-item mb-3 p-3 rounded-4 transition-all hover-shadow border
+                                        @(notification.IsRead ? "" : "border-primary")" style="background-color: var(--petlink-grey-bg);
+                                        @(notification.IsRead ? "border-color: var(--petlink-border) !important;" : "border-color: var(--petlink-primary) !important;")"
+                                 data-notification-id="@notification.Id">
+
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-info-circle-fill text-primary"></i>
+                                            <h6 class="fw-bold text-primary-darkblue mb-0">@notification.Title</h6>
+                                            @if (!notification.IsRead)
+                                            {
+                                                <span class="badge bg-primary rounded-pill ms-2" style="font-size: 0.65rem;">!</span>
+                                            }
+                                        </div>
+                                        <p class="text-muted small mb-2">@notification.Message</p>
+                                        <small class="text-muted" style="font-size: 0.7rem;">
+                                            <i class="bi bi-clock me-1"></i>@notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                                        </small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        @if (!notification.IsRead)
+                                        {
+                                            <button class="btn btn-sm btn-outline-primary rounded-pill mark-read-btn"
+                                                    data-id="@notification.Id"
+                                                    style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                                <i class="bi bi-check2 me-1"></i>Mark as read
+                                            </button>
+                                        }
+                                        @if (notification.AnimalListingId.HasValue)
+                                        {
+                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@notification.AnimalListingId"
+                                               class="btn btn-sm btn-primary rounded-pill"
+                                               style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                                <i class="bi bi-eye me-1"></i>View Pet
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
 
             @* SECÇÃO DE CANDIDATURAS *@
             <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
@@ -119,7 +190,7 @@
                                         {
                                             <span class="badge rounded-pill px-3 border fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.3) !important;">Approved</span>
                                         }
-                                        <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId" 
+                                        <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId"
                                            class="btn btn-sm rounded-pill border fw-bold" style="background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">Details</a>
                                     </div>
                                 </div>
@@ -156,12 +227,12 @@
                                                 <div class="carousel-card" style="flex: 0 0 calc(50% - 0.5rem); min-width: calc(50% - 0.5rem);">
                                                     <div class="card shadow-none rounded-4 h-100 hover-shadow transition-all" style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border) !important;">
                                                         <div class="position-relative" style="height: 120px; overflow: hidden; border-radius: 12px 12px 0 0;">
-                                                            <img src="@(string.IsNullOrEmpty(pet.ImageUrl) ? "/images/default-pet.jpg" : pet.ImageUrl)" 
+                                                            <img src="@(string.IsNullOrEmpty(pet.ImageUrl) ? "/images/default-pet.jpg" : pet.ImageUrl)"
                                                                  style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/default-pet.jpg'">
                                                         </div>
                                                         <div class="card-body p-2 pt-3 text-center">
                                                             <h6 class="fw-bold text-primary-darkblue mb-1">@pet.Name</h6>
-                                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id" 
+                                                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@pet.Id"
                                                                class="btn btn-primary btn-sm rounded-pill w-100 py-1" style="font-size: 0.75rem;">View</a>
                                                         </div>
                                                     </div>
@@ -172,11 +243,11 @@
                                     @* Botões de navegação adaptados *@
                                     @if (Model.SavedPets.Count() > 2)
                                     {
-                                        <button class="btn shadow-sm rounded-circle position-absolute start-0 top-50 translate-middle-y border" 
+                                        <button class="btn shadow-sm rounded-circle position-absolute start-0 top-50 translate-middle-y border"
                                                 id="scrollLeftBtn" style="width: 32px; height: 32px; z-index: 5; background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">
                                             <i class="bi bi-chevron-left small"></i>
                                         </button>
-                                        <button class="btn shadow-sm rounded-circle position-absolute end-0 top-50 translate-middle-y border" 
+                                        <button class="btn shadow-sm rounded-circle position-absolute end-0 top-50 translate-middle-y border"
                                                 id="scrollRightBtn" style="width: 32px; height: 32px; z-index: 5; background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">
                                             <i class="bi bi-chevron-right small"></i>
                                         </button>
@@ -210,13 +281,13 @@
                                 {
                                     var otherPerson = msg.SenderId == Model.User.Id ? msg.Receiver : msg.Sender;
                                     var isUnread = msg.ReceiverId == Model.User.Id && !msg.IsRead;
-                                    
+
                                     <a asp-controller="Messages" asp-action="Index" asp-route-id="@otherPerson?.Id" class="text-decoration-none">
-                                        <div class="p-3 mb-2 rounded-4 transition-all hover-shadow border" 
+                                        <div class="p-3 mb-2 rounded-4 transition-all hover-shadow border"
                                              style="background-color: @(isUnread ? "rgba(8, 124, 217, 0.1)" : "var(--petlink-grey-bg)"); border-color: @(isUnread ? "var(--petlink-primary)" : "transparent") !important;">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="d-flex align-items-center overflow-hidden">
-                                                    <img src="@(string.IsNullOrEmpty(otherPerson?.ProfilePicture) ? "/images/default-avatar.jpg" : otherPerson.ProfilePicture)" 
+                                                    <img src="@(string.IsNullOrEmpty(otherPerson?.ProfilePicture) ? "/images/default-avatar.jpg" : otherPerson.ProfilePicture)"
                                                          class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                                     <div class="overflow-hidden">
                                                         <h6 class="fw-bold text-primary-darkblue mb-0 text-truncate">@otherPerson?.Name</h6>
@@ -235,10 +306,13 @@
 
             @* QUICK STATS DINÂMICOS *@
             <div class="row g-3">
-                @{ string[] stats = { Model.TotalApplications.ToString(), Model.SavedPets.Count().ToString(), Model.RecentConversations.Count().ToString() };
-                   string[] labels = { "Applications", "Favorites", "Chats" }; }
-                
-                @for(int i=0; i<3; i++) {
+                @{
+                    string[] stats = { Model.TotalApplications.ToString(), Model.SavedPets.Count().ToString(), Model.RecentConversations.Count().ToString() };
+                    string[] labels = { "Applications", "Favorites", "Chats" };
+                }
+
+                @for (int i = 0; i < 3; i++)
+                {
                     <div class="col-md-4">
                         <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
                             <h2 class="fw-bold text-primary-darkblue mb-0">@stats[i]</h2>
@@ -250,3 +324,5 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/profile.js" asp-append-version="true"></script>
