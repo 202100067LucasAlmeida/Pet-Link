@@ -93,7 +93,10 @@
 
                 <!--NOTIFICATIONS-->
                 <div class="card-body p-4">
-                    @if (Model.RecentNotifications == null || !Model.RecentNotifications.Any())
+                    @{
+                        var unreadNotifications = Model.RecentNotifications?.Where(n => !n.IsRead).ToList();
+                    }
+                    @if (unreadNotifications == null || !unreadNotifications.Any())
                     {
                         <div class="text-center py-4 rounded-4" style="background-color: var(--petlink-grey-bg);">
                             <i class="bi bi-bell-slash fs-1 text-muted opacity-50"></i>
@@ -102,7 +105,16 @@
                     }
                     else
                     {
-                        foreach (var notification in Model.RecentNotifications)
+                        <div class="markAllRead mb-2">
+                            <form asp-controller="Profile" asp-action="MarkAllNotificationAsRead" method="post" style="display: inline;">
+                                <input type="hidden" name="userId" value="@Model.User.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                    <i class="bi bi-check2 me-1"></i>Mark all as read
+                                </button>
+                            </form>
+                        </div>
+
+                        @foreach (var notification in unreadNotifications)
                         {
                             <div class="notification-item mb-3 p-3 rounded-4 transition-all hover-shadow border
                                         @(notification.IsRead ? "" : "border-primary")" style="background-color: var(--petlink-grey-bg);
@@ -127,11 +139,12 @@
                                     <div class="d-flex gap-2">
                                         @if (!notification.IsRead)
                                         {
-                                            <button class="btn btn-sm btn-outline-primary rounded-pill mark-read-btn"
-                                                    data-id="@notification.Id"
-                                                    style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
-                                                <i class="bi bi-check2 me-1"></i>Mark as read
-                                            </button>
+                                            <form asp-controller="Profile" asp-action="MarkNotificationAsRead" method="post" style="display: inline;">
+                                                <input type="hidden" name="notificationId" value="@notification.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">
+                                                    <i class="bi bi-check2 me-1"></i>Mark as read
+                                                </button>
+                                            </form>
                                         }
                                         @if (notification.AnimalListingId.HasValue)
                                         {
@@ -324,5 +337,3 @@
         </div>
     </div>
 </div>
-
-<script src="~/js/profile.js" asp-append-version="true"></script>

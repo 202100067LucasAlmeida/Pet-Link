@@ -380,7 +380,14 @@ namespace PetLink.Controllers
         public async Task<IActionResult> MarkNotificationAsRead(int notificationId)
         {
             await _notificationService.MarkAsReadAsync(notificationId);
-            return Ok();
+            return RedirectToAction(nameof(MyProfile));  // This reloads the page
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkAllNotificationAsRead(int userId)
+        {
+            await _notificationService.MarkAllAsReadAsync(userId);
+            return RedirectToAction(nameof(MyProfile));  // This reloads the page
         }
 
         // POST: Profile/MarkMessagesAsRead
