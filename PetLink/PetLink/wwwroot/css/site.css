@@ -298,7 +298,7 @@ footer {
 }
 
 .sidebar-profile .list-group-item.active {
-    background-color: var(--petlink-primary) !important;
+    background-color: var(--petlink-highlight) !important;
     color: #ffffff !important;
     font-weight: bold;
     border-radius: 50px;
