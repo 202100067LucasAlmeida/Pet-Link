@@ -1,46 +1,56 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
+using PetLink.Hubs;
 using PetLink.Models;
 using PetLink.Models.Enums;
+using PetLink.Models.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
-    // Classe necessária para o JS verificar o email em tempo real
     public class EmailCheckRequest
     {
         public string Email { get; set; }
     }
 
-    public class ProfileController : Controller
+    public class ProfileController : BaseController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly INotificationService _notificationService;
 
-        public ProfileController(ApplicationDbContext context)
+        // 2. Adiciona ao construtor
+        public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, INotificationService notificationService)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
+            _notificationService = notificationService;
         }
 
-        // 1. Mostra a página de Login (GET)
+        /// <summary>
+        /// GET: Profile/LoginForm - Displays login form
+        /// Redirects authenticated users to Home/Index
+        /// </summary>
         [HttpGet]
         public IActionResult LoginForm()
         {
-            // Se já tiver login feito, manda para a Home
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
         }
 
-        // 2. Recebe os dados do formulário quando clicas "Log In" (POST)
+        // Recebe os dados do formulário 
         [HttpPost]
         public async Task<IActionResult> LoginForm(string email, string password, bool rememberMe)
         {
@@ -50,14 +60,13 @@ namespace PetLink.Controllers
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
+                .FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user == null)
+            if (user == null || !UserHashHelpers.VerifyPassword(password, user.PasswordHash))
             {
                 return Json(new { success = false, message = "Invalid email or password." });
             }
 
-            // Login (Claims)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Name),
@@ -71,11 +80,10 @@ namespace PetLink.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties { IsPersistent = rememberMe });
 
-            // Retorna sucesso para o JS fazer o redirect
             return Json(new { success = true });
         }
 
-        // 3. Mostra a página de Registo (GET)
+        // Mostra a página de Registo 
         [HttpGet]
         public IActionResult SignUpForm()
         {
@@ -83,7 +91,12 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // 4. Faz o Logout
+        public IActionResult ForgotPasswordForm()
+        {
+            return View();
+        }
+
+        // Faz o Logout
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -93,7 +106,7 @@ namespace PetLink.Controllers
 
         // sprint 2 -----------
 
-        // Verificação do Email para o JavaScript (Real-time)
+        // Verificação do Email
         [HttpPost]
         public async Task<IActionResult> ValidateEmail([FromBody] EmailCheckRequest request)
         {
@@ -104,13 +117,13 @@ namespace PetLink.Controllers
             return Json(new { isAvailable = !emailExists });
         }
 
-        // Verificações pedidas do sign up e Criação de Conta
+        // Verificaçõesdo sign up e criação de conta
         [HttpPost]
         public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
         {
             var errors = new Dictionary<string, string>();
 
-            // Validate Name
+            // valida nome
             if (string.IsNullOrWhiteSpace(model.FullName))
             {
                 errors["fullName"] = "O nome é obrigatório.";
@@ -120,7 +133,7 @@ namespace PetLink.Controllers
                 errors["fullName"] = "Name must not contain numbers or symbols.";
             }
 
-            // Validate Email
+            // valida email
             if (string.IsNullOrWhiteSpace(model.Email))
             {
                 errors["email"] = "O email é obrigatório.";
@@ -138,20 +151,20 @@ namespace PetLink.Controllers
                 }
             }
 
-            // Validate Phone
+            // valida telemóvel
             if (string.IsNullOrWhiteSpace(model.Phone))
             {
                 errors["phone"] = "Phone number is required.";
             }
 
-            // Validate Password
+            // valida password
             var passwordErrors = ValidatePassword(model.Password);
             if (passwordErrors.Any())
             {
                 errors["password"] = string.Join(" ", passwordErrors);
             }
 
-            // Validate Confirm Password
+            // valida confirmação de password
             if (model.Password != model.ConfirmPassword)
             {
                 errors["confirmPassword"] = "Passwords do not match.";
@@ -170,9 +183,12 @@ namespace PetLink.Controllers
             {
                 Name = model.FullName,
                 Email = model.Email,
-                PasswordHash = model.Password,
+                PasswordHash = UserHashHelpers.HashPassword(model.Password),
                 Role = role,
-                IsVerified = false // Requer verificação do admin para Associações e PetSitters
+                IsVerified = false, // Requer verificação do admin para Associações e PetSitters
+                Phone = model.Phone,
+                CreatedAt = DateTime.Now,
+                ProfilePicture = "/images/default-avatar.jpg"
             };
 
             _context.Users.Add(newUser);
@@ -198,7 +214,6 @@ namespace PetLink.Controllers
         }
 
 
-        // métodos extra
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -251,25 +266,45 @@ namespace PetLink.Controllers
 
 
         //account settings
-        public IActionResult AccountSettings()
+        [HttpGet]
+        public async Task<IActionResult> AccountSettings()
         {
-            return View();
+            // 1. Descobrir quem é o utilizador logado
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            int userId = int.Parse(userIdClaim);
+
+            // 2. Ir buscar TODOS os dados dele à Base de Dados
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // 3. Enviar o utilizador carregado para a View!
+            return View(user);
         }
 
-        // My profile-------- 
-        
+        // My profile
+
         // GET: Profile/MyProfile
-        [Authorize(Roles = "User,PetSitter")]
+        [Authorize]
         public async Task<IActionResult> MyProfile()
         {
-            // Obter o ID do utilizador logado
+            // Obtem o ID do utilizador logado
             var userIdClaim = User.FindFirst("UserId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
             {
                 return Challenge();
             }
 
-            // Buscar utilizador
+            // Vai buscar o utilizador
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -278,7 +313,7 @@ namespace PetLink.Controllers
                 return NotFound();
             }
 
-            // Buscar saved pets (favoritos)
+            // Vai buscar saved pets
             var savedPets = await _context.FavoritePets
                 .Where(f => f.UserId == userId)
                 .Include(f => f.AnimalListing)
@@ -286,9 +321,9 @@ namespace PetLink.Controllers
                 .Where(a => a.Status == ListingStatus.Published)
                 .ToListAsync();
 
-            // Buscar active applications (pending ou approved)
+            // vai buscar active applications 
             var activeApplications = await _context.Applications
-                .Where(a => a.UserId == userId && 
+                .Where(a => a.UserId == userId &&
                        (a.Status == ApplicationStatus.Pending || a.Status == ApplicationStatus.Approved))
                 .Include(a => a.AnimalListing)
                 .ThenInclude(a => a.Tutor)
@@ -296,7 +331,7 @@ namespace PetLink.Controllers
                 .Take(3)
                 .ToListAsync();
 
-            // Buscar mensagens recentes
+            // mensagens recentes
             var recentConversations = new List<Message>();
 
             var allMessages = await _context.Messages
@@ -306,7 +341,7 @@ namespace PetLink.Controllers
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
 
-            // Agrupar por conversa (pessoa com quem se está a falar)
+            // Agrupar por conversa 
             var conversations = allMessages
             .GroupBy(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
             .Select(g => g.OrderByDescending(m => m.CreatedAt).FirstOrDefault())
@@ -319,11 +354,21 @@ namespace PetLink.Controllers
             // Calcular estatísticas
             var totalApplications = await _context.Applications
                 .CountAsync(a => a.UserId == userId);
-                
+
             var unreadMessages = await _context.Messages
                 .CountAsync(m => m.ReceiverId == userId && !m.IsRead);
 
             var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
+
+            List<AnimalListing> pendingListingsForAdmin = null;
+            if (User.IsInRole("Admin"))
+            {
+                pendingListingsForAdmin = await _context.AnimalListings
+                    .Include(a => a.Tutor)
+                    .Where(a => a.Status == ListingStatus.Pendent)
+                    .OrderByDescending(a => a.CreatedAt)
+                    .ToListAsync();
+            }
 
             var viewModel = new ProfileViewModel
             {
@@ -334,6 +379,9 @@ namespace PetLink.Controllers
                 TotalApplications = totalApplications,
                 UnreadMessages = unreadMessages,
                 DaysSinceJoined = daysSinceJoined 
+                DaysSinceJoined = daysSinceJoined,
+                RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
+                PendingListingsForAdmin = pendingListingsForAdmin
             };
 
             // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
@@ -358,6 +406,21 @@ namespace PetLink.Controllers
             return View(viewModel);
         }
 
+        // POST: Profile/MarkNotificationAsRead
+        [HttpPost]
+        public async Task<IActionResult> MarkNotificationAsRead(int notificationId)
+        {
+            await _notificationService.MarkAsReadAsync(notificationId);
+            return RedirectToAction(nameof(MyProfile));  // This reloads the page
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkAllNotificationAsRead(int userId)
+        {
+            await _notificationService.MarkAllAsReadAsync(userId);
+            return RedirectToAction(nameof(MyProfile));  // This reloads the page
+        }
+
         // POST: Profile/MarkMessagesAsRead
         [HttpPost]
         [Authorize(Roles = "User,PetSitter")]
@@ -380,6 +443,115 @@ namespace PetLink.Controllers
 
             await _context.SaveChangesAsync();
             return Json(new { success = true });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAccount(User updatedUser, IFormFile? profilePicture, bool removePhoto)
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+            int currentUserId = int.Parse(userIdClaim);
+
+            // 1. Buscar o utilizador original para garantir que editamos o nosso próprio perfil
+            var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
+            if (userInDb == null) return NotFound();
+
+            // 2. Atualizar apenas os campos permitidos
+            userInDb.Name = updatedUser.Name;
+            userInDb.Phone = updatedUser.Phone;
+            userInDb.Location = updatedUser.Location;
+            userInDb.Bio = updatedUser.Bio;
+
+            // 3. Lógica de Foto
+            if (removePhoto)
+            {
+                if (!string.IsNullOrEmpty(userInDb.ProfilePicture) && !userInDb.ProfilePicture.Contains("default-avatar.jpg"))
+                {
+                    var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, userInDb.ProfilePicture.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                }
+                userInDb.ProfilePicture = "/images/default-avatar.jpg";
+            }
+            else if (profilePicture != null && profilePicture.Length > 0)
+            {
+                // Se já tinha foto, apaga a antiga antes de subir a nova para não acumular lixo
+                if (!string.IsNullOrEmpty(userInDb.ProfilePicture) && !userInDb.ProfilePicture.Contains("default-avatar.jpg"))
+                {
+                    var oldPath = Path.Combine(_webHostEnvironment.WebRootPath, userInDb.ProfilePicture.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                }
+                userInDb.ProfilePicture = await SaveProfileFile(profilePicture);
+            }
+
+            _context.Users.Update(userInDb);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Profile updated successfully!";
+            return RedirectToAction(nameof(AccountSettings));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveProfilePicture()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
+            int userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null) return NotFound();
+
+            // 1. Se a foto atual não for a default, vamos apagar o ficheiro físico
+            if (!string.IsNullOrEmpty(user.ProfilePicture) && !user.ProfilePicture.Contains("default-avatar.jpg"))
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfilePicture.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+
+            // 2. Voltamos o caminho para a foto default ou null
+            user.ProfilePicture = "/images/default-avatar.jpg";
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Profile picture removed successfully!";
+            return RedirectToAction(nameof(AccountSettings));
+        }
+
+        private async Task<string> SaveProfileFile(IFormFile file)
+        {
+            // 1. Criar um nome único (Ex: 550e8400-e29b-41d4.jpg)
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // 2. Definir o caminho da pasta: wwwroot/images/avatars
+            string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
+
+            // 3. Garantir que a pasta existe
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            string filePath = Path.Combine(uploadDir, fileName);
+
+            // 4. Guardar o ficheiro no disco
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // 5. Retornar o caminho relativo para a Base de Dados
+            return $"/images/avatars/{fileName}";
+        }
+
+        public IActionResult HelpCenter()
+        {
+            return View();
         }
     }
 }

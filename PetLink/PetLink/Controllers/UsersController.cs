@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models;
-
 namespace PetLink.Controllers
 {
-    [Authorize(Roles = "Admin")] // Apenas utilizadores com role "Admin" podem aceder a este controller
-    public class UsersController : Controller
+    [Authorize]
+    public class UsersController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,6 +17,7 @@ namespace PetLink.Controllers
 
         // GET: Users
         // Mostra a lista de todos os utilizadores registados
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
@@ -33,6 +33,16 @@ namespace PetLink.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (user == null) return NotFound();
+
+            // Carregar histórico de mensagens
+            if (GetCurrentUserId(out int currentUserId))
+            {
+                ViewBag.ChatHistory = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == user.Id) ||
+                                (m.SenderId == user.Id && m.ReceiverId == currentUserId))
+                    .OrderBy(m => m.Timestamp)
+                    .ToListAsync();
+            }
 
             return View(user);
         }

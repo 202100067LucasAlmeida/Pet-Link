@@ -6,7 +6,7 @@ namespace PetLink.Models
 {
     public class Message
     {
-        public int? AnimalListingId { get; set; } // Opcional: Para saber o contexto da conversa
+        public int? AnimalListingId { get; set; } 
         public virtual AnimalListing AnimalListing { get; set; }
         public int Id { get; set; }
 

@@ -13,53 +13,61 @@
                     <i class="bi bi-pencil-square me-2"></i> Edit User
                 </h2>
 
-                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
+                <a asp-action="Index"
+                       class="btn btn-outline-secondary rounded-pill btn-sm fw-bold text-primary-darkblue"
+                       style="border-color: var(--petlink-border) !important;">
                     <i class="bi bi-arrow-left me-1"></i> Back to List
                 </a>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 shadow-sm rounded-4" style="background-color: var(--petlink-card-bg);">
                 <div class="card-body p-4 p-md-5">
 
                     <form asp-action="Edit">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        @* Esconde o ID e a Password para não os perdermos no POST *@
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="PasswordHash" />
 
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label fw-semibold">Full Name</label>
-                            <input asp-for="Name" class="form-control py-2" />
+                            <label asp-for="Name" class="form-label fw-semibold text-primary-darkblue">Full Name</label>
+                            <input asp-for="Name" class="form-control py-2"
+                                   style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);" />
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
-                            <input asp-for="Email" class="form-control py-2" />
+                            <label asp-for="Email" class="form-label fw-semibold text-primary-darkblue">Email
+                                Address
+                            </label>
+                            <input asp-for="Email" class="form-control py-2"
+                                   style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);" />
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Role" class="form-label fw-semibold">Account Type (Role)</label>
-                            @* O ASP.NET gera o dropdown automaticamente a partir do teu Enum! *@
+                            <label asp-for="Role" class="form-label fw-semibold text-primary-darkblue">Account Type
+                                (Role)
+                            </label>
                             <select asp-for="Role" class="form-select py-2"
-                                    asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.UserRole>()"></select>
+                                    style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
+                                    asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.UserRole>()">
+                            </select>
                             <span asp-validation-for="Role" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-4 mt-4">
+                        <div class="mb-4 mt-4 p-3 rounded-3"
+                             style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
                             <div class="form-check form-switch fs-5">
                                 <input class="form-check-input" type="checkbox" asp-for="IsVerified"
-                                       id="isVerifiedSwitch" />
+                                       id="isVerifiedSwitch" style="cursor: pointer;" />
                                 <label class="form-check-label fs-6 ms-2 pt-1 fw-semibold text-success"
                                        for="isVerifiedSwitch">
                                     Account is Verified
                                 </label>
                             </div>
-
-                            <p class="text-muted small ms-5 mt-1">
-                                Shelters and PetSitters need to be verified by an Admin to post listings.
+                            <p class="text-secondary-grey small ms-5 mt-1 mb-0">
+                                Shelters and PetSitters need to be verified by an Admin.
                             </p>
                         </div>
 

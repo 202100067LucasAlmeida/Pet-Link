@@ -1,34 +1,46 @@
-﻿@model IEnumerable<PetLink.Models.AnimalListing>
+﻿@using PetLink.Models.Enums
+@model IEnumerable<PetLink.Models.AnimalListing>
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <section class="hero-section py-5">
-    <div class="container">
+    <div class="container" style="padding-top: 50px;">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
                 <h1 class="display-4 fw-bold mb-3 text-primary-light">Find your perfect
                     <span class="text-primary-lightblue">companion</span> today.
                 </h1>
 
-                <p class="lead text-muted mb-5 text-highlight-light">Connecting thousands of animals with loving
+                <p class="lead text-secondary-grey mb-5 text-highlight-light">Connecting thousands of animals with loving
                     homes.<br>Trustworthy, safe, and dedicated to animal welfare.
                 </p>
 
-                <form asp-controller="AnimalListings" asp-action="Index" method="get">
-                    <div class="search-card p-3 shadow-sm bg-white">
+                <a asp-controller="Errors" asp-action="AccessDenied" class="btn-home">
+                    <i class="fas fa-home"></i> 403
+                </a>
+                <a asp-controller="Errors" asp-action="FileMissing" class="btn-home">
+                    <i class="fas fa-home"></i> 404
+                </a>
+                <a asp-controller="Errors" asp-action="ServerFault" class="btn-home">
+                    <i class="fas fa-home"></i> 500
+                </a>
+
+                <form asp-controller="AnimalListings" asp-action="Search" method="get">
+                    <div class="search-card p-3 shadow-sm" style="background-color: var(--petlink-card-bg);">
                         <div class="row g-4 align-items-end">
                             <div class="col-md-3 text-start">
                                 <label class="form-label text-primary-blue small fw-bold mb-1">LOCATION</label>
-                                <input type="text" name="location"
-                                       class="form-control text-highlight-blue border-0 bg-light"
-                                       placeholder="Where are you?">
+                                @* Mudado bg-light para var(--petlink-grey-bg) *@
+                                <input type="text" name="location" class="form-control text-highlight-blue border-0"
+                                       style="background-color: var(--petlink-grey-bg);" placeholder="Where are you?">
                             </div>
 
                             <div class="col-md-3 text-start">
                                 <label class="form-label text-primary-blue small fw-bold mb-1">ANIMAL TYPE</label>
-                                <select name="species" class="form-select text-highlight-blue border-0 bg-light">
+                                <select name="species" class="form-select text-highlight-blue border-0"
+                                        style="background-color: var(--petlink-grey-bg);">
                                     <option value="">All Animals</option>
                                     <option value="Dog">Dogs</option>
                                     <option value="Cat">Cats</option>
@@ -38,11 +50,12 @@
 
                             <div class="col-md-3 text-start">
                                 <label class="form-label text-primary-blue small fw-bold mb-1">AGE RANGE</label>
-                                <select name="age" class="form-select text-highlight-blue border-0 bg-light">
+                                <select name="age" class="form-select text-highlight-blue border-0"
+                                        style="background-color: var(--petlink-grey-bg);">
                                     <option value="">Any Age</option>
-                                    <option value="0-1">Puppy (0-1 yr)</option>
-                                    <option value="1-3">Young (1-3 yrs)</option>
-                                    <option value="3-7">Adult (3-7 yrs)</option>
+                                    <option value="@Age.Puppy">Puppy (0-1 yr)</option>
+                                    <option value="@Age.Adult">Adult (1-3 yrs)</option>
+                                    <option value="@Age.Senior">Senior (3-7 yrs)</option>
                                 </select>
                             </div>
 
@@ -62,24 +75,25 @@
 <section class="features-section px-5 py-5">
     <div class="container">
         <div class="row align-content-center text-center">
+            @* Os feature-cards já usam var(--petlink-card-bg) no CSS global *@
             <div class="col-md-4 py-2">
                 <div class="feature-card p-3 mx-auto">
                     <h3 class="h5 text-primary-blue">Verified Shelters</h3>
-                    <p class="text-muted small mb-0">100% vetted partners only.</p>
+                    <p class="text-secondary-grey small mb-0">100% vetted partners only.</p>
                 </div>
             </div>
 
             <div class="col-md-4 py-2">
                 <div class="feature-card p-3 mx-auto">
                     <h3 class="h5 text-primary-blue">Daily New Pets</h3>
-                    <p class="text-muted small mb-0">Updated listings every hour.</p>
+                    <p class="text-secondary-grey small mb-0">Updated listings every hour.</p>
                 </div>
             </div>
 
             <div class="col-md-4 py-2">
                 <div class="feature-card p-3 mx-auto">
                     <h3 class="h5 text-primary-blue">Direct Contact</h3>
-                    <p class="text-muted small mb-0">Message owners instantly.</p>
+                    <p class="text-secondary-grey small mb-0">Message owners instantly.</p>
                 </div>
             </div>
         </div>
@@ -106,46 +120,45 @@
                 {
                     <div class="col-md-6 col-lg-3">
                         <div class="animal-card card h-100 shadow-sm border-0">
-                            <img src="~/images/@(item.Name.ToLower()).jpg" alt="@item.Name's photo" class="card-img-top">
-                                <div class="card-body">
-                                    <h3 class="h5 text-primary-darkblue mb-2 fw-bold">@item.Name</h3>
-                                    <div class="animal-details small text-muted">
-                                        <p class="mb-1"><i class="bi bi-geo-alt"></i> @item.Location</p>
-                                        <p class="mb-1"><i class="bi bi-calendar"></i> @item.AgeMonths months</p>
-                                        <p class="mb-1"><i class="bi bi-tag"></i> @item.Species</p>
-                                    </div>
-                                </div>
-
-                                <div class="card-footer bg-transparent border-0 pb-3">
-                                    <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@item.Id"
-                                           class="btn btn-secondary rounded-pill w-100 fw-bold">View Details
-                                    </a>
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)"
+                                 class="card-img-top" style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='/images/default-pet.jpg'">
+                            <div class="card-body">
+                                <h4 class="h5 text-primary-darkblue mb-2 fw-bold">@item.Name</h4>
+                                <div class="animal-details small text-secondary-grey">
+                                    <p class="mb-1"><i class="bi bi-geo-alt"></i> @item.Location</p>
+                                    <p class="mb-1"><i class="bi bi-calendar"></i> @item.AgeMonths months</p>
+                                    <p class="mb-1"><i class="bi bi-tag"></i> @item.Species</p>
                                 </div>
                             </div>
+
+                            <div class="card-footer bg-transparent border-0 pb-3">
+                                <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-secondary rounded-pill w-100 fw-bold">View Details
+                                </a>
+                            </div>
                         </div>
-                    }
-                }
-            else
-                {
-                    <div class="col-12 text-center py-4">
-                        <p class="text-muted">Nenhum animal listado recentemente.</p>
                     </div>
                 }
-            </div>
+            }
+            else
+            {
+                <div class="col-12 text-center py-4">
+                    <p class="text-secondary-grey">No pets listed recently.</p>
+                </div>
+            }
         </div>
     </div>
-</div>
-</div>
-</div>
 </section>
 
-<!-- Footer -->
-<div class="text-center border-top p-5 bg-light">
+@* Mudado bg-light para var(--petlink-grey-bg) e border-top para var(--petlink-border)
+<div class="text-center border-top p-5"
+     style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-3">
                 <h4 class="h5 text-primary-blue">PETLINK</h4>
-                <p class="small text-muted">Making pet adopting simple, transparent, and joyful. Our mission is to
+                <p class="small text-secondary-grey">Making pet adopting simple, transparent, and joyful. Our mission is to
                     ensure every pet finds its forever home.
                 </p>
             </div>
@@ -153,32 +166,32 @@
             <div class="col-lg-3">
                 <h5 class="h6 text-primary-blue">Platform</h5>
                 <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">How it works</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Safety center</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Success stories</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Verification process</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">How it works</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Safety center</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Success stories</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Verification process</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-3">
                 <h5 class="h6 text-primary-blue">Community</h5>
                 <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Pet care resources</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Local shelters</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Volunteering</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Events</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Pet care resources</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Local shelters</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Volunteering</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Events</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-3">
                 <h5 class="h6 text-primary-blue">Support</h5>
                 <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Help Center</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Contact Us</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Terms of Service</a></li>
                 </ul>
             </div>
         </div>
     </div>
-</div>
+</div> *@

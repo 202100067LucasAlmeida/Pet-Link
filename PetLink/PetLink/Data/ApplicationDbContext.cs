@@ -10,25 +10,39 @@ namespace PetLink.Data
         {
         }
 
-        // Estas propriedades DbSet vão transformar-se nas tabelas do SQL Server
         public DbSet<User> Users { get; set; }
         public DbSet<AnimalListing> AnimalListings { get; set; }
+        public DbSet<AnimalPhoto> AnimalPhotos { get; set; }
         public DbSet<FavoritePet> FavoritePets { get; set; }
         public DbSet<Message> Messages { get; set; }
-        // public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Review> Reviews { get; set; } 
+
+        public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Exemplo: Um User tem muitos AnimalListings
+            modelBuilder.Entity<ListingsNotification>().ToTable("ListingsNotifications");
+
             modelBuilder.Entity<AnimalListing>()
                 .HasOne(a => a.Tutor)
                 .WithMany(u => u.Listings)
                 .HasForeignKey(a => a.TutorId)
                 .OnDelete(DeleteBehavior.Cascade); // Se o user for apagado, os anúncios dele também são
+
+            modelBuilder.Entity<ListingsNotification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);// Se o user for apagado, as notificações dele também são
+
+            modelBuilder.Entity<ListingsNotification>()
+                .HasOne(n => n.AnimalListing)
+                .WithMany()
+                .HasForeignKey(n => n.AnimalListingId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<FavoritePet>()
                 .HasOne(f => f.User)
@@ -52,13 +66,13 @@ namespace PetLink.Data
             {
                 // Define quem envia
                 entity.HasOne(m => m.Sender)
-                      .WithMany()
+                      .WithMany(u => u.SentMessages)
                       .HasForeignKey(m => m.SenderId)
-                      .OnDelete(DeleteBehavior.Restrict); // Evita erros de cascata apagar users
+                      .OnDelete(DeleteBehavior.Restrict);
 
                 // Define quem recebe
                 entity.HasOne(m => m.Receiver)
-                      .WithMany()
+                      .WithMany(u => u.ReceivedMessages)
                       .HasForeignKey(m => m.ReceiverId)
                       .OnDelete(DeleteBehavior.Restrict);
             });

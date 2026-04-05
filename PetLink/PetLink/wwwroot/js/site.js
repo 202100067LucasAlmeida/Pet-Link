@@ -268,4 +268,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // --- 5. LÓGICA DE DARK MODE ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.body;
+
+    // Função para aplicar o tema
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+            themeIcon.classList.replace('bi-moon-fill', 'bi-sun-fill');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark-mode');
+            themeIcon.classList.replace('bi-sun-fill', 'bi-moon-fill');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Inicializar o ícone correto ao carregar a página
+    if (localStorage.getItem('theme') === 'dark') {
+        applyTheme('dark');
+    }
+
+    // Evento de clique
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark-mode');
+            applyTheme(isDark ? 'light' : 'dark');
+        });
+    }
 });

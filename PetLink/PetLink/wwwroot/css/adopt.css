@@ -1,0 +1,162 @@
+﻿/* MODAL ADOÇÃO DINÂMICO */
+.adopt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.adopt-modal-container {
+    background-color: var(--petlink-card-bg);
+    /* Dinâmico */
+    color: var(--petlink-dark);
+    /* Dinâmico */
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.adopt-modal-header {
+    padding: 20px 25px;
+    border-bottom: 2px solid var(--petlink-border);
+    background: var(--petlink-primary);
+    border-radius: 20px 20px 0 0;
+}
+
+.adopt-modal-header h3 {
+    margin: 0;
+    color: var(--petlink-grey-bg);
+    font-weight: bold;
+    font-family: var(--font-primary);
+}
+
+.adopt-modal-body {
+    padding: 25px;
+}
+
+.adopt-confirmation-items {
+    margin-top: 20px;
+}
+
+.adopt-confirm-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.adopt-checkbox {
+    margin-right: 12px;
+    margin-top: 3px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--petlink-primary);
+}
+
+.adopt-confirm-item label {
+    cursor: pointer;
+    color: var(--petlink-dark);
+    opacity: 0.8;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+.adopt-modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid var(--petlink-border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    background-color: var(--petlink-card-bg);
+}
+
+.adopt-cancel-btn {
+    background-color: var(--petlink-grey-bg);
+    color: var(--petlink-dark);
+    border: 1px solid var(--petlink-border);
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.adopt-cancel-btn:hover {
+    background-color: var(--petlink-light-bg);
+}
+
+.adopt-confirm-btn {
+    background-color: var(--petlink-primary);
+    color: var(--petlink-grey-bg);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.adopt-confirm-btn:hover:not(:disabled) {
+    background-color: var(--petlink-highlight);
+    transform: translateY(-2px);
+}
+
+.adopt-confirm-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* NOTIFICAÇÃO DE SUCESSO DINÂMICA */
+.adopt-success-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.adopt-success-content {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 300px;
+    border-left: 4px solid #28a745;
+}
+
+.adopt-success-content h4 {
+    margin: 10px 0 5px 0;
+    color: var(--petlink-primary);
+    font-family: var(--font-primary);
+}
+
+.adopt-success-content p {
+    margin: 0;
+    color: var(--petlink-dark);
+    opacity: 0.7;
+    font-size: 14px;
+}

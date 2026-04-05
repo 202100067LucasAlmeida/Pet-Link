@@ -12,114 +12,192 @@
                 <h2 class="text-primary-blue fw-bold mb-0">
                     <i class="bi bi-plus-circle-fill me-2"></i> Create Animal Listing
                 </h2>
-                <a asp-action="Manage" class="btn btn-outline-secondary rounded-pill btn-sm fw-bold">
-                    <i class="bi bi-arrow-left me-1"></i> Back to List
+
+                <a asp-action="MyListings"
+                       class="btn btn-outline-secondary rounded-pill btn-sm fw-bold text-primary-darkblue"
+                       style="border-color: var(--petlink-border) !important;">
+                    <i class="bi bi-arrow-left me-1"></i> Back to My Listings
                 </a>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4">
+            @* Card com fundo dinâmico *@
+            <div class="card border-0 shadow-sm rounded-4" style="background-color: var(--petlink-card-bg);">
                 <div class="card-body p-4 p-md-5">
 
-                    <form asp-action="Create">
+                    <<form asp-action="Create" method="post" enctype="multipart/form-data" id="createListingForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-semibold small"></div>
 
-                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Basic Information</h5>
+                        @* 1. Basic Information Section *@
+                        <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2"
+                            style="border-color: var(--petlink-border) !important;">Basic Information
+                        </h5>
 
                         <div class="row">
+                            <!--NAME-->
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Name" class="form-label fw-semibold">Animal Name</label>
-                                <input asp-for="Name" class="form-control py-2" placeholder="Ex: Max" />
+                                <label asp-for="Name" class="form-label fw-semibold text-primary-darkblue">Animal
+                                    Name
+                                </label>
+                                <input asp-for="Name" class="form-control py-2"
+                                       style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
+                                       placeholder="Ex: Max" required/>
                                 <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
 
+                            <!--SPECIES-->
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Species" class="form-label fw-semibold">Species</label>
-                                <select asp-for="Species" class="form-select py-2"
+                                <label asp-for="Species" class="form-label fw-semibold text-primary-darkblue">Species
+                                </label>
+                                <select asp-for="Species" class="form-select py-2" required
+                                        style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
                                         asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.Species>()">
+                                    <option value="">Select a species</option>
                                 </select>
                                 <span asp-validation-for="Species" class="text-danger small"></span>
                             </div>
                         </div>
 
                         <div class="row">
+                            <!--AGE-->
                             <div class="col-md-6 mb-3">
-                                <label asp-for="AgeMonths" class="form-label fw-semibold">Age (in months)</label>
-                                <input asp-for="AgeMonths" class="form-control py-2" placeholder="Ex: 12" />
+
+                                <label asp-for="AgeMonths" class="form-label fw-semibold text-primary-darkblue">
+                                    Age (months) <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <input asp-for="AgeMonths" class="form-control py-2"
+                                           style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
+                                           placeholder="Ex: 12" type="number" min="0" step="1" required />
+                                </div>
+
                                 <span asp-validation-for="AgeMonths" class="text-danger small"></span>
+                                <div id="ageError" class="invalid-feedback">Please enter a valid age (0 or greater)</div>
                             </div>
 
+                            <!--LOCATION-->
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Location" class="form-label fw-semibold">Location</label>
-                                <input asp-for="Location" class="form-control py-2" placeholder="Ex: Lisbon" />
+                                <label asp-for="Location" class="form-label fw-semibold text-primary-darkblue">Location
+                                </label>
+                                <input asp-for="Location" class="form-control py-2"
+                                       style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
+                                       placeholder="Ex: Lisbon" required/>
                                 <span asp-validation-for="Location" class="text-danger small"></span>
                             </div>
                         </div>
 
+                        <!--DESCRIPTION-->
                         <div class="mb-4">
-                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <label asp-for="Description"
+                                   class="form-label fw-semibold text-primary-darkblue">Description
+                            </label>
                             <textarea asp-for="Description" class="form-control" rows="3"
+                                      style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
                                       placeholder="Tell us about the pet..."></textarea>
                             <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
-                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Health Information</h5>
-                        <div class="d-flex flex-wrap gap-4 mb-4 bg-light p-3 rounded-3">
-                            <div class="form-check form-switch fs-6">
-                                <input class="form-check-input" type="checkbox" asp-for="IsVaccinated"/>
-                                    <label class="form-check-label fw-semibold text-success"
-                                           asp-for="IsVaccinated">Vaccinated
+                        <!--PHOTOS-->
+                        <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2 mt-4"
+                            style="border-color: var(--petlink-border) !important;">
+                            Photos<span class="text-danger">*</span>
+                        </h5>
+
+                        <div class="row">
+                            <!--MAIN PHOTO-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-primary-darkblue">
+                                    Main Photo (Card)<span class="text-danger">*</span>
+                                </label>
+                                
+                                <div class="border rounded-3 p-3 text-center bg-light" id="mainPhotoArea">
+                                    <i class="bi bi-image fs-1 text-secondary"></i>
+                                    <div class="mt-2">
+                                        <input type="file" name="mainPhoto" class="d-none" accept="image/*" id="mainPhoto"
+                                               style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);" />
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('mainPhoto').click()">
+                                            <i class="bi bi-upload me-1"></i> Choose Photo
+                                        </button>
+                                    </div>
+                                    <div id="mainPhotoPreview" class="mt-2" style="display: none;">
+                                        <img id="mainPhotoImg" src="#" alt="Preview" class="img-thumbnail" style="max-height: 100px;">
+                                        <button type="button" class="btn btn-link btn-sm text-danger" onclick="clearMainPhoto()">
+                                            <i class="bi bi-x-circle"></i> Remove
+                                        </button>
+                                    </div>
+                                    <div id="mainPhotoPlaceholder" class="text-muted small mt-2">
+                                        No photo selected
+                                    </div>
+                                </div>
+                                <div id="photoError" class="text-danger small mt-1" style="display: none;">
+                                    <i class="bi bi-exclamation-circle"></i> Main photo is required
+                                </div>
+                                
+                                       
+                                <small class="textsecondary-grey">Shown in search results.</small>
+                            </div>
+
+                            <!--SECOND PHOTO-->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold text-primary-darkblue">Gallery Photos</label>
+                                <input type="file" name="galleryPhotos" class="form-control" accept="image/*" multiple
+                                       style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);" />
+                                <small class="textsecondary-grey">Select multiple images.</small>
+                            </div>
+                        </div>
+
+                        @* 3. Health Information: REMOVIDO bg-light, adicionado grey-bg *@
+                        <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2 mt-4"
+                            style="border-color: var(--petlink-border) !important;">
+                            Health Information<span class="text-danger">*</span>
+                        </h5>
+
+        
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <div class="d-flex flex-wrap gap-4">
+                                <div class="form-check form-switch fs-6">
+                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsVaccinated" id="vaccinatedCheck" />
+                                    <label class="form-check-label fw-semibold text-success" asp-for="IsVaccinated">
+                                        <i class="bi bi-shield-check"></i> Vaccinated
                                     </label>
                                 </div>
 
                                 <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input" type="checkbox" asp-for="IsDewormed"/>
-                                        <label class="form-check-label fw-semibold text-success"
-                                               asp-for="IsDewormed">Dewormed</label>
-                                    </div>
+                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsDewormed" id="dewormedCheck" />
+                                    <label class="form-check-label fw-semibold text-success" asp-for="IsDewormed">
+                                        <i class="bi bi-capsule"></i> Dewormed
+                                    </label>
+                                </div>
 
-                                    <div class="form-check form-switch fs-6">
-                                        <input class="form-check-input" type="checkbox" asp-for="IsSterilized"/>
-                                            <label class="form-check-label fw-semibold text-success"
-                                                   asp-for="IsSterilized">Sterilized</label>
-                                        </div>
-                                    </div>
+                                <div class="form-check form-switch fs-6">
+                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsSterilized" id="sterilizedCheck" />
+                                    <label class="form-check-label fw-semibold text-success" asp-for="IsSterilized">
+                                        <i class="bi bi-scissors"></i> Sterilized
+                                    </label>
+                                </div>
+                            </div>
 
-                                    <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 mt-4">Listing Details</h5>
-
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label asp-for="Status" class="form-label fw-semibold">Status</label>
-                                            <select asp-for="Status" class="form-select py-2"
-                                                    asp-items="Html.GetEnumSelectList<PetLink.Models.Enums.ListingStatus>()"></select>
-                                            <span asp-validation-for="Status" class="text-danger small"></span>
-                                        </div>
-
-                                        <div class="col-md-4 mb-3">
-                                            <label asp-for="TutorId" class="form-label fw-semibold">Tutor</label>
-                                            <select asp-for="TutorId" class="form-select py-2" asp-items="ViewBag.TutorId"></select>
-                                        </div>
-
-                                        <div class="col-md-4 mb-4">
-                                            <label asp-for="CreatedAt" class="form-label fw-semibold">Date</label>
-                                            <input asp-for="CreatedAt" class="form-control py-2" type="date" />
-                                            <span asp-validation-for="CreatedAt" class="text-danger small"></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-grid gap-2 mt-2">
-                                        <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3">
-                                            <i class="bi bi-save me-2"></i> Create Listing
-                                        </button>
-                                    </div>
-                                </form>
+                            <div id="healthError" class="text-danger small mt-2" style="display: none;">
+                                Please select at least one of the three (Vaccinated, Dewormed, or Sterilized).
                             </div>
                         </div>
-                    </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary fw-bold rounded-pill py-3 shadow-sm" id="submitBtn">
+                                <i class="bi bi-cloud-upload me-2"></i> Submit Listing
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            @section Scripts {
-                @{
-                    await Html.RenderPartialAsync("_ValidationScriptsPartial");
-                }
-            }
+<script src="~/js/createListing.js" asp-append-version="true"></script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

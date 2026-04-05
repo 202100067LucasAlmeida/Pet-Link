@@ -18,104 +18,194 @@
           rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script>
+            // Verifica a preferência guardada antes de renderizar o body
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+    </script>
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
+        <nav class="navbar navbar-expand-lg custom-navbar">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center text-primary-blue fw-bold fs-4" asp-area=""
-                       asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand d-flex align-items-center text-primary-blue fw-bold fs-4" asp-controller="Home"
+                       asp-action="Index">
                     <img src="~/images/logo.png" alt="PetLink Logo" height="40"
-                         class="d-inline-block align-text-top me-2">PETLINK
+                         class="d-inline-block align-text-top me-2" />PETLINK
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center fw-semibold">
+                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings"
+                                                         asp-action="Index">Adopt</a>
+                        </li>
+                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Petsitter"
+                                                         asp-action="Index">Petsitting</a>
+                        </li>
+                        <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+
+                        <li class="nav-item me-4">
+                            <a class="nav-link text-primary-blue" id="theme-toggle" style="cursor: pointer;">
+                                <i class="bi bi-moon-fill fs-5" id="theme-icon"></i>
+                            </a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-3">
+                                <a class="nav-link text-highlight-darkblue fw-bold" asp-controller="Profile"
+                                       asp-action="MyProfile">
+                                    <i class="bi bi-person-circle me-1"></i> Hey, @User.Identity.Name.Split(' ')[0]!
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm"
+                                   asp-controller="Profile" asp-action="Logout">Sair</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Profile"
+                                                             asp-action="LoginForm">Login</a>
+                            </li>
+                            <li class="nav-item"><a
+                                class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-primary-light"
+                                asp-controller="Profile" asp-action="SignUpForm">Sign Up</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="pt-5 pb-3" style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);">
+        <div class="container">
+            <div class="row g-4">
+        
+                <div class="col-lg-3 col-md-6">
+                    <a class="navbar-brand fw-bold fs-4 text-primary-blue d-block mb-3" asp-controller="Home"
+                           asp-action="Index">
+                        <img src="~/images/logo.png" alt="PetLink" height="30" class="me-2" />PETLINK
                     </a>
-
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                        <ul class="navbar-nav align-items-center fw-semibold">
-
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item me-3">
-                                    <a class="nav-link text-primary-blue" asp-controller="Users" asp-action="Index">Users</a>
-                                </li>
-
-                                <li class="nav-item me-3">
-                                    <a class="nav-link text-primary-blue" asp-controller="AnimalListings"
-                                           asp-action="Manage">Listings
-                                    </a>
-                                </li>
-                            }
-
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-primary-blue" asp-controller="AnimalListings"
-                                       asp-action="Index">Adopt
-                                </a>
-                            </li>
-
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-primary-blue" asp-controller="Petsitter"
-                                       asp-action="Index">Petsitting
-                                </a>
-                            </li>
-
-                            <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
-
-                            <li class="nav-item me-4">
-                                <a class="nav-link text-primary-blue" href="#"><i class="bi bi-moon-fill fs-5"></i></a>
-                            </li>
-
-
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <li class="nav-item me-3">
-                                    <a class="nav-link text-dark fw-bold" asp-controller="Profile" asp-action="AccountSettings" style="cursor: pointer; text-decoration: none;">
-                                        <i class="bi bi-person-circle me-1"></i>
-                                        Hey, @User.Identity.Name.Split(' ')[0]!
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm"
-                                           asp-controller="Profile" asp-action="Logout">Sair
-                                    </a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item me-3">
-                                    <a class="nav-link text-primary-blue" asp-controller="Profile"
-                                       asp-action="LoginForm">Login</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm" asp-controller="Profile"
-                                           asp-action="SignUpForm">Sign Up
-                                    </a>
-                                </li>
-                            }
-                        </ul>
+                    <p class="small opacity-75">
+                        Connecting thousands of animals with loving homes.
+                        Dedicated to animal welfare and trustworthy adoption processes.
+                    </p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-primary-blue fs-5"><i class="bi bi-twitter-x"></i></a>
                     </div>
                 </div>
-            </nav>
-        </header>
 
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Platform</h6>
+                    <ul class="list-unstyled small d-grid gap-2">
+                        <li><a asp-controller="Home" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">How it works</a>
+                        </li>
+                        <li><a asp-controller="AnimalListings" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">Adopt a Pet</a>
+                        </li>
+                        <li><a asp-controller="Petsitter" asp-action="Index"
+                                   class="text-decoration-none text-secondary-grey hover-primary">Find a Sitter</a>
+                        </li>
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary">Success
+                            Stories</a>
+                        </li>
+                    </ul>
+                </div>
 
-        <footer class="border-top py-2 footer text-muted bg-white">
-            <div class="container text-center small text-muted">
-                <p class="mb-0">© 2026 PetLink. All rights reserved.</p>
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Policies & Protections</h6>
+                    <div class="row g-0">
+                        <div class="col-6">
+                            <ul class="list-unstyled small d-grid gap-2">
+                                @* Usamos asp-fragment para gerar o # no URL automaticamente *@
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section1"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Introduction</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section2"
+                                           class="text-decoration-none text-secondary-grey hover-primary">User Accounts</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section3"
+                                       class="text-decoration-none text-secondary-grey hover-primary">Privacy
+                                    Practices</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled small d-grid gap-2">
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section4"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Data Usage</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section5"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Termination</a>
+                                </li>
+                                <li><a asp-controller="Home" asp-action="Policies" asp-fragment="section6"
+                                           class="text-decoration-none text-secondary-grey hover-primary">Cookie Policy</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-primary-blue mb-3">Support</h6>
+                    <ul class="list-unstyled small d-grid gap-2 mb-4">
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary"><i
+                            class="bi bi-headset me-2"></i>Help Center</a>
+                        </li>
+                        <li><a href="#" class="text-decoration-none text-secondary-grey hover-primary"><i
+                            class="bi bi-envelope me-2"></i>Contact Support</a>
+                        </li>
+                    </ul>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4">
+                        <p class="extra-small text-primary-blue fw-bold mb-2">NEWSLETTER</p>
+                        <div class="input-group input-group-sm">
+                            <input type="email" class="form-control border-0 bg-white" placeholder="Your email"
+                                   style="color: var(--petlink-primary-blue);" />
+                            <button class="btn btn-primary" type="button"><i class="bi bi-send"></i></button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </footer>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+            <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.1;">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <p class="extra-small text-secondary-grey mb-0">
+                    &copy; @DateTime.Now.Year PetLink. All rights reserved. Built for animal lovers.
+                </p>
+                <div class="d-flex gap-4">
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section3"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Privacy Policy</a>
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section1"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Terms of Service</a>
+                    <a asp-controller="Home" asp-action="Policies" asp-fragment="section6"
+                       class="extra-small text-secondary-grey text-decoration-none hover-primary">Cookie Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 
 </html>

@@ -4,17 +4,18 @@
     ViewData["Title"] = Model.Name + " - Pet Details";
 }
 
-<section class="breadcrumb-section py-3 bg-light">
+<link rel="stylesheet" href="~/css/adopt.css" asp-append-version="true" />
+
+<section class="breadcrumb-section py-3"
+         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a asp-controller="Home" asp-action="Index"
-                       class="text-decoration-none text-highlight-darkblue">HOME</a>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"
+                                                   class="text-decoration-none text-highlight-darkblue">HOME</a>
                 </li>
-
-                <li class="breadcrumb-item">
-                    <a asp-action="Manage" class="text-decoration-none text-highlight-darkblue">ADOPT</a>
+                <li class="breadcrumb-item"><a asp-controller="AnimalListings" asp-action="Index"
+                                                   class="text-decoration-none text-highlight-darkblue">ADOPT</a>
                 </li>
                 <li class="breadcrumb-item active text-highlight-blue" aria-current="page">@Model.Name</li>
             </ol>
@@ -29,7 +30,7 @@
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            @if (Model.Status.ToString() == "Publicado")
+                            @if (Model.Status.ToString() == "Published")
                             {
                                 <span class="badge bg-success mb-2">AVAILABLE FOR ADOPTION</span>
                             }
@@ -39,117 +40,126 @@
                             }
 
                             <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">@Model.Name</h1>
-                            <p class="lead text-muted text-highlight-darkblue">
+                            <p class="lead text-secondary-grey text-highlight-darkblue">
                                 @Model.Species • @Model.Location • @Model.AgeMonths months
                             </p>
                         </div>
+                    </div>
+                </div>
 
-                        @if (User.IsInRole("User"))
+                <div class="position-relative mb-4 shadow-sm"
+                     style="border-radius: 1.5rem; overflow: hidden; background: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
+                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-pet.jpg" : Model.ImageUrl)"
+                         alt="@Model.Name's photo" class="img-fluid w-100"
+                         style="max-height: 500px; min-height: 400px; object-fit: cover;" />
+                    
+                    @if (!ViewBag.IsOwner && (User.IsInRole("User") || User.IsInRole("PetSitter")))
+                    {
+                        <button class="btn-heart position-absolute top-0 end-0 m-3" data-pet-id="@Model.Id"
+                                id="favoriteBtn">
+                            <i class="bi bi-heart" id="favoriteIcon"></i>
+                        </button>
+                    }
+                </div>
+
+                @* Galeria de Fotos *@
+                @if (Model.Photos != null && Model.Photos.Any())
+                {
+                    <div class="row g-2 mb-4">
+                        @foreach (var photo in Model.Photos)
                         {
-                            <button class="btn-heart favorite-toggle" data-pet-id="@Model.Id" id="favoriteBtn">
-                                <i class="bi bi-heart" id="favoriteIcon"></i>
-                            </button>
+                            <div class="col-3 col-md-2">
+                                <a href="@photo.Url" target="_blank">
+                                    <img src="@photo.Url" class="img-fluid rounded-3 border"
+                                         style="height: 80px; width: 100%; object-fit: cover; border-color: var(--petlink-border) !important;" />
+                                </a>
+                            </div>
                         }
                     </div>
-                </div>
-
-                <!-- Verificar se a imagem existe -->
-                @{
-                    var imageName = Model.Name.ToLower() + ".jpg";
-                    var imagePath = "/images/" + imageName;
-                    var imageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
-                imageName);
-                    var imageExists = System.IO.File.Exists(imageFullPath);
                 }
 
-                @if (imageExists)
-                {
-                    <img src="@imagePath" alt="@Model.Name's photo" class="img-fluid rounded-4 shadow-sm mb-4 w-100"
-                         style="max-height: 500px; object-fit: cover;" />
-                }
-                else
-                {
-                    <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center rounded-4 mb-4 w-100"
-                         style="height: 400px; max-height: 500px;">
-                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
-                    </div>
-                }
-
-                <div class="m-3 shadow-sm card border-0 rounded-4 mb-5">
-                    <div
-                        class="card-body p-4 d-flex justify-content-around flex-wrap bg-light rounded-top-4 border-bottom">
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Age</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">@Model.AgeMonths mo.</span>
+                <div class="shadow-sm card border-0 rounded-4 mb-5" style="background-color: var(--petlink-card-bg);">
+                    <div class="card-body p-0">
+                        <div class="p-4 d-flex justify-content-around flex-wrap rounded-top-4 border-bottom"
+                             style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Age</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.AgeMonths mo.</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Location</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.Location</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Species</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.Species</span>
+                            </div>
                         </div>
 
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Location</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">@Model.Location</span>
+                        <div class="p-4">
+                            <p class="lead text-secondary-grey mb-4"
+                                   style="color: var(--petlink-dark) !important; opacity: 0.8;">
+                                @Model.Description
+                            </p>
+
+                            @if (!ViewBag.IsOwner)
+                            {
+                                <button class="btn btn-primary fw-bold rounded-pill px-5 py-2" id="adoptBtn">
+                                    Adopt @Model.Name
+                                </button>
+
+                                <p class="mt-3 small text-secondary-grey">
+                                    By clicking "Adopt", you agree to our
+                                    <a href="#" class="text-decoration-none">Adoption Terms</a>.
+                                </p>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info border-0 rounded-4 text-center"
+                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                    <i class="bi bi-info-circle me-2"></i>This is your pet's listing.
+                                </div>
+                            }
                         </div>
-
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Species</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">@Model.Species</span>
-                        </div>
-                    </div>
-
-                    <div class="p-4">
-                        <p class="lead text-highlight-darkblue text-muted mb-4">
-                            @Model.Description
-                        </p>
-
-                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2">Adopt
-                            @Model.Name
-                        </button>
-
-                        <p class="mt-3 small text-muted">
-                            By clicking "Adopt", you agree to our
-                            <a href="#" class="text-decoration-none">Adoption Terms and Conditions</a>.
-                        </p>
                     </div>
                 </div>
 
+                @* Medical History *@
                 <div class="medical-history mb-5">
                     <h3 class="h4 text-primary-darkblue mb-3 fw-bold">Medical History</h3>
-                    <ul class="list-unstyled">
-                        @if (Model.IsVaccinated)
-                        {
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Fully Vaccinated</li>
-                        }
-
-                        @if (Model.IsDewormed)
-                        {
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Dewormed</li>
-                        }
-
-                        @if (Model.IsSterilized)
-                        {
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Neutered / Sterilized
-                            </li>
-                        }
-
-                        @if (!Model.IsVaccinated && !Model.IsDewormed && !Model.IsSterilized)
-                        {
-                            <li class="mb-2 text-muted">
-                                <i class="bi bi-dash-circle me-2"></i> No medical records provided.
-                            </li>
-                        }
+                    <ul class="list-unstyled text-primary-darkblue">
+                        <li class="mb-2">
+                            <i
+                            class="bi @(Model.IsVaccinated ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
+                            Fully Vaccinated
+                        </li>
+                        <li class="mb-2">
+                            <i
+                            class="bi @(Model.IsDewormed ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
+                            Dewormed
+                        </li>
+                        <li class="mb-2">
+                            <i
+                            class="bi @(Model.IsSterilized ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
+                            Neutered / Sterilized
+                        </li>
                     </ul>
                 </div>
 
+                @* Temperamento com Badges Opacas (Melhor para Dark Mode) *@
                 <div class="temperament mb-5">
                     <h3 class="h4 text-primary-darkblue mb-3 fw-bold">Temperament</h3>
                     <div class="d-flex gap-3 flex-wrap">
-                        <span class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Kid
+                        <span class="badge rounded-pill border py-2 px-3 fw-bold"
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Kid
                             Friendly
                         </span>
-                        <span
-                            class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Calm
+                        <span class="badge rounded-pill border py-2 px-3 fw-bold"
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Calm
                             at Home
                         </span>
-                        <span
-                            class="badge bg-info bg-opacity-10 text-info p-2 px-3 rounded-pill border border-info">Social
+                        <span class="badge rounded-pill border py-2 px-3 fw-bold"
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Social
                         </span>
                     </div>
                 </div>
@@ -167,191 +177,189 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 sticky-top"
-                     style="top: 20px; border-radius: 20px; overflow: hidden;">
-                    @* Header com as tuas cores oficiais *@
-                    <div class="card-header py-3 border-0"
-                         style="background-color: var(--petlink-primary); color: white;">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
-                                 style="width: 35px; height: 35px;">
-                                <i class="bi bi-person-badge text-primary"></i>
-                            </div>
-                            <div>
-                                <h3 class="h6 mb-0 fw-bold">@(Model.Tutor?.Name ?? "Pet Tutor")</h3>
-                                <div style="font-size: 0.7rem; opacity: 0.8;">Chat about @Model.Name</div>
-                            </div>
+                @if (ViewBag.IsOwner)
+                {
+                    <div class="card shadow-sm border-0 sticky-top"
+                         style="top: 20px; border-radius: 20px; overflow: hidden; background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border) !important;">
+                        <div class="card-body text-center p-5">
+                            <i class="bi bi-star-fill text-warning mb-3" style="font-size: 3rem;"></i>
+                            <h4 class="fw-bold text-primary-darkblue">Your listing</h4>
+                            <p class="text-secondary-grey small mb-4">You are viewing your pet's public listing.</p>
+                            <a asp-action="Edit" asp-route-id="@Model.Id"
+                                   class="btn btn-primary rounded-pill w-100 fw-bold py-2 mb-2">
+                                <i class="bi bi-pencil-square me-2"></i>Edit Listing
+                            </a>
                         </div>
                     </div>
+                }
+                else
+                {
+                    <div class="card shadow-sm border-0 sticky-top"
+                         style="top: 20px; border-radius: 20px; overflow: hidden; background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border) !important;">
+                        <div class="card-header py-3 border-0"
+                             style="background-color: var(--petlink-primary); color: white;">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-white rounded-circle p-1 me-2 d-flex align-items-center justify-content-center"
+                                     style="width: 35px; height: 35px;">
+                                    <i class="bi bi-person-badge text-primary"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h6 mb-0 fw-bold">@(Model.Tutor?.Name ?? "Pet Tutor")</h3>
+                                    <div style="font-size: 0.7rem; opacity: 0.8;">Chat about @Model.Name</div>
+                                </div>
+                            </div>
+                        </div>
 
-                    @* Corpo do Chat - Fundo cinza como no Account *@
-                    <div class="card-body" id="chatBox"
-                         style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
-                        @if (ViewBag.ChatHistory != null &&
-                                                                        ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
-                        {
-                            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-                            foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                        <div class="card-body" id="chatBox"
+                             style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
+                            @if (ViewBag.ChatHistory != null &&
+                                                                                    ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
                             {
-                                bool isMine = msg.SenderId == currentUserId;
-                                <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
-                                    <div class="p-3 shadow-sm"
-                                         style="max-width: 85%; font-size: 0.85rem; border-radius: 15px; 
-                                        @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
-                                                                                                                       : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
-                                        <p class="mb-1">@msg.Content</p>
-                                        <div class="text-end" style="font-size: 0.6rem; opacity: 0.7;">
-                                            @msg.Timestamp.ToString("HH:mm")
+                                var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                                foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                                {
+                                    bool isMine = msg.SenderId == currentUserId;
+                                    <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                        <div class="p-3 shadow-sm"
+                                             style="max-width: 85%; font-size: 0.85rem; border-radius: 15px; 
+                                            @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                                                                                                                                                                                                                                                                                                        : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
+                                            <p class="mb-1">@msg.Content</p>
+                                            <div class="text-end" style="font-size: 0.6rem; opacity: 0.6;">
+                                                @msg.Timestamp.ToString("HH:mm")
+                                            </div>
                                         </div>
                                     </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                    <i class="bi bi-chat-left-dots text-secondary-grey opacity-25 mb-2"
+                                       style="font-size: 2.5rem;"></i>
+                                    <p class="text-secondary-grey small">No messages yet. Say hi!</p>
                                 </div>
                             }
-                        }
-                        else
-                        {
-                            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
-                                <i class="bi bi-chat-left-dots text-muted opacity-25 mb-2" style="font-size: 2.5rem;"></i>
-                                <p class="text-muted small">No messages yet.<br>Start the conversation below!</p>
-                            </div>
-                        }
+                        </div>
+
+                        <div class="card-footer border-0 p-3" style="background-color: var(--petlink-card-bg);">
+                            <a asp-controller="Messages" asp-action="Index" asp-route-id="@Model.TutorId"
+                                   class="btn btn-primary w-100 fw-bold rounded-pill py-2 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-chat-dots-fill"></i> Message Tutor
+                            </a>
+                        </div>
                     </div>
-
-                    @* Footer com Input arredondado *@
-                    <div class="card-footer bg-white border-0 p-3">
-                        <form asp-controller="Messages" asp-action="SendMessage" method="post" class="input-group">
-                            <input type="hidden" name="receiverId" value="@Model.TutorId" />
-                            @* Adicionamos o ReturnUrl para ele não sair desta página ao enviar *@
-                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-
-                            <input type="text" name="content"
-                                   class="form-control border-0 bg-light rounded-pill ps-4 py-2"
-                                   placeholder="Type a message..." required autocomplete="off" style="font-size: 0.9rem;">
-
-                            <button
-                                class="btn btn-primary rounded-circle ms-2 d-flex align-items-center justify-content-center"
-                                type="submit"
-                                style="width: 40px; height: 40px; background-color: var(--petlink-primary); border: none;">
-                                <i class="bi bi-send-fill" style="font-size: 1rem;"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>
 </section>
 
-<section class="featured-section py-5 bg-light mt-4">
+@* Secção de Outros Animais *@
+<section class="featured-section py-5 mt-4 border-top"
+         style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <span class="text-primary small fw-bold">RECENTLY ADDED</span>
-                <h2 class="h3 text-primary-darkblue mb-0 fw-bold">Featured Animals for Adoption</h2>
+                <h2 class="h3 text-primary-darkblue mb-0 fw-bold">Featured Animals</h2>
             </div>
-            <a asp-action="Index" class="btn btn-outline-primary rounded-pill px-4 fw-bold">View All Pets →</a>
+            <a asp-action="Index" class="btn btn-outline-primary rounded-pill px-4 fw-bold">View All</a>
         </div>
 
         <div class="row g-4">
             @foreach (var pet in ViewBag.OtherPets as IEnumerable<PetLink.Models.AnimalListing>)
             {
                 <div class="col-md-6 col-lg-3">
-                    <a asp-action="Details" asp-route-id="@pet.Id" class="text-decoration-none text-dark">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card">
-                            <!-- Verificar se a imagem existe -->
-                            @{
-                                var petImageName = pet.Name.ToLower() + ".jpg";
-                                var petImagePath = "/images/" + petImageName;
-                                var petImageFullPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot",
-                        "images", petImageName);
-                                var petImageExists = System.IO.File.Exists(petImageFullPath);
-                            }
-
-                            @if (petImageExists)
-                            {
-                                <img src="@petImagePath" alt="@pet.Name's photo" class="img-fluid w-100"
-                                     style="height: 200px; object-fit: cover;" />
-                            }
-                            else
-                            {
-                                <div class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center w-100"
-                                     style="height: 200px;">
-                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                                </div>
-                            }
+                    <a asp-action="Details" asp-route-id="@pet.Id" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card"
+                             style="background-color: var(--petlink-card-bg);">
+                            <img src="@(string.IsNullOrEmpty(pet.ImageUrl) ? "/images/default-pet.jpg" : pet.ImageUrl)"
+                                 class="img-fluid w-100" style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='/images/default-pet.jpg'" />
 
                             <div class="card-body">
                                 <h3 class="h5 text-primary-darkblue fw-bold mb-2">@pet.Name</h3>
-                                <div class="text-muted small">
+                                <div class="text-secondary-grey small">
                                     <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> @pet.Location</p>
-                                    <p class="mb-1"><i class="bi bi-info-circle me-1"></i> @pet.Species • @pet.AgeMonths mo.
-                                    </p>
+                                    <p class="mb-0">@pet.Species • @pet.AgeMonths mo.</p>
                                 </div>
                             </div>
                         </div>
                     </a>
                 </div>
             }
-
-            @if (((IEnumerable<PetLink.Models.AnimalListing>)ViewBag.OtherPets).Count() == 0)
-            {
-                <div class="col-12 text-center text-muted">
-                    <p>No other pets available for adoption right now.</p>
-                </div>
-            }
         </div>
     </div>
 </section>
 
+<script src="~/js/adopt.js" asp-append-version="true"></script>
+
 @section Scripts {
     <script>
-                    $(document).ready(function () {
-                        var petId = @Model.Id;
-
-                        // Verificar estado inicial
-                        $.ajax({
-                            url: '@Url.Action("Check", "Favorites")',
-                            type: 'GET',
-                            data: { animalListingId: petId },
-                            success: function (isFavorited) {
-                                if (isFavorited) {
-                                    $('#favoriteIcon').removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                    $('#favoriteBtn').addClass('active');
-                                }
+        $(document).ready(function () {
+            var petId = @Model.Id;
+            var favoriteBtn = $('#favoriteBtn');
+            var favoriteIcon = $('#favoriteIcon');
+            
+            // Verificar estado inicial
+            $.ajax({
+                url: '@Url.Action("Check", "Favorites")',
+                type: 'GET',
+                data: { animalListingId: petId },
+                success: function (isFavorited) {
+                    if (isFavorited) {
+                        favoriteIcon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                        favoriteBtn.addClass('active');
+                    }
+                },
+                error: function () {
+                    console.log('Erro ao verificar favorito');
+                }
+            });
+            
+            // Clique no coração
+            favoriteBtn.click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                $.ajax({
+                    url: '@Url.Action("Toggle", "Favorites")',
+                    type: 'POST',
+                    data: { animalListingId: petId },
+                    success: function (response) {
+                        if (response.success) {
+                            if (response.isFavorited) {
+                                favoriteIcon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+                                favoriteBtn.addClass('active');
+                                showNotification('Added to favorites!');
+                            } else {
+                                favoriteIcon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
+                                favoriteBtn.removeClass('active');
+                                showNotification('Removed from favorites!');
                             }
-                        });
-
-                        // Clique no coração
-                        $('#favoriteBtn').click(function (e) {
-                            e.preventDefault();
-
-                            var icon = $('#favoriteIcon');
-
-                            $.ajax({
-                                url: '@Url.Action("Toggle", "Favorites")',
-                                type: 'POST',
-                                data: { animalListingId: petId },
-                                success: function (response) {
-                                    if (response.success) {
-                                        if (response.isFavorited) {
-                                            icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                                            showNotification('Added to favorites!');
-                                        } else {
-                                            icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                                            showNotification('Removed from favorites!');
-                                        }
-                                    }
-                                }
-                            });
-                        });
-
-                        function showNotification(message) {
-                            // Remove notificações anteriores
-                            $('.toast-notification').remove();
-
-                            var toast = $(`<div class="toast-notification">${message}</div>`);
-                            $('body').append(toast);
-                            setTimeout(() => toast.fadeOut(300, function () { $(this).remove(); }), 2000);
+                        } else {
+                            showNotification(response.message, 'error');
                         }
+                    },
+                    error: function () {
+                        showNotification('Error updating favorite. Please try again.', 'error');
+                    }
+                });
+            });
+            
+            function showNotification(message) {
+                // Remove notificações anteriores
+                $('.toast-notification').remove();
+                
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                setTimeout(() => {
+                    toast.fadeOut(300, function () {
+                        $(this).remove();
                     });
+                }, 2000);
+            }
+        });
     </script>
 }

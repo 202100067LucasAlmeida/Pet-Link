@@ -1,0 +1,212 @@
+﻿@using PetLink.Models.Enums
+@{
+    ViewData["Title"] = "Policies & Protections";
+}
+
+<div class="container py-5" style="color: var(--petlink-dark); font-family: var(--font-display);">
+    <div class="row">
+        
+        <div class="col-lg-3 mb-4 d-none d-lg-block">
+            <div class="sticky-top" style="top: 30px; height: fit-content;">
+                
+                <div class="sidebar-container"
+                     style="background-color: var(--petlink-grey-bg); border-radius: 16px;">
+            
+                    <p class="small mb-3 mt-2 px-3 fw-bold opacity-50 text-primary-darkblue"
+                           style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+                        Legal Contents
+                    </p>
+
+                    <div class="list-group list-group-flush sidebar-profile">
+                
+                        <a href="#section1"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-1 rounded-pill active">
+                            <i class="bi bi-file-text-fill me-3"></i> Introduction
+                        </a>
+                
+                        <a href="#section2"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-1 rounded-pill">
+                            <i class="bi bi-people-fill me-3"></i> User Accounts
+                        </a>
+                
+                        <a href="#section3"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-1 rounded-pill">
+                            <i class="bi bi-shield-lock-fill me-3"></i> Privacy Practices
+                        </a>
+                
+                        <a href="#section4"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-1 rounded-pill">
+                            <i class="bi bi-database-fill-check me-3"></i> Data Usage
+                        </a>
+                
+                        <a href="#section5"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-2 rounded-pill">
+                            <i class="bi bi-slash-circle-fill me-3"></i> Termination
+                        </a>
+
+                        <hr class="my-3 mx-3" style="border-color: var(--petlink-border); opacity: 0.2;" />
+
+                        <p class="small mb-2 px-3 fw-bold opacity-50 text-primary-darkblue"
+                               style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+                            Support
+                        </p>
+                
+                        <a href="#"
+                               class="list-group-item list-group-item-action d-flex align-items-center mb-1 rounded-pill">
+                            <i class="bi bi-question-circle-fill me-3"></i> Help Center
+                        </a>
+                
+                        <a asp-controller="Profile" asp-action="AccountSettings"
+                               class="list-group-item list-group-item-action d-flex align-items-center rounded-pill">
+                            <i class="bi bi-gear-fill me-3"></i> Settings
+                        </a>
+                    </div>
+                </div>
+
+                <div class="help-card shadow-sm">
+                    <div class="help-icon">
+                        <i class="bi bi-chat-heart-fill"></i>
+                    </div>
+    
+                    <div class="help-content">
+                        <h5 class="help-title">Need Help?</h5>
+                        <p class="help-text">
+                            Our team is ready to clarify any legal or privacy concerns.
+                        </p>
+                        <a href="#" class="btn btn-help">Contact Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* CONTEÚDO PRINCIPAL *@
+        <div class="col-lg-9 ps-lg-5" style="padding-top: 50px;">
+            <header class="mb-5">
+                <h1 class="display-4 fw-bold mb-3"
+                    style="color: var(--petlink-highlight); font-family: var(--font-primary); letter-spacing: -1px;">
+                    Policies & Protections
+                </h1>
+                <p class="lead opacity-75" style="font-size: 1.25rem; line-height: 1.6;">
+                    Transparency is the cornerstone of the PetLink sanctuary. We believe in clear rules and
+                    uncompromising
+                    data safety for every member of our community.
+                </p>
+            </header>
+
+            @* Section 1 *@
+            <section id="section1" class="policy-card mb-5">
+                <h2 class="h3 fw-bold mb-4" style="font-family: var(--font-primary); color: var(--petlink-primary);">
+                    Introduction
+                </h2>
+                <div class="opacity-75 leading-relaxed">
+                    <p>Welcome to PetLink, the curated sanctuary for pet lovers and companions. These Terms govern your
+                        access to and use of our platform.
+                    </p>
+                    <p>By using PetLink, you agree to provide a safe, respectful, and high-quality environment for pet
+                        adoption and pet-sitting services.
+                    </p>
+                </div>
+            </section>
+
+            @* Section 2 *@
+            <section id="section2" class="policy-card mb-5">
+                <h2 class="h3 fw-bold mb-4" style="font-family: var(--font-primary); color: var(--petlink-primary);">
+                    User Accounts
+                </h2>
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4"
+                     style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border) !important;">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-2 bg-white rounded-3 shadow-sm me-3">
+                            <i class="bi bi-shield-check text-highlight fs-4"></i>
+                        </div>
+                        <h4 class="h5 fw-bold m-0" style="color: var(--petlink-highlight);">Account Integrity</h4>
+                    </div>
+                    <p class="small opacity-75 mb-4">Your login credentials are the keys to your sanctuary. Accuracy and
+                        confidentiality are paramount.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-md-6 d-flex align-items-center small opacity-75">
+                            <i class="bi bi-check2-circle text-success me-2 fs-5"></i> Accurate and truthful data.
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center small opacity-75">
+                            <i class="bi bi-check2-circle text-success me-2 fs-5"></i> Single account per user.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            @* Section 3 *@
+            <section id="section3" class="policy-card mb-5">
+                <h2 class="h3 fw-bold mb-4" style="font-family: var(--font-primary); color: var(--petlink-primary);">
+                    Privacy Practices
+                </h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="h-100 p-4 border rounded-4 shadow-sm hover-lift transition-all"
+                             style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
+                            <i class="bi bi-lock-fill text-highlight fs-2 mb-3 d-block"></i>
+                            <h6 class="fw-bold text-primary">Encrypted Storage</h6>
+                            <p class="small mb-0 opacity-75">Industry-standard AES-256 protocol ensures your data stays
+                                yours.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="h-100 p-4 border rounded-4 shadow-sm hover-lift transition-all"
+                             style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
+                            <i class="bi bi-eye-slash-fill text-highlight fs-2 mb-3 d-block"></i>
+                            <h6 class="fw-bold text-primary">Zero Sale Policy</h6>
+                            <p class="small mb-0 opacity-75">We never sell your personal data. Your trust is our most
+                                valuable asset.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            @* Section 4 *@
+            <section id="section4" class="policy-card mb-5">
+                <h2 class="h3 fw-bold mb-4" style="font-family: var(--font-primary); color: var(--petlink-primary);">
+                    Data Usage
+                </h2>
+                <div class="d-flex flex-column gap-4">
+                    @{
+                        var steps = new[] {
+                            "Verify the identity of pet adopters and sitters.",
+                            "Personalize your experience based on pet preferences.",
+                            "Send important service updates and community alerts.",
+                            "Analyze platform performance to improve sanctuary features."
+                        };
+                        for (int i = 0; i < steps.Length; i++)
+                        {
+                            <div class="d-flex align-items-center gap-4 group-hover">
+                                <div class="step-number" style="color: var(--petlink-grey-bg);">@(i + 1)</div>
+                                <p class="small opacity-75 mb-0 fw-medium">@steps[i]</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
+
+            @* Section 5 *@
+            <section id="section5" class="policy-card mb-5 pb-5">
+                <h2 class="h3 fw-bold mb-4" style="font-family: var(--font-primary); color: var(--petlink-primary);">
+                    Termination
+                </h2>
+                <div class="alert alert-danger border-0 rounded-4 p-4 shadow-sm"
+                     style="background-color: rgba(220, 53, 69, 0.05); color: #dc3545;">
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-exclamation-octagon-fill fs-4"></i>
+                        <p class="small mb-0 opacity-90 fw-semibold">
+                            PetLink reserves the right to suspend or terminate accounts that violate guidelines,
+                            engage in fraudulent activity, or mistreat animals.
+                        </p>
+                    </div>
+                </div>
+                <p class="extra-small text-muted mt-5 text-center opacity-50">
+                    Last Updated: April 03, 2026 • Version 2.0.1
+                </p>
+            </section>
+        </div>
+    </div>
+</div>

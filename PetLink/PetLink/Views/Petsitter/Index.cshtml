@@ -4,31 +4,50 @@
     ViewData["Title"] = "Find a Trusted Sitter";
 }
 
+<section class="breadcrumb-section py-3"
+         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-decoration-none text-highlight-darkblue">HOME</a>
+                </li>
+                <li class="breadcrumb-item active text-highlight-blue" aria-current="page">SITTERS</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
 <div class="container my-5">
     <div class="row">
 
         <div class="col-lg-3 mb-4 mb-lg-0">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="fw-bold text-primary-darkblue mb-0" style="color: var(--petlink-dark);">Filters</h4>
-                <a href="#" class="text-decoration-none small fw-semibold text-muted">Reset All</a>
+                <h4 class="fw-bold text-primary-darkblue mb-0">Filters</h4>
             </div>
 
-            <div class="card filter-card rounded-4 shadow-sm p-4">
+            <div class="card filter-card rounded-4 shadow-sm p-4"
+                 style="background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border);">
                 <form>
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-briefcase me-2"></i> SERVICE TYPE</div>
                         
                         <div class="form-check mb-2 mt-3">
                             <input class="form-check-input" type="radio" name="serviceType" id="srvBoarding" checked>
-                            <label class="form-check-label text-muted small fw-semibold" for="srvBoarding">Boarding</label>
+                            <label class="form-check-label text-muted small fw-semibold" for="srvBoarding">Boarding
+                            </label>
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="serviceType" id="srvWalking">
-                            <label class="form-check-label text-muted small fw-semibold" for="srvWalking">Walking</label>
+                            <label class="form-check-label text-muted small fw-semibold" for="srvWalking">Walking
+                            </label>
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="serviceType" id="srvHouse">
-                            <label class="form-check-label text-muted small fw-semibold" for="srvHouse">House Sitting</label>
+                            <label class="form-check-label text-muted small fw-semibold" for="srvHouse">House
+                                Sitting
+                            </label>
                         </div>
                     </div>
 
@@ -44,57 +63,63 @@
                     </div>
 
                     <div class="mb-5">
-                        <div class="filter-section-title"><i class="me-2"></i> PET PREFERENCES</div>
+                        <div class="filter-section-title"><i class="bi bi-heart me-2"></i> PET PREFERENCES</div>
                         <div class="form-check mb-2 mt-3">
                             <input class="form-check-input" type="checkbox" id="prefSmallDogs" checked>
-                            <label class="form-check-label text-muted small fw-semibold" for="prefSmallDogs">Small Dogs</label>
+                            <label class="form-check-label text-muted small fw-semibold" for="prefSmallDogs">Small
+                                Dogs
+                            </label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="prefCats">
-                            <label class="form-check-label text-muted small fw-semibold" for="prefCats">Cats only</label>
+                            <label class="form-check-label text-muted small fw-semibold" for="prefCats">Cats
+                                only
+                            </label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3"
-                            style="background-color: #0a4f8b; border: none;">Apply Filters
-                    </button>
+                    <div class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a asp-controller="Petsitter" asp-action="Index"
+                                   class="btn btn-primary w-100 fw-bold py-2 rounded-3">Reset All</a>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">Apply
+                                    Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-9">
             <div class="mb-4">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb small mb-2">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">Find a Sitter</li>
-                    </ol>
-                </nav>
-
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3">
                     <div>
-                        <h1 class="display-6 fw-bold mb-1" style="color: var(--petlink-dark);">Find a Trusted Sitter</h1>
-                        <p class="text-muted mb-0">Showing @Model.Count() verified sitters available in your area</p>
+                        <h1 class="display-6 fw-bold mb-1 text-primary-darkblue">Find a Trusted Sitter</h1>
+                        <p class="text-muted mb-0">Showing @Model.Count() verified sitters</p>
                     </div>
                 
                     <div class="mt-3 mt-md-0 d-flex align-items-center">
                         <span class="text-muted small me-2">Sort by:</span>
-                        <select class="form-select form-select-sm rounded-3 border-0 shadow-sm fw-semibold text-dark"
-                                style="width: 150px;">
+                        <select class="form-select form-select-sm rounded-3 shadow-sm fw-semibold"
+                                style="width: 150px; background-color: var(--petlink-card-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);">
                             <option>Top Rated</option>
                             <option>Price: Low to High</option>
-                            <option>Nearest</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="d-flex gap-2 flex-wrap mb-4">
-                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                    <span class="badge rounded-pill py-2 px-3 fw-semibold border"
+                          style="background-color: rgba(8, 124, 217, 0.1); color: var(--petlink-highlight); border-color: rgba(8, 124, 217, 0.2) !important;">
                         Boarding <i class="bi bi-x ms-1 cursor-pointer"></i>
                     </span>
-                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                    <span
+                        class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
                         Small Dogs <i class="bi bi-x ms-1 cursor-pointer"></i>
                     </span>
                 </div>
@@ -104,80 +129,65 @@
                 @foreach (var item in Model)
                 {
                     <div class="col-md-6 col-xl-4">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
-                            <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column"
+                             style="background-color: var(--petlink-card-bg);">
+                            
+                            <div class="pet-card-img-wrapper position-relative">
+                                <a asp-action="Details" asp-route-id="@item.Id">
+                                    <img src="@(string.IsNullOrEmpty(item.User.ProfilePicture) ? "/images/default-avatar.jpg" : item.User.ProfilePicture)"
+                                         alt="@item.User.Name's photo" class="img-fluid w-100"
+                                         style="height: 250px; object-fit: cover;"
+                                         onerror="this.src='/images/default-avatar.jpg'">
+                                </a>
 
-                                <div class="pet-card-img-wrapper position-relative">
-                                    <img src="~/images/@(item.User.Name.ToLower().Replace(" ", "")).jpg" alt="@item.User.Name's photo" class="pet-card-img" style="object-fit: cover;">
+                                <span class="position-absolute top-0 end-0 m-3 px-2 py-1 shadow-sm fs-6 rounded-3 border"
+                                      style="background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important;">
+                                    <i class="bi bi-star-fill text-warning"></i> @item.Rating.ToString("0.0")
+                                </span>
+                            </div>
 
-                                    <span class="badge bg-light text-dark position-absolute top-0 end-0 m-3 px-2 py-1 shadow-sm fs-6 rounded-3">
-                                        <i class="bi bi-star-fill text-warning"></i> @item.Rating.ToString("0.0")
-                                    </span>
+                            <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <div>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                                            <h4 class="h5 fw-bold mb-0 text-primary-darkblue">@item.User.Name</h4>
+                                        </a>
+                                        <p class="text-muted small mb-0 mt-1">
+                                            <i class="bi bi-geo-alt"></i> @item.LocationZone
+                                        </p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="fw-bold fs-5 text-primary">@item.HourlyRate.ToString("0")€</span>
+
+                                        <div class="text-muted"
+                                             style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px; color: var(--petlink-dark) !important; opacity: 0.6;">
+                                            PER HOUR
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="card-body p-3 d-flex flex-column">
-                                    
-                                    <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <div>
-                                            <h4 class="h5 fw-bold mb-0" style="color: var(--petlink-dark);">
-                                                @item.User.Name, @item.Age
-                                                @if (item.User.IsVerified)
-                                                {
-                                                    <i class="bi bi-check-circle-fill text-primary ms-1 fs-6" title="Verified Sitter"></i>
-                                                }
-                                            </h4>
-                                            <span class="small text-muted"><i class="bi bi-geo-alt"></i> @item.LocationZone • @item.DistanceKm km away</span>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="fw-bold fs-5 text-primary">@item.HourlyRate.ToString("0")€</span>
-                                            <div class="text-muted" style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;">PER HOUR</div>
-                                        </div>
-                                    </div>
+                                <p class="text-muted small mt-3 mb-3"
+                                       style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--petlink-dark) !important; opacity: 0.8;">
+                                    @item.Bio
+                                </p>
 
-                                    <p class="text-muted small mt-3 mb-3" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                        @item.Bio
-                                    </p>
-
-                                    <div class="d-flex flex-wrap gap-2 mt-auto">
-                                        @if (!string.IsNullOrEmpty(item.SpecialtyTags))
+                                <div class="d-flex flex-wrap gap-2 mt-auto">
+                                    @if (!string.IsNullOrEmpty(item.SpecialtyTags))
+                                    {
+                                        foreach (var tag in item.SpecialtyTags.Split(','))
                                         {
-                                            foreach (var tag in item.SpecialtyTags.Split(','))
-                                            {
-                                                <span class="pet-tag border border-secondary text-secondary bg-transparent">@tag.Trim()</span>
-                                            }
+                                            <span class="badge rounded-1 border fw-bold"
+                                                  style="font-size: 0.6rem; background-color: var(--petlink-light-bg); color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
+                                                @tag.Trim().ToUpper()
+                                            </span>
                                         }
-                                    </div>
-
+                                    }
                                 </div>
                             </div>
-                        </a>
-                    </div>
-                }
-
-                @if (!Model.Any())
-                {
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                        <h5 class="fw-bold">No sitters found matching your criteria.</h5>
-                        <p class="text-muted">Try adjusting your filters or search location.</p>
+                        </div>
                     </div>
                 }
             </div>
-
-            @if (Model.Any())
-            {
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-muted" href="#"><i class="bi bi-chevron-left"></i></a></li>
-                        <li class="page-item active"><a class="page-link border-0 shadow-sm rounded-3 me-2" style="background-color: var(--petlink-dark);" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">3</a></li>
-                        <li class="page-item disabled"><span class="page-link border-0 bg-transparent text-muted">...</span></li>
-                        <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">12</a></li>
-                        <li class="page-item"><a class="page-link border-0 shadow-sm rounded-3 text-dark" href="#"><i class="bi bi-chevron-right"></i></a></li>
-                    </ul>
-                </nav>
-            }
         </div>
     </div>
 </div>

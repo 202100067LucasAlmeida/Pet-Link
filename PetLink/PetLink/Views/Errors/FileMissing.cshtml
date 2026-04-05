@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "File Missing";
+}
+
+<link rel="stylesheet" href="~/css/errors.css" asp-append-version="true" />
+
+<div class="error-page-container">
+    <div class="error-content">
+        <div class="error-number">
+            <span class="digit">4</span>
+            <img src="~/images/error404.png" alt="0" class="error-zero-image" />
+            <span class="digit">4</span>
+        </div>
+
+        <h1 class="error-title">File Missing</h1>
+
+        <p class="error-description">
+            Sorry, we can't find the page you're looking for.
+            We apologize for the inconvenience.
+        </p>
+
+        <a asp-controller="Home" asp-action="Index" class="btn-home">
+            <i class="fas fa-home"></i> Return to Main Page
+        </a>
+    </div>
+</div>

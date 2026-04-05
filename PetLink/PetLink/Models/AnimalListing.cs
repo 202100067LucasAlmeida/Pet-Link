@@ -15,12 +15,12 @@ namespace PetLink.Models
         public string Name { get; set; }
 
         public Species Species { get; set; }
-        public Breed Breed { get; set; }
 
         [Required]
-        public string Location { get; set; } 
+        public string Location { get; set; }
 
         public int AgeMonths { get; set; }
+        public Age Age { get; set; }
 
         [Required]
         public string Description { get; set; }
@@ -34,12 +34,27 @@ namespace PetLink.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Chave estrangeira para o utilizador que criou o anúncio 
         public int TutorId { get; set; }
-        
-        [ForeignKey("TutorId")]
-        public User Tutor { get; set; } 
 
-         public ICollection<FavoritePet> Favorites { get; set; }
+        [ForeignKey("TutorId")]
+        public User Tutor { get; set; }
+
+        public ICollection<FavoritePet> Favorites { get; set; }
+
+        public String? ImageUrl { get; set; }
+        public ICollection<AnimalPhoto> Photos { get; set; } = new List<AnimalPhoto>();
+    }
+    public class AnimalPhoto
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public string Url { get; set; }
+
+        public int AnimalListingId { get; set; }
+
+        [ForeignKey("AnimalListingId")]
+        public AnimalListing AnimalListing { get; set; }
     }
 }

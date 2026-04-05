@@ -14,14 +14,13 @@ namespace PetLink.Models
         public int SenderId { get; set; }
         public User Sender { get; set; }
 
-        // Quem recebe a mensagem (Tutor do animal ou o Petsitter)
+        // Quem recebe a mensagem 
         public int ReceiverId { get; set; }
         public User Receiver { get; set; }
 
         public string Content { get; set; }
         public DateTime SentAt { get; set; } = DateTime.Now;
 
-        // (Opcional) Para sabermos sobre que animal/serviço estão a falar
         public int? AnimalListingId { get; set; }
     }
 }

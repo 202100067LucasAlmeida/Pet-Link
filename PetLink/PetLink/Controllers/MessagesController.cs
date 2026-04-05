@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
-using PetLink.ViewModels;
+using PetLink.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -21,14 +21,10 @@ namespace PetLink.Controllers
         // GET: /Messages/Index ou /Messages/Index/5
         public async Task<IActionResult> Index(int? id)
         {
-            // 1. Obter o ID do utilizador logado com segurança
-            var userIdClaim = User.FindFirst("UserId")?.Value
-               ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+            var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
             int currentUserId = int.Parse(userIdClaim);
 
-            // 2. Procurar todas as mensagens onde o user participa
             var allMessages = await _context.Messages
                 .Include(m => m.Sender)
                 .Include(m => m.Receiver)
@@ -36,25 +32,28 @@ namespace PetLink.Controllers
                 .OrderByDescending(m => m.Timestamp)
                 .ToListAsync();
 
-            // 3. Criar a lista de conversas (Coluna da Esquerda)
-            // Agrupamos por "a outra pessoa" (quem não sou eu)
+            // Criar a lista de conversas com IMAGEM
             var conversations = allMessages
                 .GroupBy(m => m.SenderId == currentUserId ? m.ReceiverId : m.SenderId)
-                .Select(g => new ConversationSummary
+                .Select(g =>
                 {
-                    OtherUserId = g.Key,
-                    // Vamos buscar o nome da outra pessoa
-                    OtherUserName = g.First().SenderId == currentUserId ? g.First().Receiver.Name : g.First().Sender.Name,
-                    LastMessagePreview = g.First().Content,
-                    LastMessageTimestamp = g.First().Timestamp,
-                    IsActive = (id.HasValue && g.Key == id.Value),
-                    IsOnline = true // Hardcoded para o mockup, podes evoluir depois
+                    var firstMsg = g.First();
+                    var otherUser = firstMsg.SenderId == currentUserId ? firstMsg.Receiver : firstMsg.Sender;
+                    return new ConversationSummary
+                    {
+                        OtherUserId = g.Key,
+                        OtherUserName = otherUser.Name,
+                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
+                        LastMessagePreview = firstMsg.Content,
+                        LastMessageTimestamp = firstMsg.Timestamp,
+                        IsActive = (id.HasValue && g.Key == id.Value),
+                        IsOnline = true
+                    };
                 })
                 .ToList();
 
             var viewModel = new MessagesViewModel { Conversations = conversations };
 
-            // 4. Se houver um ID na URL, carregamos os detalhes dessa conversa (Coluna da Direita)
             if (id.HasValue)
             {
                 var otherUser = await _context.Users.FindAsync(id.Value);
@@ -64,12 +63,15 @@ namespace PetLink.Controllers
                     {
                         OtherUserId = id.Value,
                         OtherUserName = otherUser.Name,
+                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
                         Messages = allMessages
                             .Where(m => (m.SenderId == currentUserId && m.ReceiverId == id.Value) ||
                                         (m.SenderId == id.Value && m.ReceiverId == currentUserId))
-                            .OrderBy(m => m.Timestamp) // Ordem cronológica para o chat
+                            .OrderBy(m => m.Timestamp)
                             .ToList()
                     };
+
+                    // Lógica de inserir chat novo no topo se não existir...
                 }
             }
 
@@ -80,16 +82,21 @@ namespace PetLink.Controllers
         [Authorize]
         public async Task<IActionResult> SendMessage(int receiverId, string content)
         {
-            // 1. Obtém o ID do utilizador logado (quem está a enviar)
+            // Obtém o ID do utilizador logado 
             var senderIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(senderIdClaim) || string.IsNullOrWhiteSpace(content))
             {
-                return RedirectToAction("Index", new { id = receiverId });
+                return Json(new { success = false, message = "Invalid sender or empty content" });
             }
 
             int senderId = int.Parse(senderIdClaim);
 
-            // 2. Cria o objeto da mensagem
+            if (senderId == receiverId)
+            {
+                return Json(new { success = false, message = "You cannot message yourself." });
+            }
+
+            // Cria o objeto da mensagem
             var newMessage = new Message
             {
                 SenderId = senderId,
@@ -99,17 +106,11 @@ namespace PetLink.Controllers
                 IsRead = false
             };
 
-            // 3. Guarda na Base de Dados
+            // Guarda na Base de Dados
             _context.Messages.Add(newMessage);
             await _context.SaveChangesAsync();
 
-            // 4. Redireciona de volta para a conversa para mostrar a nova mensagem
-            // Se estivesses a usar SignalR, aqui chamarias o Hub. 
-            // Por agora, o refresh da página fará o trabalho!
-            return RedirectToAction("Index", new { id = receiverId });
+            return Json(new { success = true, messageId = newMessage.Id, timestamp = newMessage.Timestamp.ToString("HH:mm") });
         }
-        
-
-        
     }
 }

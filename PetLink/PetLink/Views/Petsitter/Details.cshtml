@@ -4,12 +4,19 @@
     ViewData["Title"] = Model.User.Name + " - Sitter Details";
 }
 
-<section class="breadcrumb-section py-3 bg-light">
+@* 1. Breadcrumb Dinâmico *@
+<section class="breadcrumb-section py-3"
+         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
-                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-highlight-darkblue">PETSITTING</a></li>
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-decoration-none text-highlight-darkblue">HOME</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-action="Index" class="text-decoration-none text-highlight-darkblue">SITTERS</a>
+                </li>
                 <li class="breadcrumb-item active text-highlight-blue" aria-current="page">@Model.User.Name</li>
             </ol>
         </nav>
@@ -32,38 +39,60 @@
 
                     <h1 class="display-5 text-primary-darkblue mb-2 fw-bold">
                         @Model.User.Name
-                        <span class="fs-4 text-warning ms-2"><i class="bi bi-star-fill"></i> @Model.Rating.ToString("0.0")</span>
+                        <span class="fs-4 text-warning ms-2"><i class="bi bi-star-fill"></i>
+                            @Model.Rating.ToString("0.0")
+                        </span>
                     </h1>
-                    <p class="lead text-muted text-highlight-darkblue">
+                    <p class="lead text-secondary-grey text-highlight-darkblue">
                         @Model.Age years old • @Model.LocationZone • @Model.DistanceKm km away
                     </p>
                 </div>
 
-                <img src="~/images/@(Model.User.Name.ToLower().Replace(" ", "")).jpg" alt="@Model.User.Name's photo"
-                     class="img-fluid rounded-4 shadow-sm mb-4 w-100" style="max-height: 500px; object-fit: cover;" />
+                @* Foto Principal *@
+                <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)"
+                     alt="@Model.User.Name's photo" class="img-fluid rounded-4 shadow-sm mb-4 w-100"
+                     style="max-height: 500px; object-fit: cover; border: 1px solid var(--petlink-border);"
+                     onerror="this.src='/images/default-avatar.jpg'" />
 
-                <div class="m-3 shadow-sm card border-0 rounded-4 mb-5">
-                    <div class="card-body p-4 d-flex justify-content-around flex-wrap bg-light rounded-top-4 border-bottom">
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Rate</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">@Model.HourlyRate.ToString("0")€ / hr</span>
+                <div class="shadow-sm card border-0 rounded-4 mb-5" style="background-color: var(--petlink-card-bg);">
+                    <div class="card-body p-0">
+                        <div class="p-4 d-flex justify-content-around flex-wrap rounded-top-4 border-bottom"
+                             style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Rate</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.HourlyRate.ToString("0")€ /
+                                    hr
+                                </span>
+                            </div>
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Location</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.LocationZone</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="d-block text-secondary-grey small fw-bold text-uppercase">Experience</span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">Pro Sitter</span>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Location</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">@Model.LocationZone</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="d-block text-muted small fw-bold text-uppercase">Experience</span>
-                            <span class="text-primary-darkblue fs-5 fw-semibold">Pro Sitter</span>
-                        </div>
-                    </div>
 
-                    <div class="p-4">
-                        <h3 class="h5 text-primary-darkblue mb-3 fw-bold">About @Model.User.Name.Split(' ')[0]</h3>
-                        <p class="lead text-highlight-darkblue text-muted mb-4">@Model.Bio</p>
-                        <button class="btn btn-primary text-white fw-bold rounded-pill px-5 py-2" style="background-color: #0a4f8b; border: none;">
-                            Book @Model.User.Name.Split(' ')[0]
-                        </button>
+                        <div class="p-4">
+                            <h3 class="h5 text-primary-darkblue mb-3 fw-bold">About @Model.User.Name.Split(' ')[0]</h3>
+                            <p class="lead text-secondary-grey mb-4"
+                               style="color: var(--petlink-dark) !important; opacity: 0.8;">@Model.Bio</p>
+        
+                            @if (!ViewBag.IsSelf)
+                            {
+                                <button class="btn btn-primary fw-bold rounded-pill px-5 py-2 w-100 shadow-sm">
+                                    Book @Model.User.Name.Split(' ')[0]
+                                </button>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info border-0 rounded-4 text-center mt-3"
+                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                    <i class="bi bi-info-circle me-2"></i>This is your PetSitter profile.
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
 
@@ -74,132 +103,139 @@
                         {
                             foreach (var tag in Model.SpecialtyTags.Split(','))
                             {
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> @tag.Trim()</li>
+                                <li class="mb-2 text-primary-darkblue"><i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    @tag.Trim()
+                                </li>
                             }
                         }
                     </ul>
                 </div>
             </div>
 
+            @* 3. Painel Lateral (Chat ou Edit Profile) *@
             <div class="col-lg-4">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border-radius: 20px; overflow: hidden;">
-                    <div class="card-header border-0 py-3" style="background-color: var(--petlink-primary); color: white;">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                <i class="bi bi-calendar-check-fill" style="color: var(--petlink-primary);"></i>
+                @if (ViewBag.IsSelf)
+                {
+                    @* Painel do próprio Sitter - Corrigido para Dark Mode *@
+                    <div class="card shadow-sm border-0 sticky-top"
+                         style="top: 20px; border-radius: 20px; overflow: hidden; background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border) !important;">
+                        <div class="card-body text-center p-5">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm"
+                                 style="width: 70px; height: 70px; background-color: var(--petlink-grey-bg);">
+                                <i class="bi bi-person-badge-fill text-primary" style="font-size: 2.5rem;"></i>
                             </div>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Hire @Model.User.Name</h6>
-                                <small style="opacity: 0.8; font-size: 0.75rem;">Check availability</small>
-                            </div>
+                            <h4 class="fw-bold text-primary-darkblue">This is your profile</h4>
+                            <p class="text-secondary-grey small mb-4">You are viewing your public profile as it appears to
+                                clients.
+                            </p>
+                            <a asp-action="Edit" asp-route-id="@Model.Id"
+                                   class="btn btn-primary rounded-pill w-100 fw-bold py-2 mb-2">
+                                <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                            </a>
                         </div>
                     </div>
+                }
+                else
+                {
+                    @* Painel de Contratação / Chat *@
+                    <div class="card shadow-sm border-0 sticky-top"
+                         style="top: 20px; border-radius: 20px; overflow: hidden; background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border) !important;">
+            
+                        <div class="card-header border-0 py-3"
+                             style="background-color: var(--petlink-primary); color: white;">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-white rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-calendar-check-fill text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Hire @Model.User.Name</h6>
+                                    <small style="opacity: 0.8; font-size: 0.75rem;">Check availability</small>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="card-body" id="chatBox" style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
-                        @if (ViewBag.ChatHistory != null && ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
-                        {
-                            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-                            foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                        <div class="card-body" id="chatBox"
+                             style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
+                            @if (ViewBag.ChatHistory != null &&
+                                                                                                            ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
                             {
-                                bool isMine = msg.SenderId == currentUserId;
-                                <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
-                                    <div class="p-3 shadow-sm" 
-                                        style="max-width: 85%; border-radius: 18px; font-size: 0.85rem;
-                                                @(isMine ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;" 
-                                                        : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;")">
-                                        <p class="mb-0">@msg.Content</p>
-                                        <div class="text-end" style="font-size: 0.6rem; opacity: 0.7; margin-top: 4px;">
-                                            @msg.Timestamp.ToString("HH:mm")
+                                var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                                foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
+                                {
+                                    bool isMine = msg.SenderId == currentUserId;
+                                    <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                        <div class="p-3 shadow-sm"
+                                             style="max-width: 85%; border-radius: 18px; font-size: 0.85rem; line-height: 1.4;
+                                            @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                                                                                                                                                                                                                                                                    : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
+                                
+                                            <p class="mb-0">@msg.Content</p>
+                                            <div class="text-end" style="font-size: 0.6rem; opacity: 0.6; margin-top: 5px;">
+                                                @msg.Timestamp.ToString("HH:mm")
+                                            </div>
                                         </div>
                                     </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                    <i class="bi bi-chat-dots mb-2 opacity-25"
+                                       style="font-size: 3rem; color: var(--petlink-primary);"></i>
+                                    <p class="text-secondary-grey small">No messages yet. Say hi!</p>
                                 </div>
                             }
-                        }
-                        else
-                        {
-                            <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
-                                <i class="bi bi-chat-dots mb-2 opacity-25" style="font-size: 3rem; color: var(--petlink-primary);"></i>
-                                <p class="text-muted small">No messages yet. Say hi to @Model.User.Name.Split(' ')[0]!</p>
-                            </div>
-                        }
-                    </div>
+                        </div>
 
-                    <div class="card-footer bg-white border-0 p-3">
-                        <form asp-controller="Messages" asp-action="SendMessage" method="post" class="d-flex gap-2">
-                            <input type="hidden" name="receiverId" value="@Model.UserId" />
-                            @* Adicionamos o returnUrl para não sair da página ao enviar *@
-                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                            
-                            <input type="text" name="content" class="form-control border-0 rounded-pill ps-4 py-2" 
-                                style="background-color: var(--petlink-grey-bg); font-size: 0.9rem;" 
-                                placeholder="Message @Model.User.Name..." required autocomplete="off">
-                            <button class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm" 
-                                    type="submit" style="background-color: var(--petlink-primary); color: white; width: 40px; height: 40px;">
-                                <i class="bi bi-send-fill"></i>
-                            </button>
-                        </form>
+                        <div class="card-footer border-0 p-3" style="background-color: var(--petlink-card-bg);">
+                            <a asp-controller="Messages" asp-action="Index" asp-route-id="@Model.UserId"
+                                   class="btn btn-primary w-100 fw-bold rounded-pill py-2 d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-chat-dots-fill"></i> Message @Model.User.Name.Split(' ')[0]
+                            </a>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>
 </section>
 
-<section class="featured-section py-5 bg-light mt-4 border-top">
+<section class="featured-section py-5 mt-4 border-top"
+         style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <span class="text-primary small fw-bold">LOCAL PROS</span>
-                <h2 class="h3 text-primary-darkblue mb-0 fw-bold">Other Trusted Sitters in Your Area</h2>
+                <h2 class="h3 text-primary-darkblue mb-0 fw-bold">Other Trusted Sitters</h2>
             </div>
-            <a asp-action="Index" class="btn btn-outline-primary rounded-pill px-4 fw-bold">View All Sitters →</a>
+            <a asp-action="Index" class="btn btn-outline-primary rounded-pill px-4 fw-bold">View All</a>
         </div>
 
         <div class="row g-4">
             @foreach (var sitter in ViewBag.OtherSitters as IEnumerable<PetLink.Models.Petsitter>)
             {
                 <div class="col-md-6 col-lg-3">
-                    <a asp-action="Details" asp-route-id="@sitter.Id" class="text-decoration-none text-dark">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card">
-                            <img src="~/images/@(sitter.User.Name.ToLower().Replace(" ", "")).jpg" 
-                                 alt="@sitter.User.Name's photo"
-                                 class="img-fluid w-100" style="height: 200px; object-fit: cover;" />
-                            
+                    <a asp-action="Details" asp-route-id="@sitter.Id" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden pet-card"
+                             style="background-color: var(--petlink-card-bg);">
+                            <img src="@(string.IsNullOrEmpty(sitter.User.ProfilePicture) ? "/images/default-avatar.jpg" : sitter.User.ProfilePicture)"
+                                 class="img-fluid w-100" style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='/images/default-avatar.jpg'" />
+
                             <div class="card-body">
-                                <h3 class="h5 text-primary-darkblue fw-bold mb-2">
-                                    @sitter.User.Name.Split(' ')[0] 
-                                    @if (sitter.User.IsVerified)
-                                    {
-                                        <i class="bi bi-check-circle-fill text-primary ms-1 fs-6"></i>
-                                    }
-                                </h3>
-                                <div class="text-muted small">
+                                <h3 class="h5 text-primary-darkblue fw-bold mb-2">@sitter.User.Name.Split(' ')[0]</h3>
+                                <div class="text-secondary-grey small">
                                     <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> @sitter.LocationZone</p>
-                                    <p class="mb-1"><i class="bi bi-star-fill text-warning me-1"></i> @sitter.Rating.ToString("0.0") Rating</p>
+                                    <p class="mb-0"><i class="bi bi-star-fill text-warning me-1"></i>
+                                        @sitter.Rating.ToString("0.0")
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </a>
                 </div>
             }
-            @if (((IEnumerable<PetLink.Models.Petsitter>)ViewBag.OtherSitters).Count() == 0)
-            {
-                <div class="col-12 text-center text-muted">
-                    <p>No other sitters available in your area right now.</p>
-                </div>
-            }
         </div>
     </div>
 </section>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            var chatBox = document.getElementById("chatBox");
-            if (chatBox) {
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        });
-    </script>
-    <script src="~/js/chat.js"></script>
-}

@@ -11,14 +11,18 @@ namespace PetLink.Models.Enums
         Other
     }
 
-    public enum Breed
+    public enum Age
     {
         
+        Puppy,
+        Adult,
+        Senior,
+        Unkown
     }
 
     public enum ListingStatus
     {
-        Pendent,   // Aguarda aprovação do Admin (Requisito R20)
+        Pendent,   // Aguarda aprovação do Admin 
         Published,  // Visível na pesquisa
         Rejected,  // Chumbado pelo Admin
         Adopted     // Adoção concluída
