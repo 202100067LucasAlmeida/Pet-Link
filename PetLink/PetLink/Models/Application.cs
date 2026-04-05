@@ -24,6 +24,8 @@ namespace PetLink.Models
         public int TotalSteps { get; set; } = 4;
         
         public DateTime SubmittedAt { get; set; } = DateTime.Now;
+
+        public DateTime? UpdatedAt { get; set; }
         
         // propiedade de navegação
         [ForeignKey("UserId")]
