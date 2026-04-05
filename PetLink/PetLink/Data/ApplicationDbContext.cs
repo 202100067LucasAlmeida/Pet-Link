@@ -17,6 +17,7 @@ namespace PetLink.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         public DbSet<Application> Applications { get; set; }
+        public DbSet<Review> Reviews { get; set; } 
 
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -87,6 +88,32 @@ namespace PetLink.Data
                 .WithMany()
                 .HasForeignKey(a => a.AnimalListingId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+             modelBuilder.Entity<Review>()
+    .HasOne(r => r.Reviewer)
+    .WithMany(u => u.ReviewsGiven)
+    .HasForeignKey(r => r.ReviewerId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+modelBuilder.Entity<Review>()
+    .HasOne(r => r.Reviewed)
+    .WithMany(u => u.ReviewsReceived)
+    .HasForeignKey(r => r.ReviewedId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+modelBuilder.Entity<Review>()
+    .HasOne(r => r.AnimalListing)
+    .WithMany()
+    .HasForeignKey(r => r.AnimalListingId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+// Índice para evitar múltiplas avaliações para o mesmo animal
+modelBuilder.Entity<Review>()
+    .HasIndex(r => new { r.ReviewerId, r.AnimalListingId })
+    .IsUnique();
+            
+
+        
         }
     }
 }

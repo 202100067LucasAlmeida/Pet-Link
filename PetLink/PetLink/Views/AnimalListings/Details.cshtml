@@ -163,6 +163,17 @@
                         </span>
                     </div>
                 </div>
+
+                <!-- Botão para avaliar -->
+                @if (User.Identity.IsAuthenticated && ViewBag.CanReview != null && ViewBag.CanReview == true)
+                {
+                    <div class="mt-4">
+                    <a asp-controller="Review" asp-action="Create" asp-route-animalListingId="@Model.Id" 
+                    class="btn btn-outline-warning rounded-pill">
+                    <i class="bi bi-star-fill me-2"></i> Review This Adoption
+                    </a>
+                    </div>
+                }
             </div>
 
             <div class="col-lg-4">

@@ -378,10 +378,30 @@ namespace PetLink.Controllers
                 RecentConversations = recentConversations,
                 TotalApplications = totalApplications,
                 UnreadMessages = unreadMessages,
+                DaysSinceJoined = daysSinceJoined 
                 DaysSinceJoined = daysSinceJoined,
                 RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
                 PendingListingsForAdmin = pendingListingsForAdmin
             };
+
+            // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
+            var averageRating = 0.0;
+            var totalReviews = 0;
+            var canReceiveReviews = (user.Role == UserRole.User || user.Role == UserRole.PetSitter);
+
+            if (canReceiveReviews)
+            {
+                var reviews = await _context.Reviews
+                    .Where(r => r.ReviewedId == userId && r.IsApproved)
+                    .ToListAsync();
+                
+                totalReviews = reviews.Count;
+                averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
+            }
+
+            ViewBag.AverageRating = averageRating;
+            ViewBag.TotalReviews = totalReviews;
+            ViewBag.CanReceiveReviews = canReceiveReviews;
 
             return View(viewModel);
         }

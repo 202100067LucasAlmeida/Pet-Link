@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using PetLink.Models.Enums;
 using System.Collections.Generic;
 using PetLink.Models;
+using System.ComponentModel.DataAnnotations.Schema; 
 
 namespace PetLink.Models
 {
@@ -40,5 +41,16 @@ namespace PetLink.Models
         public ICollection<Application> Applications { get; set; }
         public ICollection<Message> SentMessages { get; set; }
         public ICollection<Message> ReceivedMessages { get; set; }
+        public virtual ICollection<Review> ReviewsReceived { get; set; } // Avaliações recebidas
+public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+
+// Propriedades calculadas (não mapeadas na BD)
+[NotMapped]
+public double AverageRating => ReviewsReceived != null && ReviewsReceived.Any() 
+    ? ReviewsReceived.Average(r => r.Rating) 
+    : 0;
+
+[NotMapped]
+public int TotalReviews => ReviewsReceived?.Count ?? 0;
     }
 }

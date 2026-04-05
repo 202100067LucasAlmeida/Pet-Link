@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Hubs;
 using PetLink.Models;
+using PetLink.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models.Enums;
 
@@ -56,15 +57,46 @@ namespace PetLink
                 }
             }
 
+            // Lógica para carregar OtherPets
             // Passar a variável limpa para a View
             ViewBag.IsOwner = isOwner;
 
             // Atenção aqui: também mudei para usar o realId
             ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
 
+            // ========== LÓGICA PARA VERIFICAR SE PODE AVALIAR ==========
+            var canReview = false;
+            if (!string.IsNullOrEmpty(userIdClaim))
+            {
+                int currentUserId = int.Parse(userIdClaim);
+                
+                // Verificar se o utilizador adotou este animal (status Completed)
+                var application = await _context.Applications
+                    .FirstOrDefaultAsync(a => a.UserId == currentUserId && 
+                                             a.AnimalListingId == id &&
+                                             a.Status == ApplicationStatus.Completed);
+                
+                if (application != null)
+                {
+                    // Verificar se já fez review
+                    var existingReview = await _context.Reviews
+                        .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && 
+                                                 r.AnimalListingId == id);
+                    
+                    // Verificar se o Tutor do animal pode receber avaliações (User ou PetSitter)
+                    var canReceiveReview = (listing.Tutor != null && 
+                                           (listing.Tutor.Role == UserRole.User || 
+                                            listing.Tutor.Role == UserRole.PetSitter));
+                    
+                    canReview = existingReview == null && canReceiveReview;
+                }
+            }
+            
+            ViewBag.CanReview = canReview;
+            // ========== FIM DA LÓGICA ==========
+
             return View(listing);
         }
-
 
         // GET: AnimalListings/Create
         [HttpGet]
@@ -350,7 +382,6 @@ namespace PetLink
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
         {
-            // Vai buscar todos os anúncios e inclui a informação do Tutor (para sabermos o email dele)
             var allListings = await _context.AnimalListings
                 .Include(a => a.Tutor)
                 .OrderByDescending(a => a.CreatedAt)

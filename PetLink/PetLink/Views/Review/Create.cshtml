@@ -1,0 +1,95 @@
+@model PetLink.Models.ViewModels.CreateReviewViewModel
+
+@{
+    ViewData["Title"] = $"Review {Model.AnimalName}";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="text-primary-darkblue fw-bold">Review Your Adoption</h2>
+                    <p class="text-muted">Share your experience adopting <strong>@Model.AnimalName</strong> from <strong>@Model.ReviewedName</strong></p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="AnimalListingId" />
+                        <input type="hidden" asp-for="ReviewedId" />
+
+                        <!-- Rating Stars -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your Rating</label>
+                            <div class="rating-stars">
+                                <div class="d-flex gap-2">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi bi-star fs-1 rating-star" data-rating="@i" style="cursor: pointer; color: #ccc;"></i>
+                                    }
+                                </div>
+                                <input type="hidden" asp-for="Rating" id="ratingValue" />
+                                <span asp-validation-for="Rating" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="mb-4">
+                            <label asp-for="Comment" class="form-label fw-bold">Your Review (Optional)</label>
+                            <textarea asp-for="Comment" class="form-control rounded-3" rows="5" 
+                                      placeholder="Tell others about your experience..."></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                            <small class="text-muted">Max 500 characters</small>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2">
+                                Submit Review
+                            </button>
+                            <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@Model.AnimalListingId" 
+                               class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Star rating functionality
+            $('.rating-star').hover(
+                function() {
+                    var rating = $(this).data('rating');
+                    highlightStars(rating);
+                },
+                function() {
+                    var currentRating = $('#ratingValue').val();
+                    highlightStars(currentRating || 0);
+                }
+            );
+
+            $('.rating-star').click(function() {
+                var rating = $(this).data('rating');
+                $('#ratingValue').val(rating);
+                highlightStars(rating);
+            });
+
+            function highlightStars(rating) {
+                $('.rating-star').each(function() {
+                    var starRating = $(this).data('rating');
+                    if (starRating <= rating) {
+                        $(this).removeClass('bi-star').addClass('bi-star-fill').css('color', '#ffc107');
+                    } else {
+                        $(this).removeClass('bi-star-fill').addClass('bi-star').css('color', '#ccc');
+                    }
+                });
+            }
+        });
+    </script>
+}
