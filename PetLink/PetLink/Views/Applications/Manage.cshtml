@@ -1,0 +1,86 @@
+@model IEnumerable<PetLink.Models.Application>
+
+@{
+    ViewData["Title"] = "Manage Applications";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="text-primary-blue mb-4">Adoption Applications</h2>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Pet</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var app in Model)
+                                {
+                                    <tr>
+                                        <td>@app.User?.Name</td>
+                                        <td>@app.AnimalListing?.Name</td>
+                                        <td>@app.SubmittedAt.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            @if (app.Status == ApplicationStatus.Pending)
+                                            {
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            }
+                                            else if (app.Status == ApplicationStatus.Approved)
+                                            {
+                                                <span class="badge bg-info">Approved</span>
+                                            }
+                                            else if (app.Status == ApplicationStatus.Completed)
+                                            {
+                                                <span class="badge bg-success">Completed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Rejected</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (app.Status == ApplicationStatus.Pending)
+                                            {
+                                                <form asp-action="Approve" method="post" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@app.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                                </form>
+                                                <form asp-action="Reject" method="post" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@app.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                                                </form>
+                                            }
+                                            else if (app.Status == ApplicationStatus.Approved)
+                                            {
+                                                <form asp-action="Complete" method="post" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@app.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-primary">Complete</button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
