@@ -810,6 +810,8 @@ input[type="radio"]:checked+.animal-type-btn {
 
 .rating-stars i:hover {
     transform: scale(1.1);
+}
+
 .form-check-input:checked+.form-check-label {
     font-weight: bold;
     color: var(--petlink-primary);

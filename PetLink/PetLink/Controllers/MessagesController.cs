@@ -5,6 +5,8 @@ using PetLink.Models;
 using PetLink.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using PetLink.Services;
+using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
@@ -12,10 +14,12 @@ namespace PetLink.Controllers
     public class MessagesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public MessagesController(ApplicationDbContext context)
+        public MessagesController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // GET: /Messages/Index ou /Messages/Index/5
@@ -43,7 +47,7 @@ namespace PetLink.Controllers
                     {
                         OtherUserId = g.Key,
                         OtherUserName = otherUser.Name,
-                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
+                        OtherUserImagePath = otherUser.ProfilePicture,
                         LastMessagePreview = firstMsg.Content,
                         LastMessageTimestamp = firstMsg.Timestamp,
                         IsActive = (id.HasValue && g.Key == id.Value),
@@ -63,15 +67,13 @@ namespace PetLink.Controllers
                     {
                         OtherUserId = id.Value,
                         OtherUserName = otherUser.Name,
-                        OtherUserImagePath = otherUser.ProfilePicture, // <--- BUSCA A FOTO
+                        OtherUserImagePath = otherUser.ProfilePicture,
                         Messages = allMessages
                             .Where(m => (m.SenderId == currentUserId && m.ReceiverId == id.Value) ||
                                         (m.SenderId == id.Value && m.ReceiverId == currentUserId))
                             .OrderBy(m => m.Timestamp)
                             .ToList()
                     };
-
-                    // Lógica de inserir chat novo no topo se não existir...
                 }
             }
 
@@ -96,6 +98,10 @@ namespace PetLink.Controllers
                 return Json(new { success = false, message = "You cannot message yourself." });
             }
 
+            // Buscar informações do remetente e destinatário
+            var sender = await _context.Users.FindAsync(senderId);
+            var receiver = await _context.Users.FindAsync(receiverId);
+
             // Cria o objeto da mensagem
             var newMessage = new Message
             {
@@ -109,6 +115,34 @@ namespace PetLink.Controllers
             // Guarda na Base de Dados
             _context.Messages.Add(newMessage);
             await _context.SaveChangesAsync();
+
+            // ========== ENVIAR NOTIFICAÇÃO POR EMAIL ==========
+            // Enviar email apenas se o destinatário existe e tem email válido
+            if (receiver != null && !string.IsNullOrEmpty(receiver.Email))
+            {
+                // Criar preview da mensagem (max 100 caracteres)
+                var messagePreview = content.Length > 100 ? content.Substring(0, 100) + "..." : content;
+                
+                // Enviar email de notificação (em background, não bloquear a resposta)
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _emailService.SendNewMessageNotificationAsync(
+                            receiver.Email,
+                            receiver.Name,
+                            sender?.Name ?? "Someone",
+                            messagePreview
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log do erro (podes adicionar logging)
+                        Console.WriteLine($"Error sending email: {ex.Message}");
+                    }
+                });
+            }
+            // ========== FIM DA NOTIFICAÇÃO ==========
 
             return Json(new { success = true, messageId = newMessage.Id, timestamp = newMessage.Timestamp.ToString("HH:mm") });
         }

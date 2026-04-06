@@ -57,11 +57,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-4">
+
+                        <div class="flex-grow-1 ms-4 mt-4">
                             <h1 class="display-5 fw-bold text-primary-darkblue mb-2">Welcome back, @Model.User.Name!</h1>
                             <p class="text-muted mb-1">Manage your pet adoptions and view your saved companions.</p>
-                            
-                            <!-- Rating do utilizador - apenas para Users e PetSitters -->
+
                             @if (ViewBag.CanReceiveReviews == true)
                             {
                                 <div class="mt-2">
@@ -103,6 +103,7 @@
                                     }
                                 </div>
                             }
+                        </div>
                     </div>
                 </div>
             }
@@ -130,18 +131,13 @@
 
             @* NOTIFICAÇÕES RECENTES
             <div class="card border-0 shadow-sm rounded-4 mb-4" style="background-color: var(--petlink-card-bg);">
-
-                <!--ADMIN-->
                 @if (userRole == "Admin")
                 {
-                    <!--HEADER-->
                     <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
                         <h6 class="fw-bold text-primary-darkblue mb-0">
                             <i class="bi bi-clock-history text-primary-darkblue me-2"></i>Pending Approvals
                         </h6>
                     </div>
-
-                    <!--NOTIFICATIONS-->
                     <div class="card-body p-4">
                         @{
                             var pendingListings = Model.PendingListingsForAdmin ?? new List<AnimalListing>();
@@ -176,18 +172,13 @@
                         }
                     </div>
                 }
-
-                <!--NORMAL USER-->
-                @if (userRole != "Admin")
+                else
                 {
-                    <!--HEADER-->
                     <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
                         <h6 class="fw-bold text-primary-darkblue mb-0">
                             <i class="bi bi-bell text-primary-darkblue me-2"></i>Recent Notifications
                         </h6>
                     </div>
-
-                    <!--NOTIFICATIONS-->
                     <div class="card-body p-4">
                         @{
                             var unreadNotifications = Model.RecentNotifications?.Where(n => !n.IsRead).ToList();
@@ -310,6 +301,7 @@
                 </div>
             </div>
 
+            <!-- SAVED PETS E MESSAGES -->
             <div class="row">
                 <!-- Saved Pets Section -->
                 <div class="col-md-6 mb-4">
@@ -463,17 +455,6 @@
 
                 @* MESSAGES 
                 <div class="col-md-6 mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold text-primary-darkblue mb-0">
-                            <i class="bi bi-chat-dots me-2"></i>Recent Messages
-                        </h4>
-                        <a asp-controller="Messages" asp-action="Index" class="btn btn-sm btn-outline-primary rounded-pill">
-                            View All <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-body">
                     <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden" style="background-color: var(--petlink-card-bg);">
                         <div class="card-header border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center" style="background-color: transparent;">
                             <h4 class="fw-bold text-primary-darkblue mb-0">
@@ -520,18 +501,22 @@
 
             @* QUICK STATS DINÂMICOS 
             <div class="row g-3">
-                @{
-                    string[] stats = { Model.TotalApplications.ToString(), Model.SavedPets.Count().ToString(), Model.RecentConversations.Count().ToString() };
-                    string[] labels = { "Applications", "Favorites", "Chats" };
-                }
-
-                @for (int i = 0; i < 3; i++)
-                {
-                    <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
-                            <h2 class="fw-bold text-primary-darkblue mb-0">@stats[i]</h2>
-                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">@labels[i]</small>
-                        </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.TotalApplications</h2>
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Applications</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.SavedPets.Count()</h2>
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Favorites</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-3 h-100" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="fw-bold text-primary-darkblue mb-0">@Model.RecentConversations.Count()</h2>
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Chats</small>
                     </div>
             </div>
                 <div class="col-md-6">
@@ -556,11 +541,9 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Carrossel para Saved Pets
             const track = document.getElementById('carouselTrack');
             const scrollLeftBtn = document.getElementById('scrollLeftBtn');
             const scrollRightBtn = document.getElementById('scrollRightBtn');
-            const indicator = document.getElementById('carouselIndicator');
             
             if (track && scrollLeftBtn && scrollRightBtn) {
                 let currentPage = 0;
@@ -571,18 +554,10 @@
                 
                 function updateCarousel() {
                     const cardWidth = cards[0]?.offsetWidth || 0;
-                    const gap = 16; 
+                    const gap = 16;
                     const offset = currentPage * (cardWidth + gap) * cardsPerView;
                     track.style.transform = `translateX(-${offset}px)`;
                     
-                    // Atualizar indicador
-                    if (indicator) {
-                        const start = currentPage * cardsPerView + 1;
-                        const end = Math.min((currentPage + 1) * cardsPerView, totalCards);
-                        indicator.textContent = `${start} - ${end} of ${totalCards}`;
-                    }
-                    
-                    // Desabilitar/enabled botões
                     scrollLeftBtn.disabled = currentPage === 0;
                     scrollRightBtn.disabled = currentPage === totalPages - 1;
                     scrollLeftBtn.style.opacity = currentPage === 0 ? "0.5" : "1";
@@ -603,15 +578,12 @@
                     }
                 });
                 
-                // Atualizar ao redimensionar
                 window.addEventListener('resize', () => {
                     updateCarousel();
                 });
                 
-                // Inicializar
                 setTimeout(updateCarousel, 100);
             }
-            
         });
     </script>
 }
