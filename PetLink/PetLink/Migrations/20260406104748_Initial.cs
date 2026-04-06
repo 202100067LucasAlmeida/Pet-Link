@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetLink.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,8 @@ namespace PetLink.Migrations
                     IsSterilized = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TutorId = table.Column<int>(type: "int", nullable: false)
+                    TutorId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,6 +87,26 @@ namespace PetLink.Migrations
                         name: "FK_Petsitters_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AnimalPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AnimalListingId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnimalPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AnimalPhotos_AnimalListings_AnimalListingId",
+                        column: x => x.AnimalListingId,
+                        principalTable: "AnimalListings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -149,6 +170,36 @@ namespace PetLink.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ListingsNotifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AnimalListingId = table.Column<int>(type: "int", nullable: true),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListingsNotifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ListingsNotifications_AnimalListings_AnimalListingId",
+                        column: x => x.AnimalListingId,
+                        principalTable: "AnimalListings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ListingsNotifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -184,10 +235,52 @@ namespace PetLink.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReviewerId = table.Column<int>(type: "int", nullable: false),
+                    ReviewedId = table.Column<int>(type: "int", nullable: false),
+                    AnimalListingId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsApproved = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_AnimalListings_AnimalListingId",
+                        column: x => x.AnimalListingId,
+                        principalTable: "AnimalListings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_ReviewedId",
+                        column: x => x.ReviewedId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_ReviewerId",
+                        column: x => x.ReviewerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnimalListings_TutorId",
                 table: "AnimalListings",
                 column: "TutorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnimalPhotos_AnimalListingId",
+                table: "AnimalPhotos",
+                column: "AnimalListingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Applications_AnimalListingId",
@@ -211,6 +304,16 @@ namespace PetLink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ListingsNotifications_AnimalListingId",
+                table: "ListingsNotifications",
+                column: "AnimalListingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ListingsNotifications_UserId",
+                table: "ListingsNotifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_AnimalListingId",
                 table: "Messages",
                 column: "AnimalListingId");
@@ -229,11 +332,30 @@ namespace PetLink.Migrations
                 name: "IX_Petsitters_UserId",
                 table: "Petsitters",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_AnimalListingId",
+                table: "Reviews",
+                column: "AnimalListingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ReviewedId",
+                table: "Reviews",
+                column: "ReviewedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ReviewerId_AnimalListingId",
+                table: "Reviews",
+                columns: new[] { "ReviewerId", "AnimalListingId" },
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AnimalPhotos");
+
             migrationBuilder.DropTable(
                 name: "Applications");
 
@@ -241,10 +363,16 @@ namespace PetLink.Migrations
                 name: "FavoritePets");
 
             migrationBuilder.DropTable(
+                name: "ListingsNotifications");
+
+            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Petsitters");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "AnimalListings");

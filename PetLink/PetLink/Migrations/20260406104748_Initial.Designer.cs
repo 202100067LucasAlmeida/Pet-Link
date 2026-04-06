@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260331184215_AddAnimalPhotos")]
-    partial class AddAnimalPhotos
+    [Migration("20260406104748_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,43 @@ namespace PetLink.Migrations
                     b.ToTable("FavoritePets");
                 });
 
+            modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AnimalListingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalListingId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ListingsNotifications", (string)null);
+                });
+
             modelBuilder.Entity("PetLink.Models.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -247,6 +284,48 @@ namespace PetLink.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Petsitters");
+                });
+
+            modelBuilder.Entity("PetLink.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimalListingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReviewedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReviewerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalListingId");
+
+                    b.HasIndex("ReviewedId");
+
+                    b.HasIndex("ReviewerId", "AnimalListingId")
+                        .IsUnique();
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("PetLink.Models.User", b =>
@@ -359,6 +438,24 @@ namespace PetLink.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
+                {
+                    b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
+                        .WithMany()
+                        .HasForeignKey("AnimalListingId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("PetLink.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AnimalListing");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PetLink.Models.Message", b =>
                 {
                     b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
@@ -395,6 +492,33 @@ namespace PetLink.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PetLink.Models.Review", b =>
+                {
+                    b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
+                        .WithMany()
+                        .HasForeignKey("AnimalListingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PetLink.Models.User", "Reviewed")
+                        .WithMany("ReviewsReceived")
+                        .HasForeignKey("ReviewedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PetLink.Models.User", "Reviewer")
+                        .WithMany("ReviewsGiven")
+                        .HasForeignKey("ReviewerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AnimalListing");
+
+                    b.Navigation("Reviewed");
+
+                    b.Navigation("Reviewer");
+                });
+
             modelBuilder.Entity("PetLink.Models.AnimalListing", b =>
                 {
                     b.Navigation("Favorites");
@@ -411,6 +535,10 @@ namespace PetLink.Migrations
                     b.Navigation("Listings");
 
                     b.Navigation("ReceivedMessages");
+
+                    b.Navigation("ReviewsGiven");
+
+                    b.Navigation("ReviewsReceived");
 
                     b.Navigation("SentMessages");
                 });
