@@ -112,5 +112,35 @@ namespace PetLink.Hubs
 
             await _context.SaveChangesAsync();
         }
+
+       
+        public async Task CreateNewUserNotificationForAdminsAsync(int userId, string userName, string userEmail, UserRole userRole)
+        {
+            
+            var admins = await _context.Users
+                .Where(u => u.Role == UserRole.Admin)
+                .ToListAsync();
+
+            //vou deixar aqui como exemplo, caso queiramos usar no futuro
+            //bool needsVerification = (userRole == UserRole.Shelter);
+
+
+            foreach (var admin in admins)
+            {
+                var notification = new ListingsNotification
+                {
+                    UserId = admin.Id,
+                    AnimalListingId = null,
+                    Title = $"New User Registration: {userName}",
+                    Message = $"A new unverified {userRole} account has been created. User: {userName} ({userEmail})",
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.ListingsNotifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

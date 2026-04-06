@@ -1,4 +1,5 @@
 ﻿using PetLink.Models;
+using PetLink.Models.Enums;
 
 namespace PetLink.Hubs
 {
@@ -13,6 +14,8 @@ namespace PetLink.Hubs
         Task<int> GetUnreadCountAsync(int userId);
 
         Task CreateNewListingNotificationForAdminsAsync(int listingId, string petName, int tutorId);
+
+        Task CreateNewUserNotificationForAdminsAsync(int userId, string userName, string userEmail, UserRole userRole);
 
     }
 }

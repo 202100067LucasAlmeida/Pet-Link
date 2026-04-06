@@ -21,5 +21,7 @@ namespace PetLink.Models.ViewModels
         public List<ListingsNotification> RecentNotifications { get; set; }
 
         public List<AnimalListing> PendingListingsForAdmin { get; set; }
+
+        public List<User> UnverifiedUsersForAdmin { get; set; }
     }
 }

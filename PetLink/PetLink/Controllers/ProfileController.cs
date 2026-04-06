@@ -185,7 +185,7 @@ namespace PetLink.Controllers
                 Email = model.Email,
                 PasswordHash = UserHashHelpers.HashPassword(model.Password),
                 Role = role,
-                IsVerified = false, // Requer verificação do admin para Associações e PetSitters
+                IsVerified = false,
                 Phone = model.Phone,
                 CreatedAt = DateTime.Now,
                 ProfilePicture = "/images/default-avatar.jpg"
@@ -193,6 +193,13 @@ namespace PetLink.Controllers
 
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
+
+            await _notificationService.CreateNewUserNotificationForAdminsAsync(
+                newUser.Id,
+                newUser.Name,
+                newUser.Email,
+                newUser.Role
+            );
 
             return Json(new { success = true });
         }
@@ -361,12 +368,19 @@ namespace PetLink.Controllers
             var daysSinceJoined = (int)(DateTime.Now - user.CreatedAt).TotalDays;
 
             List<AnimalListing> pendingListingsForAdmin = null;
+            List<User> unverifiedUsersForAdmin = null;
             if (User.IsInRole("Admin"))
             {
                 pendingListingsForAdmin = await _context.AnimalListings
                     .Include(a => a.Tutor)
                     .Where(a => a.Status == ListingStatus.Pendent)
                     .OrderByDescending(a => a.CreatedAt)
+                    .ToListAsync();
+
+                unverifiedUsersForAdmin = await _context.Users
+                    //.Where(u => !u.IsVerified && u.Role == UserRole.Shelter)
+                    .Where(u => !u.IsVerified)
+                    .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
 
@@ -380,7 +394,8 @@ namespace PetLink.Controllers
                 UnreadMessages = unreadMessages,
                 DaysSinceJoined = daysSinceJoined, 
                 RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
-                PendingListingsForAdmin = pendingListingsForAdmin
+                PendingListingsForAdmin = pendingListingsForAdmin,
+                UnverifiedUsersForAdmin = unverifiedUsersForAdmin
             };
 
             // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
@@ -410,14 +425,14 @@ namespace PetLink.Controllers
         public async Task<IActionResult> MarkNotificationAsRead(int notificationId)
         {
             await _notificationService.MarkAsReadAsync(notificationId);
-            return RedirectToAction(nameof(MyProfile));  // This reloads the page
+            return RedirectToAction(nameof(MyProfile));
         }
 
         [HttpPost]
         public async Task<IActionResult> MarkAllNotificationAsRead(int userId)
         {
             await _notificationService.MarkAllAsReadAsync(userId);
-            return RedirectToAction(nameof(MyProfile));  // This reloads the page
+            return RedirectToAction(nameof(MyProfile));
         }
 
         // POST: Profile/MarkMessagesAsRead
