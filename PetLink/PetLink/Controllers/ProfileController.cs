@@ -378,7 +378,6 @@ namespace PetLink.Controllers
                 RecentConversations = recentConversations,
                 TotalApplications = totalApplications,
                 UnreadMessages = unreadMessages,
-                DaysSinceJoined = daysSinceJoined 
                 DaysSinceJoined = daysSinceJoined,
                 RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
                 PendingListingsForAdmin = pendingListingsForAdmin
