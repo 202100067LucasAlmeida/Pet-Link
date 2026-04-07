@@ -474,7 +474,9 @@ namespace PetLink.Controllers
             // 2. Atualizar apenas os campos permitidos
             userInDb.Name = updatedUser.Name;
             userInDb.Phone = updatedUser.Phone;
-            userInDb.Location = updatedUser.Location;
+            userInDb.City = updatedUser.City;
+            userInDb.Lat = updatedUser.Lat;
+            userInDb.Lon = updatedUser.Lon;
             userInDb.Bio = updatedUser.Bio;
 
             // 3. Lógica de Foto

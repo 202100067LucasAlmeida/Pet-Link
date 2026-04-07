@@ -30,7 +30,9 @@ namespace PetLink.Models
 
         
         public string Phone { get; set; }
-        public string? Location { get; set; }
+        public string? City { get; set; }
+        public string? Lat { get; set; }
+        public string? Lon { get; set; }
         public string? Bio { get; set; }
         public string? ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
