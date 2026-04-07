@@ -84,6 +84,9 @@ namespace PetLink.Controllers
         [Authorize]
         public async Task<IActionResult> SendMessage(int receiverId, string content)
         {
+            Console.WriteLine("=== ENTROU NO SENDMESSAGE ===");
+            Console.WriteLine($"ReceiverId: {receiverId}");
+            Console.WriteLine($"Content: {content}");
             // Obtém o ID do utilizador logado 
             var senderIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(senderIdClaim) || string.IsNullOrWhiteSpace(content))
@@ -117,31 +120,33 @@ namespace PetLink.Controllers
             await _context.SaveChangesAsync();
 
             // ========== ENVIAR NOTIFICAÇÃO POR EMAIL ==========
+            Console.WriteLine("=== TENTANDO ENVIAR EMAIL ===");
+            Console.WriteLine($"Destinatário: {receiver?.Email}");
+            Console.WriteLine($"Destinatário existe? {receiver != null}");
             // Enviar email apenas se o destinatário existe e tem email válido
             if (receiver != null && !string.IsNullOrEmpty(receiver.Email))
-            {
-                // Criar preview da mensagem (max 100 caracteres)
-                var messagePreview = content.Length > 100 ? content.Substring(0, 100) + "..." : content;
-                
-                // Enviar email de notificação (em background, não bloquear a resposta)
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        await _emailService.SendNewMessageNotificationAsync(
-                            receiver.Email,
-                            receiver.Name,
-                            sender?.Name ?? "Someone",
-                            messagePreview
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log do erro (podes adicionar logging)
-                        Console.WriteLine($"Error sending email: {ex.Message}");
-                    }
-                });
-            }
+    {
+        try
+        {
+            Console.WriteLine($"A enviar email para: {receiver.Email}");
+            await _emailService.SendNewMessageNotificationAsync(
+                receiver.Email,
+                receiver.Name,
+                sender?.Name ?? "Someone",
+                content.Length > 100 ? content.Substring(0, 100) + "..." : content
+            );
+            Console.WriteLine("✅ Email enviado com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Erro ao enviar email: {ex.Message}");
+            Console.WriteLine($"Detalhes: {ex.StackTrace}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("❌ Destinatário inválido ou sem email");
+    }
             // ========== FIM DA NOTIFICAÇÃO ==========
 
             return Json(new { success = true, messageId = newMessage.Id, timestamp = newMessage.Timestamp.ToString("HH:mm") });

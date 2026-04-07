@@ -2,16 +2,23 @@ using Microsoft.AspNetCore.SignalR;
 using PetLink.Data;
 using PetLink.Models;
 using Microsoft.EntityFrameworkCore;
+using PetLink.Services;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace PetLink.Hubs
 {
     public class ChatHub : Hub
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
+         private readonly IServiceScopeFactory _scopeFactory; 
 
-        public ChatHub(ApplicationDbContext context)
+        public ChatHub(ApplicationDbContext context, IEmailService emailService, IServiceScopeFactory scopeFactory)
         {
             _context = context;
+            _emailService = emailService;
+            _scopeFactory = scopeFactory;
         }
 
         public async Task SendChatMessage(int receiverId, string content)
@@ -38,6 +45,37 @@ namespace PetLink.Hubs
                 _context.Messages.Add(message);
                 await _context.SaveChangesAsync(); // Se isto falhar, o código abaixo não corre
 
+                // ========== ENVIAR NOTIFICAÇÃO POR EMAIL ==========
+                 _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+                            
+                            var sender = await dbContext.Users.FindAsync(senderId);
+                            var receiver = await dbContext.Users.FindAsync(receiverId);
+
+                            if (receiver != null && !string.IsNullOrEmpty(receiver.Email))
+                            {
+                                await emailService.SendNewMessageNotificationAsync(
+                                    receiver.Email,
+                                    receiver.Name,
+                                    sender?.Name ?? "Someone",
+                                    content.Length > 100 ? content.Substring(0, 100) + "..." : content
+                                );
+                                Console.WriteLine("✅ Email enviado com sucesso!");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"❌ Erro ao enviar email: {ex.Message}");
+                    }
+                });
+                
                 // 3. Identificar o Grupo (Sala de chat privada entre os dois)
                 string groupName = GetGroupName(senderId, receiverId);
 
