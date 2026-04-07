@@ -12,7 +12,7 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260407141320_InitialCreate")]
+    [Migration("20260407170506_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
