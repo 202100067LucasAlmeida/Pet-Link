@@ -52,6 +52,14 @@
             </a>
         }
         
+        @if (userRole == UserRole.Shelter.ToString() || userRole == UserRole.Admin.ToString())
+        {
+            <a asp-controller="Applications" asp-action="Manage"
+                class="list-group-item list-group-item-action mb-1 rounded-pill">
+                <i class="bi bi-file-earmark-ruled-fill me-2"></i>Applications
+            </a>
+        }
+        
         @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
         {
             <a asp-controller="Favorites" asp-action="Index"
@@ -59,10 +67,6 @@
                 <i class="bi bi-heart-fill me-2"></i>My Favorites
             </a>
         }
-        
-        <a href="#" class="list-group-item list-group-item-action mb-1 rounded-pill">
-            <i class="bi bi-file-earmark-ruled-fill me-2"></i>Applications
-        </a>
 
         <a asp-controller="Messages" asp-action="Index"
                class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Messages" ? "active" : "")">

@@ -44,4 +44,9 @@ public class ApplicationController : Controller
         TempData["Success"] = "Adoption completed successfully!";
         return RedirectToAction("Manage", "Applications");
     }
+
+    public async Task<IActionResult> Index()
+    {
+        return View();
+    }
 }
