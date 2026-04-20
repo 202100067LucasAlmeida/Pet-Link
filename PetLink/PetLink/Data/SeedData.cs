@@ -30,12 +30,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 912 345 678",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Admin system user",
                     ProfilePicture = "/images/logo.png",
                     CreatedAt = DateTime.Now.AddDays(-365)
                 };
+
+                admin.UpdateCoordinates(null, null);
 
                 var shelter = new User
                 {
@@ -46,12 +46,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 234 567 890",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Animal shelter specializing in rescue dogs and cats",
                     ProfilePicture = "/images/avatars/sunnypaws.jpg",
                     CreatedAt = DateTime.Now.AddDays(-180)
                 };
+
+                shelter.UpdateCoordinates(null, null);
 
                 var particular = new User
                 {
@@ -62,12 +62,12 @@ namespace PetLink.Data
                     IsVerified = false,
                     Phone = "+351 912 345 679",
                     City = "Setubal",
-                    Lat = "38.548168",
-                    Lon = "-8.901205",
                     Bio = "Pet lover looking for adoption",
                     ProfilePicture = "/images/avatars/joaosilva.jpg",
                     CreatedAt = DateTime.Now.AddDays(-30)
                 };
+
+                particular.UpdateCoordinates("38.548168", "-8.901205");
 
                 // Pet Sitters completos
                 var sitter1 = new User
@@ -79,12 +79,13 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 923 456 789",
                     City = "Setúbal",
-                    Lat = "38.548168",
-                    Lon = "-8.901205",
                     Bio = "Experienced dog walker",
                     ProfilePicture = "/images/avatars/sarahjenkins.jpg",
                     CreatedAt = DateTime.Now.AddDays(-90)
                 };
+
+                sitter1.UpdateCoordinates("38.548168", "-8.901205");
+
                 var sitter2 = new User
                 {
                     Name = "Marcus Chen",
@@ -94,12 +95,13 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 934 567 890",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Cat specialist",
                     ProfilePicture = "/images/avatars/marcuschen.jpg",
                     CreatedAt = DateTime.Now.AddDays(-120)
                 };
+
+                sitter2.UpdateCoordinates(null, null);
+
                 var sitter3 = new User
                 {
                     Name = "Elena Smith",
@@ -109,12 +111,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 945 678 901",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Exotic pets expert",
                     ProfilePicture = "/images/avatars/elenasmith.jpg",
                     CreatedAt = DateTime.Now.AddDays(-60)
                 };
+
+                sitter3.UpdateCoordinates(null, null);
 
                 // Salva users primeiro para gerar IDs
                 context.Users.AddRange(admin, shelter, particular, sitter1, sitter2, sitter3);

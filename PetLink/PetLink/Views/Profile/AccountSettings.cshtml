@@ -34,7 +34,7 @@
 
                     <div class="col-sm-9">
                         <button onclick="getAccurateLocation()" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
-                            <i class="bi bi-geo-alt me-1"></i>Get My Location
+                            <i class="bi bi-geo-alt me-1"></i>Update my location
                         </button>
                         <p class="text-muted small">If the first try isn't correct, try again, and make sure the location is accurate.</p>
                         <p id="ipDetails"></p>
@@ -95,13 +95,12 @@
                                 <div class="col-sm-9">
                                     <input type="text" asp-for="City" class="form-control"
                                            style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
-                                           placeholder="Your city or region" />
-                                    <input type="hidden" asp-for="Lat" id="latField" />
-                                    <input type="hidden" asp-for="Lon" id="lonField" />
+                                           placeholder="@(Model?.City)" />
+                                    <input type="text" id="latField" name="Lat" value="@(Model?.GetLatitude())"/>
+                                    <input type="text" id="lonField" name="Lon" value="@(Model?.GetLongitude())"/>
                                 </div>
 
-                                <p class="text-muted small">To update your location, just click on "Get my location" and verify the data retrieved.</p>
-
+                                <p class="text-muted small">To update your location, just click on "Update my location" and verify the data retrieved.</p>
                             </div>
                         </div>
 

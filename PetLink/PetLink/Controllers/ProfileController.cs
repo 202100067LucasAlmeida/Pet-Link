@@ -475,8 +475,7 @@ namespace PetLink.Controllers
             userInDb.Name = updatedUser.Name;
             userInDb.Phone = updatedUser.Phone;
             userInDb.City = updatedUser.City;
-            userInDb.Lat = updatedUser.Lat;
-            userInDb.Lon = updatedUser.Lon;
+            userInDb.UpdateCoordinates(updatedUser.GetLatitude(), updatedUser.GetLongitude());
             userInDb.Bio = updatedUser.Bio;
 
             // 3. Lógica de Foto

@@ -106,8 +106,6 @@
         `;
     }
 }
-
-
 function updateLocationField(city, lat, lng) {
     const locationInput = document.querySelector('input[name="City"]');
     if (locationInput) {
