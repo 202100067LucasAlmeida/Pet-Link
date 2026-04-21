@@ -33,6 +33,10 @@ namespace PetLink.Controllers
 
             int currentUserId = int.Parse(userIdString);
 
+            // Precisamos de ir buscar o animal para saber quem é o Tutor (Destinatário da Mensagem) e o Nome
+            var animal = await _context.AnimalListings.FindAsync(AnimalListingId);
+            if (animal == null) return NotFound();
+
             // 1. Evitar que a pessoa se candidate duas vezes ao mesmo animal
             var existingApp = await _context.Applications
                 .FirstOrDefaultAsync(a => a.UserId == currentUserId && a.AnimalListingId == AnimalListingId);
@@ -52,14 +56,26 @@ namespace PetLink.Controllers
                 Status = ApplicationStatus.Pending,
                 SubmittedAt = DateTime.Now
             };
-
             _context.Applications.Add(application);
+
+            // 3. NOVO: Criar a mensagem inicial no sistema de Chat!
+            var chatMessage = new PetLink.Models.Message
+            {
+                SenderId = currentUserId,
+                ReceiverId = animal.TutorId,
+                AnimalListingId = AnimalListingId, // O contexto do chat (Para separar o Cooper do Rex)
+                Content = $"[Adoption Application] Hello! I'm very interested in adopting {animal.Name}.\n\nMy presentation: {Message}",
+                Timestamp = DateTime.Now,
+                IsRead = false
+            };
+            _context.Messages.Add(chatMessage);
+
+            // Grava a Candidatura e a Mensagem ao mesmo tempo
             await _context.SaveChangesAsync();
 
-            // 3. Mensagem de sucesso verde no ecrã
-            TempData["Success"] = "Your adoption request has been sent to the tutor!";
+            // 4. Mensagem de sucesso verde no ecrã
+            TempData["Success"] = "Your adoption request has been sent! Check your messages to talk with the tutor.";
 
-            // 4. Redireciona de volta para a página do animal
             return RedirectToAction("Details", "AnimalListings", new { id = AnimalListingId });
         }
 

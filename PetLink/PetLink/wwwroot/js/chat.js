@@ -44,12 +44,13 @@ function initChat(currentUserId) {
         .then(() => {
             console.log("SignalR ligado.");
             const receiverId = $("#receiverId").val();
+            const animalId = $("#animalId").val(); // Lê o ID que puseste no HTML no passo anterior
 
             if (receiverId) {
-                connection.invoke("JoinChat", parseInt(currentUserId), parseInt(receiverId))
+                connection.invoke("JoinChat", parseInt(currentUserId), parseInt(receiverId), animalId ? parseInt(animalId) : null)
                     .then(() => {
-                        console.log("Entrei na sala.");
-                        scrollToBottom(); // Scroll inicial ao entrar
+                        console.log("Entrei na sala do pet.");
+                        scrollToBottom();
                     })
                     .catch(err => console.error("Erro ao entrar na sala:", err));
             }
@@ -78,20 +79,26 @@ function generateMessageHtml(content, time, isMine) {
 $(document).on("submit", "#sendMessageForm", function (e) {
     e.preventDefault();
     const receiverId = $("#receiverId").val();
+    const animalId = $("#animalId").val(); // <-- LER O ID DO ANIMAL DO HTML
     const content = $("#messageInput").val();
     
     if (content.trim() && receiverId && connection) {
         // Limpar input imediatamente para melhor UX
         $("#messageInput").val("").focus();
 
-        connection.invoke("SendChatMessage", parseInt(receiverId), content.trim())
-            .then(() => {
-                scrollToBottom();
-            })
-            .catch(err => {
-                console.error("Erro ao enviar:", err);
-                alert("Could not send message. Try again.");
-            });
+        // Enviar DIRETAMENTE para o teu Hub C# (que trata da BD e do E-mail)
+        connection.invoke("SendChatMessage", 
+            parseInt(receiverId), 
+            animalId ? parseInt(animalId) : null, 
+            content.trim()
+        )
+        .then(() => {
+            scrollToBottom();
+        })
+        .catch(err => {
+            console.error("Erro ao enviar via Hub:", err);
+            alert("Could not send message. Try again.");
+        });
     }
 });
 

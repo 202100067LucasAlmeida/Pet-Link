@@ -5,14 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace PetLink.Hubs
 {
     public class ChatHub : Hub
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
-         private readonly IServiceScopeFactory _scopeFactory; 
+        private readonly IServiceScopeFactory _scopeFactory;
 
         public ChatHub(ApplicationDbContext context, IEmailService emailService, IServiceScopeFactory scopeFactory)
         {
@@ -21,7 +20,8 @@ namespace PetLink.Hubs
             _scopeFactory = scopeFactory;
         }
 
-        public async Task SendChatMessage(int receiverId, string content)
+        // NOVO: Recebe o animalId
+        public async Task SendChatMessage(int receiverId, int? animalId, string content)
         {
             // 1. Validar utilizador
             var senderIdClaim = Context.User?.FindFirst("UserId")?.Value;
@@ -37,50 +37,49 @@ namespace PetLink.Hubs
                 {
                     SenderId = senderId,
                     ReceiverId = receiverId,
+                    AnimalListingId = animalId, // NOVO: Guarda o contexto do animal!
                     Content = content.Trim(),
                     Timestamp = DateTime.Now,
                     IsRead = false
                 };
 
                 _context.Messages.Add(message);
-                await _context.SaveChangesAsync(); // Se isto falhar, o código abaixo não corre
+                await _context.SaveChangesAsync();
 
                 // ========== ENVIAR NOTIFICAÇÃO POR EMAIL ==========
-                 _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        using (var scope = _scopeFactory.CreateScope())
-                        {
-                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                            var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
-                            
-                            var sender = await dbContext.Users.FindAsync(senderId);
-                            var receiver = await dbContext.Users.FindAsync(receiverId);
+                _ = Task.Run(async () =>
+               {
+                   try
+                   {
+                       using (var scope = _scopeFactory.CreateScope())
+                       {
+                           var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                           var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-                            if (receiver != null && !string.IsNullOrEmpty(receiver.Email))
-                            {
-                                await emailService.SendNewMessageNotificationAsync(
-                                    receiver.Email,
-                                    receiver.Name,
-                                    sender?.Name ?? "Someone",
-                                    content.Length > 100 ? content.Substring(0, 100) + "..." : content
-                                );
-                                Console.WriteLine("✅ Email enviado com sucesso!");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"❌ Erro ao enviar email: {ex.Message}");
-                    }
-                });
-                
-                // 3. Identificar o Grupo (Sala de chat privada entre os dois)
-                string groupName = GetGroupName(senderId, receiverId);
+                           var sender = await dbContext.Users.FindAsync(senderId);
+                           var receiver = await dbContext.Users.FindAsync(receiverId);
 
-                // 4. Notificar TODOS no grupo (Sender e Receiver)
-                // O SignalR enviará para todos os dispositivos ligados destes dois users nessa sala
+                           if (receiver != null && !string.IsNullOrEmpty(receiver.Email))
+                           {
+                               await emailService.SendNewMessageNotificationAsync(
+                                   receiver.Email,
+                                   receiver.Name,
+                                   sender?.Name ?? "Someone",
+                                   content.Length > 100 ? content.Substring(0, 100) + "..." : content
+                               );
+                           }
+                       }
+                   }
+                   catch (Exception ex)
+                   {
+                       Console.WriteLine($"❌ Erro ao enviar email: {ex.Message}");
+                   }
+               });
+
+                // 3. Identificar o Grupo (Agora separado pelo Animal)
+                string groupName = GetGroupName(senderId, receiverId, animalId);
+
+                // 4. Notificar TODOS no grupo
                 await Clients.Group(groupName).SendAsync("ReceiveMessage",
                     senderId,
                     message.Content,
@@ -88,25 +87,29 @@ namespace PetLink.Hubs
             }
             catch (Exception ex)
             {
-                // Log do erro para saberes porque não gravou
                 Console.WriteLine($"[SignalR Error]: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task JoinChat(int userId1, int userId2)
+        // NOVO: O JoinChat também tem de saber de que animal estamos a falar
+        public async Task JoinChat(int userId1, int userId2, int? animalId)
         {
-            string groupName = GetGroupName(userId1, userId2);
+            string groupName = GetGroupName(userId1, userId2, animalId);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             Console.WriteLine($"[SignalR]: User {Context.ConnectionId} joined {groupName}");
         }
 
-        private string GetGroupName(int id1, int id2)
+        // NOVO: A lógica que cria o nome da sala de forma única
+        private string GetGroupName(int id1, int id2, int? animalId)
         {
-            // Garante que o nome do grupo é sempre igual (ex: 3_5) independentemente de quem inicia
             var list = new List<int> { id1, id2 };
             list.Sort();
-            return $"chat_{list[0]}_{list[1]}";
+
+            // Se houver animal, a sala é "chat_3_5_pet_12". Se não houver, é "chat_3_5".
+            return animalId.HasValue
+                ? $"chat_{list[0]}_{list[1]}_pet_{animalId.Value}"
+                : $"chat_{list[0]}_{list[1]}";
         }
     }
 }
