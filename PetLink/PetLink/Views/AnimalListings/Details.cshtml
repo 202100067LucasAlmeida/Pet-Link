@@ -104,14 +104,27 @@
 
                             @if (!ViewBag.IsOwner)
                             {
-                                <button class="btn btn-primary fw-bold rounded-pill px-5 py-2" id="adoptBtn">
-                                    Adopt @Model.Name
-                                </button>
+                                @* Verifica se já se candidatou (usando a variável que criámos antes) *@
+                                @if (ViewBag.HasApplied != null && ViewBag.HasApplied)
+                                {
+                                    <div class="alert border-0 rounded-4 text-center"
+                                         style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                        <i class="bi bi-check-circle-fill me-2"></i> You have already applied to adopt
+                                        @Model.Name!
+                                    </div>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-primary fw-bold rounded-pill px-5 py-2"
+                                            data-bs-toggle="modal" data-bs-target="#adoptModal">
+                                        Adopt @Model.Name
+                                    </button>
 
-                                <p class="mt-3 small text-secondary-grey">
-                                    By clicking "Adopt", you agree to our
-                                    <a href="#" class="text-decoration-none">Adoption Terms</a>.
-                                </p>
+                                    <p class="mt-3 small text-secondary-grey">
+                                        By clicking "Adopt", you agree to our
+                                        <a href="#" class="text-decoration-none">Adoption Terms</a>.
+                                    </p>
+                                }
                             }
                             else
                             {
@@ -168,10 +181,10 @@
                 @if (User.Identity.IsAuthenticated && ViewBag.CanReview != null && ViewBag.CanReview == true)
                 {
                     <div class="mt-4">
-                    <a asp-controller="Review" asp-action="Create" asp-route-animalListingId="@Model.Id" 
-                    class="btn btn-outline-warning rounded-pill">
-                    <i class="bi bi-star-fill me-2"></i> Review This Adoption
-                    </a>
+                        <a asp-controller="Review" asp-action="Create" asp-route-animalListingId="@Model.Id"
+                               class="btn btn-outline-warning rounded-pill">
+                            <i class="bi bi-star-fill me-2"></i> Review This Adoption
+                        </a>
                     </div>
                 }
             </div>
@@ -213,7 +226,7 @@
                         <div class="card-body" id="chatBox"
                              style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
                             @if (ViewBag.ChatHistory != null &&
-                                                                                    ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
+                                                                                                                                        ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
                             {
                                 var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
                                 foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
@@ -223,7 +236,7 @@
                                         <div class="p-3 shadow-sm"
                                              style="max-width: 85%; font-size: 0.85rem; border-radius: 15px; 
                                             @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
-                                                                                                                                                                                                                                                                                                                                                                                                        : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
                                             <p class="mb-1">@msg.Content</p>
                                             <div class="text-end" style="font-size: 0.6rem; opacity: 0.6;">
                                                 @msg.Timestamp.ToString("HH:mm")
@@ -293,6 +306,49 @@
     </div>
 </section>
 
+<div class="modal fade" id="adoptModal" tabindex="-1" aria-labelledby="adoptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary-darkblue" id="adoptModalLabel">Adopt @Model.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form asp-controller="Applications" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="AnimalListingId" value="@Model.Id" />
+                
+                <div class="modal-body">
+                    <p class="text-secondary-grey small mb-4">
+                        You are about to send an adoption request to <strong>@(Model.Tutor?.Name ?? "the shelter")</strong>. Please introduce yourself and explain why you would be a great match for
+                        @Model.Name!
+                    </p>
+                    
+                    <div class="mb-3">
+                        <label for="Message" class="form-label fw-bold text-primary-darkblue">Your Message</label>
+                        <textarea class="form-control rounded-3" id="Message" name="Message" rows="4" required
+                                  placeholder="Hi! I would love to adopt @Model.Name because..."></textarea>
+                    </div>
+                    
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="acceptTerms" required>
+                        <label class="form-check-label text-secondary-grey small" for="acceptTerms">
+                            I accept the <a href="#" class="text-decoration-none">Terms and Conditions</a> of the
+                            adoption process, and I confirm that I am able to provide a safe and loving home.
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill fw-bold" id="confirmAdoptBtn"
+                            disabled>Send Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="~/js/adopt.js" asp-append-version="true"></script>
 
 @section Scripts {
@@ -360,6 +416,10 @@
                     });
                 }, 2000);
             }
+
+            $('#acceptTerms').change(function () {
+                $('#confirmAdoptBtn').prop('disabled', !this.checked);
+            });
         });
     </script>
 }

@@ -30,7 +30,7 @@ namespace PetLink.Models
         public bool IsDewormed { get; set; }
         public bool IsSterilized { get; set; }
 
-        public ListingStatus Status { get; set; } = ListingStatus.Pendent;
+        public ListingStatus Status { get; set; } = ListingStatus.Pending;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

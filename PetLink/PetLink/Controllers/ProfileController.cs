@@ -373,7 +373,7 @@ namespace PetLink.Controllers
             {
                 pendingListingsForAdmin = await _context.AnimalListings
                     .Include(a => a.Tutor)
-                    .Where(a => a.Status == ListingStatus.Pendent)
+                    .Where(a => a.Status == ListingStatus.Pending)
                     .OrderByDescending(a => a.CreatedAt)
                     .ToListAsync();
 

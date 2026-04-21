@@ -1,14 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PetLink.Controllers;
 using PetLink.Data;
 using PetLink.Hubs;
 using PetLink.Models;
 using PetLink.Models.Enums;
-using Microsoft.AspNetCore.Authorization;
-using PetLink.Models.Enums;
 
-using PetLink.Controllers;
 namespace PetLink
 {
     public class AnimalListingsController : BaseController
@@ -37,65 +36,79 @@ namespace PetLink
 
             if (listing == null) return NotFound();
 
-            // Verificar se o utilizador logado é o dono do anúncio
-            bool isOwner = false;
             var userIdClaim = User.FindFirst("UserId")?.Value;
+            bool isAuthenticated = int.TryParse(userIdClaim, out int currentUserId);
 
-            if (!string.IsNullOrEmpty(userIdClaim))
+            // Segurança: Ocultar anúncios não publicados, exceto para o dono ou Admin
+            if (listing.Status != ListingStatus.Published)
             {
-                int currentUserId = int.Parse(userIdClaim);
-                isOwner = (listing.TutorId == currentUserId);
-
-                // Só carrega o histórico de mensagens se NÃO for o dono
-                if (!isOwner)
-                {
-                    ViewBag.ChatHistory = await _context.Messages
-                        .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
-                                    (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
-                        .OrderBy(m => m.Timestamp)
-                        .ToListAsync();
-                }
+                bool isAuthorized = isAuthenticated && (listing.TutorId == currentUserId || User.IsInRole("Admin"));
+                if (!isAuthorized) return Forbid();
             }
 
-            // Lógica para carregar OtherPets
-            // Passar a variável limpa para a View
-            ViewBag.IsOwner = isOwner;
+            bool isOwner = isAuthenticated && (listing.TutorId == currentUserId);
+            bool hasApplied = false;
+            ApplicationStatus? myApplicationStatus = null;
+            bool canReview = false;
 
-            // Atenção aqui: também mudei para usar o realId
-            ViewBag.OtherPets = _context.AnimalListings.Where(a => a.Id != id).Take(4).ToList();
-
-            // ========== LÓGICA PARA VERIFICAR SE PODE AVALIAR ==========
-            var canReview = false;
-            if (!string.IsNullOrEmpty(userIdClaim))
+            if (isAuthenticated && !isOwner)
             {
-                int currentUserId = int.Parse(userIdClaim);
-                
-                // Verificar se o utilizador adotou este animal (status Completed)
+                // Carregar o histórico de mensagens
+                ViewBag.ChatHistory = await _context.Messages
+                    .Where(m => (m.SenderId == currentUserId && m.ReceiverId == listing.TutorId) ||
+                                (m.SenderId == listing.TutorId && m.ReceiverId == currentUserId))
+                    .OrderBy(m => m.Timestamp)
+                    .ToListAsync();
+
+                // Verificar se já existe candidatura
                 var application = await _context.Applications
-                    .FirstOrDefaultAsync(a => a.UserId == currentUserId && 
-                                             a.AnimalListingId == id &&
-                                             a.Status == ApplicationStatus.Completed);
-                
+                    .FirstOrDefaultAsync(a => a.UserId == currentUserId && a.AnimalListingId == id);
+
                 if (application != null)
                 {
-                    // Verificar se já fez review
-                    var existingReview = await _context.Reviews
-                        .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && 
-                                                 r.AnimalListingId == id);
-                    
-                    // Verificar se o Tutor do animal pode receber avaliações (User ou PetSitter)
-                    var canReceiveReview = (listing.Tutor != null && 
-                                           (listing.Tutor.Role == UserRole.User || 
-                                            listing.Tutor.Role == UserRole.PetSitter));
-                    
-                    canReview = existingReview == null && canReceiveReview;
+                    hasApplied = true;
+                    myApplicationStatus = application.Status;
+
+                    // Lógica para verificar se pode avaliar (apenas se a adoção foi concluída)
+                    if (application.Status == ApplicationStatus.Completed)
+                    {
+                        var existingReview = await _context.Reviews
+                            .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && r.AnimalListingId == id);
+
+                        bool canReceiveReview = listing.Tutor != null &&
+                                                (listing.Tutor.Role == UserRole.User || listing.Tutor.Role == UserRole.PetSitter);
+
+                        canReview = existingReview == null && canReceiveReview;
+                    }
                 }
             }
-            
+
+            ViewBag.IsOwner = isOwner;
+            ViewBag.HasApplied = hasApplied;
+            ViewBag.MyApplicationStatus = myApplicationStatus;
             ViewBag.CanReview = canReview;
-            // ========== FIM DA LÓGICA ==========
+            ViewBag.OtherPets = await _context.AnimalListings.Where(a => a.Id != id).Take(4).ToListAsync();
 
             return View(listing);
+        }
+
+        // GET: Lista as candidaturas enviadas pelo Adotante
+        [Authorize]
+        public async Task<IActionResult> MyApplications()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
+            int currentUserId = int.Parse(userIdClaim);
+
+            var myApplications = await _context.Applications
+                .Include(a => a.AnimalListing)
+                    .ThenInclude(l => l.Tutor)
+                .Where(a => a.UserId == currentUserId)
+                .OrderByDescending(a => a.SubmittedAt)
+                .ToListAsync();
+
+            return View(myApplications);
         }
 
         // GET: AnimalListings/Create
@@ -115,42 +128,22 @@ namespace PetLink
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
 
-            // validação Server-side
-            bool hasValidationErrors = false;
-
-            // idade
+            // Validação customizada
             if (animalListing.AgeMonths < 0)
-            {
-                ModelState.AddModelError("AgeMonths", "Age must be 0 or greater");
-                hasValidationErrors = true;
-            }
+                ModelState.AddModelError("AgeMonths", "Age must be 0 or greater.");
 
-            // vacinas
             if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
-            {
-                ModelState.AddModelError("IsVaccinated", "At least one of the three (Vaccinated, Dewormed, or Sterilized) must be selected");
-                hasValidationErrors = true;
-            }
+                ModelState.AddModelError("IsVaccinated", "At least one health status (Vaccinated, Dewormed, or Sterilized) must be selected.");
 
-            // foto
             if (mainPhoto == null || mainPhoto.Length == 0)
-            {
-                ModelState.AddModelError("mainPhoto", "At least one photo, for the main display, is required");
-                hasValidationErrors = true;
-            }
+                ModelState.AddModelError("mainPhoto", "A main photo is required.");
 
-            if (ModelState.IsValid && !hasValidationErrors)
+            if (ModelState.IsValid)
             {
-                // Forçar dados automáticos
                 animalListing.TutorId = int.Parse(userIdClaim);
-                animalListing.Status = ListingStatus.Pendent;
+                animalListing.Status = ListingStatus.Pending;
                 animalListing.CreatedAt = DateTime.Now;
-
-                // Upload da Imagem Principal
-                if (mainPhoto != null && mainPhoto.Length > 0)
-                {
-                    animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
-                }
+                animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
 
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();
@@ -161,13 +154,13 @@ namespace PetLink
                     animalListing.TutorId
                 );
 
-
                 return RedirectToAction(nameof(MyListings));
             }
+
             return View(animalListing);
         }
 
-        // GET: Responsável por abrir a página de edição
+        // GET: AnimalListings/Edit/5
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
@@ -177,12 +170,10 @@ namespace PetLink
             var animalListing = await _context.AnimalListings.FindAsync(id);
             if (animalListing == null) return NotFound();
 
-            // Segurança: Só o dono ou Admin edita
-            var userId = int.Parse(User.FindFirst("UserId").Value);
+            int userId = int.Parse(User.FindFirst("UserId").Value);
             if (animalListing.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
 
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
-
             return View(animalListing);
         }
 
@@ -194,34 +185,31 @@ namespace PetLink
         {
             if (id != animalListing.Id) return NotFound();
 
-            // 1. Procurar o animal, e tutor, original na base de dados
             var existingListing = await _context.AnimalListings
                 .Include(a => a.Tutor)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (existingListing == null) return NotFound();
 
-            // 2. Segurança: Só o Dono ou Admin podem editar
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+            
             int userId = int.Parse(userIdClaim);
+            bool isAdmin = User.IsInRole("Admin");
 
-            if (existingListing.TutorId != userId && !User.IsInRole("Admin")) return Forbid();
+            if (existingListing.TutorId != userId && !isAdmin) return Forbid();
 
-            // 3. Limpar validações de propriedades de navegação que não vêm do Form
             ModelState.Remove("Tutor");
             ModelState.Remove("Favorites");
             ModelState.Remove("Photos");
             ModelState.Remove("mainPhoto");
 
-            // guardar o status original
             var oldStatus = existingListing.Status.ToString();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // 4. Mapear manualmente os campos para garantir que o EF rastreia as mudanças
                     existingListing.Name = animalListing.Name;
                     existingListing.Species = animalListing.Species;
                     existingListing.AgeMonths = animalListing.AgeMonths;
@@ -231,40 +219,36 @@ namespace PetLink
                     existingListing.IsDewormed = animalListing.IsDewormed;
                     existingListing.IsSterilized = animalListing.IsSterilized;
 
-                    // 5. Lógica de ADMIN: Apenas Admin altera Status e Tutor
-                    if (User.IsInRole("Admin") && existingListing.Status != animalListing.Status)
+                    if (isAdmin)
                     {
-                        existingListing.Status = animalListing.Status;
+                        if (existingListing.Status != animalListing.Status)
+                        {
+                            existingListing.Status = animalListing.Status;
+                            await _notificationService.CreateListingStatusNotificationAsync(
+                                existingListing.TutorId,
+                                existingListing.Name,
+                                existingListing.Id,
+                                oldStatus,
+                                animalListing.Status.ToString()
+                            );
+                        }
 
-                        // Create notification for the tutor about status change
-                        var newStatus = animalListing.Status.ToString();
-                        await _notificationService.CreateListingStatusNotificationAsync(
-                            existingListing.TutorId,
-                            existingListing.Name,
-                            existingListing.Id,
-                            oldStatus,
-                            newStatus
-                        );
+                        if (existingListing.TutorId != animalListing.TutorId)
+                        {
+                            existingListing.TutorId = animalListing.TutorId;
+                        }
                     }
 
-                    if (User.IsInRole("Admin") && existingListing.TutorId != animalListing.TutorId)
-                    {
-                        existingListing.TutorId = animalListing.TutorId;
-                    }
-
-                    // 6. Lógica de Imagem
                     if (mainPhoto != null && mainPhoto.Length > 0)
                     {
-                        // Opcional: Apagar a imagem antiga do servidor antes de salvar a nova
                         existingListing.ImageUrl = await UploadImage(mainPhoto, "animals");
                     }
 
-                    // 7. Salvar as alterações
                     _context.Update(existingListing);
                     await _context.SaveChangesAsync();
 
                     TempData["Success"] = "Changes saved successfully!";
-                    return User.IsInRole("Admin") ? RedirectToAction(nameof(Manage)) : RedirectToAction(nameof(MyListings));
+                    return isAdmin ? RedirectToAction(nameof(Manage)) : RedirectToAction(nameof(MyListings));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -277,7 +261,6 @@ namespace PetLink
                 }
             }
 
-            // Se falhar, repopula os dados necessários para a View
             ViewData["TutorId"] = new SelectList(_context.Users, "Id", "Email", animalListing.TutorId);
             return View(animalListing);
         }
@@ -285,36 +268,38 @@ namespace PetLink
         // GET: AnimalListings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var animalListing = await _context.AnimalListings
                 .Include(a => a.Tutor)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (animalListing == null)
-            {
-                return NotFound();
-            }
+
+            if (animalListing == null) return NotFound();
 
             return View(animalListing);
         }
 
-        public async Task<IActionResult> Search(Species? species,
-                                                string? location,
-                                                Age? age,
-                                                string? sort,
-                                                string? range)
+        // POST: AnimalListings/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var animalListing = await _context.AnimalListings.FindAsync(id);
+            if (animalListing != null)
+            {
+                _context.AnimalListings.Remove(animalListing);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Manage));
+        }
+
+        public async Task<IActionResult> Search(Species? species, string? location, Age? age, string? sort, string? range)
         {
             var query = _context.AnimalListings
-                        .Include(t => t.Tutor)
-                        .AsQueryable();
+                .Include(t => t.Tutor)
+                .Where(p => p.Status == ListingStatus.Published);
 
-            // Apenas animais publicados, autorizados pelo administrador
-            query = query.Where(p => p.Status == ListingStatus.Published);
-
-            // Store active filters in ViewBag for the view
             ViewBag.ActiveFilters = new Dictionary<string, object>();
 
             if (species.HasValue)
@@ -335,7 +320,6 @@ namespace PetLink
                 ViewBag.ActiveFilters["Age"] = age.Value;
             }
 
-            // Store range if needed for distance filtering
             if (!string.IsNullOrWhiteSpace(range) && int.TryParse(range, out int rangeValue))
             {
                 ViewBag.ActiveFilters["Range"] = rangeValue;
@@ -349,7 +333,6 @@ namespace PetLink
 
             var results = await query.ToListAsync();
 
-            // Store current filter values to repopulate the form
             ViewBag.CurrentSpecies = species;
             ViewBag.CurrentLocation = location;
             ViewBag.CurrentAge = age;
@@ -358,27 +341,7 @@ namespace PetLink
             return View("Index", results);
         }
 
-        // POST: AnimalListings/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var animalListing = await _context.AnimalListings.FindAsync(id);
-            if (animalListing != null)
-            {
-                _context.AnimalListings.Remove(animalListing);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Manage));
-        }
-
-        private bool AnimalListingExists(int id)
-        {
-            return _context.AnimalListings.Any(e => e.Id == id);
-        }
-
-        // GET: AnimalListings/Manage
+        // GET: AnimalListings/Manage (Admin apenas)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
         {
@@ -389,6 +352,8 @@ namespace PetLink
 
             return View(allListings);
         }
+
+        // GET: Meus anúncios
         [Authorize]
         public async Task<IActionResult> MyListings()
         {
@@ -405,22 +370,25 @@ namespace PetLink
             return View(myListings);
         }
 
+        private bool AnimalListingExists(int id)
+        {
+            return _context.AnimalListings.Any(e => e.Id == id);
+        }
+
         private async Task<string> UploadImage(IFormFile file, string subFolder)
         {
             if (file == null || file.Length == 0) return null;
 
-            // Criar um nome único para evitar ficheiros repetidos
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-            // Caminho físico: wwwroot/images/subFolder/nome.jpg
             string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", subFolder, fileName);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(uploadPath)); // Garantir que a pasta existe
 
             using (var stream = new FileStream(uploadPath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            // Caminho para guardar na BD (URL relativa)
             return $"/images/{subFolder}/{fileName}";
         }
     }

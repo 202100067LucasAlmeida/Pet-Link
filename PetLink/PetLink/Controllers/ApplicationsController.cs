@@ -5,16 +5,17 @@ using PetLink.Data;
 using PetLink.Models;
 using PetLink.Models.Enums;
 using PetLink.Services;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
-    [Authorize(Roles = "Admin,Shelter")]
+    [Authorize]
     public class ApplicationsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmailService _emailService;
+        private readonly IEmailService _emailService; // Adicionado para não dar erro no Complete
 
         public ApplicationsController(ApplicationDbContext context, IEmailService emailService)
         {
@@ -22,7 +23,48 @@ namespace PetLink.Controllers
             _emailService = emailService;
         }
 
+        // POST: /Applications/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(int AnimalListingId, string Message)
+        {
+            var userIdString = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
+
+            int currentUserId = int.Parse(userIdString);
+
+            // 1. Evitar que a pessoa se candidate duas vezes ao mesmo animal
+            var existingApp = await _context.Applications
+                .FirstOrDefaultAsync(a => a.UserId == currentUserId && a.AnimalListingId == AnimalListingId);
+
+            if (existingApp != null)
+            {
+                TempData["Error"] = "You have already applied for this pet.";
+                return RedirectToAction("Details", "AnimalListings", new { id = AnimalListingId });
+            }
+
+            // 2. Criar a nova candidatura
+            var application = new Application
+            {
+                UserId = currentUserId,
+                AnimalListingId = AnimalListingId,
+                Message = Message,
+                Status = ApplicationStatus.Pending,
+                SubmittedAt = DateTime.Now
+            };
+
+            _context.Applications.Add(application);
+            await _context.SaveChangesAsync();
+
+            // 3. Mensagem de sucesso verde no ecrã
+            TempData["Success"] = "Your adoption request has been sent to the tutor!";
+
+            // 4. Redireciona de volta para a página do animal
+            return RedirectToAction("Details", "AnimalListings", new { id = AnimalListingId });
+        }
+
         // GET: Applications/Manage
+        [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Manage()
         {
             var applications = await _context.Applications
@@ -36,6 +78,7 @@ namespace PetLink.Controllers
 
         // POST: Applications/Approve/5
         [HttpPost]
+        [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Approve(int id)
         {
             var application = await _context.Applications.FindAsync(id);
@@ -51,6 +94,7 @@ namespace PetLink.Controllers
 
         // POST: Applications/Complete/5
         [HttpPost]
+        [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Complete(int id)
         {
             var application = await _context.Applications
@@ -79,6 +123,7 @@ namespace PetLink.Controllers
 
         // POST: Applications/Reject/5
         [HttpPost]
+        [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Reject(int id)
         {
             var application = await _context.Applications.FindAsync(id);
