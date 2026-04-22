@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using PetLink.Models;
+using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
@@ -16,10 +17,7 @@ namespace PetLink.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var sitters = await _context.Petsitters
-                                        .Include(p => p.User)
-                                        .ToListAsync();
-            return View(sitters);
+            return await Search(null, null, null);
         }
 
         // GET: Petsitter/Details/5
@@ -63,11 +61,33 @@ namespace PetLink.Controllers
             return View(sitter);
         }
 
-        public async Task<IActionResult> Search()
+        public async Task<IActionResult> Search(ServiceType? serviceType,
+                                                decimal? maxRate,
+                                                PetPreferences? petPreferences)
         {
 
+            var query = _context.Petsitters
+                        .Include(p => p.User)
+                        .AsQueryable();
 
-            return View();
+            if (serviceType.HasValue)
+            {
+                query = query.Where(p => p.serviceType == serviceType.Value);
+            }
+
+            if (maxRate.HasValue)
+            {
+                query = query.Where(p => p.HourlyRate <= maxRate.Value);
+            }
+
+            if (petPreferences.HasValue)
+            {
+                query = query.Where(p => p.petPreferences == petPreferences.Value);
+            }
+
+            var results = await query.ToListAsync();
+
+            return View("Index", results);
         }
     }
 }

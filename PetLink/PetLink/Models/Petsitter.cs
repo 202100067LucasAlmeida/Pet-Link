@@ -1,3 +1,4 @@
+using PetLink.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +15,10 @@ namespace PetLink.Models
         public User? User { get; set; }
 
         public int Age { get; set; }
+
+        public ServiceType serviceType { get; set; }
+
+        public PetPreferences petPreferences { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal HourlyRate { get; set; }

@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260407230326_UserLocations")]
-    partial class UserLocations
+    [Migration("20260422094059_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,6 +285,12 @@ namespace PetLink.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("petPreferences")
+                        .HasColumnType("int");
+
+                    b.Property<int>("serviceType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

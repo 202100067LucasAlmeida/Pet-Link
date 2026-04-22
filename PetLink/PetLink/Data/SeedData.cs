@@ -126,6 +126,8 @@ namespace PetLink.Data
                     {
                         UserId = sitter1.Id,
                         Age = 31,
+                        serviceType = ServiceType.Walking,
+                        petPreferences = PetPreferences.SmallDogs,
                         HourlyRate = 3.00m,
                         Rating = 4.9,
                         LocationZone = "Downtown",
@@ -137,6 +139,8 @@ namespace PetLink.Data
                     {
                         UserId = sitter2.Id,
                         Age = 42,
+                        serviceType = ServiceType.Boarding,
+                        petPreferences = PetPreferences.Cats,
                         HourlyRate = 7.00m,
                         Rating = 5.0,
                         LocationZone = "Westside",
@@ -148,6 +152,8 @@ namespace PetLink.Data
                     {
                         UserId = sitter3.Id,
                         Age = 21,
+                        serviceType = ServiceType.HouseSitting,
+                        petPreferences = PetPreferences.Exotic,
                         HourlyRate = 5.00m,
                         Rating = 4.8,
                         LocationZone = "North Park",
