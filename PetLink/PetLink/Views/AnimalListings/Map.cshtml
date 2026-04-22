@@ -1,0 +1,210 @@
+@using PetLink.Models.Enums
+@model IEnumerable<PetLink.Models.AnimalListing>
+
+@{
+    ViewData["Title"] = "Map Explorer";
+    Layout = "_Layout"; 
+}
+
+<style>
+    body { overflow: hidden; } 
+    
+    .sidebar-scroll {
+        overflow-y: auto;
+        flex-grow: 1;
+        height: 0;
+    }
+    
+    .sidebar-scroll::-webkit-scrollbar { width: 6px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { 
+        background-color: rgba(0, 0, 0, 0.15);
+        border-radius: 10px; 
+    }
+</style>
+
+<div class="container-fluid p-0" style="height: calc(100vh - 76px); background-color: var(--petlink-card-bg);">
+    <div class="row g-0 h-100">
+        
+        <div class="col-lg-4 col-xl-3 d-flex flex-column shadow-sm" style="background-color: var(--petlink-card-bg); z-index: 10; border-right: 1px solid var(--petlink-border);">
+            
+            <div class="p-4 border-bottom" style="border-color: var(--petlink-border) !important;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h1 class="h4 text-primary-darkblue fw-bold mb-0">Map Explorer</h1>
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill">List View</a>
+                </div>
+
+                <form asp-controller="AnimalListings" asp-action="Map" method="get">
+                    <div class="input-group mb-3 rounded-pill" style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
+                        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-secondary-grey"></i></span>
+                        <input type="text" name="location" value="@ViewBag.CurrentLocation" class="form-control border-0 bg-transparent text-primary-darkblue" placeholder="Search locations...">
+                    </div>
+
+                    <div class="d-flex gap-2 mb-3">
+                        <select name="species" class="form-select form-select-sm rounded-pill border-0 flex-grow-1 text-center fw-bold text-primary-darkblue" style="background-color: var(--petlink-grey-bg);">
+                            <option value="">All Pets</option>
+                            <option value="Dog" selected="@(ViewBag.CurrentSpecies?.ToString() == "Dog")">🐶 Dogs</option>
+                            <option value="Cat" selected="@(ViewBag.CurrentSpecies?.ToString() == "Cat")">🐱 Cats</option>
+                            <option value="Bird" selected="@(ViewBag.CurrentSpecies?.ToString() == "Bird")">🦜 Birds</option>
+                        </select>
+
+                        <select name="age" class="form-select form-select-sm rounded-pill border-0 flex-grow-1 text-center fw-bold text-primary-darkblue" style="background-color: var(--petlink-grey-bg);">
+                            <option value="">Any Age</option>
+                            <option value="@Age.Puppy" selected="@(ViewBag.CurrentAge?.ToString() == Age.Puppy.ToString())">Baby</option>
+                            <option value="@Age.Adult" selected="@(ViewBag.CurrentAge?.ToString() == Age.Adult.ToString())">Adult</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100 fw-bold">Search</button>
+                        @if(ViewBag.CurrentSpecies != null || ViewBag.CurrentLocation != null || ViewBag.CurrentAge != null)
+                        {
+                            <a asp-action="Map" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-x-lg"></i></a>
+                        }
+                    </div>
+                </form>
+            </div>
+
+            <div class="p-3">
+                <p class="small fw-bold text-secondary-grey mb-3 px-2">@Model.Count() results found</p>
+            </div>
+            
+            <div class="sidebar-scroll px-3 pb-4">
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="card mb-3 border-0 shadow-sm" style="border-radius: 12px; background-color: var(--petlink-grey-bg);">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)" 
+                                    class="w-100" 
+                                    style="height: 120px; object-fit: cover; border-top-left-radius: 12px; border-bottom-left-radius: 12px;" 
+                                    alt="@item.Name">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <h5 class="card-title mb-0 fw-bold text-primary-darkblue" style="font-size: 1rem;">@item.Name</h5>
+                                            <span class="badge bg-success rounded-pill" style="font-size: 0.6rem;">AVAILABLE</span>
+                                        </div>
+                                        <p class="card-text small text-secondary-grey mb-2"><i class="bi bi-geo-alt"></i> @item.Location</p>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none fw-bold small text-primary">View Pet <i class="bi bi-arrow-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center mt-5 text-secondary-grey">
+                        <i class="bi bi-emoji-frown fs-1 mb-2 opacity-50"></i>
+                        <p>No pets found with these filters.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-xl-9 position-relative h-100">
+            <div id="fullMap" style="height: 100%; width: 100%; z-index: 1;"></div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var petsArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
+            id = p.Id,
+            name = p.Name,
+            species = p.Species.ToString(),
+            location = p.Location,
+            ageMonths = p.AgeMonths,
+            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
+            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
+            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+        })));
+
+        var petsByLocation = {};
+        
+        petsArray.forEach(function(pet) {
+            var key = pet.lat + "_" + pet.lng;
+            if (!petsByLocation[key]) { petsByLocation[key] = []; }
+            petsByLocation[key].push(pet);
+        });
+
+        var map = L.map('fullMap', { zoomControl: false }).setView([38.7223, -9.1393], 13);
+
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        var petIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1076/1076928.png', 
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+        });
+
+        var leafletMarkers = []; 
+        
+        Object.keys(petsByLocation).forEach(function(gpsKey) {
+            var petsHere = petsByLocation[gpsKey];
+            var coords = gpsKey.split('_');
+            var lat = parseFloat(coords[0].replace(',', '.'));
+            var lng = parseFloat(coords[1].replace(',', '.'));
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                var marker = L.marker([lat, lng], {icon: petIcon}).addTo(map);
+                
+                var popupContent = `<div style="text-align: center; min-width: 170px; max-height: 250px; overflow-y: auto; padding-right: 5px;">`;
+                
+                petsHere.forEach(function(pet) {
+                    popupContent += `
+                        <div style="margin-bottom: 10px; text-align: left;">
+                            <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
+                            <h6 style="margin: 0; font-weight: bold; color: var(--petlink-primary-darkblue);">${pet.name}</h6>
+                            <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
+                            <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
+                        </div>`;
+                });
+                
+                popupContent += `</div>`;
+                marker.bindPopup(popupContent);
+                leafletMarkers.push(marker);
+            }
+        });
+
+        var boundsGroup = new L.featureGroup(leafletMarkers);
+
+        if (leafletMarkers.length > 0) {
+            map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    var userLat = position.coords.latitude;
+                    var userLng = position.coords.longitude;
+
+                    var userMarker = L.circleMarker([userLat, userLng], {
+                        radius: 8, fillColor: "#087CD9", color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9
+                    }).addTo(map).bindPopup("<b>You are here!</b>");
+
+                    if (leafletMarkers.length > 0) {
+                        boundsGroup.addLayer(userMarker); 
+                        map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+                    } else {
+                        map.setView([userLat, userLng], 13);
+                    }
+                },
+                function (error) {
+                    console.warn("Location access unavailable: " + error.message);
+                }
+            );
+        }
+    </script>
+}

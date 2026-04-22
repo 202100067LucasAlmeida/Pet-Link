@@ -193,7 +193,7 @@ namespace PetLink
 
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
-            
+
             int userId = int.Parse(userIdClaim);
             bool isAdmin = User.IsInRole("Admin");
 
@@ -390,6 +390,33 @@ namespace PetLink
             }
 
             return $"/images/{subFolder}/{fileName}";
+        }
+        // GET: AnimalListings/Map
+        public async Task<IActionResult> Map(Species? species, string? location, Age? age)
+        {
+            // Vai buscar apenas os animais publicados e os seus tutores (para ter as coordenadas)
+            var query = _context.AnimalListings
+                .Include(t => t.Tutor)
+                .Where(p => p.Status == ListingStatus.Published);
+
+            // Aplicar Filtros se existirem
+            if (species.HasValue)
+                query = query.Where(p => p.Species == species.Value);
+
+            if (!string.IsNullOrWhiteSpace(location))
+                query = query.Where(p => p.Location.Contains(location));
+
+            if (age.HasValue)
+                query = query.Where(p => p.Age == age.Value);
+
+            var results = await query.ToListAsync();
+
+            // Guardar os filtros atuais para manter a seleção visível na página
+            ViewBag.CurrentSpecies = species;
+            ViewBag.CurrentLocation = location;
+            ViewBag.CurrentAge = age;
+
+            return View(results);
         }
     }
 }
