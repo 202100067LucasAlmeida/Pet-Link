@@ -13,7 +13,8 @@
                     <span class="text-primary-lightblue">companion</span> today.
                 </h1>
 
-                <p class="lead text-secondary-grey mb-5 text-highlight-light">Connecting thousands of animals with loving
+                <p class="lead text-secondary-grey mb-5 text-highlight-light">Connecting thousands of animals with
+                    loving
                     homes.<br>Trustworthy, safe, and dedicated to animal welfare.
                 </p>
 
@@ -139,49 +140,138 @@
             }
         </div>
     </div>
-</section>
 
-@* Mudado bg-light para var(--petlink-grey-bg) e border-top para var(--petlink-border)
-<div class="text-center border-top p-5"
-     style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-3">
-                <h4 class="h5 text-primary-blue">PETLINK</h4>
-                <p class="small text-secondary-grey">Making pet adopting simple, transparent, and joyful. Our mission is to
-                    ensure every pet finds its forever home.
+    <div class="container mt-5 pt-5 border-top" style="border-color: var(--petlink-border) !important;">
+        <div class="row align-items-end mb-4">
+            <div class="col-lg-8">
+                <h2 class="bi bi-compass me-1 h3 text-primary-darkblue mb-2">Find Pets Near You</h2>
+                <p class="text-secondary-grey mb-0">
+                    Explore our interactive map to discover animals looking for a loving home in your area. 
+                    Allow location access to see exactly how close you are, and click on any paw to learn more!
                 </p>
             </div>
-
-            <div class="col-lg-3">
-                <h5 class="h6 text-primary-blue">Platform</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">How it works</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Safety center</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Success stories</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Verification process</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-3">
-                <h5 class="h6 text-primary-blue">Community</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Pet care resources</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Local shelters</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Volunteering</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Events</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-3">
-                <h5 class="h6 text-primary-blue">Support</h5>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Help Center</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Contact Us</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Privacy Policy</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary-grey text-decoration-none">Terms of Service</a></li>
-                </ul>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <span class="badge rounded-pill fw-normal px-3 py-2" style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);">
+                    <i class="bi bi-geo-fill text-primary"></i> 15km Search Radius
+                </span>
             </div>
         </div>
+
+        <div class="map-wrapper shadow-sm" style="border-radius: 16px; overflow: hidden; border: 4px solid var(--petlink-card-bg); background-color: var(--petlink-grey-bg);">
+            <div id="meuMapa" style="height: 550px; width: 100%;"></div>
+        </div>
     </div>
-</div> *@
+</section>
+
+<script>
+    var petsArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
+        id = p.Id,
+        name = p.Name,
+        species = p.Species.ToString(),
+        location = p.Location,
+        ageMonths = p.AgeMonths,
+        imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
+        lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
+        lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+    })));
+
+    var petsByLocation = {};
+    
+    petsArray.forEach(function(pet) {
+        var key = pet.lat + "_" + pet.lng; 
+        if (!petsByLocation[key]) {
+            petsByLocation[key] = [];
+        }
+        petsByLocation[key].push(pet);
+    });
+
+    var map = L.map('meuMapa').setView([38.7223, -9.1393], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var petIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/1076/1076928.png', 
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+    });
+
+    var leafletMarkers = []; 
+    
+    Object.keys(petsByLocation).forEach(function(gpsKey) {
+        var petsHere = petsByLocation[gpsKey];
+        var coords = gpsKey.split('_');
+        var lat = parseFloat(coords[0].replace(',', '.'));
+        var lng = parseFloat(coords[1].replace(',', '.'));
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+            var marker = L.marker([lat, lng], {icon: petIcon}).addTo(map);
+            
+            var popupContent = `<div style="text-align: center; min-width: 170px; max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">`;
+            
+            if(petsHere.length > 1) {
+                popupContent += `
+                    <div style="position: sticky; top: 0; background: white; padding-bottom: 5px; border-bottom: 2px solid var(--petlink-border); margin-bottom: 10px; z-index: 2;">
+                        <span class="badge bg-primary rounded-pill mb-1" style="font-family: var(--font-primary);">${petsHere.length} Pets Here</span>
+                    </div>`;
+            }
+
+            petsHere.forEach(function(pet) {
+                popupContent += `
+                    <div style="margin-bottom: 15px; background: var(--petlink-grey-bg); padding: 8px; border-radius: 12px; border: 1px solid var(--petlink-border);">
+                        <img src="${pet.imageUrl}" alt="${pet.name}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                        <h6 style="margin: 0; font-weight: bold; color: var(--petlink-primary-darkblue); font-family: var(--font-primary);">${pet.name}</h6>
+                        <p style="margin: 0; font-size: 11px; color: var(--petlink-secondary-grey);">${pet.species} • ${pet.ageMonths} mo.</p>
+                        <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm w-100 mt-2" style="background-color: var(--petlink-primary); color: white; border-radius: 20px; font-weight: bold; font-size: 12px;">Adopt ${pet.name}</a>
+                    </div>
+                `;
+            });
+
+            popupContent += `</div>`;
+            marker.bindPopup(popupContent);
+            leafletMarkers.push(marker);
+        }
+    });
+
+    var boundsGroup = new L.featureGroup(leafletMarkers);
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                var userLat = position.coords.latitude;
+                var userLng = position.coords.longitude;
+
+                var userMarker = L.circleMarker([userLat, userLng], {
+                    radius: 8,
+                    fillColor: "#087CD9",
+                    color: "#fff",
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                }).addTo(map).bindPopup("<b style='color: var(--petlink-primary-darkblue);'>You are here!</b>").openPopup();
+
+                L.circle([userLat, userLng], {
+                    color: '#087CD9',
+                    fillColor: '#087CD9',
+                    fillOpacity: 0.1,
+                    radius: 15000 
+                }).addTo(map);
+
+                boundsGroup.addLayer(userMarker); 
+                map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 15 }); 
+            },
+            
+            function (error) {
+                console.warn("Location access unavailable: " + error.message);
+                if (leafletMarkers.length > 0) {
+                    map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+                }
+            }
+        );
+    } else if (leafletMarkers.length > 0) {
+        map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+    }
+</script>

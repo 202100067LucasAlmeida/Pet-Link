@@ -1,0 +1,80 @@
+@model IEnumerable<PetLink.Models.Application>
+@{
+    ViewData["Title"] = "My Applications";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="text-primary-darkblue mb-4 fw-bold">My Adoption Applications</h2>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info border-0 rounded-4 text-center p-5"
+                     style="background-color: var(--petlink-light-bg);">
+                    <i class="bi bi-folder2-open mb-3 d-block" style="font-size: 3rem; color: var(--petlink-primary);"></i>
+                    <h4 class="fw-bold text-primary-darkblue">No applications yet</h4>
+                    <p class="text-secondary-grey">You haven't applied to adopt any pets yet. Find your new best friend
+                        today!</p>
+                        <a asp-controller="AnimalListings" asp-action="Index"
+                           class="btn btn-primary rounded-pill px-4 mt-2">Find a Pet</a>
+                    </div>
+                }
+            else
+                {
+                    <div class="row g-4">
+                        @foreach (var app in Model)
+                        {
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm rounded-4"
+                                     style="background-color: var(--petlink-card-bg);">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="fw-bold text-primary-darkblue mb-0">@app.AnimalListing?.Name</h4>
+                            
+                                            @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
+                                            {
+                                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
+                                            }
+                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
+                                            {
+                                                <span class="badge bg-info rounded-pill px-3 py-2">Approved</span>
+                                            }
+                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Completed)
+                                            {
+                                                <span class="badge bg-success rounded-pill px-3 py-2">Adopted!</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger rounded-pill px-3 py-2">Rejected</span>
+                                            }
+                                        </div>
+                        
+                                        <hr style="border-color: var(--petlink-border);" />
+                        
+                                        <p class="small text-secondary-grey mb-2">
+                                            <i class="bi bi-person-badge me-2"></i><strong>Tutor:</strong>
+                                            @app.AnimalListing?.Tutor?.Name
+                                        </p>
+                                        <p class="small text-secondary-grey mb-4">
+                                            <i class="bi bi-calendar-event me-2"></i><strong>Date:</strong>
+                                            @app.SubmittedAt.ToString("MMM dd, yyyy")
+                                        </p>
+                        
+                                        <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId"
+                                               class="btn btn-outline-primary btn-sm rounded-pill w-100 fw-bold">
+                                            View Pet Listing
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>

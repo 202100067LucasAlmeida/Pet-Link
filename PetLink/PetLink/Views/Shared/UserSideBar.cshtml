@@ -44,7 +44,7 @@
         </p>
 
         @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString() || userRole ==
-                UserRole.Shelter.ToString())
+                                UserRole.Shelter.ToString())
         {
             <a asp-controller="AnimalListings" asp-action="MyListings"
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyListings" ? "active" : "")">
@@ -55,7 +55,7 @@
         @if (userRole == UserRole.Shelter.ToString() || userRole == UserRole.Admin.ToString())
         {
             <a asp-controller="Applications" asp-action="Manage"
-                class="list-group-item list-group-item-action mb-1 rounded-pill">
+                   class="list-group-item list-group-item-action mb-1 rounded-pill">
                 <i class="bi bi-file-earmark-ruled-fill me-2"></i>Applications
             </a>
         }
@@ -65,6 +65,14 @@
             <a asp-controller="Favorites" asp-action="Index"
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Favorites" ? "active" : "")">
                 <i class="bi bi-heart-fill me-2"></i>My Favorites
+            </a>
+        }
+
+        @if (userRole == UserRole.User.ToString())
+        {
+            <a asp-controller="AnimalListings" asp-action="MyApplications"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "MyApplications" ? "active" : "")">
+                <i class="bi bi-file-earmark-text-fill me-2"></i>My Applications
             </a>
         }
 
@@ -90,7 +98,3 @@
         </a>
     </div>
 </div>
-
-<style>
-    
-</style>

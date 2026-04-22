@@ -43,6 +43,7 @@
                                         @foreach (var conv in Model.Conversations)
                                         {
                                             <a asp-action="Index" asp-route-id="@conv.OtherUserId"
+                                                   asp-route-animalId="@conv.AnimalListingId"
                                                    class="list-group-item list-group-item-action p-3 border-0" style="background-color: @(conv.IsActive ? "var(--petlink-light-bg)" : "transparent"); 
                                                 border-left: @(conv.IsActive ? "4px solid var(--petlink-primary)" : "none") !important;
                                                 color: var(--petlink-dark);">
@@ -66,121 +67,130 @@
                                                             <small class="text-secondary-grey"
                                                                    style="font-size: 0.7rem;">@conv.LastMessageTimestamp.ToString("HH:mm")</small>
                                                         </div>
-                                                        <p class="text-secondary-grey small m-0 text-truncate">
-                                                            @conv.LastMessagePreview
-                                                        </p>
+                                                        @if (!string.IsNullOrEmpty(conv.AnimalName))
+                                                        {
+                                                            <small class="text-primary fw-bold" style="font-size: 0.7rem;">About
+                                                                @conv.AnimalName</small>
+                                                            }
+                                                            <p class="text-secondary-grey small m-0 text-truncate">
+                                                                @conv.LastMessagePreview
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </a>
+                                                </a>
+                                            }
                                         }
-                                    }
                                     else
-                                    {
-                                        <div class="text-center p-4 mt-5 text-secondary-grey small">No messages found.</div>
-                                    }
+                                        {
+                                            <div class="text-center p-4 mt-5 text-secondary-grey small">No messages found.</div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-8 d-flex flex-column" style="background-color: var(--petlink-card-bg); height: 75vh; min-height: 600px;">
-                            @if (Model.ActiveConversation != null)
-                            {
-                                @* Header do Chat *@
-                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between shadow-sm"
-                                     style="z-index: 10; background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
-                                    <div class="d-flex align-items-center ms-2">
-                                        <img src="@(string.IsNullOrEmpty(Model.ActiveConversation.OtherUserImagePath) ? "/images/default-avatar.jpg" : Model.ActiveConversation.OtherUserImagePath)"
-                                             class="rounded-circle me-3 shadow-sm" width="40" height="40"
-                                             onerror="this.src='/images/default-avatar.jpg'" />
-                                        <div>
-                                            <h6 class="mb-0 fw-bold" style="color: var(--petlink-dark);">
-                                                @Model.ActiveConversation.OtherUserName
-                                            </h6>
-                                            <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">●
-                                                ONLINE
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="text-secondary-grey d-flex gap-3 me-2">
-                                        <i class="bi bi-telephone cursor-pointer" style="color: var(--petlink-dark);"></i>
-                                        <i class="bi bi-info-circle cursor-pointer" style="color: var(--petlink-dark);"></i>
-                                    </div>
-                                </div>
-
-                                @* Área de Mensagens *@
-                                <div class="flex-grow-1 p-4 overflow-auto" id="chatWindow"
-                                     style="background-color: var(--petlink-grey-bg); scroll-behavior: smooth;">
-                                    @foreach (var msg in Model.ActiveConversation.Messages)
-                                    {
-                                        var isMine = msg.SenderId == int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-                                        <div class="d-flex mb-4 @(isMine ? "justify-content-end" : "justify-content-start")">
-                                            @if (!isMine)
-                                            {
-                                                <img src="@(string.IsNullOrEmpty(Model.ActiveConversation.OtherUserImagePath) ? "/images/default-avatar.jpg" : Model.ActiveConversation.OtherUserImagePath)"
-                                                     class="rounded-circle me-2 align-self-end mb-1 shadow-sm" width="28" height="28"
-                                                     onerror="this.src='/images/default-avatar.jpg'">
-                                            }
-                                            <div class="p-3 shadow-sm"
-                                                 style="max-width: 75%; border-radius: 18px; 
-                                                @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
-                                                                                                                                                                                                                                                                                                                                                                                   : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
-                                                <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">@msg.Content</p>
-                                                <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">
-                                                    @msg.Timestamp.ToString("HH:mm")
-                                                </div>
+                            <div class="col-md-8 d-flex flex-column"
+                                 style="background-color: var(--petlink-card-bg); height: 75vh; min-height: 600px;">
+                                @if (Model.ActiveConversation != null)
+                                {
+                                    @* Header do Chat *@
+                                    <div class="p-3 border-bottom d-flex align-items-center justify-content-between shadow-sm"
+                                         style="z-index: 10; background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
+                                        <div class="d-flex align-items-center ms-2">
+                                            <img src="@(string.IsNullOrEmpty(Model.ActiveConversation.OtherUserImagePath) ? "/images/default-avatar.jpg" : Model.ActiveConversation.OtherUserImagePath)"
+                                                 class="rounded-circle me-3 shadow-sm" width="40" height="40"
+                                                 onerror="this.src='/images/default-avatar.jpg'" />
+                                            <div>
+                                                <h6 class="mb-0 fw-bold" style="color: var(--petlink-dark);">
+                                                    @Model.ActiveConversation.OtherUserName
+                                                </h6>
+                                                <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">●
+                                                    ONLINE
+                                                </small>
                                             </div>
                                         </div>
-                                    }
-                                    <div id="chat-anchor" style="height: 1px;"></div>
-                                </div>
-
-                                @* Footer / Input de Mensagem *@
-                                <div class="p-3 border-top"
-                                     style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
-                                    <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
-                                        <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
-                                        <input type="hidden" id="receiverId"
-                                               value="@Model.ActiveConversation?.OtherUserId" />
-                                        
-                                        <input type="text" name="content" id="messageInput"
-                                               class="form-control rounded-pill border-0 py-2 flex-grow-1"
-                                               style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);"
-                                               placeholder="Type your message here..." required autocomplete="off">
-                                        
-                                        <button type="submit"
-                                                class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                                                style="background-color: var(--petlink-primary); color: var(--petlink-grey-bg); width: 44px; height: 44px; flex-shrink: 0;">
-                                            <i class="bi bi-send-fill"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            }
-                            else
-                            {
-                                @* Estado Vazio *@
-                                <div
-                                    class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
-                                    <div class="mb-3"
-                                         style="background-color: var(--petlink-light-bg); padding: 25px; border-radius: 50%;">
-                                        <i class="bi bi-chat-left-dots"
-                                           style="font-size: 2.5rem; color: var(--petlink-primary);"></i>
+                                        <div class="text-secondary-grey d-flex gap-3 me-2">
+                                            <i class="bi bi-telephone cursor-pointer" style="color: var(--petlink-dark);"></i>
+                                            <i class="bi bi-info-circle cursor-pointer" style="color: var(--petlink-dark);"></i>
+                                        </div>
                                     </div>
-                                    <h4 style="font-family: var(--font-primary); color: var(--petlink-dark);">Select a
-                                        conversation
-                                    </h4>
-                                    <p class="text-secondary-grey small">Choose a contact from the left to start messaging.
-                                    </p>
-                                </div>
-                            }
+
+                                    @* Área de Mensagens *@
+                                    <div class="flex-grow-1 p-4 overflow-auto" id="chatWindow"
+                                         style="background-color: var(--petlink-grey-bg); scroll-behavior: smooth;">
+                                        @foreach (var msg in Model.ActiveConversation.Messages)
+                                        {
+                                            var isMine = msg.SenderId == int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+                                            <div class="d-flex mb-4 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                                @if (!isMine)
+                                                {
+                                                    <img src="@(string.IsNullOrEmpty(Model.ActiveConversation.OtherUserImagePath) ? "/images/default-avatar.jpg" : Model.ActiveConversation.OtherUserImagePath)"
+                                                         class="rounded-circle me-2 align-self-end mb-1 shadow-sm" width="28" height="28"
+                                                         onerror="this.src='/images/default-avatar.jpg'">
+                                                }
+                                                <div class="p-3 shadow-sm"
+                                                     style="max-width: 75%; border-radius: 18px; 
+                                                    @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
+                                                    <p class="mb-1" style="font-size: 0.9rem; line-height: 1.4;">@msg.Content</p>
+                                                    <div class="text-end" style="font-size: 0.65rem; opacity: 0.7;">
+                                                        @msg.Timestamp.ToString("HH:mm")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div id="chat-anchor" style="height: 1px;"></div>
+                                    </div>
+
+                                    @* Footer / Input de Mensagem *@
+                                    <div class="p-3 border-top"
+                                         style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
+                                        <form id="sendMessageForm" class="d-flex gap-2 align-items-center">
+                                            <input type="hidden" id="currentUserId" value="@User.FindFirst("UserId")?.Value" />
+                                            <input type="hidden" id="receiverId"
+                                                   value="@Model.ActiveConversation?.OtherUserId" />
+    
+                                            <input type="hidden" id="animalId"
+                                                   value="@Model.ActiveConversation?.AnimalListingId" />
+    
+                                            <input type="text" name="content" id="messageInput"
+                                                   class="form-control rounded-pill border-0 py-2 flex-grow-1"
+                                                   style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);"
+                                                   placeholder="Type your message here..." required autocomplete="off">
+    
+                                            <button type="submit"
+                                                    class="btn border-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                                    style="background-color: var(--petlink-primary); color: var(--petlink-grey-bg); width: 44px; height: 44px; flex-shrink: 0;">
+                                                <i class="bi bi-send-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @* Estado Vazio *@
+                                    <div
+                                        class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
+                                        <div class="mb-3"
+                                             style="background-color: var(--petlink-light-bg); padding: 25px; border-radius: 50%;">
+                                            <i class="bi bi-chat-left-dots"
+                                               style="font-size: 2.5rem; color: var(--petlink-primary);"></i>
+                                        </div>
+                                        <h4 style="font-family: var(--font-primary); color: var(--petlink-dark);">Select a
+                                            conversation
+                                        </h4>
+                                        <p class="text-secondary-grey small">Choose a contact from the left to start messaging.
+                                        </p>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-    <script src="~/js/chat.js" asp-append-version="true"></script>
-}
+    @section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+        <script src="~/js/chat.js" asp-append-version="true"></script>
+    }
