@@ -284,6 +284,12 @@ namespace PetLink.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("petPreferences")
+                        .HasColumnType("int");
+
+                    b.Property<int>("serviceType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");

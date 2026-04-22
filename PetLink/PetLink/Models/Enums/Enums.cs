@@ -20,6 +20,20 @@ namespace PetLink.Models.Enums
         Unkown
     }
 
+    public enum ServiceType
+    {
+        Boarding,
+        Walking,
+        HouseSitting
+    }
+
+    public enum PetPreferences
+    {
+        SmallDogs,
+        Cats,
+        Exotic
+    }
+
     public enum ListingStatus
     {
         Pendent,   // Aguarda aprovação do Admin 
