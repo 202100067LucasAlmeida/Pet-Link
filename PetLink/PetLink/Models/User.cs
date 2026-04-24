@@ -53,7 +53,8 @@ namespace PetLink.Models
         public ICollection<Message> SentMessages { get; set; }
         public ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Review> ReviewsReceived { get; set; } // Avaliações recebidas
-public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+        public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+        public ICollection<FavoritePetsitter> FavoritePetsitters { get; set; }
 
 // Propriedades calculadas (não mapeadas na BD)
 [NotMapped]

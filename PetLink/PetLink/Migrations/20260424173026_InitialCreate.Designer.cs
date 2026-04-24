@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260422094059_Initial")]
-    partial class Initial
+    [Migration("20260424173026_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -369,12 +369,6 @@ namespace PetLink.Migrations
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Lat")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Lon")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
