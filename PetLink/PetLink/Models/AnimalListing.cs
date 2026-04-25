@@ -30,6 +30,12 @@ namespace PetLink.Models
         public bool IsDewormed { get; set; }
         public bool IsSterilized { get; set; }
 
+        //provas em como a saúde (checkboxes) é válida
+        public string? VaccinationProofUrl { get; set; }
+        public string? DewormingProofUrl { get; set; }
+        public string? SterilizationProofUrl { get; set; }
+
+
         public ListingStatus Status { get; set; } = ListingStatus.Pending;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

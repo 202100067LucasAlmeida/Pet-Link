@@ -181,7 +181,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-1),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/cooper.jpg"
+                        ImageUrl = "/images/animals/cooper.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -197,7 +200,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-2),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/luna.jpg"
+                        ImageUrl = "/images/animals/luna.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -229,7 +235,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-4),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/shadow.jpg"
+                        ImageUrl = "/images/animals/shadow.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -245,7 +254,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-5),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/rex.jpg"
+                        ImageUrl = "/images/animals/rex.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -261,7 +273,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-6),
                         TutorId = particular.Id,
-                        ImageUrl = "/images/animals/max.jpg"
+                        ImageUrl = "/images/animals/max.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -277,7 +292,9 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-7),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/daisy.jpg"
+                        ImageUrl = "/images/animals/daisy.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png"
                     },
                     new AnimalListing
                     {
@@ -293,7 +310,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-8),
                         TutorId = particular.Id,
-                        ImageUrl = "/images/animals/misty.jpg"
+                        ImageUrl = "/images/animals/misty.jpg",
+                        VaccinationProofUrl = "/images/placeholders/proof_vacination.png",
+                        DewormingProofUrl = "/images/placeholders/proof_vacination.png",
+                        SterilizationProofUrl = "/images/placeholders/proof_vacination.png"
                     }
                 );
 

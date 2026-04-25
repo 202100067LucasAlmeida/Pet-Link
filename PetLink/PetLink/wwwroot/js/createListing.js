@@ -68,7 +68,67 @@ function validateHealth() {
     return isValid;
 }
 
-// Add event listeners for real-time validation
+function validateProofs() {
+    const healthChecks = document.querySelectorAll('.health-check');
+    let isValid = true;
+
+    healthChecks.forEach(checkbox => {
+        if (checkbox.checked) {
+            const proofDivId = checkbox.getAttribute('data-proof');
+            const proofDiv = document.getElementById(proofDivId);
+            const proofInput = proofDiv.querySelector('.proof-file');
+            const proofErrorSpan = proofDiv.querySelector('.text-danger');
+
+            if (!proofInput.files || proofInput.files.length === 0) {
+                isValid = false;
+                proofInput.classList.add('is-invalid');
+                if (!proofErrorSpan || !proofErrorSpan.innerText.includes('Proof is required')) {
+                    const errorSpan = proofErrorSpan || document.createElement('span');
+                    errorSpan.className = 'text-danger small mt-1';
+                    errorSpan.style.display = 'block';
+                    errorSpan.innerText = 'Proof document is required';
+                    if (!proofErrorSpan) proofDiv.appendChild(errorSpan);
+                }
+            } else {
+                proofInput.classList.remove('is-invalid');
+                if (proofErrorSpan && proofErrorSpan.innerText.includes('Proof is required')) {
+                    proofErrorSpan.style.display = 'none';
+                }
+            }
+        }
+    });
+
+    return isValid;
+}
+
+// Toggle da submissão de documento para cada checkbox ativa
+function toggleProofUpload(checkbox) {
+    const proofDivId = checkbox.getAttribute('data-proof');
+    const proofDiv = document.getElementById(proofDivId);
+
+    if (checkbox.checked) {
+        proofDiv.style.display = 'block';
+        // Add required attribute to file input
+        const proofInput = proofDiv.querySelector('.proof-file');
+        if (proofInput) proofInput.required = true;
+    } else {
+        proofDiv.style.display = 'none';
+        // Remove required attribute and clear file input
+        const proofInput = proofDiv.querySelector('.proof-file');
+        if (proofInput) {
+            proofInput.required = false;
+            proofInput.value = ''; // Clear the file input
+            proofInput.classList.remove('is-invalid');
+            // Remove any error messages
+            const errorSpan = proofDiv.querySelector('.text-danger');
+            if (errorSpan && errorSpan.innerText.includes('Proof is required')) {
+                errorSpan.style.display = 'none';
+            }
+        }
+    }
+}
+
+
 document.querySelector('input[name="AgeMonths"]').addEventListener('input', function () {
     validateAge();
 });
@@ -80,19 +140,27 @@ document.getElementById('mainPhoto').addEventListener('change', function () {
 document.querySelectorAll('.health-check').forEach(checkbox => {
     checkbox.addEventListener('change', function () {
         validateHealth();
+        toggleProofUpload(this);
+        validateProofs(); // Re-validate proofs when checkboxes change
     });
 });
 
-// Form submission validation
+document.addEventListener('change', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('proof-file')) {
+        validateProofs();
+    }
+});
+
+// Submissão do formulário
 document.getElementById('createListingForm').addEventListener('submit', function (e) {
     const isAgeValid = validateAge();
     const isPhotoValid = validatePhoto();
     const isHealthValid = validateHealth();
+    const isProofsValid = validateProofs();
 
-    if (!isAgeValid || !isPhotoValid || !isHealthValid) {
+    if (!isAgeValid || !isPhotoValid || !isHealthValid || !isProofsValid) {
         e.preventDefault();
 
-        // Scroll to the first invalid field
         if (!isAgeValid) {
             document.querySelector('input[name="AgeMonths"]').focus();
             document.querySelector('input[name="AgeMonths"]').classList.add('is-invalid');
@@ -100,6 +168,11 @@ document.getElementById('createListingForm').addEventListener('submit', function
             document.getElementById('mainPhotoArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if (!isHealthValid) {
             document.getElementById('healthError').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (!isProofsValid) {
+            const firstInvalidProof = document.querySelector('.proof-file.is-invalid');
+            if (firstInvalidProof) {
+                firstInvalidProof.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
     }
 });
@@ -109,4 +182,12 @@ setTimeout(() => {
     validateAge();
     validatePhoto();
     validateHealth();
+
+    // Initialize proof upload visibility based on checked checkboxes
+    document.querySelectorAll('.health-check').forEach(checkbox => {
+        if (checkbox.checked) {
+            toggleProofUpload(checkbox);
+        }
+    });
+    validateProofs();
 }, 100);

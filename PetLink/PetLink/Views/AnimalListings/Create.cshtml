@@ -147,33 +147,60 @@
                         </div>
 
                         @* 3. Health Information: REMOVIDO bg-light, adicionado grey-bg *@
+                        <!-- Health Information Section -->
                         <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2 mt-4"
                             style="border-color: var(--petlink-border) !important;">
                             Health Information<span class="text-danger">*</span>
                         </h5>
 
-        
                         <div class="bg-light p-3 rounded-3 mb-3">
                             <div class="d-flex flex-wrap gap-4">
-                                <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsVaccinated" id="vaccinatedCheck" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsVaccinated">
-                                        <i class="bi bi-shield-check"></i> Vaccinated
-                                    </label>
+                                <!--Vacinação -->
+                                <div class="mb-4">
+                                    <div class="form-check form-switch fs-6">
+                                        <input class="form-check-input health-check" type="checkbox" asp-for="IsVaccinated" id="vaccinatedCheck" data-proof="vaccinationProofDiv" />
+                                        <label class="form-check-label fw-semibold text-success" asp-for="IsVaccinated">
+                                            <i class="bi bi-shield-check"></i> Vaccinated
+                                        </label>
+                                    </div>
+                                    <div id="vaccinationProofDiv" class="proof-upload" style="display: none;">
+                                        <label class="form-label fw-semibold">Vaccination Proof <span class="text-danger">*</span></label>
+                                        <input type="file" name="vaccinationProof" class="form-control proof-file" accept="image/*,application/pdf" />
+                                        <small class="text-muted">Upload vaccination certificate or proof (image or PDF)</small>
+                                        <span asp-validation-for="VaccinationProofUrl" class="text-danger small"></span>
+                                    </div>
                                 </div>
 
-                                <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsDewormed" id="dewormedCheck" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsDewormed">
-                                        <i class="bi bi-capsule"></i> Dewormed
-                                    </label>
+                                <!--Desparazitado -->
+                                <div class="mb-4">
+                                    <div class="form-check form-switch fs-6">
+                                        <input class="form-check-input health-check" type="checkbox" asp-for="IsDewormed" id="dewormedCheck" data-proof="dewormingProofDiv" />
+                                        <label class="form-check-label fw-semibold text-success" asp-for="IsDewormed">
+                                            <i class="bi bi-capsule"></i> Dewormed
+                                        </label>
+                                    </div>
+                                    <div id="dewormingProofDiv" class="proof-upload" style="display: none;">
+                                        <label class="form-label fw-semibold">Deworming Proof <span class="text-danger">*</span></label>
+                                        <input type="file" name="dewormingProof" class="form-control proof-file" accept="image/*,application/pdf" />
+                                        <small class="text-muted">Upload deworming proof (image or PDF)</small>
+                                        <span asp-validation-for="DewormingProofUrl" class="text-danger small"></span>
+                                    </div>
                                 </div>
 
-                                <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsSterilized" id="sterilizedCheck" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsSterilized">
-                                        <i class="bi bi-scissors"></i> Sterilized
-                                    </label>
+                                <!--Esterilização -->
+                                <div class="mb-4">
+                                    <div class="form-check form-switch fs-6">
+                                        <input class="form-check-input health-check" type="checkbox" asp-for="IsSterilized" id="sterilizedCheck" data-proof="sterilizationProofDiv" />
+                                        <label class="form-check-label fw-semibold text-success" asp-for="IsSterilized">
+                                            <i class="bi bi-scissors"></i> Sterilized
+                                        </label>
+                                    </div>
+                                    <div id="sterilizationProofDiv" class="proof-upload" style="display: none;">
+                                        <label class="form-label fw-semibold">Sterilization Proof <span class="text-danger">*</span></label>
+                                        <input type="file" name="sterilizationProof" class="form-control proof-file" accept="image/*,application/pdf" />
+                                        <small class="text-muted">Upload sterilization certificate or proof (image or PDF)</small>
+                                        <span asp-validation-for="SterilizationProofUrl" class="text-danger small"></span>
+                                    </div>
                                 </div>
                             </div>
 

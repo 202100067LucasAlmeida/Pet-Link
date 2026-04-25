@@ -123,7 +123,8 @@ namespace PetLink
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized")] AnimalListing animalListing, IFormFile? mainPhoto)
+        public async Task<IActionResult> Create([Bind("Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized")] AnimalListing animalListing,
+            IFormFile? mainPhoto, IFormFile? vaccinationProof, IFormFile? dewormingProof, IFormFile? sterilizationProof)
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
@@ -138,12 +139,32 @@ namespace PetLink
             if (mainPhoto == null || mainPhoto.Length == 0)
                 ModelState.AddModelError("mainPhoto", "A main photo is required.");
 
+            // Validação dos documentos
+            if (animalListing.IsVaccinated && (vaccinationProof == null || vaccinationProof.Length == 0))
+                ModelState.AddModelError("vaccinationProof", "You must provide proof of vaccination.");
+
+            if (animalListing.IsDewormed && (dewormingProof == null || dewormingProof.Length == 0))
+                ModelState.AddModelError("dewormingProof", "You must provide proof of deworming.");
+
+            if (animalListing.IsSterilized && (sterilizationProof == null || sterilizationProof.Length == 0))
+                ModelState.AddModelError("sterilizationProof", "You must provide proof of sterilization.");
+
             if (ModelState.IsValid)
             {
                 animalListing.TutorId = int.Parse(userIdClaim);
                 animalListing.Status = ListingStatus.Pending;
                 animalListing.CreatedAt = DateTime.Now;
                 animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
+
+                // Upload dos documentos
+                if (animalListing.IsVaccinated && vaccinationProof != null)
+                    animalListing.VaccinationProofUrl = await UploadImage(vaccinationProof, "proofs");
+
+                if (animalListing.IsDewormed && dewormingProof != null)
+                    animalListing.DewormingProofUrl = await UploadImage(dewormingProof, "proofs");
+
+                if (animalListing.IsSterilized && sterilizationProof != null)
+                    animalListing.SterilizationProofUrl = await UploadImage(sterilizationProof, "proofs");
 
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();

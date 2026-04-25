@@ -49,6 +49,9 @@ namespace PetLink.Migrations
                     IsVaccinated = table.Column<bool>(type: "bit", nullable: false),
                     IsDewormed = table.Column<bool>(type: "bit", nullable: false),
                     IsSterilized = table.Column<bool>(type: "bit", nullable: false),
+                    VaccinationProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DewormingProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SterilizationProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TutorId = table.Column<int>(type: "int", nullable: false),
@@ -63,6 +66,33 @@ namespace PetLink.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FavoritePetsitters",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    PetsitterId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoritePetsitters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FavoritePetsitters_Users_PetsitterId",
+                        column: x => x.PetsitterId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FavoritePetsitters_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -306,6 +336,17 @@ namespace PetLink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_FavoritePetsitters_PetsitterId",
+                table: "FavoritePetsitters",
+                column: "PetsitterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoritePetsitters_UserId_PetsitterId",
+                table: "FavoritePetsitters",
+                columns: new[] { "UserId", "PetsitterId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ListingsNotifications_AnimalListingId",
                 table: "ListingsNotifications",
                 column: "AnimalListingId");
@@ -363,6 +404,9 @@ namespace PetLink.Migrations
 
             migrationBuilder.DropTable(
                 name: "FavoritePets");
+
+            migrationBuilder.DropTable(
+                name: "FavoritePetsitters");
 
             migrationBuilder.DropTable(
                 name: "ListingsNotifications");
