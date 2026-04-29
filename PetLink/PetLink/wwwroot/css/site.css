@@ -841,3 +841,34 @@ input[type="radio"]:checked+.animal-type-btn {
         opacity: 1;
     }
 }
+
+/* Botões de favorito petsitter */
+.favorite-petsitter-btn,
+.btn-heart {
+    background: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 35px !important;
+    height: 35px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.favorite-petsitter-btn:hover,
+.btn-heart:hover {
+    transform: scale(1.1) !important;
+}
+
+.favorite-petsitter-btn i,
+.btn-heart i {
+    font-size: 1.2rem !important;
+}
+
+.favorite-petsitter-btn i.text-danger,
+.btn-heart i.text-danger {
+    color: #dc3545 !important;
+}

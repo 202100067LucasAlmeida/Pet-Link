@@ -81,6 +81,7 @@
                 </div>
 
                 <!-- SECÇÃO: PETSITTERS FAVORITOS -->
+                
                 <div class="mt-5">
                     <h4 class="fw-bold text-primary-darkblue mb-3">
                         <i class="bi bi-person-badge me-2 text-primary"></i>Favorite Petsitters
@@ -102,34 +103,47 @@
                             @foreach (var petsitter in Model.FavoritePetsitters)
                             {
                                 <div class="col-md-6 col-lg-4">
-                                    <div class="card h-100 border-0 shadow-sm">
-                                        <div class="card-body text-center">
-                                            <div class="mb-3">
-                                                @if (!string.IsNullOrEmpty(petsitter.ProfilePicture))
-                                                {
-                                                    <img src="@petsitter.ProfilePicture" alt="@petsitter.Name" 
-                                                         class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
-                                                }
-                                                else
-                                                {
-                                                    <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto" 
-                                                         style="width: 80px; height: 80px;">
-                                                        <i class="bi bi-person-circle text-secondary fs-1"></i>
-                                                    </div>
-                                                }
+                                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column"
+                                        style="background-color: var(--petlink-card-bg);">
+                                        
+                                        <div class="position-relative" style="height: 200px; overflow: hidden;">
+                                            <a asp-controller="Petsitter" asp-action="Details" asp-route-id="@petsitter.Id">
+                                                <img src="@(string.IsNullOrEmpty(petsitter.ProfilePicture) ? "/images/default-avatar.jpg" : petsitter.ProfilePicture)"
+                                                    alt="@petsitter.Name"
+                                                    class="img-fluid w-100 h-100"
+                                                    style="height: 200px; width: 100%; object-fit: cover;"
+                                                    onerror="this.src='/images/default-avatar.jpg'">
+                                            </a>
+                                            
+                                            @* Botão coração para remover dos favoritos *@
+                                            <button class="favorite-petsitter-btn position-absolute bottom-0 end-0 m-2" 
+                                                    data-petsitter-id="@petsitter.Id"
+                                                    style="background: white; border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; cursor: pointer;">
+                                                <i class="bi bi-heart-fill text-danger"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                                <div>
+                                                    <a asp-controller="Petsitter" asp-action="Details" asp-route-id="@petsitter.Id" class="text-decoration-none">
+                                                        <h4 class="h5 fw-bold mb-0 text-primary-darkblue">@petsitter.Name</h4>
+                                                    </a>
+                                                    <p class="text-muted small mb-0 mt-1">
+                                                        <i class="bi bi-geo-alt"></i> @petsitter.City
+                                                    </p>
+                                                </div>
+                                                <div class="text-end">
+                                                    @* Se tiveres hourlyRate, adiciona, senão remove esta parte *@
+                                                    @* <span class="fw-bold fs-5 text-primary">0€</span> *@
+                                                </div>
                                             </div>
-                                            <h6 class="fw-bold text-primary-darkblue mb-1">@petsitter.Name</h6>
-                                            <small class="text-muted d-block">@petsitter.City</small>
-                                            <small class="text-muted">@petsitter.Email</small>
-                                            <div class="mt-3 d-flex gap-2">
+
+                                            <div class="d-flex flex-wrap gap-2 mt-auto">
                                                 <a asp-controller="Profile" asp-action="TutorProfile" asp-route-id="@petsitter.Id" 
-                                                   class="btn btn-outline-primary rounded-pill w-100 btn-sm">
+                                                class="btn btn-outline-primary rounded-pill w-100 btn-sm">
                                                     View Profile
                                                 </a>
-                                                <button class="btn btn-outline-danger rounded-pill favorite-petsitter-btn" 
-                                                        data-petsitter-id="@petsitter.Id">
-                                                    <i class="bi bi-heart-fill text-danger"></i>
-                                                </button>
                                             </div>
                                         </div>
                                     </div>

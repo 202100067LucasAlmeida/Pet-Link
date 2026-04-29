@@ -34,14 +34,28 @@ namespace PetLink.Controllers
                 return Challenge();
             }
 
-            var favoriteListings = await _context.FavoritePets
-                .Where(f => f.UserId == userId)
-                .Include(f => f.AnimalListing)
-                .Select(f => f.AnimalListing)
-                .Where(a => a.Status == ListingStatus.Published)
-                .ToListAsync();
+            var favoritePets = await _context.FavoritePets
+        .Where(f => f.UserId == userId)
+        .Include(f => f.AnimalListing)
+        .Select(f => f.AnimalListing)
+        .Where(a => a.Status == ListingStatus.Published)
+        .ToListAsync();
 
-            return View("MyFavorites", favoriteListings); 
+    // Buscar petsitters favoritos
+    var favoritePetsitters = await _context.FavoritePetsitters
+        .Where(f => f.UserId == userId)
+        .Include(f => f.Petsitter)
+        .Select(f => f.Petsitter)
+        .ToListAsync();
+
+    // Criar o ViewModel com ambas as listas
+    var viewModel = new FavoritesViewModel
+    {
+        FavoritePets = favoritePets,
+        FavoritePetsitters = favoritePetsitters
+    };
+
+    return View("MyFavorites", viewModel);
         }
 
         // POST: Favorites/Toggle/5
