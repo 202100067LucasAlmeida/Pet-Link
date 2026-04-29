@@ -4,9 +4,6 @@
 @{
     ViewData["Title"] = "Find Your New Best Friend";
 
-    @* var currentUserIdStr = User.FindFirst("UserId")?.Value;
-    bool isOwner = currentUserIdStr != null && currentUserIdStr == Model.TutorId.ToString(); *@
-
     // Helper function to get display name for species
     string GetSpeciesDisplayName(Species species)
     {
@@ -265,7 +262,6 @@
                                 class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column">
                                 <div class="pet-card-img-wrapper position-relative">
                                     <a asp-action="Details" asp-route-id="@item.Id">
-                                        @* Lógica de imagem simplificada: usa a URL da BD ou o default *@
                                         <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)"
                                              class="img-fluid w-100" style="height: 250px; object-fit: cover;"
                                              onerror="this.src='/images/default-pet.jpg'">
@@ -294,20 +290,34 @@
                                     </p>
                                     <p class="text-secondary-grey small mb-3">@item.Species • @item.AgeMonths mo.</p>
 
+                                    <!-- ========== BADGES DINÂMICAS DE SAÚDE ========== -->
                                     <div class="d-flex flex-wrap gap-2 mt-auto">
                                         @if (item.IsVaccinated)
                                         {
-                                            <span class="pet-tag pet-tag-green">VACCINATED</span>
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="bi bi-shield-check me-1"></i> VACCINATED
+                                            </span>
+                                        }
+                                        @if (item.IsDewormed)
+                                        {
+                                            <span class="badge bg-success rounded-pill">
+                                                <i class="bi bi-capsule me-1"></i> DEWORMED
+                                            </span>
                                         }
                                         @if (item.IsSterilized)
                                         {
-                                            <span class="pet-tag pet-tag-green">STERILIZED</span>
+                                            <span class="badge bg-primary rounded-pill">
+                                                <i class="bi bi-heart-pulse me-1"></i> STERILIZED
+                                            </span>
                                         }
-                                        @if (!item.IsVaccinated && !item.IsSterilized)
+                                        @if (!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized)
                                         {
-                                            <span class="pet-tag">NEEDS VET</span>
+                                            <span class="badge bg-warning text-dark rounded-pill">
+                                                <i class="bi bi-exclamation-triangle-fill me-1"></i> NEEDS VET CHECK
+                                            </span>
                                         }
                                     </div>
+                                    <!-- ========== FIM BADGES ========== -->
                                 </div>
                             </div>
                         </div>

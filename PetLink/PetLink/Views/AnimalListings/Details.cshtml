@@ -104,7 +104,6 @@
 
                             @if (!ViewBag.IsOwner)
                             {
-                                @* Verifica se já se candidatou (usando a variável que criámos antes) *@
                                 @if (ViewBag.HasApplied != null && ViewBag.HasApplied)
                                 {
                                     <div class="alert border-0 rounded-4 text-center"
@@ -137,42 +136,102 @@
                     </div>
                 </div>
 
-                @* Medical History *@
+                <!-- ========== MEDICAL HISTORY COM BADGES DINÂMICAS ========== -->
                 <div class="medical-history mb-5">
-                    <h3 class="h4 text-primary-darkblue mb-3 fw-bold">Medical History</h3>
-                    <ul class="list-unstyled text-primary-darkblue">
-                        <li class="mb-2">
-                            <i
-                            class="bi @(Model.IsVaccinated ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
-                            Fully Vaccinated
-                        </li>
-                        <li class="mb-2">
-                            <i
-                            class="bi @(Model.IsDewormed ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
-                            Dewormed
-                        </li>
-                        <li class="mb-2">
-                            <i
-                            class="bi @(Model.IsSterilized ? "bi-check-circle-fill text-success" : "bi-dash-circle text-secondary-grey") me-2"></i>
-                            Neutered / Sterilized
-                        </li>
-                    </ul>
+                    <h3 class="h4 text-primary-darkblue mb-3 fw-bold">
+                        <i class="bi bi-heart-pulse me-2"></i>Medical History
+                    </h3>
+                    
+                    <div class="row g-3">
+                        <!-- Vaccinated Badge -->
+                        <div class="col-md-4">
+                            <div class="card border-0 rounded-3 h-100 text-center p-3"
+                                 style="background-color: var(--petlink-grey-bg);">
+                                <div class="mb-2">
+                                    @if (Model.IsVaccinated)
+                                    {
+                                        <i class="bi bi-shield-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-shield-exclamation text-danger" style="font-size: 2rem;"></i>
+                                    }
+                                </div>
+                                <h6 class="fw-bold mb-1 @(Model.IsVaccinated ? "text-success" : "text-danger")">
+                                    @(Model.IsVaccinated ? "VACCINATED" : "NOT VACCINATED")
+                                </h6>
+                                <small class="text-secondary-grey">
+                                    @(Model.IsVaccinated ? "Pet has up-to-date vaccinations" : "Vaccination status unknown")
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Dewormed Badge -->
+                        <div class="col-md-4">
+                            <div class="card border-0 rounded-3 h-100 text-center p-3"
+                                 style="background-color: var(--petlink-grey-bg);">
+                                <div class="mb-2">
+                                    @if (Model.IsDewormed)
+                                    {
+                                        <i class="bi bi-capsule text-success" style="font-size: 2rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                                    }
+                                </div>
+                                <h6 class="fw-bold mb-1 @(Model.IsDewormed ? "text-success" : "text-danger")">
+                                    @(Model.IsDewormed ? "DEWORMED" : "NOT DEWORMED")
+                                </h6>
+                                <small class="text-secondary-grey">
+                                    @(Model.IsDewormed ? "Pet has been dewormed" : "Deworming status unknown")
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Sterilized Badge -->
+                        <div class="col-md-4">
+                            <div class="card border-0 rounded-3 h-100 text-center p-3"
+                                 style="background-color: var(--petlink-grey-bg);">
+                                <div class="mb-2">
+                                    @if (Model.IsSterilized)
+                                    {
+                                        <i class="bi bi-heart-pulse text-success" style="font-size: 2rem;"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-info-circle text-secondary" style="font-size: 2rem;"></i>
+                                    }
+                                </div>
+                                <h6 class="fw-bold mb-1 @(Model.IsSterilized ? "text-success" : "text-secondary")">
+                                    @(Model.IsSterilized ? "STERILIZED" : "NOT STERILIZED")
+                                </h6>
+                                <small class="text-secondary-grey">
+                                    @(Model.IsSterilized ? "Pet is neutered/spayed" : "Sterilization status unknown")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- ========== FIM MEDICAL HISTORY ========== -->
 
                 @* Temperamento com Badges Opacas (Melhor para Dark Mode) *@
                 <div class="temperament mb-5">
-                    <h3 class="h4 text-primary-darkblue mb-3 fw-bold">Temperament</h3>
+                    <h3 class="h4 text-primary-darkblue mb-3 fw-bold">
+                        <i class="bi bi-emoji-smile me-2"></i>Temperament
+                    </h3>
                     <div class="d-flex gap-3 flex-wrap">
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Kid
-                            Friendly
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                            <i class="bi bi-people me-1"></i> Kid Friendly
                         </span>
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Calm
-                            at Home
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                            <i class="bi bi-house-heart me-1"></i> Calm at Home
                         </span>
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">Social
+                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                            <i class="bi bi-chat-heart me-1"></i> Social
                         </span>
                     </div>
                 </div>
@@ -295,7 +354,20 @@
                                 <h3 class="h5 text-primary-darkblue fw-bold mb-2">@pet.Name</h3>
                                 <div class="text-secondary-grey small">
                                     <p class="mb-1"><i class="bi bi-geo-alt me-1"></i> @pet.Location</p>
-                                    <p class="mb-0">@pet.Species • @pet.AgeMonths mo.</p>
+                                    <div class="d-flex gap-2 mt-2">
+                                        @if (pet.IsVaccinated)
+                                        {
+                                            <i class="bi bi-shield-check text-success" title="Vaccinated"></i>
+                                        }
+                                        @if (pet.IsDewormed)
+                                        {
+                                            <i class="bi bi-capsule text-success" title="Dewormed"></i>
+                                        }
+                                        @if (pet.IsSterilized)
+                                        {
+                                            <i class="bi bi-heart-pulse text-success" title="Sterilized"></i>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>

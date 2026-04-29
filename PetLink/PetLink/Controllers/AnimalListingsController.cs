@@ -124,30 +124,25 @@ namespace PetLink
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized")] AnimalListing animalListing,
-            IFormFile? mainPhoto, IFormFile? vaccinationProof, IFormFile? dewormingProof, IFormFile? sterilizationProof)
+            IFormFile? mainPhoto, IFormFile? galleryPhotos)
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
 
-            // Validação customizada
+            // ========== VALIDAÇÕES ==========
+            // Validação da idade
             if (animalListing.AgeMonths < 0)
                 ModelState.AddModelError("AgeMonths", "Age must be 0 or greater.");
 
+            // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE (OBRIGATÓRIO PELO MENOS UMA) ==========
             if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
-                ModelState.AddModelError("IsVaccinated", "At least one health status (Vaccinated, Dewormed, or Sterilized) must be selected.");
+            {
+                ModelState.AddModelError("IsVaccinated", "Please confirm at least one health status (Vaccinated, Dewormed, or Sterilized).");
+            }
 
+            // Validação da foto principal
             if (mainPhoto == null || mainPhoto.Length == 0)
                 ModelState.AddModelError("mainPhoto", "A main photo is required.");
-
-            // Validação dos documentos
-            if (animalListing.IsVaccinated && (vaccinationProof == null || vaccinationProof.Length == 0))
-                ModelState.AddModelError("vaccinationProof", "You must provide proof of vaccination.");
-
-            if (animalListing.IsDewormed && (dewormingProof == null || dewormingProof.Length == 0))
-                ModelState.AddModelError("dewormingProof", "You must provide proof of deworming.");
-
-            if (animalListing.IsSterilized && (sterilizationProof == null || sterilizationProof.Length == 0))
-                ModelState.AddModelError("sterilizationProof", "You must provide proof of sterilization.");
 
             if (ModelState.IsValid)
             {
@@ -155,16 +150,6 @@ namespace PetLink
                 animalListing.Status = ListingStatus.Pending;
                 animalListing.CreatedAt = DateTime.Now;
                 animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
-
-                // Upload dos documentos
-                if (animalListing.IsVaccinated && vaccinationProof != null)
-                    animalListing.VaccinationProofUrl = await UploadImage(vaccinationProof, "proofs");
-
-                if (animalListing.IsDewormed && dewormingProof != null)
-                    animalListing.DewormingProofUrl = await UploadImage(dewormingProof, "proofs");
-
-                if (animalListing.IsSterilized && sterilizationProof != null)
-                    animalListing.SterilizationProofUrl = await UploadImage(sterilizationProof, "proofs");
 
                 _context.Add(animalListing);
                 await _context.SaveChangesAsync();
@@ -227,6 +212,12 @@ namespace PetLink
 
             var oldStatus = existingListing.Status.ToString();
 
+            // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE (OBRIGATÓRIO PELO MENOS UMA) ==========
+            if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
+            {
+                ModelState.AddModelError("IsVaccinated", "Please confirm at least one health status (Vaccinated, Dewormed, or Sterilized).");
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -236,6 +227,8 @@ namespace PetLink
                     existingListing.AgeMonths = animalListing.AgeMonths;
                     existingListing.Location = animalListing.Location;
                     existingListing.Description = animalListing.Description;
+                    
+                    // ========== ATUALIZAR AS CHECKBOXES DE SAÚDE ==========
                     existingListing.IsVaccinated = animalListing.IsVaccinated;
                     existingListing.IsDewormed = animalListing.IsDewormed;
                     existingListing.IsSterilized = animalListing.IsSterilized;
@@ -403,7 +396,7 @@ namespace PetLink
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", subFolder, fileName);
 
-            Directory.CreateDirectory(Path.GetDirectoryName(uploadPath)); // Garantir que a pasta existe
+            Directory.CreateDirectory(Path.GetDirectoryName(uploadPath));
 
             using (var stream = new FileStream(uploadPath, FileMode.Create))
             {
@@ -412,15 +405,14 @@ namespace PetLink
 
             return $"/images/{subFolder}/{fileName}";
         }
+
         // GET: AnimalListings/Map
         public async Task<IActionResult> Map(Species? species, string? location, Age? age)
         {
-            // Vai buscar apenas os animais publicados e os seus tutores (para ter as coordenadas)
             var query = _context.AnimalListings
                 .Include(t => t.Tutor)
                 .Where(p => p.Status == ListingStatus.Published);
 
-            // Aplicar Filtros se existirem
             if (species.HasValue)
                 query = query.Where(p => p.Species == species.Value);
 
@@ -432,7 +424,6 @@ namespace PetLink
 
             var results = await query.ToListAsync();
 
-            // Guardar os filtros atuais para manter a seleção visível na página
             ViewBag.CurrentSpecies = species;
             ViewBag.CurrentLocation = location;
             ViewBag.CurrentAge = age;
