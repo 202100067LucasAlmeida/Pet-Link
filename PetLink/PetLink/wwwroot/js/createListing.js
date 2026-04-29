@@ -169,10 +169,7 @@ document.getElementById('createListingForm').addEventListener('submit', function
         } else if (!isHealthValid) {
             document.getElementById('healthError').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if (!isProofsValid) {
-            const firstInvalidProof = document.querySelector('.proof-file.is-invalid');
-            if (firstInvalidProof) {
-                firstInvalidProof.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            document.querySelector('.proof-file.is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 });
