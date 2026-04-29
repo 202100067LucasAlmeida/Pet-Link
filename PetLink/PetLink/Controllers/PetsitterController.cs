@@ -17,7 +17,7 @@ namespace PetLink.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return await Search(null, null, null);
+            return await Search(null, null, null, null);
         }
 
         // GET: Petsitter/Details/5
@@ -63,7 +63,8 @@ namespace PetLink.Controllers
 
         public async Task<IActionResult> Search(ServiceType? serviceType,
                                                 decimal? maxRate,
-                                                PetPreferences? petPreferences)
+                                                PetPreferences? petPreferences,
+                                                string? sort)
         {
 
             var query = _context.Petsitters
@@ -84,6 +85,14 @@ namespace PetLink.Controllers
             {
                 query = query.Where(p => p.petPreferences == petPreferences.Value);
             }
+
+            query = sort switch
+            {
+                "price_asc" => query.OrderBy(p => p.HourlyRate),
+                "price_desc" => query.OrderByDescending(p => p.HourlyRate),
+                //"rating" => query.OrderByDescending(p => p.Rating),
+                _ => query.OrderByDescending(p => p.Rating)
+            };
 
             var results = await query.ToListAsync();
 
