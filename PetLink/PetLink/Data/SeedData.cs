@@ -219,7 +219,10 @@ namespace PetLink.Data
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-3),
                         TutorId = particular.Id,
-                        ImageUrl = "/images/animals/rio.jpg"
+                        ImageUrl = "/images/animals/rio.jpg",
+                        VaccinationProofUrl = null,
+                        DewormingProofUrl = null,
+                        SterilizationProofUrl = null
                     },
                     new AnimalListing
                     {

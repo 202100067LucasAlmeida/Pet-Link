@@ -19,62 +19,83 @@
                     <i class="bi bi-folder2-open mb-3 d-block" style="font-size: 3rem; color: var(--petlink-primary);"></i>
                     <h4 class="fw-bold text-primary-darkblue">No applications yet</h4>
                     <p class="text-secondary-grey">You haven't applied to adopt any pets yet. Find your new best friend
-                        today!</p>
-                        <a asp-controller="AnimalListings" asp-action="Index"
-                           class="btn btn-primary rounded-pill px-4 mt-2">Find a Pet</a>
-                    </div>
-                }
+                        today!
+                    </p>
+                    <a asp-controller="AnimalListings" asp-action="Index"
+                           class="btn btn-primary rounded-pill px-4 mt-2">Find a Pet
+                    </a>
+                </div>
+            }
             else
-                {
-                    <div class="row g-4">
-                        @foreach (var app in Model)
-                        {
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 shadow-sm rounded-4"
-                                     style="background-color: var(--petlink-card-bg);">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h4 class="fw-bold text-primary-darkblue mb-0">@app.AnimalListing?.Name</h4>
-                            
-                                            @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
-                                            {
-                                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
-                                            }
-                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
-                                            {
-                                                <span class="badge bg-info rounded-pill px-3 py-2">Approved</span>
-                                            }
-                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Completed)
-                                            {
-                                                <span class="badge bg-success rounded-pill px-3 py-2">Adopted!</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger rounded-pill px-3 py-2">Rejected</span>
-                                            }
-                                        </div>
-                        
-                                        <hr style="border-color: var(--petlink-border);" />
-                        
-                                        <p class="small text-secondary-grey mb-2">
-                                            <i class="bi bi-person-badge me-2"></i><strong>Tutor:</strong>
-                                            @app.AnimalListing?.Tutor?.Name
-                                        </p>
-                                        <p class="small text-secondary-grey mb-4">
-                                            <i class="bi bi-calendar-event me-2"></i><strong>Date:</strong>
-                                            @app.SubmittedAt.ToString("MMM dd, yyyy")
-                                        </p>
-                        
-                                        <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId"
+            {
+                <div class="row g-4">
+                    @foreach (var app in Model)
+                    {
+                        <!-- Alterado para col-lg-4 para criar 3 colunas -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm pet-card d-flex flex-column"
+                                 style="background-color: var(--petlink-card-bg); border-radius: 12px;">
+                                
+                                <!-- IMAGE WRAPPER COM HOVER -->
+                                <div class="pet-card-img-wrapper position-relative">
+                                    <img src="@(string.IsNullOrEmpty(app.AnimalListing?.ImageUrl) ? "/images/default-avatar.jpg" : app.AnimalListing.ImageUrl)"
+                                         alt="@app.AnimalListing?.Name" class="w-100"
+                                         style="height: 200px; width: 100%; object-fit: cover; border-radius: 12px 12px 0 0;">
+                                    
+                                    <!-- Badges de Estado (Flutuantes na imagem - Ajustados para m-2) -->
+                                    @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
+                                    {
+                                        <span
+                                        class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 px-3 py-2 rounded-pill shadow-sm"
+                                        style="font-size: 0.75rem;">Pending</span>
+                                    }
+                                    else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
+                                    {
+                                        <span
+                                        class="badge bg-info position-absolute top-0 end-0 m-2 px-3 py-2 rounded-pill shadow-sm"
+                                        style="font-size: 0.75rem;">Approved</span>
+                                    }
+                                    else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Completed)
+                                    {
+                                        <span
+                                        class="badge bg-success position-absolute top-0 end-0 m-2 px-3 py-2 rounded-pill shadow-sm"
+                                        style="font-size: 0.75rem;">Adopted!</span>
+                                    }
+                                    else
+                                    {
+                                        <span
+                                        class="badge bg-danger position-absolute top-0 end-0 m-2 px-3 py-2 rounded-pill shadow-sm"
+                                        style="font-size: 0.75rem;">Rejected</span>
+                                    }
+                                </div>
+                                
+                                <!-- Alterado para p-3 para equilibrar o espaço na coluna mais estreita -->
+                                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                                    <h6 class="fw-bold text-primary-darkblue mb-3">@app.AnimalListing?.Name</h6>
+                    
+                                    <p class="small text-secondary-grey mb-1">
+                                        <i class="bi bi-person-badge me-2"></i><strong>Tutor:</strong>
+                                        @app.AnimalListing?.Tutor?.Name
+                                    </p>
+                                    <p class="small text-secondary-grey mb-3">
+                                        <i class="bi bi-calendar-event me-2"></i><strong>Date:</strong>
+                                        @app.SubmittedAt.ToString("MMM dd, yyyy")
+                                    </p>
+                    
+                                    <!-- mt-auto empurra o botão para o fim do cartão -->
+                                    <div class="mt-auto pt-2">
+                                        <a asp-controller="AnimalListings" asp-action="Details"
+                                               asp-route-id="@app.AnimalListingId"
                                                class="btn btn-outline-primary btn-sm rounded-pill w-100 fw-bold">
                                             View Pet Listing
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                        }
-                    </div>
-                }
-            </div>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </div>
+</div>

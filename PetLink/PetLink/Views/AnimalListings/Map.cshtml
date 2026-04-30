@@ -34,31 +34,63 @@
                 </div>
 
                 <form asp-controller="AnimalListings" asp-action="Map" method="get">
-                    <div class="input-group mb-3 rounded-pill" style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
+                    
+                    <!-- BARRA DE PESQUISA (Localização) -->
+                    <div class="input-group mb-4 rounded-pill" style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
                         <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-secondary-grey"></i></span>
                         <input type="text" name="location" value="@ViewBag.CurrentLocation" class="form-control border-0 bg-transparent text-primary-darkblue" placeholder="Search locations...">
                     </div>
 
-                    <div class="d-flex gap-2 mb-3">
-                        <select name="species" class="form-select form-select-sm rounded-pill border-0 flex-grow-1 text-center fw-bold text-primary-darkblue" style="background-color: var(--petlink-grey-bg);">
-                            <option value="">All Pets</option>
-                            <option value="Dog" selected="@(ViewBag.CurrentSpecies?.ToString() == "Dog")">🐶 Dogs</option>
-                            <option value="Cat" selected="@(ViewBag.CurrentSpecies?.ToString() == "Cat")">🐱 Cats</option>
-                            <option value="Bird" selected="@(ViewBag.CurrentSpecies?.ToString() == "Bird")">🦜 Birds</option>
-                        </select>
+                    <!-- FILTRO DE ESPÉCIE (Botões Dinâmicos) -->
+                    <div class="mb-4">
+                        <label class="small fw-bold text-secondary-grey mb-2"><i class="bi bi-funnel me-1"></i> ANIMAL TYPE</label>
+                        <div class="row g-2">
+                            <!-- Opção "All Pets" é importante num filtro de rádio para poder limpar a seleção -->
+                            <div class="col-12">
+                                <input type="radio" class="btn-check" name="species" value="" id="allPets" 
+                                    @(string.IsNullOrEmpty(ViewBag.CurrentSpecies?.ToString()) ? "checked" : "")>
+                                <label class="btn btn-outline-secondary btn-sm w-100 rounded-pill fw-bold" for="allPets">All Pets</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Dog" id="dog" 
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Dog.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="dog">🐶 Dogs</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Cat" id="cat" 
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Cat.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="cat">🐱 Cats</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Bird" id="bird" 
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Bird.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="bird">🦜 Birds</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Other" id="other" 
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Other.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="other">🐾 Others</label>
+                            </div>
+                        </div>
+                    </div>
 
-                        <select name="age" class="form-select form-select-sm rounded-pill border-0 flex-grow-1 text-center fw-bold text-primary-darkblue" style="background-color: var(--petlink-grey-bg);">
+                    <!-- FILTRO DE IDADE -->
+                    <div class="mb-4">
+                        <label class="small fw-bold text-secondary-grey mb-2"><i class="bi bi-clock me-1"></i> AGE</label>
+                        <select name="age" class="form-select form-select-sm rounded-pill border-0 text-center fw-bold text-primary-darkblue shadow-sm" style="background-color: var(--petlink-grey-bg);">
                             <option value="">Any Age</option>
                             <option value="@Age.Puppy" selected="@(ViewBag.CurrentAge?.ToString() == Age.Puppy.ToString())">Baby</option>
                             <option value="@Age.Adult" selected="@(ViewBag.CurrentAge?.ToString() == Age.Adult.ToString())">Adult</option>
                         </select>
                     </div>
 
+                    <!-- BOTÕES DE SUBMIT/CLEAR -->
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100 fw-bold">Search</button>
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill w-100 fw-bold shadow-sm">Search Map</button>
+                        
                         @if(ViewBag.CurrentSpecies != null || ViewBag.CurrentLocation != null || ViewBag.CurrentAge != null)
                         {
-                            <a asp-action="Map" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-x-lg"></i></a>
+                            <a asp-action="Map" class="btn btn-outline-danger btn-sm rounded-circle shadow-sm" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
                         }
                     </div>
                 </form>
