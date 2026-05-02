@@ -59,4 +59,11 @@ namespace PetLink.Models.Enums
         Admin
 
     }
+
+    public enum HealthDocumentType
+    {
+        Vaccine,      // Vacina
+        Deworming,    // Desparasitação 
+        Sterilization // Esterilização
+    }
 }
