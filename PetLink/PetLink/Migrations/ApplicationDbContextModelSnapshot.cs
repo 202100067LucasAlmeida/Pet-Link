@@ -43,20 +43,8 @@ namespace PetLink.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DewormingProofUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDewormed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSterilized")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsVaccinated")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -73,14 +61,8 @@ namespace PetLink.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("SterilizationProofUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("TutorId")
                         .HasColumnType("int");
-
-                    b.Property<string>("VaccinationProofUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -205,6 +187,39 @@ namespace PetLink.Migrations
                         .IsUnique();
 
                     b.ToTable("FavoritePetsitters");
+                });
+
+            modelBuilder.Entity("PetLink.Models.HealthDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimalListingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalListingId");
+
+                    b.ToTable("HealthDocument");
                 });
 
             modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
@@ -506,6 +521,17 @@ namespace PetLink.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PetLink.Models.HealthDocument", b =>
+                {
+                    b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
+                        .WithMany("HealthDocuments")
+                        .HasForeignKey("AnimalListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AnimalListing");
+                });
+
             modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
                 {
                     b.HasOne("PetLink.Models.AnimalListing", "AnimalListing")
@@ -590,6 +616,8 @@ namespace PetLink.Migrations
             modelBuilder.Entity("PetLink.Models.AnimalListing", b =>
                 {
                     b.Navigation("Favorites");
+
+                    b.Navigation("HealthDocuments");
 
                     b.Navigation("Photos");
                 });

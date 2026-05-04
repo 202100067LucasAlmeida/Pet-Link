@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetLink.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddHealthDocs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,12 +46,6 @@ namespace PetLink.Migrations
                     AgeMonths = table.Column<int>(type: "int", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsVaccinated = table.Column<bool>(type: "bit", nullable: false),
-                    IsDewormed = table.Column<bool>(type: "bit", nullable: false),
-                    IsSterilized = table.Column<bool>(type: "bit", nullable: false),
-                    VaccinationProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DewormingProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SterilizationProofUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TutorId = table.Column<int>(type: "int", nullable: false),
@@ -203,6 +197,29 @@ namespace PetLink.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HealthDocument",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AnimalListingId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HealthDocument", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HealthDocument_AnimalListings_AnimalListingId",
+                        column: x => x.AnimalListingId,
+                        principalTable: "AnimalListings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ListingsNotifications",
                 columns: table => new
                 {
@@ -347,6 +364,11 @@ namespace PetLink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_HealthDocument_AnimalListingId",
+                table: "HealthDocument",
+                column: "AnimalListingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ListingsNotifications_AnimalListingId",
                 table: "ListingsNotifications",
                 column: "AnimalListingId");
@@ -407,6 +429,9 @@ namespace PetLink.Migrations
 
             migrationBuilder.DropTable(
                 name: "FavoritePetsitters");
+
+            migrationBuilder.DropTable(
+                name: "HealthDocument");
 
             migrationBuilder.DropTable(
                 name: "ListingsNotifications");

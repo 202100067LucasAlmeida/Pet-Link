@@ -32,6 +32,7 @@ namespace PetLink
         {
             var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
+                .Include(a => a.HealthDocuments)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (listing == null) return NotFound();
@@ -87,7 +88,11 @@ namespace PetLink
             ViewBag.HasApplied = hasApplied;
             ViewBag.MyApplicationStatus = myApplicationStatus;
             ViewBag.CanReview = canReview;
-            ViewBag.OtherPets = await _context.AnimalListings.Where(a => a.Id != id).Take(4).ToListAsync();
+            ViewBag.OtherPets = await _context.AnimalListings
+                .Include(a => a.HealthDocuments)
+                .Where(a => a.Id != id && a.Status == ListingStatus.Published)
+                .Take(4)
+                .ToListAsync();
 
             return View(listing);
         }
@@ -187,12 +192,14 @@ namespace PetLink
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto)
+        // 1. ADICIONADOS OS 3 BOOLEANOS AQUI PARA CAPTURAR AS CHECKBOXES DO FORMULÁRIO HTML
+        public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto, bool isVaccinated, bool isDewormed, bool isSterilized)
         {
             if (id != animalListing.Id) return NotFound();
 
             var existingListing = await _context.AnimalListings
                 .Include(a => a.Tutor)
+                .Include(a => a.HealthDocuments) // 2. CRÍTICO: Carregar os documentos de saúde existentes!
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (existingListing == null) return NotFound();
@@ -209,11 +216,13 @@ namespace PetLink
             ModelState.Remove("Favorites");
             ModelState.Remove("Photos");
             ModelState.Remove("mainPhoto");
+            ModelState.Remove("HealthDocuments"); // Prevenir erros de validação
 
             var oldStatus = existingListing.Status.ToString();
 
-            // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE (OBRIGATÓRIO PELO MENOS UMA) ==========
-            if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
+            // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE ==========
+            // Usamos os parâmetros booleanos do método em vez do animalListing
+            if (!isVaccinated && !isDewormed && !isSterilized)
             {
                 ModelState.AddModelError("IsVaccinated", "Please confirm at least one health status (Vaccinated, Dewormed, or Sterilized).");
             }
@@ -227,11 +236,30 @@ namespace PetLink
                     existingListing.AgeMonths = animalListing.AgeMonths;
                     existingListing.Location = animalListing.Location;
                     existingListing.Description = animalListing.Description;
-                    
-                    // ========== ATUALIZAR AS CHECKBOXES DE SAÚDE ==========
-                    existingListing.IsVaccinated = animalListing.IsVaccinated;
-                    existingListing.IsDewormed = animalListing.IsDewormed;
-                    existingListing.IsSterilized = animalListing.IsSterilized;
+
+                    // ========== ATUALIZAR AS CONDIÇÕES DE SAÚDE ==========
+
+                    // Vacinação: Se a checkbox está ativa e não existe documento, criamos. Se está desativada e existe, apagamos.
+                    var vacDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Vaccine);
+                    if (isVaccinated && vacDoc == null)
+                        existingListing.HealthDocuments.Add(new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" });
+                    else if (!isVaccinated && vacDoc != null)
+                        existingListing.HealthDocuments.Remove(vacDoc);
+
+                    // Desparasitação
+                    var dewDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Deworming);
+                    if (isDewormed && dewDoc == null)
+                        existingListing.HealthDocuments.Add(new HealthDocument { Name = "Comprovativo Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" });
+                    else if (!isDewormed && dewDoc != null)
+                        existingListing.HealthDocuments.Remove(dewDoc);
+
+                    // Esterilização
+                    var steDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Sterilization);
+                    if (isSterilized && steDoc == null)
+                        existingListing.HealthDocuments.Add(new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" });
+                    else if (!isSterilized && steDoc != null)
+                        existingListing.HealthDocuments.Remove(steDoc);
+
 
                     if (isAdmin)
                     {
