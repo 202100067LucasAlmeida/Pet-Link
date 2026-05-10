@@ -36,7 +36,7 @@
                                 <p class="mb-1"><strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
                                 <p class="mb-1"><strong>City:</strong> ${city}</p>
                             </div>
-                            <button onclick="updateLocationField('${city}', ${lat}, ${lng})" class="btn btn-sm btn-primary rounded-pill mt-3">
+                            <button onclick="event.preventDefault(); updateLocationField('${city}', ${lat}, ${lng})" class="btn btn-sm btn-primary rounded-pill mt-3">
                                 <i class="bi bi-check-lg me-1"></i>Use This Location
                             </button>
                         </div>
@@ -53,7 +53,7 @@
                                 <p class="mb-1"><strong>Coordinates:</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}</p>
                                 <p class="mb-0 text-warning"><strong>Note:</strong> Could not retrieve city name, but coordinates are available</p>
                             </div>
-                            <button onclick="updateLocationField('', ${lat}, ${lng})" class="btn btn-sm btn-primary rounded-pill mt-3">
+                            <button onclick="event.preventDefault(); updateLocationField('', ${lat}, ${lng})" class="btn btn-sm btn-primary rounded-pill mt-3">
                                 <i class="bi bi-check-lg me-1"></i>Use These Coordinates
                             </button>
                         </div>
@@ -106,6 +106,9 @@
         `;
     }
 }
+
+let locationUpdateTimeout = null;
+
 function updateLocationField(city, lat, lng) {
     const locationInput = document.querySelector('input[name="City"]');
     if (locationInput) {
@@ -141,7 +144,24 @@ function updateLocationField(city, lat, lng) {
     `;
     ipDetailsDiv.appendChild(successMessage);
 
-    setTimeout(() => {
-        if (successMessage) successMessage.remove();
-    }, 3000);
+    // Clear previous timeout if it exists
+    if (locationUpdateTimeout) {
+        clearTimeout(locationUpdateTimeout);
+    }
+
+    // Also remove any existing success messages to avoid duplicates
+    const existingMessages = ipDetailsDiv.querySelectorAll('.alert-success');
+    existingMessages.forEach(msg => {
+        if (msg !== successMessage) {
+            msg.remove();
+        }
+    });
+
+    // Set new timeout
+    locationUpdateTimeout = setTimeout(() => {
+        if (successMessage && successMessage.parentNode) {
+            successMessage.remove();
+        }
+        locationUpdateTimeout = null;
+    }, 6000);
 }
