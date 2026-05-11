@@ -190,11 +190,12 @@
                     </div>
 
                     <div class="d-flex gap-3 justify-content-center mb-4">
-                        <button type="button"
-                                class="btn btn-outline-secondary w-50 rounded-pill py-2 text-primary-darkblue"
-                                style="border-color: var(--petlink-border);">
-                            <i class="bi bi-google"></i> Google
-                        </button>
+                        <a asp-controller = "Profile"
+                           asp-action = "LoginWithGoogle"
+                           class = "btn btn-outline-secondary w-50 rounded-pill py-2 text-primary-darkblue"
+                           style = "border-color: var(--petlink-border);">
+                            <i class = "bi bi-google"></i> Google
+                        </a>
                         <button type="button"
                                 class="btn btn-outline-secondary w-50 rounded-pill py-2 text-primary-darkblue"
                                 style="border-color: var(--petlink-border);">

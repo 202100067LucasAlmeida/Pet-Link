@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -563,6 +564,81 @@ namespace PetLink.Controllers
 
             // 5. Retornar o caminho relativo para a Base de Dados
             return $"/images/avatars/{fileName}";
+        }
+
+        public IActionResult LoginWithGoogle()
+        {
+            var redirectUrl = Url.Action("GoogleResponse");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme); 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("LoginForm");
+            }
+
+            var claims = result.Principal.Identities
+                .FirstOrDefault()?.Claims;
+
+            var email = claims?
+                .FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var name = claims?
+                .FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToAction("LoginForm");
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Name = name ?? "Google User",
+                    Email = email,
+                    Phone = null,
+                    PasswordHash = null,
+                    Role = UserRole.User,
+                    IsVerified = true,
+                    IsExternalLogin = true,
+                    CreatedAt = DateTime.Now,
+                    ProfilePicture = "/images/default-avatar.jpg"
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            var appClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.ToString()),
+                    new Claim("UserId", user.Id.ToString())
+                };
+
+            var identity = new ClaimsIdentity(
+                appClaims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal);
+
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult HelpCenter()

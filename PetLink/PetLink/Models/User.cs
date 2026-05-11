@@ -20,16 +20,16 @@ namespace PetLink.Models
         [EmailAddress(ErrorMessage = "Email inválido.")]
         public string Email { get; set; }
 
-        [Required]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         public UserRole Role { get; set; }
 
         // Indica se a Associação/PetSitter já foi verificada pelo Admin 
         public bool IsVerified { get; set; } = false; 
+        public bool IsExternalLogin { get; set; }
 
         
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
         public string? City { get; set; }
         public string? Lat { get; set; }
         public string? Lon { get; set; }
