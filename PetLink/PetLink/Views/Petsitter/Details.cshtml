@@ -48,11 +48,23 @@
                     </p>
                 </div>
 
-                @* Foto Principal *@
-                <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)"
-                     alt="@Model.User.Name's photo" class="img-fluid rounded-4 shadow-sm mb-4 w-100"
-                     style="max-height: 500px; object-fit: cover; border: 1px solid var(--petlink-border);"
-                     onerror="this.src='/images/default-avatar.jpg'" />
+                @* Foto Principal com botão coração  *@
+                <div class="position-relative mb-4" style="max-height: 500px; border-radius: 1rem; overflow: hidden;">
+                    <img src="@(string.IsNullOrEmpty(Model.User.ProfilePicture) ? "/images/default-avatar.jpg" : Model.User.ProfilePicture)"
+                         alt="@Model.User.Name's photo" class="img-fluid rounded-4 shadow-sm w-100"
+                         style="max-height: 500px; object-fit: cover; border: 1px solid var(--petlink-border);"
+                         onerror="this.src='/images/default-avatar.jpg'" />
+                    
+                    @* Botão coração *@
+                    @if (User.IsInRole("User"))
+                    {
+                        <button class="btn-heart favorite-petsitter-btn position-absolute top-0 end-0 m-3" 
+                                data-petsitter-id="@Model.UserId"
+                                style="background: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;">
+                            <i class="bi bi-heart fs-4"></i>
+                        </button>
+                    }
+                </div>
 
                 <div class="shadow-sm card border-0 rounded-4 mb-5" style="background-color: var(--petlink-card-bg);">
                     <div class="card-body p-0">
@@ -60,9 +72,7 @@
                              style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
                             <div class="text-center">
                                 <span class="d-block text-secondary-grey small fw-bold text-uppercase">Rate</span>
-                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.HourlyRate.ToString("0")€ /
-                                    hr
-                                </span>
+                                <span class="text-primary-darkblue fs-5 fw-semibold">@Model.HourlyRate.ToString("0")€ / hr</span>
                             </div>
                             <div class="text-center">
                                 <span class="d-block text-secondary-grey small fw-bold text-uppercase">Location</span>
@@ -103,7 +113,7 @@
                         {
                             foreach (var tag in Model.SpecialtyTags.Split(','))
                             {
-                                <li class="mb-2 text-primary-darkblue"><i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <li class="mb-2 text-primary-darkblue"><i class="bi bi-check text-success me-2"></i>
                                     @tag.Trim()
                                 </li>
                             }
@@ -112,11 +122,11 @@
                 </div>
             </div>
 
-            @* 3. Painel Lateral (Chat ou Edit Profile) *@
+            @* 3. Painel Lateral  *@
             <div class="col-lg-4">
                 @if (ViewBag.IsSelf)
                 {
-                    @* Painel do próprio Sitter - Corrigido para Dark Mode *@
+                    @* Painel do próprio Sitter *@
                     <div class="card shadow-sm border-0 sticky-top"
                          style="top: 20px; border-radius: 20px; overflow: hidden; background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border) !important;">
                         <div class="card-body text-center p-5">
@@ -125,11 +135,9 @@
                                 <i class="bi bi-person-badge-fill text-primary" style="font-size: 2.5rem;"></i>
                             </div>
                             <h4 class="fw-bold text-primary-darkblue">This is your profile</h4>
-                            <p class="text-secondary-grey small mb-4">You are viewing your public profile as it appears to
-                                clients.
-                            </p>
+                            <p class="text-secondary-grey small mb-4">You are viewing your public profile as it appears to clients.</p>
                             <a asp-action="Edit" asp-route-id="@Model.Id"
-                                   class="btn btn-primary rounded-pill w-100 fw-bold py-2 mb-2">
+                               class="btn btn-primary rounded-pill w-100 fw-bold py-2 mb-2">
                                 <i class="bi bi-pencil-square me-2"></i>Edit Profile
                             </a>
                         </div>
@@ -158,7 +166,7 @@
                         <div class="card-body" id="chatBox"
                              style="height: 400px; overflow-y: auto; background-color: var(--petlink-grey-bg);">
                             @if (ViewBag.ChatHistory != null &&
-                                                                                                            ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
+                                 ((IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory).Any())
                             {
                                 var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
                                 foreach (var msg in (IEnumerable<PetLink.Models.Message>)ViewBag.ChatHistory)
@@ -167,9 +175,8 @@
                                     <div class="d-flex mb-3 @(isMine ? "justify-content-end" : "justify-content-start")">
                                         <div class="p-3 shadow-sm"
                                              style="max-width: 85%; border-radius: 18px; font-size: 0.85rem; line-height: 1.4;
-                                            @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
-                                                                                                                                                                                                                                                                                                                                                                    : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
-                                
+                                                @(isMine ? "background-color: var(--petlink-highlight); color: white; border-bottom-right-radius: 4px;"
+                                                        : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px; border: 1px solid var(--petlink-border);")">
                                             <p class="mb-0">@msg.Content</p>
                                             <div class="text-end" style="font-size: 0.6rem; opacity: 0.6; margin-top: 5px;">
                                                 @msg.Timestamp.ToString("HH:mm")
@@ -190,7 +197,7 @@
 
                         <div class="card-footer border-0 p-3" style="background-color: var(--petlink-card-bg);">
                             <a asp-controller="Messages" asp-action="Index" asp-route-id="@Model.UserId"
-                                   class="btn btn-primary w-100 fw-bold rounded-pill py-2 d-flex align-items-center justify-content-center gap-2">
+                               class="btn btn-primary w-100 fw-bold rounded-pill py-2 d-flex align-items-center justify-content-center gap-2">
                                 <i class="bi bi-chat-dots-fill"></i> Message @Model.User.Name.Split(' ')[0]
                             </a>
                         </div>
@@ -239,3 +246,61 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var petsitterId = @Model.UserId;
+            var favoriteBtn = $('.favorite-petsitter-btn');
+            
+            // Função para atualizar o ícone do coração 
+            function updateHeartIcon(isFavorited) {
+                if (isFavorited) {
+                    favoriteBtn.html('<i class="bi bi-heart-fill text-danger fs-4"></i>');
+                    favoriteBtn.addClass('active');
+                } else {
+                    favoriteBtn.html('<i class="bi bi-heart fs-4"></i>');
+                    favoriteBtn.removeClass('active');
+                }
+            }
+            
+            // Verificar estado inicial
+            $.ajax({
+                url: '@Url.Action("CheckPetsitter", "Favorites")',
+                type: 'GET',
+                data: { petsitterId: petsitterId },
+                success: function(isFavorited) {
+                    updateHeartIcon(isFavorited);
+                }
+            });
+            
+            // Toggle favorito
+            favoriteBtn.click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                $.ajax({
+                    url: '@Url.Action("TogglePetsitter", "Favorites")',
+                    type: 'POST',
+                    data: { petsitterId: petsitterId },
+                    success: function(response) {
+                        if (response.success) {
+                            updateHeartIcon(response.isFavorited);
+                            showNotification(response.message);
+                        }
+                    },
+                    error: function() {
+                        showNotification('Error updating favorite', 'error');
+                    }
+                });
+            });
+            
+            function showNotification(message) {
+                $('.toast-notification').remove();
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                setTimeout(() => toast.fadeOut(300, function() { $(this).remove(); }), 2000);
+            }
+        });
+    </script>
+}

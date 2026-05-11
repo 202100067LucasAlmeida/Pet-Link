@@ -31,8 +31,17 @@ namespace PetLink.Models
         
         public string? Phone { get; set; }
         public string? City { get; set; }
-        public string? Lat { get; set; }
-        public string? Lon { get; set; }
+        private string? Lat;
+        private string? Lon;
+
+        public void UpdateCoordinates(string lat, string lon)
+        {
+            Lat = lat;
+            Lon = lon;
+        }
+        public string GetLatitude() => Lat;
+        public string GetLongitude() => Lon;
+
         public string? Bio { get; set; }
         public string? ProfilePicture { get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -44,7 +53,8 @@ namespace PetLink.Models
         public ICollection<Message> SentMessages { get; set; }
         public ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Review> ReviewsReceived { get; set; } // Avaliações recebidas
-public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+        public virtual ICollection<Review> ReviewsGiven { get; set; } // Avaliações feitas
+        public ICollection<FavoritePetsitter> FavoritePetsitters { get; set; }
 
 // Propriedades calculadas (não mapeadas na BD)
 [NotMapped]

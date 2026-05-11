@@ -30,12 +30,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 912 345 678",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Admin system user",
                     ProfilePicture = "/images/logo.png",
                     CreatedAt = DateTime.Now.AddDays(-365)
                 };
+
+                admin.UpdateCoordinates(null, null);
 
                 var shelter = new User
                 {
@@ -46,12 +46,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 234 567 890",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Animal shelter specializing in rescue dogs and cats",
                     ProfilePicture = "/images/avatars/sunnypaws.jpg",
                     CreatedAt = DateTime.Now.AddDays(-180)
                 };
+
+                shelter.UpdateCoordinates(null, null);
 
                 var particular = new User
                 {
@@ -62,12 +62,12 @@ namespace PetLink.Data
                     IsVerified = false,
                     Phone = "+351 912 345 679",
                     City = "Setubal",
-                    Lat = "38.548168",
-                    Lon = "-8.901205",
                     Bio = "Pet lover looking for adoption",
                     ProfilePicture = "/images/avatars/joaosilva.jpg",
                     CreatedAt = DateTime.Now.AddDays(-30)
                 };
+
+                particular.UpdateCoordinates("38.548168", "-8.901205");
 
                 // Pet Sitters completos
                 var sitter1 = new User
@@ -79,12 +79,13 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 923 456 789",
                     City = "Setúbal",
-                    Lat = "38.548168",
-                    Lon = "-8.901205",
                     Bio = "Experienced dog walker",
                     ProfilePicture = "/images/avatars/sarahjenkins.jpg",
                     CreatedAt = DateTime.Now.AddDays(-90)
                 };
+
+                sitter1.UpdateCoordinates("38.548168", "-8.901205");
+
                 var sitter2 = new User
                 {
                     Name = "Marcus Chen",
@@ -94,12 +95,13 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 934 567 890",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Cat specialist",
                     ProfilePicture = "/images/avatars/marcuschen.jpg",
                     CreatedAt = DateTime.Now.AddDays(-120)
                 };
+
+                sitter2.UpdateCoordinates(null, null);
+
                 var sitter3 = new User
                 {
                     Name = "Elena Smith",
@@ -109,12 +111,12 @@ namespace PetLink.Data
                     IsVerified = true,
                     Phone = "+351 945 678 901",
                     City = null,
-                    Lat = null,
-                    Lon = null,
                     Bio = "Exotic pets expert",
                     ProfilePicture = "/images/avatars/elenasmith.jpg",
                     CreatedAt = DateTime.Now.AddDays(-60)
                 };
+
+                sitter3.UpdateCoordinates(null, null);
 
                 // Salva users primeiro para gerar IDs
                 context.Users.AddRange(admin, shelter, particular, sitter1, sitter2, sitter3);
@@ -173,13 +175,16 @@ namespace PetLink.Data
                         AgeMonths = 4,
                         Location = "Lisbon",
                         Description = "Energetic puppy loves playing!",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-1),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/cooper.jpg"
+                        ImageUrl = "/images/animals/cooper.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -189,13 +194,16 @@ namespace PetLink.Data
                         AgeMonths = 24,
                         Location = "Setúbal",
                         Description = "Calm apartment cat",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-2),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/luna.jpg"
+                        ImageUrl = "/images/animals/luna.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -205,13 +213,11 @@ namespace PetLink.Data
                         AgeMonths = 12,
                         Location = "Leiria",
                         Description = "Talkative macaw parrot",
-                        IsVaccinated = false,
-                        IsDewormed = false,
-                        IsSterilized = false,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-3),
                         TutorId = particular.Id,
                         ImageUrl = "/images/animals/rio.jpg"
+                        // Rio não tem HealthDocuments, por isso a lista fica vazia/omissa (tudo a false)
                     },
                     new AnimalListing
                     {
@@ -221,13 +227,16 @@ namespace PetLink.Data
                         AgeMonths = 60,
                         Location = "Algarve",
                         Description = "Loyal companion for quiet home",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-4),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/shadow.jpg"
+                        ImageUrl = "/images/animals/shadow.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -237,13 +246,16 @@ namespace PetLink.Data
                         AgeMonths = 36,
                         Location = "Porto",
                         Description = "Friendly French Bulldog",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-5),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/rex.jpg"
+                        ImageUrl = "/images/animals/rex.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -253,13 +265,16 @@ namespace PetLink.Data
                         AgeMonths = 96,
                         Location = "Coimbra",
                         Description = "Trained senior German Shepherd",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-6),
                         TutorId = particular.Id,
-                        ImageUrl = "/images/animals/max.jpg"
+                        ImageUrl = "/images/animals/max.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -269,13 +284,16 @@ namespace PetLink.Data
                         AgeMonths = 48,
                         Location = "Braga",
                         Description = "Active Beagle needs exercise",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = false,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-7),
                         TutorId = shelter.Id,
-                        ImageUrl = "/images/animals/daisy.jpg"
+                        ImageUrl = "/images/animals/daisy.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            // A Daisy não tem esterilização no teu código original, por isso só leva estes dois
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     },
                     new AnimalListing
                     {
@@ -285,13 +303,16 @@ namespace PetLink.Data
                         AgeMonths = 60,
                         Location = "Aveiro",
                         Description = "Independent longhair cat",
-                        IsVaccinated = true,
-                        IsDewormed = true,
-                        IsSterilized = true,
                         Status = ListingStatus.Published,
                         CreatedAt = DateTime.Now.AddDays(-8),
                         TutorId = particular.Id,
-                        ImageUrl = "/images/animals/misty.jpg"
+                        ImageUrl = "/images/animals/misty.jpg",
+                        HealthDocuments = new List<HealthDocument>
+                        {
+                            new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" },
+                            new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" }
+                        }
                     }
                 );
 

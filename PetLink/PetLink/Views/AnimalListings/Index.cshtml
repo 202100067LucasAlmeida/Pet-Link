@@ -4,9 +4,6 @@
 @{
     ViewData["Title"] = "Find Your New Best Friend";
 
-    @* var currentUserIdStr = User.FindFirst("UserId")?.Value;
-    bool isOwner = currentUserIdStr != null && currentUserIdStr == Model.TutorId.ToString(); *@
-
     // Helper function to get display name for species
     string GetSpeciesDisplayName(Species species)
     {
@@ -42,7 +39,7 @@
                     <a asp-controller="Home" asp-action="Index"
                        class="text-decoration-none text-highlight-darkblue">HOME</a>
                 </li>
-                <li class="breadcrumb-item active text-highlight-blue" aria-current="page">ADOPT©</li>
+                <li class="breadcrumb-item active text-highlight-blue" aria-current="page">ADOPT</li>
             </ol>
         </nav>
     </div>
@@ -51,12 +48,14 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-3 mb-4 mb-lg-0">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="fw-bold text-primary-darkblue mb-0">Filters</h4>
-            </div>
+            <div class="position-sticky" style="top: 100px; z-index: 10;">
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-primary-darkblue mb-0">Filters</h4>
+                </div>
 
-            <div class="card filter-card rounded-4 shadow-sm p-4">
-                <form method="get" asp-action="Search" asp-controller="AnimalListings" id="filterForm">
+                <div class="card filter-card rounded-4 shadow-sm p-4">
+                    <form method="get" asp-action="Search" asp-controller="AnimalListings" id="filterForm">
                     <!--ANIMAL TYPE-->
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-bag me-2"></i> ANIMAL TYPE</div>
@@ -64,7 +63,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Dog" id="dog"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Dog.ToString() ? "checked" : "") hidden>
+                                                                    Species.Dog.ToString() ? "checked" : "") hidden>
                                 <label for="dog" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Dogs
                                 </label>
@@ -72,7 +71,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Cat" id="cat"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Cat.ToString() ? "checked" : "") hidden>
+                                Species.Cat.ToString() ? "checked" : "") hidden>
                                 <label for="cat" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Cats
                                 </label>
@@ -80,7 +79,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Bird" id="bird"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Bird.ToString() ? "checked" : "") hidden>
+                                Species.Bird.ToString() ? "checked" : "") hidden>
                                 <label for="bird" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Birds
                                 </label>
@@ -88,7 +87,7 @@
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Other" id="other"
                                 @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Species.Other.ToString() ? "checked" : "") hidden>
+                                Species.Other.ToString() ? "checked" : "") hidden>
                                 <label for="other" class="btn animal-type-btn w-100 rounded-3">
                                     <i class="bi bi-list-task me-1"></i>Others
                                 </label>
@@ -97,13 +96,13 @@
                     </div>
 
                     <!--BREED-->
-                    <div class="mb-4">
+                    @* <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-tag me-2"></i> BREED</div>
                         <p style="color: red; font-size:x-small;">'BREED' filter is not available at this moment</p>
                         <select class="form-select rounded-3 py-2 text-secondary-grey fw-semibold fs-6">
                             <option>All Breeds</option>
                         </select>
-                    </div>
+                    </div> *@
 
                     <!--AGE-->
                     <div class="mb-4">
@@ -111,7 +110,7 @@
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Puppy" id="agePuppy"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Puppy.ToString() ?
-                                                                                                                                                                                                                                                                                                                                                                                                                           "checked" : "")>
+                            "checked" : "")>
                             <label class="form-check-label text-secondary-grey small fw-semibold" for="agePuppy">Puppy
                                 (0-1
                                 yr)
@@ -120,7 +119,7 @@
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Adult" id="ageAdult"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Adult.ToString() ?
-                                                                                                                                                                                                                                                                                                                                                                                                                     "checked" : "")>
+                            "checked" : "")>
                             <label class="form-check-label text-secondary-grey small fw-semibold" for="ageAdult">Adult
                                 (1-7
                                 yrs)
@@ -129,7 +128,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="age" value="@Age.Senior" id="ageSenior"
                             @(ViewBag.CurrentAge != null && ViewBag.CurrentAge.ToString() == Age.Senior.ToString() ?
-                                                                                                                                                                                                                                                                                                                                                                                                                       "checked" : "")>
+                            "checked" : "")>
                             <label class="form-check-label text-secondary-grey small fw-semibold" for="ageSenior">Senior
                                 (7+
                                 yrs)
@@ -177,35 +176,55 @@
                 </form>
             </div>
         </div>
+        </div>
 
         <!--BADGES/TAGS ATIVAS-->
         <div class="col-lg-9">
             <div class="mb-4">
 
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-3">
-                    <div>
-                        <h1 class="display-6 fw-bold mb-1 text-primary-darkblue">Find Your New Best Friend</h1>
-                        <p class="text-secondary-grey mb-0">Showing @Model.Count() adoptable pets near your location</p>
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="display-6 text-primary-darkblue fw-bold mb-1">Find Your New Best Friend</h2>
+                    <p class="text-secondary-grey mb-0 small">Showing @Model.Count() adoptable pets near your location</p>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <label class="small text-secondary-grey fw-bold mb-0 text-nowrap">Sort by:</label>
+                    <select class="form-select form-select-sm border-0 fw-bold" style="background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-radius: 8px; width: 140px;">
+                        <option>New Arrivals</option>
+                        <option>Distance</option>
+                        <option>Age</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 mb-5 overflow-hidden" style="border-radius: 16px; background-color: var(--petlink-card-bg);">
+                <div class="row g-0">
+                    <div class="col-md-5 p-4 d-flex flex-column justify-content-center" style="border-right: 1px solid var(--petlink-border);">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-geo-alt-fill text-primary fs-4 me-2"></i>
+                            <h3 class="h5 text-primary-darkblue fw-bold mb-0">Pets Near You</h3>
+                        </div>
+                        <p class="small text-secondary-grey mb-4">
+                            Get a quick glimpse of animals nearby, or open the full interactive map to search by area.
+                        </p>
+                        <div>
+                            <a asp-controller="AnimalListings" asp-action="Map" class="btn btn-outline-primary rounded-pill btn-sm fw-bold px-4">
+                                <i class="bi bi-map me-2"></i>Open Map Explorer
+                            </a>
+                        </div>
                     </div>
                     
-                    <form method="get" asp-action="Search" class="mt-3 mt-md-0 d-flex align-items-center">
-                        <input type="hidden" name="species" value="@Context.Request.Query["species"]" />
-                        <input type="hidden" name="age" value="@Context.Request.Query["age"]" />
-                        <input type="hidden" name="location" value="@Context.Request.Query["location"]" />
-
-                        <span class="text-secondary-grey small me-2">Sort by:</span>
-
-                        <select name="sort"
-                                class="form-select form-select-sm rounded-3 border-0 shadow-sm fw-semibold text-dark"
-                                style="width: 150px;" onchange="this.form.submit()">
-
-                            <option value="newest" selected="@(Context.Request.Query["sort"] == "newest")">New Arrivals
-                            </option>
-                            <option value="oldest" selected="@(Context.Request.Query["sort"] == "oldest")">Oldest
-                            </option>
-                        </select>
-                    </form>
+                    <div class="col-md-7 position-relative">
+                        <span class="badge position-absolute top-0 end-0 m-3 shadow-sm z-3" 
+                            style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border); border-radius: 20px;">
+                            <i class="bi bi-radar text-primary me-1"></i> 15km Radius
+                        </span>
+                        <div id="miniMap" style="height: 200px; width: 100%; z-index: 1;"></div>
+                    </div>
                 </div>
+            </div>
+
 
                 <!-- Active Filters Display -->
                 @if (ViewBag.ActiveFilters != null && ViewBag.ActiveFilters.Count > 0)
@@ -242,19 +261,18 @@
                     @foreach (var item in Model)
                     {
                         <div class="col-md-6 col-xl-4">
-                            <div
-                                class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column">
+                            <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column" style="background-color: var(--petlink-card-bg);">
+                                
                                 <div class="pet-card-img-wrapper position-relative">
                                     <a asp-action="Details" asp-route-id="@item.Id">
-                                        @* Lógica de imagem simplificada: usa a URL da BD ou o default *@
                                         <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-pet.jpg" : item.ImageUrl)"
-                                             class="img-fluid w-100" style="height: 250px; object-fit: cover;"
-                                             onerror="this.src='/images/default-pet.jpg'">
+                                            class="img-fluid w-100" style="height: 250px; object-fit: cover;"
+                                            onerror="this.src='/images/default-pet.jpg'">
                                     </a>
 
                                     @if (User.IsInRole("User") || User.IsInRole("PetSitter"))
                                     {
-                                        <button class="btn-heart favorite-toggle position-absolute top-0 end-0 m-2"
+                                        <button class="btn-heart favorite-toggle position-absolute top-0 end-0 m-3 shadow-sm"
                                                 data-pet-id="@item.Id">
                                             <i class="bi bi-heart"></i>
                                         </button>
@@ -262,33 +280,52 @@
 
                                     @if (item.Status.ToString() == "Published")
                                     {
-                                        <span class="badge-adoptable position-absolute bottom-0 start-0 m-3">ADOPTABLE</span>
+                                        <span class="badge-adoptable position-absolute bottom-0 start-0 m-3 shadow-sm">ADOPTABLE</span>
                                     }
                                 </div>
 
-                                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                                <div class="card-body p-4 d-flex flex-column flex-grow-1">
                                     <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
-                                        <h4 class="h5 fw-bold mb-0 text-primary-darkblue">@item.Name</h4>
+                                        <h4 class="h5 fw-bold mb-1 text-primary-darkblue">@item.Name</h4>
                                     </a>
-                                    <p class="text-secondary-grey small mb-1">
-                                        <i class="bi bi-geo-alt"></i> @item.Location
-                                    </p>
-                                    <p class="text-secondary-grey small mb-3">@item.Species • @item.AgeMonths mo.</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <p class="text-secondary-grey small mb-0">
+                                            <i class="bi bi-geo-alt me-1"></i>@item.Location
+                                        </p>
+                                        <span class="text-secondary-grey small fw-medium">
+                                            @item.Species • @item.AgeMonths mo.
+                                        </span>
+                                    </div>
 
-                                    <div class="d-flex flex-wrap gap-2 mt-auto">
+                                    <!-- ========== BADGES DINÂMICAS DE SAÚDE ========== -->
+                                    <div class="d-flex flex-wrap gap-2 mt-auto pt-3 border-top" style="border-color: var(--petlink-border) !important;">
                                         @if (item.IsVaccinated)
                                         {
-                                            <span class="pet-tag pet-tag-green">VACCINATED</span>
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.2); font-size: 0.65rem;">
+                                                <i class="bi bi-shield-check me-1"></i> VACCINATED
+                                            </span>
+                                        }
+                                        @if (item.IsDewormed)
+                                        {
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(32, 201, 151, 0.1); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.2); font-size: 0.65rem;">
+                                                <i class="bi bi-capsule me-1"></i> DEWORMED
+                                            </span>
                                         }
                                         @if (item.IsSterilized)
                                         {
-                                            <span class="pet-tag pet-tag-green">STERILIZED</span>
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; border: 1px solid rgba(13, 110, 253, 0.2); font-size: 0.65rem;">
+                                                <i class="bi bi-heart-pulse me-1"></i> STERILIZED
+                                            </span>
                                         }
-                                        @if (!item.IsVaccinated && !item.IsSterilized)
+                                        @if (!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized)
                                         {
-                                            <span class="pet-tag">NEEDS VET</span>
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #d39e00; border: 1px solid rgba(255, 193, 7, 0.2); font-size: 0.65rem;">
+                                                <i class="bi bi-exclamation-triangle-fill me-1"></i> NEEDS VET
+                                            </span>
                                         }
                                     </div>
+                                    <!-- ========== FIM BADGES ========== -->
                                 </div>
                             </div>
                         </div>
@@ -304,44 +341,50 @@
                     }
                 </div>
 
-                @if (Model.Any())
-                {
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-secondary-grey" href="#"><i
-                                    class="bi bi-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2"
-                                       style="background-color: var(--petlink-dark);" href="#">1
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">2
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">3
-                                </a>
-                            </li>
-                            <li class="page-item disabled">
-                                <span class="page-link border-0 bg-transparent text-secondary-grey">...
-                                </span>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-3 me-2 text-dark" href="#">12
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link border-0 shadow-sm rounded-3 text-dark" href="#"><i
-                                    class="bi bi-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                }
+                @* PAGINATION (WIP) *@
+                 @if (Model.Any())
+                    {
+                        int currentPage = ViewBag.CurrentPage ?? 1;
+                        int totalPages = ViewBag.TotalPages ?? 1;
+
+                        // Só mostramos a paginação se houver mais do que 1 página!
+                        if (totalPages > 1)
+                        {
+                            <nav aria-label="Page navigation" class="mt-5">
+                                <ul class="pagination justify-content-center">
+                                    
+                                    @* BOTÃO ANTERIOR *@
+                                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                        <a class="page-link border-0 shadow-sm rounded-3 me-2 @(currentPage == 1 ? "text-secondary-grey" : "text-dark")" 
+                                        href="@Url.Action("Index", new { page = currentPage - 1 })">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+
+                                    @* NÚMEROS DAS PÁGINAS *@
+                                    @for (int i = 1; i <= totalPages; i++)
+                                    {
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <a class="page-link border-0 shadow-sm rounded-3 me-2 @(i != currentPage ? "text-dark" : "")"
+                                            style="@(i == currentPage ? "background-color: var(--petlink-dark); color: white;" : "")" 
+                                            href="@Url.Action("Index", new { page = i })">
+                                                @i
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @* BOTÃO SEGUINTE *@
+                                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                        <a class="page-link border-0 shadow-sm rounded-3 text-dark @(currentPage == totalPages ? "text-secondary-grey" : "text-dark")" 
+                                        href="@Url.Action("Index", new { page = currentPage + 1 })">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </nav>
+                        }
+                    }
             </div>
         </div>
     </div>
@@ -421,4 +464,115 @@
         });
     </script>
 
+    <script>
+        var petsArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
+            id = p.Id,
+            name = p.Name,
+            species = p.Species.ToString(),
+            location = p.Location,
+            ageMonths = p.AgeMonths,
+            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
+            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
+            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+        })));
+
+        var petsByLocation = {};
+        
+        petsArray.forEach(function(pet) {
+            var key = pet.lat + "_" + pet.lng; 
+            if (!petsByLocation[key]) {
+                petsByLocation[key] = [];
+            }
+            petsByLocation[key].push(pet);
+        });
+
+        var map = L.map('miniMap').setView([38.7223, -9.1393], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        var petIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1076/1076928.png', 
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+        });
+
+        var leafletMarkers = []; 
+        
+        Object.keys(petsByLocation).forEach(function(gpsKey) {
+            var petsHere = petsByLocation[gpsKey];
+            var coords = gpsKey.split('_');
+            var lat = parseFloat(coords[0].replace(',', '.'));
+            var lng = parseFloat(coords[1].replace(',', '.'));
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                var marker = L.marker([lat, lng], {icon: petIcon}).addTo(map);
+                
+                var popupContent = `<div style="text-align: center; min-width: 170px; max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 5px;">`;
+                
+                if(petsHere.length > 1) {
+                    popupContent += `
+                        <div style="position: sticky; top: 0; background: white; padding-bottom: 5px; border-bottom: 2px solid var(--petlink-border); margin-bottom: 10px; z-index: 2;">
+                            <span class="badge bg-primary rounded-pill mb-1" style="font-family: var(--font-primary);">${petsHere.length} Pets Here</span>
+                        </div>`;
+                }
+
+                petsHere.forEach(function(pet) {
+                    popupContent += `
+                        <div style="margin-bottom: 15px; background: var(--petlink-grey-bg); padding: 8px; border-radius: 12px; border: 1px solid var(--petlink-border);">
+                            <img src="${pet.imageUrl}" alt="${pet.name}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                            <h6 style="margin: 0; font-weight: bold; color: var(--petlink-primary-darkblue); font-family: var(--font-primary);">${pet.name}</h6>
+                            <p style="margin: 0; font-size: 11px; color: var(--petlink-secondary-grey);">${pet.species} • ${pet.ageMonths} mo.</p>
+                            <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm w-100 mt-2" style="background-color: var(--petlink-primary); color: white; border-radius: 20px; font-weight: bold; font-size: 12px;">Adopt ${pet.name}</a>
+                        </div>
+                    `;
+                });
+
+                popupContent += `</div>`;
+                marker.bindPopup(popupContent);
+                leafletMarkers.push(marker);
+            }
+        });
+
+        var boundsGroup = new L.featureGroup(leafletMarkers);
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    var userLat = position.coords.latitude;
+                    var userLng = position.coords.longitude;
+
+                    var userMarker = L.circleMarker([userLat, userLng], {
+                        radius: 8,
+                        fillColor: "#087CD9",
+                        color: "#fff",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    }).addTo(map).bindPopup("<b style='color: var(--petlink-primary-darkblue);'>You are here!</b>").openPopup();
+
+                    L.circle([userLat, userLng], {
+                        color: '#087CD9',
+                        fillColor: '#087CD9',
+                        fillOpacity: 0.1,
+                        radius: 15000 
+                    }).addTo(map);
+
+                    boundsGroup.addLayer(userMarker); 
+                    map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 }); 
+                },
+                function (error) {
+                    console.warn("Location access unavailable: " + error.message);
+                    if (leafletMarkers.length > 0) {
+                        map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+                    }
+                }
+            );
+        } else if (leafletMarkers.length > 0) {
+            map.fitBounds(boundsGroup.getBounds().pad(0.1), { maxZoom: 13 });
+        }
+    </script>
 }

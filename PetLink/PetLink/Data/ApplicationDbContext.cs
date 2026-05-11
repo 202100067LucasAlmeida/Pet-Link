@@ -17,9 +17,10 @@ namespace PetLink.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Petsitter> Petsitters { get; set; }
         public DbSet<Application> Applications { get; set; }
-        public DbSet<Review> Reviews { get; set; } 
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<FavoritePetsitter> FavoritePetsitters { get; set; }
 
-       public DbSet<ListingsNotification> ListingsNotifications { get; set; }
+        public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -89,11 +90,11 @@ namespace PetLink.Data
                 .HasForeignKey(a => a.AnimalListingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-             modelBuilder.Entity<Review>()
-            .HasOne(r => r.Reviewer)
-            .WithMany(u => u.ReviewsGiven)
-            .HasForeignKey(r => r.ReviewerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Review>()
+           .HasOne(r => r.Reviewer)
+           .WithMany(u => u.ReviewsGiven)
+           .HasForeignKey(r => r.ReviewerId)
+           .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Review>()
             .HasOne(r => r.Reviewed)
@@ -111,9 +112,25 @@ namespace PetLink.Data
             modelBuilder.Entity<Review>()
             .HasIndex(r => new { r.ReviewerId, r.AnimalListingId })
             .IsUnique();
-            
 
-        
+            modelBuilder.Entity<FavoritePetsitter>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.FavoritePetsitters)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FavoritePetsitter>()
+            .HasOne(f => f.Petsitter)
+            .WithMany()
+            .HasForeignKey(f => f.PetsitterId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FavoritePetsitter>()
+            .HasIndex(f => new { f.UserId, f.PetsitterId })
+            .IsUnique();
+
+
+
         }
     }
 }

@@ -374,7 +374,7 @@ namespace PetLink.Controllers
             {
                 pendingListingsForAdmin = await _context.AnimalListings
                     .Include(a => a.Tutor)
-                    .Where(a => a.Status == ListingStatus.Pendent)
+                    .Where(a => a.Status == ListingStatus.Pending)
                     .OrderByDescending(a => a.CreatedAt)
                     .ToListAsync();
 
@@ -384,6 +384,12 @@ namespace PetLink.Controllers
                     .OrderByDescending(u => u.CreatedAt)
                     .ToListAsync();
             }
+
+            var favoritePetsitters = await _context.FavoritePetsitters
+            .Where(f => f.UserId == userId)
+            .Include(f => f.Petsitter)
+            .Select(f => f.Petsitter)
+            .ToListAsync();
 
             var viewModel = new ProfileViewModel
             {
@@ -396,7 +402,8 @@ namespace PetLink.Controllers
                 DaysSinceJoined = daysSinceJoined, 
                 RecentNotifications = await _notificationService.GetUserRecentNotificationsAsync(userId, 5),
                 PendingListingsForAdmin = pendingListingsForAdmin,
-                UnverifiedUsersForAdmin = unverifiedUsersForAdmin
+                UnverifiedUsersForAdmin = unverifiedUsersForAdmin,
+                FavoritePetsitters = favoritePetsitters,
             };
 
             // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
@@ -413,6 +420,8 @@ namespace PetLink.Controllers
                 totalReviews = reviews.Count;
                 averageRating = totalReviews > 0 ? Math.Round(reviews.Average(r => r.Rating), 1) : 0;
             }
+
+            
 
             ViewBag.AverageRating = averageRating;
             ViewBag.TotalReviews = totalReviews;
@@ -476,8 +485,7 @@ namespace PetLink.Controllers
             userInDb.Name = updatedUser.Name;
             userInDb.Phone = updatedUser.Phone;
             userInDb.City = updatedUser.City;
-            userInDb.Lat = updatedUser.Lat;
-            userInDb.Lon = updatedUser.Lon;
+            userInDb.UpdateCoordinates(updatedUser.GetLatitude(), updatedUser.GetLongitude());
             userInDb.Bio = updatedUser.Bio;
 
             // 3. Lógica de Foto

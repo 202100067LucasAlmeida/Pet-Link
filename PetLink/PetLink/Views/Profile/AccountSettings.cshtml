@@ -23,22 +23,14 @@
                     <ul class="nav nav-pills mb-4 pb-2 border-bottom"
                         style="border-color: var(--petlink-border) !important;">
                         <li class="nav-item">
-                            <a class="nav-link active" asp-controller="Profile" asp-action="AccountSettings">Profile
-                                Information
+                            <a class="nav-link active text-primary-darkblue" asp-controller="Profile" asp-action="AccountSettings">
+                                Profile Information
                             </a>
                         </li>
-                        <li class="nav-item"><a class="nav-link text-primary-darkblue" href="#">Notifications</a></li>
+                        @* <li class="nav-item"><a class="nav-link text-primary-darkblue" href="#">Notifications</a></li>
                         <li class="nav-item"><a class="nav-link text-primary-darkblue" href="#">Security</a></li>
-                        <li class="nav-item"><a class="nav-link text-primary-darkblue" href="#">Payment Methods</a></li>
+                        <li class="nav-item"><a class="nav-link text-primary-darkblue" href="#">Payment Methods</a></li> *@
                     </ul>
-
-                    <div class="col-sm-9">
-                        <button onclick="getAccurateLocation()" class="btn btn-sm btn-outline-primary rounded-pill mt-2">
-                            <i class="bi bi-geo-alt me-1"></i>Get My Location
-                        </button>
-                        <p class="text-muted small">If the first try isn't correct, try again, and make sure the location is accurate.</p>
-                        <p id="ipDetails"></p>
-                    </div>
 
                     <form asp-controller="Profile" asp-action="UpdateAccount" method="post"
                           enctype="multipart/form-data">
@@ -95,124 +87,135 @@
                                 <div class="col-sm-9">
                                     <input type="text" asp-for="City" class="form-control"
                                            style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
-                                           placeholder="Your city or region" />
-                                    <input type="hidden" asp-for="Lat" id="latField" />
-                                    <input type="hidden" asp-for="Lon" id="lonField" />
+                                           placeholder="@(Model?.City)" />
+                                           
+                                    <!-- Alterado de type="text" para type="hidden" -->
+                                    <input type="hidden" id="latField" name="Lat" value="@(Model?.GetLatitude())" />
+                                    <input type="hidden" id="lonField" name="Lon" value="@(Model?.GetLongitude())" />
                                 </div>
-
-                                <p class="text-muted small">To update your location, just click on "Get my location" and verify the data retrieved.</p>
-
                             </div>
-                        </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted small mb-2">To update your location, just click on "Update my location" and verify the data retrieved.</p>
+                                    <button type="button" onclick="getAccurateLocation()"
+                                            class="btn btn-sm btn-outline-primary rounded-pill">
+                                        <i class="bi bi-geo-alt me-1"></i>Update my location
+                                    </button>
+                                    <p class="text-muted small mt-2 mb-0">If the first try isn't correct, try again, and make sure the location is accurate.</p>
+                                    <p id="ipDetails" class="mb-0"></p>
+                                </div>
+                            </div>
 
-                        <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.2;">
+                                <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.2;">
 
-                        @* Profile Picture Section *@
-                        <div class="mb-5">
-                            <h4 class="mb-4 text-primary-darkblue">Profile Picture</h4>
+                                @* Profile Picture Section *@
+                                <div class="mb-5">
+                                    <h4 class="mb-4 text-primary-darkblue">Profile Picture</h4>
 
-                            <div class="d-flex align-items-start gap-4">
-                                <div class="position-relative">
-                                    @* Avatar Placeholder Dinâmico *@
-                                    <div id="defaultAvatarIcon"
-                                         class="@(!string.IsNullOrEmpty(Model?.ProfilePicture) && Model.ProfilePicture != "/images/default-avatar.jpg" ? "d-none" : "") rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                                         style="width: 100px; height: 100px; background-color: var(--petlink-grey-bg);">
-                                        <i class="bi bi-person-circle fs-1" style="color: var(--petlink-primary);"></i>
-                                    </div>
+                                    <div class="d-flex align-items-start gap-4">
+                                        <div class="position-relative">
+                                            @* Avatar Placeholder Dinâmico *@
+                                            <div id="defaultAvatarIcon"
+                                                 class="@(!string.IsNullOrEmpty(Model?.ProfilePicture) && Model.ProfilePicture != "/images/default-avatar.jpg" ? "d-none" : "") rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                                                 style="width: 100px; height: 100px; background-color: var(--petlink-grey-bg);">
+                                                <i class="bi bi-person-circle fs-1" style="color: var(--petlink-primary);"></i>
+                                            </div>
             
-                                    <img id="profilePreview"
-                                         src="@(string.IsNullOrEmpty(Model?.ProfilePicture) ? "" : Model.ProfilePicture)"
-                                         class="@(string.IsNullOrEmpty(Model?.ProfilePicture) || Model.ProfilePicture == "/images/default-avatar.jpg" ? "d-none" : "") rounded-circle shadow-sm"
-                                         style="width: 100px; height: 100px; object-fit: cover; border: 2px solid var(--petlink-primary);"
-                                         onerror="this.style.display='none'" />
-                                </div>
+                                            <img id="profilePreview"
+                                                 src="@(string.IsNullOrEmpty(Model?.ProfilePicture) ? "" : Model.ProfilePicture)"
+                                                 class="@(string.IsNullOrEmpty(Model?.ProfilePicture) || Model.ProfilePicture == "/images/default-avatar.jpg" ? "d-none" : "") rounded-circle shadow-sm"
+                                                 style="width: 100px; height: 100px; object-fit: cover; border: 2px solid var(--petlink-primary);"
+                                                 onerror="this.style.display='none'" />
+                                        </div>
 
-                                <div class="flex-grow-1">
-                                    <div class="mb-3">
-                                        <input type="file" id="profilePictureInput" name="profilePicture"
-                                               accept="image/jpeg, image/png, image/gif" class="d-none"
-                                               onchange="previewImage(event)">
+                                        <div class="flex-grow-1">
+                                            <div class="mb-3">
+                                                <input type="file" id="profilePictureInput" name="profilePicture"
+                                                       accept="image/jpeg, image/png, image/gif" class="d-none"
+                                                       onchange="previewImage(event)">
         
-                                        <button type="button" class="btn btn-primary btn-sm me-2 rounded-pill px-3"
-                                                onclick="document.getElementById('profilePictureInput').click()">
-                                            <i class="bi bi-upload me-1"></i>Upload Photo
-                                        </button>
+                                                <button type="button" class="btn btn-primary btn-sm me-2 rounded-pill px-3"
+                                                        onclick="document.getElementById('profilePictureInput').click()">
+                                                    <i class="bi bi-upload me-1"></i>Upload Photo
+                                                </button>
         
-                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                                onclick="handleRemovePhoto()">
-                                            <i class="bi bi-trash me-1"></i>Remove
-                                        </button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                                        onclick="handleRemovePhoto()">
+                                                    <i class="bi bi-trash me-1"></i>Remove
+                                                </button>
+                                            </div>
+                                            <p class="text-secondary-grey small mb-0">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                JPG, GIF or PNG. Max 2MB.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p class="text-secondary-grey small mb-0">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        JPG, GIF or PNG. Max 2MB.
-                                    </p>
                                 </div>
-                            </div>
-                        </div>
 
-                        <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.2;">
+                                <hr class="my-4" style="border-color: var(--petlink-border); opacity: 0.2;">
 
-                        @* Bio Section *@
-                        <div class="mb-4 about-me-sec">
-                            <h4 class="mb-4 text-primary-darkblue">About Me</h4>
+                                @* Bio Section *@
+                                <div class="mb-4 about-me-sec">
+                                    <h4 class="mb-4 text-primary-darkblue">About Me</h4>
 
-                            <div class="mb-4">
-                                <label class="form-label fw-medium text-primary-darkblue">Bio</label>
-                                <textarea asp-for="Bio" class="form-control" rows="4"
-                                          style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
-                                          placeholder="Tell us a bit about yourself..."></textarea>
-                                <div class="form-text text-secondary-grey">
-                                    Brief description for your profile. This helps shelters know more about you.
+                                    <div class="mb-4">
+                                        <label class="form-label fw-medium text-primary-darkblue">Bio</label>
+                                        <textarea asp-for="Bio" class="form-control" rows="4"
+                                                  style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
+                                                  placeholder="Tell us a bit about yourself..."></textarea>
+                                        <div class="form-text text-secondary-grey">
+                                            Brief description for your profile. This helps shelters know more about you.
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                                            <i class="bi bi-check-lg me-1"></i>Save Changes
+                                        </button>
+                                        <a asp-action="AccountSettings"
+                                           class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                                    <i class="bi bi-check-lg me-1"></i>Save Changes
-                                </button>
-                                <a asp-action="AccountSettings"
-                                   class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
-                            </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-@section Scripts {
+        @section Scripts {
 
-    <script src="~/js/location.js" asp-append-version="true"></script>
+            <script src="~/js/location.js" asp-append-version="true"></script>
 
-    <script>
-        function previewImage(event) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var output = document.getElementById('profilePreview');
-                var icon = document.getElementById('defaultAvatarIcon');
-                var removeFlag = document.getElementById('removePhotoFlag');
+            <script>
+                function previewImage(event) {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var output = document.getElementById('profilePreview');
+                        var icon = document.getElementById('defaultAvatarIcon');
+                        var removeFlag = document.getElementById('removePhotoFlag');
 
-                output.src = reader.result;
-                output.classList.remove('d-none');
-                output.style.display = 'block';
-                icon.classList.add('d-none');
-                removeFlag.value = "false";
-            }
-            if (event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
+                        output.src = reader.result;
+                        output.classList.remove('d-none');
+                        output.style.display = 'block';
+                        icon.classList.add('d-none');
+                        removeFlag.value = "false";
+                    }
+                    if (event.target.files[0]) {
+                        reader.readAsDataURL(event.target.files[0]);
+                    }
+                }
+
+                function handleRemovePhoto() {
+                    document.getElementById('profilePictureInput').value = "";
+                    var output = document.getElementById('profilePreview');
+                    var icon = document.getElementById('defaultAvatarIcon');
+                    output.src = "";
+                    output.classList.add('d-none');
+                    icon.classList.remove('d-none');
+                    document.getElementById('removePhotoFlag').value = "true";
+                }
+            </script>
         }
-
-        function handleRemovePhoto() {
-            document.getElementById('profilePictureInput').value = "";
-            var output = document.getElementById('profilePreview');
-            var icon = document.getElementById('defaultAvatarIcon');
-            output.src = "";
-            output.classList.add('d-none');
-            icon.classList.remove('d-none');
-            document.getElementById('removePhotoFlag').value = "true";
-        }
-    </script>
-}

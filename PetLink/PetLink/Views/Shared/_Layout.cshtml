@@ -19,11 +19,15 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
-            // Verifica a preferência guardada antes de renderizar o body
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-            }
+        // Verifica a preferência guardada antes de renderizar o body
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark-mode');
+        }
     </script>
 </head>
 
@@ -45,6 +49,9 @@
                     <ul class="navbar-nav align-items-center fw-semibold">
                         <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings"
                                                          asp-action="Index">Adopt</a>
+                        </li>
+                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="AnimalListings"
+                                                         asp-action="Map">Map</a>
                         </li>
                         <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Petsitter"
                                                          asp-action="Index">Petsitting</a>
