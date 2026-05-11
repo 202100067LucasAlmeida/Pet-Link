@@ -12,13 +12,20 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Profile/LoginForm";
-        options.AccessDeniedPath = "/Profile/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);
-    });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+}).AddCookie(options =>
+{
+    options.LoginPath = "/Profile/LoginForm";
+    options.AccessDeniedPath = "/Profile/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+}).AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
 
 builder.Services.AddSignalR();
 
