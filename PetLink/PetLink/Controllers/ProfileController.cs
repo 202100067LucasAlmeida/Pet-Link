@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
@@ -11,13 +9,8 @@ using PetLink.Hubs;
 using PetLink.Models;
 using PetLink.Models.Enums;
 using PetLink.Models.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
@@ -328,6 +321,8 @@ namespace PetLink.Controllers
                 .Select(f => f.AnimalListing)
                 .Where(a => a.Status == ListingStatus.Published)
                 .ToListAsync();
+
+            
 
             // vai buscar active applications 
             var activeApplications = await _context.Applications

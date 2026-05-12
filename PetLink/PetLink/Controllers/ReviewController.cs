@@ -23,57 +23,92 @@ namespace PetLink.Controllers
 
         // GET: Review/Create/5
         [HttpGet]
-        public async Task<IActionResult> Create(int animalListingId)
-        {
-            var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            if (currentUserId == 0) return Challenge();
+public async Task<IActionResult> Create(int animalListingId, int? reviewedId = null)
+{
+    var currentUserId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+    if (currentUserId == 0) return Challenge();
 
-            // Verificar se o utilizador adotou este animal
-            var application = await _context.Applications
-                .FirstOrDefaultAsync(a => a.UserId == currentUserId && 
-                                         a.AnimalListingId == animalListingId &&
-                                         a.Status == ApplicationStatus.Completed);
+    var animal = await _context.AnimalListings
+        .Include(a => a.Tutor)
+        .FirstOrDefaultAsync(a => a.Id == animalListingId);
 
-            if (application == null)
-            {
-                TempData["Error"] = "You can only review pets you have adopted.";
-                return RedirectToAction("Index", "AnimalListings");
-            }
+    if (animal == null) return NotFound();
 
-            // Verificar se já fez review
-            var existingReview = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && 
-                                         r.AnimalListingId == animalListingId);
+    // Determinar quem está a ser avaliado
+    // Se reviewedId for fornecido (ex: petsitter), usa esse, senão usa o Tutor
+    var reviewedUser = reviewedId.HasValue 
+        ? await _context.Users.FindAsync(reviewedId.Value)
+        : animal.Tutor;
 
-            if (existingReview != null)
-            {
-                TempData["Error"] = "You have already reviewed this adoption.";
-                return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
-            }
+    if (reviewedUser == null) return NotFound();
 
-            var animal = await _context.AnimalListings
-                .Include(a => a.Tutor)
-                .FirstOrDefaultAsync(a => a.Id == animalListingId);
+    // Verificar permissão: só pode avaliar quem está envolvido na transação
+    bool canReview = false;
+    string reviewType = "Adoption";
 
-            if (animal == null) return NotFound();
+    if (reviewedId.HasValue)
+    {
+        // Avaliação de Petsitter - verificar se existe serviço concluído
+        // (tirar os comentarios quando for possivel contratar um petssiter)
+        /*
+        var booking = await _context.PetsittingBookings
+            .FirstOrDefaultAsync(b => b.UserId == currentUserId && 
+                                     b.PetsitterId == reviewedId.Value &&
+                                     b.AnimalListingId == animalListingId &&
+                                     b.Status == BookingStatus.Completed);
+        canReview = booking != null;
+        reviewType = "Petsitter";
+        */
+        
+        canReview = true;
+    }
+    else
+    {
+        // Avaliação de Tutor (adoção)
+        var application = await _context.Applications
+            .FirstOrDefaultAsync(a => a.UserId == currentUserId && 
+                                     a.AnimalListingId == animalListingId &&
+                                     a.Status == ApplicationStatus.Completed);
+        canReview = application != null;
+        reviewType = "Adoption";
+    }
 
-            // Verificar se o tutor pode receber avaliações
-            if (animal.Tutor != null && animal.Tutor.Role != UserRole.User && animal.Tutor.Role != UserRole.PetSitter)
-            {
-                TempData["Error"] = "This user cannot receive reviews.";
-                return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
-            }
+    if (!canReview)
+    {
+        TempData["Error"] = $"You can only review {reviewType.ToLower()} after the process is completed.";
+        return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
+    }
 
-            var viewModel = new CreateReviewViewModel
-            {
-                AnimalListingId = animalListingId,
-                AnimalName = animal.Name,
-                ReviewedId = animal.TutorId,
-                ReviewedName = animal.Tutor?.Name
-            };
+    // Verificar se já fez review
+    var existingReview = await _context.Reviews
+        .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && 
+                                 r.ReviewedId == reviewedUser.Id &&
+                                 r.AnimalListingId == animalListingId);
 
-            return View(viewModel);
-        }
+    if (existingReview != null)
+    {
+        TempData["Error"] = $"You have already reviewed this {reviewType.ToLower()}.";
+        return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
+    }
+
+    // Verificar se o avaliado pode receber avaliações (User ou PetSitter)
+    if (reviewedUser.Role != UserRole.User && reviewedUser.Role != UserRole.PetSitter)
+    {
+        TempData["Error"] = "This user cannot receive reviews.";
+        return RedirectToAction("Details", "AnimalListings", new { id = animalListingId });
+    }
+
+    var viewModel = new CreateReviewViewModel
+    {
+        AnimalListingId = animalListingId,
+        AnimalName = animal.Name,
+        ReviewedId = reviewedUser.Id,
+        ReviewedName = reviewedUser.Name,
+        ReviewType = reviewType
+    };
+
+    return View(viewModel);
+}
 
         // POST: Review/Create
         [HttpPost]

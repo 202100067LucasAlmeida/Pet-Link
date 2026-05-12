@@ -9,6 +9,7 @@ namespace PetLink.Models.ViewModels
         public string AnimalName { get; set; }
         public int ReviewedId { get; set; }
         public string ReviewedName { get; set; }
+        public string ReviewType { get; set; }
 
         [Required(ErrorMessage = "Please select a rating")]
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
