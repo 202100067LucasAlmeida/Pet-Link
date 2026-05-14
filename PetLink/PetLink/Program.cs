@@ -21,12 +21,11 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Profile/LoginForm";
     options.AccessDeniedPath = "/Profile/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
+}).AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 });
-// ).AddGoogle(options =>
-// {
-//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-// });
 
 builder.Services.AddSignalR();
 
@@ -48,11 +47,7 @@ if (!app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-
-    // Deixamos o SeedData correr "sem rede de segurança". 
-    // Assim, se falhar, a app vai rebentar e mostrar-nos o erro exato!
     SeedData.Initialize(services);
-
 }
 
 app.UseHttpsRedirection();
