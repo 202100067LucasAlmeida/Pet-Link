@@ -10,13 +10,13 @@ namespace PetLink.Models
         public int Id { get; set; }
 
         [Required]
-        public int ReviewerId { get; set; } // Quem fez a avaliação (adotante)
+        public int ReviewerId { get; set; } // Quem fez a avaliação (user)
 
         [Required]
         public int ReviewedId { get; set; } // Quem foi avaliado (Tutor/PetSitter)
 
         [Required]
-        public int AnimalListingId { get; set; } // Animal que foi adotado
+        public int AnimalListingId { get; set; } // Animal que foi adotado ou no qual foi usado o serviço de petsitting
 
         [Required]
         [Range(1, 5)]

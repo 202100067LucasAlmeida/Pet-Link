@@ -315,6 +315,7 @@ namespace PetLink.Data
                         }
                     }
                 );
+                context.SaveChanges();
 
                 // 4. Sample FavoritePets
                 context.FavoritePets.AddRange(

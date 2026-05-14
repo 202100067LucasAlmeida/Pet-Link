@@ -47,16 +47,7 @@ if (!app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
-    {
-        // Chama a nossa classe de Seed passando os serviços
-        SeedData.Initialize(services);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocorreu um erro a injetar os dados iniciais na base de dados.");
-    }
+    SeedData.Initialize(services);
 }
 
 app.UseHttpsRedirection();
