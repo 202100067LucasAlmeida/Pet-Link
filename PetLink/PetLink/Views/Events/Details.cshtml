@@ -1,0 +1,123 @@
+@model PetLink.Models.Event
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="breadcrumb-section py-3" style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-highlight-darkblue">EVENTS</a></li>
+                <li class="breadcrumb-item active text-highlight-blue">@Model.Name</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-event.jpg" : Model.ImageUrl)" 
+                     alt="@Model.Name" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;">
+                
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="display-5 fw-bold text-primary-darkblue mb-2">@Model.Name</h1>
+                            <span class="badge bg-primary rounded-pill">@Model.Type</span>
+                        </div>
+                        @if (User.IsInRole("Shelter") && Model.OrganizerId.ToString() == User.FindFirst("UserId")?.Value ||
+                             User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary rounded-pill">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </a>
+                        }
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar-event fs-4 text-primary me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Date</small>
+                                    <strong>@Model.StartDate.ToString("dd MMM yyyy, HH:mm")</strong>
+                                    @if (Model.EndDate.HasValue)
+                                    {
+                                        <span class="text-muted"> - @Model.EndDate.Value.ToString("dd MMM yyyy, HH:mm")</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-geo-alt fs-4 text-primary me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Location</small>
+                                    <strong>@Model.Location</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-building fs-4 text-primary me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Organized by</small>
+                                    <strong>@Model.Organizer?.Name</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary-darkblue mb-3">About this event</h5>
+                    <p class="text-muted mb-4" style="line-height: 1.6;">@Model.Description</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white py-3 rounded-top-4">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Event Status</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Status == EventStatus.Approved)
+                    {
+                        <div class="alert alert-success border-0 rounded-3">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>Approved</strong><br>
+                            <small>This event is confirmed and open to the public.</small>
+                        </div>
+                    }
+                    else if (Model.Status == EventStatus.Pending)
+                    {
+                        <div class="alert alert-warning border-0 rounded-3">
+                            <i class="bi bi-clock-history me-2"></i>
+                            <strong>Pending Approval</strong><br>
+                            <small>This event is awaiting admin review.</small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary border-0 rounded-3">
+                            <i class="bi bi-x-circle me-2"></i>
+                            <strong>@Model.Status</strong>
+                        </div>
+                    }
+
+                    @if (User.IsInRole("Shelter"))
+                    {
+                        <hr>
+                        <div class="text-center">
+                            <i class="bi bi-share fs-4 text-muted"></i>
+                            <p class="small text-muted mt-2 mb-0">Share this event with your community</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

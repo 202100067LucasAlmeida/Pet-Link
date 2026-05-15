@@ -1,0 +1,81 @@
+@model PetLink.Models.Event
+
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="text-primary-darkblue fw-bold">
+                        <i class="bi bi-calendar-plus me-2"></i>Create Event
+                    </h2>
+                    <p class="text-muted">Share your event with the community. It will be visible after admin approval.</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Event Name</label>
+                            <input asp-for="Name" class="form-control rounded-3" placeholder="Ex: Adoption Day" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Type" class="form-label fw-bold">Event Type</label>
+                            <select asp-for="Type" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<EventType>()">
+                                <option value="">Select a type</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control rounded-3" rows="5" placeholder="Describe your event..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartDate" class="form-label fw-bold">Start Date</label>
+                                <input asp-for="StartDate" class="form-control rounded-3" type="datetime-local" />
+                                <span asp-validation-for="StartDate" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndDate" class="form-label fw-bold">End Date (Optional)</label>
+                                <input asp-for="EndDate" class="form-control rounded-3" type="datetime-local" />
+                                <span asp-validation-for="EndDate" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label fw-bold">Location</label>
+                            <input asp-for="Location" class="form-control rounded-3" placeholder="Lisbon, Portugal" />
+                            <span asp-validation-for="Location" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Event Image</label>
+                            <input type="file" name="imageFile" class="form-control rounded-3" accept="image/*" />
+                            <small class="text-muted">Recommended size: 800x400px. Leave empty to use default image.</small>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2">
+                                <i class="bi bi-save me-2"></i>Create Event
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
