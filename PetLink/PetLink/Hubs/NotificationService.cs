@@ -142,5 +142,49 @@ namespace PetLink.Hubs
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task CreateNewEventNotificationForAdminsAsync(int eventId, string eventName, int organizerId)
+        {
+            // Buscar todos os admins
+            var admins = await _context.Users
+                .Where(u => u.Role == UserRole.Admin)
+                .ToListAsync();
+
+            var organizer = await _context.Users.FindAsync(organizerId);
+
+            foreach (var admin in admins)
+            {
+                var notification = new ListingsNotification
+                {
+                    UserId = admin.Id,
+                    Title = "New Event Pending Approval",
+                    Message = $"A new event '{eventName}' has been created by {organizer?.Name} and needs your review.",
+                    AnimalListingId = null,
+                    IsRead = false,
+                    CreatedAt = DateTime.Now
+                };
+                _context.ListingsNotifications.Add(notification);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateEventApprovalNotificationAsync(int organizerId, string eventName, int eventId, bool isApproved, string rejectionReason = null)
+        {
+            var notification = new ListingsNotification
+            {
+                UserId = organizerId,
+                Title = isApproved ? "Event Approved! 🎉" : "Event Update",
+                Message = isApproved 
+                    ? $"Your event '{eventName}' has been approved and is now visible to the public."
+                    : $"Your event '{eventName}' has been rejected. {(string.IsNullOrEmpty(rejectionReason) ? "Please check the requirements and try again." : $"Reason: {rejectionReason}")}",
+                AnimalListingId = eventId,
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            };
+
+            _context.ListingsNotifications.Add(notification);
+            await _context.SaveChangesAsync();
+        }
     }
 }

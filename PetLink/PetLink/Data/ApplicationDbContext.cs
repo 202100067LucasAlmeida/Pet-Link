@@ -21,6 +21,7 @@ namespace PetLink.Data
         public DbSet<FavoritePetsitter> FavoritePetsitters { get; set; }
 
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
+        public DbSet<Event> Events { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -128,6 +129,25 @@ namespace PetLink.Data
             modelBuilder.Entity<FavoritePetsitter>()
             .HasIndex(f => new { f.UserId, f.PetsitterId })
             .IsUnique();
+
+            modelBuilder.Entity<Event>()
+            .HasOne(e => e.Organizer)
+            .WithMany()
+            .HasForeignKey(e => e.OrganizerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para pesquisa
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Status);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.StartDate);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Type);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Location);
 
 
 
