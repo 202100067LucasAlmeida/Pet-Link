@@ -36,6 +36,10 @@
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "Manage" ? "active" : "")">
                 <i class="bi bi-card-list me-2"></i>Manage Listings
             </a>
+
+            <a asp-controller="Events" asp-action="Manage" class="list-group-item list-group-item-action mb-1">
+                <i class="bi bi-calendar-check me-2"></i>Manage Events
+            </a>
         }
 
         <p class="small mb-2 mt-4 px-3 fw-bold opacity-50 text-primary-darkblue"
@@ -73,6 +77,17 @@
             <a asp-controller="AnimalListings" asp-action="MyApplications"
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "MyApplications" ? "active" : "")">
                 <i class="bi bi-file-earmark-text-fill me-2"></i>My Applications
+            </a>
+        }
+
+        @if (userRole ==UserRole.Shelter.ToString())
+        {
+            <a asp-controller="Events" asp-action="Create" 
+                    class="list-group-item list-group-item-action mb-1">
+                <i class="bi bi-calendar-plus me-2"></i>Create Event
+            </a>
+            <a asp-controller="Events" asp-action="MyEvents" class="list-group-item list-group-item-action mb-1">
+                <i class="bi bi-calendar-event me-2"></i>My Events
             </a>
         }
 

@@ -1,0 +1,150 @@
+@{
+    ViewData["Title"] = "Manage Events";
+    var pendingEvents = ViewBag.PendingEvents as IEnumerable<PetLink.Models.Event>;
+    var approvedEvents = ViewBag.ApprovedEvents as IEnumerable<PetLink.Models.Event>;
+}
+
+<div class="container py-4">
+    <h2 class="text-primary-blue fw-bold mb-4">
+        <i class="bi bi-calendar-check me-2"></i>Manage Events
+    </h2>
+
+    <!-- Pending Events -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-header bg-white border-0 pt-4">
+            <h4 class="fw-bold text-primary-darkblue mb-0">
+                <i class="bi bi-clock-history me-2"></i>Pending Approval
+                <span class="badge bg-warning ms-2">@(pendingEvents?.Count() ?? 0)</span>
+            </h4>
+        </div>
+        <div class="card-body">
+            @if (pendingEvents == null || !pendingEvents.Any())
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-check-circle fs-1 text-success"></i>
+                    <p class="text-muted mt-2">No pending events to review.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Organizer</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var eventItem in pendingEvents)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@eventItem.Name</strong><br>
+                                        <small class="text-muted">@eventItem.Type</small>
+                                    </td>
+                                    <td>@eventItem.Organizer?.Name</td>
+                                    <td>@eventItem.StartDate.ToString("dd MMM yyyy")</td>
+                                    <td>@eventItem.Location</td>
+                                    <td>
+                                        <form asp-action="Approve" method="post" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@eventItem.Id" />
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill">
+                                                <i class="bi bi-check-lg me-1"></i>Approve
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#rejectModal-@eventItem.Id">
+                                            <i class="bi bi-x-lg me-1"></i>Reject
+                                        </button>
+                                        
+                                        <!-- Reject Modal -->
+                                        <div class="modal fade" id="rejectModal-@eventItem.Id" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <form asp-action="Reject" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@eventItem.Id" />
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Reject Event</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <label class="form-label">Reason (optional)</label>
+                                                            <textarea name="rejectionReason" class="form-control" rows="3" placeholder="Provide a reason for rejection..."></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-danger">Reject Event</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Approved Events -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-0 pt-4">
+            <h4 class="fw-bold text-primary-darkblue mb-0">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>Approved Events
+                <span class="badge bg-success ms-2">@(approvedEvents?.Count() ?? 0)</span>
+            </h4>
+        </div>
+        <div class="card-body">
+            @if (approvedEvents == null || !approvedEvents.Any())
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-calendar fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No approved events yet.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Organizer</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var eventItem in approvedEvents)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@eventItem.Name</strong><br>
+                                        <small class="text-muted">@eventItem.Type</small>
+                                    </td>
+                                    <td>@eventItem.Organizer?.Name</td>
+                                    <td>@eventItem.StartDate.ToString("dd MMM yyyy")</td>
+                                    <td>@eventItem.Location</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@eventItem.Id" class="btn btn-sm btn-outline-primary rounded-pill">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
