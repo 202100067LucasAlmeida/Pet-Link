@@ -96,28 +96,64 @@ namespace PetLink.Controllers
         [Authorize(Roles = "Shelter")]
         public IActionResult Create()
         {
+            Console.WriteLine("=== CREATE GET ===");
+ 
             return View();
         }
 
         // POST: Events/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Shelter")]
         public async Task<IActionResult> Create(Event model, IFormFile? imageFile)
         {
+            Console.WriteLine("=== CREATE EVENT POST ===");
+            
             var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
-
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                Console.WriteLine("UserId not found!");
+                return Challenge();
+            }
+            
+            Console.WriteLine($"UserId: {userIdClaim}");
+            Console.WriteLine($"Name: {model.Name}");
+            Console.WriteLine($"Description: {model.Description}");
+            Console.WriteLine($"StartDate: {model.StartDate}");
+            Console.WriteLine($"Location: {model.Location}");
+            Console.WriteLine($"Type: {model.Type}");
+            Console.WriteLine($"ImageFile: {imageFile?.FileName}");
+            
+            // Remover validação de campos que não precisamos
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("Organizer");
+            ModelState.Remove("ApprovedBy");
+            ModelState.Remove("ApprovedAt");
+            ModelState.Remove("CreatedAt");
+            ModelState.Remove("UpdatedAt");
+            
+            // Verificar erros de validação
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine($"Validation error: {error.ErrorMessage}");
+                }
+                return View(model);
+            }
+            
+            try
             {
                 // Upload da imagem
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     model.ImageUrl = await UploadImage(imageFile);
+                    Console.WriteLine($"Image uploaded: {model.ImageUrl}");
                 }
                 else
                 {
                     model.ImageUrl = "/images/default-event.jpg";
+                    Console.WriteLine("Using default image");
                 }
 
                 model.OrganizerId = int.Parse(userIdClaim);
@@ -126,19 +162,33 @@ namespace PetLink.Controllers
 
                 _context.Events.Add(model);
                 await _context.SaveChangesAsync();
+                
+                Console.WriteLine($"Event created with ID: {model.Id}");
 
-                // Notificar admins sobre novo evento pendente
-                await _notificationService.CreateNewEventNotificationForAdminsAsync(
-                    model.Id,
-                    model.Name,
-                    model.OrganizerId
-                );
+                // Notificar admins (com try-catch para não falhar)
+                try
+                {
+                    await _notificationService.CreateNewEventNotificationForAdminsAsync(
+                        model.Id,
+                        model.Name,
+                        model.OrganizerId
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Notification error: {ex.Message}");
+                }
 
                 TempData["Success"] = "Event created successfully! It will be visible after admin approval.";
                 return RedirectToAction(nameof(MyEvents));
             }
-
-            return View(model);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating event: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                TempData["Error"] = $"Error: {ex.Message}";
+                return View(model);
+            }
         }
 
         // GET: Events/Edit/5
