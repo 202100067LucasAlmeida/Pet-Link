@@ -87,11 +87,7 @@
                                 <div class="col-sm-9">
                                     <input type="text" asp-for="City" class="form-control"
                                            style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
-                                           placeholder="@(Model?.City)" />
-                                           
-                                    <!-- Alterado de type="text" para type="hidden" -->
-                                    <input type="hidden" id="latField" name="Lat" value="@(Model?.GetLatitude())" />
-                                    <input type="hidden" id="lonField" name="Lon" value="@(Model?.GetLongitude())" />
+                                           placeholder="@(Model?.City)"/>
                                 </div>
                             </div>
                             
@@ -189,33 +185,5 @@
 
             <script src="~/js/location.js" asp-append-version="true"></script>
 
-            <script>
-                function previewImage(event) {
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        var output = document.getElementById('profilePreview');
-                        var icon = document.getElementById('defaultAvatarIcon');
-                        var removeFlag = document.getElementById('removePhotoFlag');
-
-                        output.src = reader.result;
-                        output.classList.remove('d-none');
-                        output.style.display = 'block';
-                        icon.classList.add('d-none');
-                        removeFlag.value = "false";
-                    }
-                    if (event.target.files[0]) {
-                        reader.readAsDataURL(event.target.files[0]);
-                    }
-                }
-
-                function handleRemovePhoto() {
-                    document.getElementById('profilePictureInput').value = "";
-                    var output = document.getElementById('profilePreview');
-                    var icon = document.getElementById('defaultAvatarIcon');
-                    output.src = "";
-                    output.classList.add('d-none');
-                    icon.classList.remove('d-none');
-                    document.getElementById('removePhotoFlag').value = "true";
-                }
-            </script>
+            <script src="~/js/pfp.js" asp-append-version="true"></script>
         }
