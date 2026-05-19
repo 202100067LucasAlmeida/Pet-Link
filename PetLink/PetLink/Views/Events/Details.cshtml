@@ -29,12 +29,34 @@
                             <h1 class="display-5 fw-bold text-primary-darkblue mb-2">@Model.Name</h1>
                             <span class="badge bg-primary rounded-pill">@Model.Type</span>
                         </div>
-                        @if (User.IsInRole("Shelter") && Model.OrganizerId.ToString() == User.FindFirst("UserId")?.Value ||
-                             User.IsInRole("Admin"))
+                        
+                        @* Botões de ação - apenas para o organizador ou admin *@
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary rounded-pill">
-                                <i class="bi bi-pencil me-1"></i>Edit
-                            </a>
+                            var userId = User.FindFirst("UserId")?.Value;
+                            bool isOrganizer = userId != null && Model.OrganizerId.ToString() == userId;
+                            bool isAdmin = User.IsInRole("Admin");
+                            
+                            if (isOrganizer || isAdmin)
+                            {
+                                <div class="d-flex gap-2">
+                                    @* Botão Editar - apenas para o organizador (Shelter) *@
+                                    @if (isOrganizer)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary rounded-pill">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </a>
+                                    }
+                                    
+                                    @* Botão Eliminar - apenas para Admin *@
+                                    @if (isAdmin)
+                                    {
+                                        <button type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="bi bi-trash me-1"></i>Delete
+                                        </button>
+                                    }
+                                </div>
+                            }
                         }
                     </div>
 
@@ -117,6 +139,33 @@
                         </div>
                     }
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Event
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                <p class="text-muted small">This action cannot be undone. All data related to this event will be permanently removed.</p>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Delete Event
+                    </button>
+                </form>
             </div>
         </div>
     </div>

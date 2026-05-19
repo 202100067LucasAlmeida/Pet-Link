@@ -210,55 +210,90 @@ namespace PetLink.Controllers
         }
 
         // POST: Events/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Shelter,Admin")]
-        public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
+[HttpPost]
+[ValidateAntiForgeryToken]
+[Authorize(Roles = "Shelter,Admin")]
+public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
+{
+    Console.WriteLine("=== EDIT POST - CHAMADO ===");
+    
+    if (id != model.Id) return NotFound();
+
+    var existingEvent = await _context.Events.FindAsync(id);
+    if (existingEvent == null) return NotFound();
+
+    var userIdClaim = User.FindFirst("UserId")?.Value;
+    if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
+    int userId = int.Parse(userIdClaim);
+    bool isAdmin = User.IsInRole("Admin");
+
+    if (existingEvent.OrganizerId != userId && !isAdmin) return Forbid();
+
+    ModelState.Remove("ImageUrl");
+    ModelState.Remove("Organizer");
+    ModelState.Remove("ApprovedBy");
+    ModelState.Remove("ApprovedAt");
+    ModelState.Remove("CreatedAt");
+    ModelState.Remove("UpdatedAt");
+
+    if (ModelState.IsValid)
+    {
+        try
         {
-            if (id != model.Id) return NotFound();
+            existingEvent.Name = model.Name;
+            existingEvent.Description = model.Description;
+            existingEvent.StartDate = model.StartDate;
+            existingEvent.EndDate = model.EndDate;
+            existingEvent.Location = model.Location;
+            existingEvent.Type = model.Type;
+            existingEvent.UpdatedAt = DateTime.Now;
 
-            var existingEvent = await _context.Events.FindAsync(id);
-            if (existingEvent == null) return NotFound();
-
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
-
-            int userId = int.Parse(userIdClaim);
-            bool isAdmin = User.IsInRole("Admin");
-
-            if (existingEvent.OrganizerId != userId && !isAdmin) return Forbid();
-
-            if (ModelState.IsValid)
+            if (imageFile != null && imageFile.Length > 0)
             {
-                existingEvent.Name = model.Name;
-                existingEvent.Description = model.Description;
-                existingEvent.StartDate = model.StartDate;
-                existingEvent.EndDate = model.EndDate;
-                existingEvent.Location = model.Location;
-                existingEvent.Type = model.Type;
-                existingEvent.UpdatedAt = DateTime.Now;
+                existingEvent.ImageUrl = await UploadImage(imageFile);
+            }
 
-                if (imageFile != null && imageFile.Length > 0)
-                {
-                    existingEvent.ImageUrl = await UploadImage(imageFile);
-                }
-
-                // Se for admin, pode alterar o status
-                if (isAdmin && existingEvent.Status != model.Status)
+            // ========== REGRA IMPORTANTE ==========
+            // Se não for admin (ou seja, é o shelter a editar), o evento volta a Pending
+            // Se for admin a editar, mantém o status atual ou pode alterar manualmente
+            if (!isAdmin)
+            {
+                // Shelter a editar: evento volta para aprovação
+                existingEvent.Status = EventStatus.Pending;
+                existingEvent.ApprovedAt = null;
+                existingEvent.ApprovedBy = null;
+                
+            }
+            else
+            {
+                // Admin a editar: pode alterar o status manualmente
+                if (existingEvent.Status != model.Status)
                 {
                     existingEvent.Status = model.Status;
                     existingEvent.ApprovedAt = model.Status == EventStatus.Approved ? DateTime.Now : null;
                     existingEvent.ApprovedBy = model.Status == EventStatus.Approved ? userId : null;
                 }
-
-                await _context.SaveChangesAsync();
-
-                TempData["Success"] = "Event updated successfully!";
-                return RedirectToAction(isAdmin ? nameof(Manage) : nameof(MyEvents));
             }
 
-            return View(model);
+            await _context.SaveChangesAsync();
+            Console.WriteLine($"Event updated. New status: {existingEvent.Status}");
+
+            TempData["Success"] = !isAdmin 
+                ? "Event updated! It will be visible again after admin approval." 
+                : "Event updated successfully!";
+
+            return RedirectToAction(isAdmin ? nameof(Manage) : nameof(MyEvents));
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            TempData["Error"] = $"Error: {ex.Message}";
+        }
+    }
+
+    return View(model);
+}
 
         // GET: Events/MyEvents - Eventos criados pela shelter
         [Authorize(Roles = "Shelter")]
@@ -277,6 +312,7 @@ namespace PetLink.Controllers
             return View(events);
         }
 
+        
         // GET: Events/Manage - Admin apenas
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
@@ -374,6 +410,32 @@ namespace PetLink.Controllers
                 .ToListAsync();
 
             return Json(events);
+        }
+
+        // POST: Events/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var eventItem = await _context.Events.FindAsync(id);
+            if (eventItem == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                _context.Events.Remove(eventItem);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"Event '{eventItem.Name}' has been deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error deleting event: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Manage));
         }
 
         private async Task<string> UploadImage(IFormFile file)

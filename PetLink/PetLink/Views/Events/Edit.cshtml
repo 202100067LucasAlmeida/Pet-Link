@@ -1,0 +1,91 @@
+@model PetLink.Models.Event
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="text-primary-darkblue fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Event
+                    </h2>
+                    <p class="text-muted">Update your event information</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" action="/Events/Edit/@Model.Id">
+                        @Html.AntiForgeryToken()
+                        
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
+                        <input type="hidden" name="OrganizerId" value="@Model.OrganizerId" />
+                        <input type="hidden" name="CreatedAt" value="@Model.CreatedAt" />
+                        <input type="hidden" name="Status" value="@Model.Status" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Event Name</label>
+                            <input name="Name" value="@Model.Name" class="form-control rounded-3" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Event Type</label>
+                            <select name="Type" class="form-select rounded-3" required>
+                                <option value="Adoption" selected="@(Model.Type == EventType.Adoption)">Adoption</option>
+                                <option value="Fundraising" selected="@(Model.Type == EventType.Fundraising)">Fundraising</option>
+                                <option value="Education" selected="@(Model.Type == EventType.Education)">Education</option>
+                                <option value="Volunteer" selected="@(Model.Type == EventType.Volunteer)">Volunteer</option>
+                                <option value="Other" selected="@(Model.Type == EventType.Other)">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea name="Description" class="form-control rounded-3" rows="5" required>@Model.Description</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Start Date</label>
+                                <input name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")" class="form-control rounded-3" type="datetime-local" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">End Date (Optional)</label>
+                                <input name="EndDate" value="@(Model.EndDate?.ToString("yyyy-MM-ddTHH:mm"))" class="form-control rounded-3" type="datetime-local" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Location</label>
+                            <input name="Location" value="@Model.Location" class="form-control rounded-3" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Event Image</label>
+                            
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl) && Model.ImageUrl != "/images/default-event.jpg")
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.ImageUrl" alt="Current image" style="max-height: 100px; border-radius: 8px;" />
+                                    <p class="text-muted small mt-1">Current image</p>
+                                </div>
+                            }
+                            
+                            <input type="file" name="imageFile" class="form-control rounded-3" accept="image/*" />
+                            <small class="text-muted">Leave empty to keep current image.</small>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2">
+                                <i class="bi bi-save me-2"></i>Save Changes
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary rounded-pill px-4 py-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
