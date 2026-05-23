@@ -122,6 +122,7 @@
 
                 @if (userRole == "Admin")
                 {
+                    <!-- Pending Approvals (Listings + Events) -->
                     <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
                         <h6 class="fw-bold text-primary-darkblue mb-0">
                             <i class="bi bi-clock-history text-primary-darkblue me-2"></i>Pending Approvals
@@ -131,37 +132,75 @@
                     <div class="card-body p-4">
                         @{
                             var pendingListings = Model.PendingListingsForAdmin ?? new List<AnimalListing>();
+                            var pendingEvents = Model.PendingEventsForAdmin ?? new List<Event>();
+                            var hasPending = pendingListings.Any() || pendingEvents.Any();
                         }
-                        @if (!pendingListings.Any())
+                        
+                        @if (!hasPending)
                         {
-                            <div class="text-center py-y rounded-4" style="background-color: var(--petlink-grey-bg); padding: 1.5rem;">
+                            <div class="text-center py-3 rounded-4" style="background-color: var(--petlink-grey-bg);">
                                 <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                                <p class="text-muted small mb-0 mt-2">No pending listings to review</p>
+                                <p class="text-muted small mb-0 mt-2">No pending approvals to review</p>
                             </div>
                         }
                         else
                         {
-                            <div class="list-group">
-                                @foreach (var listing in pendingListings)
-                                {
-                                    <div class="p-3 mb-2 rounded-4 border" style="background-color: var(--petlink-grey-bg);">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="fw-bold text-primary-darkblue mb-1">@listing.Name</h6>
-                                                <small class="text-muted">Submitted by: @listing.Tutor?.Name</small><br />
-                                                <small class="text-muted">Created: @listing.CreatedAt.ToString("dd MMM yyyy")</small>
+                            <!-- Listings Pendentes -->
+                            @if (pendingListings.Any())
+                            {
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-primary-darkblue mb-2">
+                                        <i class="bi bi-paw me-2"></i>Animal Listings
+                                    </h6>
+                                    @foreach (var listing in pendingListings)
+                                    {
+                                        <div class="p-3 mb-2 rounded-4 border" style="background-color: var(--petlink-grey-bg);">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="fw-bold text-primary-darkblue mb-1">@listing.Name</h6>
+                                                    <small class="text-muted">Submitted by: @listing.Tutor?.Name</small><br />
+                                                    <small class="text-muted">Created: @listing.CreatedAt.ToString("dd MMM yyyy")</small>
+                                                </div>
+                                                <a asp-controller="AnimalListings" asp-action="Edit" asp-route-id="@listing.Id"
+                                                   class="btn btn-sm btn-primary rounded-pill">
+                                                    <i class="bi bi-eye me-1"></i>Review
+                                                </a>
                                             </div>
-                                            <a asp-controller="AnimalListings" asp-action="Edit" asp-route-id="@listing.Id"
-                                               class="btn btn-sm btn-primary rounded-pill">
-                                                <i class="bi bi-eye me-1"></i>Review
-                                            </a>
                                         </div>
-                                    </div>
-                                }
-                            </div>
+                                    }
+                                </div>
+                            }
+                            
+                            <!-- Events Pendentes -->
+                            @if (pendingEvents.Any())
+                            {
+                                <div>
+                                    <h6 class="fw-bold text-primary-darkblue mb-2">
+                                        <i class="bi bi-calendar-event me-2"></i>Events
+                                    </h6>
+                                    @foreach (var eventItem in pendingEvents)
+                                    {
+                                        <div class="p-3 mb-2 rounded-4 border" style="background-color: var(--petlink-grey-bg);">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="fw-bold text-primary-darkblue mb-1">@eventItem.Name</h6>
+                                                    <small class="text-muted">Submitted by: @eventItem.Organizer?.Name</small><br />
+                                                    <small class="text-muted">Date: @eventItem.StartDate.ToString("dd MMM yyyy")</small>
+                                                    <small class="text-muted">Type: @eventItem.Type</small>
+                                                </div>
+                                                <a asp-controller="Events" asp-action="Details" asp-route-id="@eventItem.Id"
+                                                   class="btn btn-sm btn-primary rounded-pill">
+                                                    <i class="bi bi-eye me-1"></i>Review
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
                         }
                     </div>
 
+                    <!-- Pending User Verifications -->
                     <div class="card-header border-0 pt-4 px-4 pb-0" style="background-color: transparent;">
                         <h6 class="fw-bold text-primary-darkblue mb-0">
                             <i class="bi bi-person-check text-primary-darkblue me-2"></i>Pending User Verifications
@@ -174,7 +213,7 @@
                         }
                         @if (!unverifiedUsers.Any())
                         {
-                            <div class="text-center py-y rounded-4" style="background-color: var(--petlink-grey-bg);">
+                            <div class="text-center py-3 rounded-4" style="background-color: var(--petlink-grey-bg);">
                                 <i class="bi bi-check-circle-fill text-success fs-4"></i>
                                 <p class="text-muted small mb-0 mt-2">All users are verified</p>
                             </div>

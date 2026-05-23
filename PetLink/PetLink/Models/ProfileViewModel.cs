@@ -24,5 +24,7 @@ namespace PetLink.Models.ViewModels
         public List<AnimalListing> PendingListingsForAdmin { get; set; }
 
         public List<User> UnverifiedUsersForAdmin { get; set; }
+
+        public List<Event> PendingEventsForAdmin { get; set; }
     }
 }

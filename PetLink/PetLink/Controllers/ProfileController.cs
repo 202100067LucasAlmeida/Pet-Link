@@ -365,6 +365,7 @@ namespace PetLink.Controllers
 
             List<AnimalListing> pendingListingsForAdmin = null;
             List<User> unverifiedUsersForAdmin = null;
+            List<Event> pendingEventsForAdmin = null; 
             if (User.IsInRole("Admin"))
             {
                 pendingListingsForAdmin = await _context.AnimalListings
@@ -377,6 +378,12 @@ namespace PetLink.Controllers
                     //.Where(u => !u.IsVerified && u.Role == UserRole.Shelter)
                     .Where(u => !u.IsVerified)
                     .OrderByDescending(u => u.CreatedAt)
+                    .ToListAsync();
+
+                 pendingEventsForAdmin = await _context.Events
+                    .Include(e => e.Organizer)
+                    .Where(e => e.Status == EventStatus.Pending)
+                    .OrderByDescending(e => e.CreatedAt)
                     .ToListAsync();
             }
 
@@ -399,6 +406,7 @@ namespace PetLink.Controllers
                 PendingListingsForAdmin = pendingListingsForAdmin,
                 UnverifiedUsersForAdmin = unverifiedUsersForAdmin,
                 FavoritePetsitters = favoritePetsitters,
+                PendingEventsForAdmin = pendingEventsForAdmin,
             };
 
             // Buscar reviews apenas se o user pode receber avaliações (User ou PetSitter)
