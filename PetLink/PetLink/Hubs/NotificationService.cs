@@ -171,20 +171,38 @@ namespace PetLink.Hubs
 
         public async Task CreateEventApprovalNotificationAsync(int organizerId, string eventName, int eventId, bool isApproved, string rejectionReason = null)
         {
-            var notification = new ListingsNotification
-            {
-                UserId = organizerId,
-                Title = isApproved ? "Event Approved! 🎉" : "Event Update",
-                Message = isApproved 
-                    ? $"Your event '{eventName}' has been approved and is now visible to the public."
-                    : $"Your event '{eventName}' has been rejected. {(string.IsNullOrEmpty(rejectionReason) ? "Please check the requirements and try again." : $"Reason: {rejectionReason}")}",
-                AnimalListingId = eventId,
-                IsRead = false,
-                CreatedAt = DateTime.Now
-            };
-
-            _context.ListingsNotifications.Add(notification);
-            await _context.SaveChangesAsync();
+            string title;
+            string message;
+    
+        if (isApproved)
+        {
+            title = "Event Approved! 🎉";
+            message = $"Your event '{eventName}' has been approved and is now visible to the public.";
         }
+        {
+            title = "Event Rejected ❌";  // Mudar de "Event Update" para "Event Rejected ❌"
+            if (!string.IsNullOrEmpty(rejectionReason))
+            {
+                message = $"Your event '{eventName}' has been rejected. Reason: {rejectionReason}";
+            }
+            else
+            {
+                message = $"Your event '{eventName}' has been rejected. Please check the requirements and try again.";
+            }
+        }
+
+        var notification = new ListingsNotification
+        {
+            UserId = organizerId,
+            Title = title,
+            Message = message,
+            AnimalListingId = eventId,
+            IsRead = false,
+            CreatedAt = DateTime.Now
+        };
+
+        _context.ListingsNotifications.Add(notification);
+        await _context.SaveChangesAsync();
     }
+        }
 }
