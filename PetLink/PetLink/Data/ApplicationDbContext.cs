@@ -22,6 +22,7 @@ namespace PetLink.Data
 
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -149,7 +150,17 @@ namespace PetLink.Data
             modelBuilder.Entity<Event>()
             .HasIndex(e => e.Location);
 
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Petsitter)
+            .WithMany()
+            .HasForeignKey(b => b.PetsitterId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

@@ -14,13 +14,9 @@ namespace PetLink.Data
             using (var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                // Verifica se a base de dados já tem dados seed. Se sim, sai do método.
-                if (context.Users.Any())
+                // 1. Cria dados base (utilizadores, petsitters, animais, etc.)
+                if (!context.Users.Any())
                 {
-                    return;
-                }
-
-                // 1. Cria utilizadores completos
                 var admin = new User
                 {
                     Name = "Administrador PetLink",
@@ -399,6 +395,73 @@ namespace PetLink.Data
 
                 // Salva tudo
                 context.SaveChanges();
+                }
+
+                // 7. Cria bookings de exemplo se não existirem
+                if (!context.Bookings.Any())
+                {
+                    var particular = context.Users.FirstOrDefault(u => u.Email == "joao.silva@email.com");
+                    var sitter1 = context.Users.FirstOrDefault(u => u.Email == "sarah@petlink.com");
+                    var sitter2 = context.Users.FirstOrDefault(u => u.Email == "marcus@petlink.com");
+                    var sitter3 = context.Users.FirstOrDefault(u => u.Email == "elena@petlink.com");
+
+                    var sarahPs = context.Petsitters.FirstOrDefault(p => p.UserId == sitter1.Id);
+                    var marcusPs = context.Petsitters.FirstOrDefault(p => p.UserId == sitter2.Id);
+                    var elenaPs = context.Petsitters.FirstOrDefault(p => p.UserId == sitter3.Id);
+
+                    if (particular != null && sarahPs != null && marcusPs != null && elenaPs != null)
+                    {
+                        var bookings = new List<Booking>
+                        {
+                            new Booking
+                            {
+                                UserId = particular.Id,
+                                PetsitterId = sarahPs.Id,
+                                ServiceType = ServiceType.Walking,
+                                StartDate = DateTime.Today.AddDays(3),
+                                EndDate = DateTime.Today.AddDays(3).AddHours(2),
+                                PetName = "Rex",
+                                PetSpecies = "Dog",
+                                Message = "Preciso de alguém para passear o meu cão Rex por 2 horas no centro.",
+                                TotalPrice = sarahPs.HourlyRate * 2,
+                                Status = BookingStatus.Confirmed,
+                                CreatedAt = DateTime.Now.AddDays(-2),
+                                UpdatedAt = DateTime.Now.AddDays(-1)
+                            },
+                            new Booking
+                            {
+                                UserId = particular.Id,
+                                PetsitterId = marcusPs.Id,
+                                ServiceType = ServiceType.Boarding,
+                                StartDate = DateTime.Today.AddDays(10),
+                                EndDate = DateTime.Today.AddDays(12),
+                                PetName = "Misty",
+                                PetSpecies = "Cat",
+                                Message = "Preciso de deixar a minha gata Misty durante um fim de semana prolongado.",
+                                TotalPrice = marcusPs.HourlyRate * 48,
+                                Status = BookingStatus.Pending,
+                                CreatedAt = DateTime.Now.AddDays(-1)
+                            },
+                            new Booking
+                            {
+                                UserId = particular.Id,
+                                PetsitterId = elenaPs.Id,
+                                ServiceType = ServiceType.HouseSitting,
+                                StartDate = DateTime.Today.AddDays(5),
+                                EndDate = DateTime.Today.AddDays(7),
+                                PetName = "Rio",
+                                PetSpecies = "Bird",
+                                Message = "Vou viajar e preciso de alguém para cuidar do meu papagaio Rio em casa.",
+                                TotalPrice = elenaPs.HourlyRate * 48,
+                                Status = BookingStatus.Pending,
+                                CreatedAt = DateTime.Now.AddHours(-12)
+                            }
+                        };
+
+                        context.Bookings.AddRange(bookings);
+                        context.SaveChanges();
+                    }
+                }
             }
         }
     }

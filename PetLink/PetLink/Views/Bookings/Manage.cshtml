@@ -1,0 +1,150 @@
+@model IEnumerable<PetLink.Models.Booking>
+
+@{
+    ViewData["Title"] = "Manage Bookings";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="text-primary-darkblue fw-bold mb-4">Booking Requests</h2>
+
+            @if (!Model.Any())
+            {
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center" style="background-color: var(--petlink-card-bg);">
+                    <i class="bi bi-inbox mb-3 opacity-25" style="font-size: 4rem; color: var(--petlink-primary);"></i>
+                    <h4 class="text-primary-darkblue fw-bold">No booking requests yet</h4>
+                    <p class="text-muted mb-0">When someone books your services, it will appear here.</p>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead style="background-color: var(--petlink-grey-bg);">
+                                <tr>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3 ps-4">Client</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Service</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Dates</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Total</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Status</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3 pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                                @foreach (var booking in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(booking.User?.ProfilePicture) ? "/images/default-avatar.jpg" : booking.User?.ProfilePicture)"
+                                                     class="rounded-circle me-3 flex-shrink-0" style="width: 40px; height: 40px; object-fit: cover;" />
+                                                <div>
+                                                    <strong class="text-primary-darkblue d-block mb-1">@booking.User?.Name</strong>
+                                                    <small class="text-muted">@(booking.PetName ?? "No pet specified")</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold text-primary-darkblue">@booking.ServiceType</span>
+                                        </td>
+                                        <td class="text-secondary-grey" style="font-size: 0.85rem;">
+                                            @booking.StartDate.ToString("MMM dd") - @booking.EndDate.ToString("MMM dd, yyyy")
+                                        </td>
+                                        <td class="fw-bold text-primary">@booking.TotalPrice.ToString("0.00")€</td>
+                                        <td>
+                                            @if (booking.Status == PetLink.Models.Enums.BookingStatus.Pending)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #d39e00; border-color: rgba(255, 193, 7, 0.3) !important;">Pending</span>
+                                            }
+                                            else if (booking.Status == PetLink.Models.Enums.BookingStatus.Confirmed)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.3) !important;">Confirmed</span>
+                                            }
+                                            else if (booking.Status == PetLink.Models.Enums.BookingStatus.Completed)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; border-color: rgba(13, 110, 253, 0.3) !important;">Completed</span>
+                                            }
+                                            else if (booking.Status == PetLink.Models.Enums.BookingStatus.Cancelled)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(108, 117, 125, 0.1); color: #6c757d; border-color: rgba(108, 117, 125, 0.3) !important;">Cancelled</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: rgba(220, 53, 69, 0.3) !important;">Rejected</span>
+                                            }
+                                        </td>
+                                        <td class="pe-4">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if (!string.IsNullOrEmpty(booking.Message))
+                                                {
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill fw-bold"
+                                                            data-bs-toggle="modal" data-bs-target="#messageModal-@booking.Id">
+                                                        <i class="bi bi-chat-text me-1"></i> Message
+                                                    </button>
+                                                }
+
+                                                @if (booking.Status == PetLink.Models.Enums.BookingStatus.Pending)
+                                                {
+                                                    <form asp-action="Confirm" method="post" class="m-0">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@booking.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" title="Confirm">
+                                                            <i class="bi bi-check-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form asp-action="Reject" method="post" class="m-0">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@booking.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" title="Reject">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+
+                                                @if (booking.Status == PetLink.Models.Enums.BookingStatus.Confirmed)
+                                                {
+                                                    <form asp-action="Complete" method="post" class="m-0">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@booking.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-primary rounded-pill fw-bold shadow-sm">
+                                                            Complete
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    @if (!string.IsNullOrEmpty(booking.Message))
+                                    {
+                                        <div class="modal fade" id="messageModal-@booking.Id" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content rounded-4 border-0 shadow">
+                                                    <div class="modal-header border-0 pb-0">
+                                                        <h5 class="modal-title text-primary-darkblue fw-bold">Message from @booking.User?.Name</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4 text-secondary-grey">
+                                                        <div class="p-3 rounded-3" style="background-color: var(--petlink-grey-bg);">
+                                                            <p class="mb-0 fst-italic">"@booking.Message"</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

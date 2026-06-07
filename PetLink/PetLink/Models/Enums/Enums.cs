@@ -66,4 +66,13 @@ namespace PetLink.Models.Enums
         Deworming,    // Desparasitação 
         Sterilization // Esterilização
     }
+
+    public enum BookingStatus
+    {
+        Pending,
+        Confirmed,
+        Rejected,
+        Completed,
+        Cancelled
+    }
 }

@@ -64,6 +64,14 @@
             </a>
         }
         
+        @if (userRole == UserRole.PetSitter.ToString())
+        {
+            <a asp-controller="Bookings" asp-action="Manage"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Bookings" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-calendar-check-fill me-2"></i>Booking Requests
+            </a>
+        }
+
         @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
         {
             <a asp-controller="Favorites" asp-action="Index"
@@ -77,6 +85,10 @@
             <a asp-controller="AnimalListings" asp-action="MyApplications"
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "MyApplications" ? "active" : "")">
                 <i class="bi bi-file-earmark-text-fill me-2"></i>My Applications
+            </a>
+            <a asp-controller="Bookings" asp-action="MyBookings"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Bookings" && currentAction == "MyBookings" ? "active" : "")">
+                <i class="bi bi-calendar-check-fill me-2"></i>My Bookings
             </a>
         }
 
