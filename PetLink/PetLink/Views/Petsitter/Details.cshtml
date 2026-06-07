@@ -89,11 +89,19 @@
                             <p class="lead text-secondary-grey mb-4"
                                style="color: var(--petlink-dark) !important; opacity: 0.8;">@Model.Bio</p>
         
-                            @if (!ViewBag.IsSelf)
+                            @if (!ViewBag.IsSelf && User.Identity.IsAuthenticated)
                             {
-                                <button class="btn btn-primary fw-bold rounded-pill px-5 py-2 w-100 shadow-sm">
+                                <button class="btn btn-primary fw-bold rounded-pill px-5 py-2 w-100 shadow-sm"
+                                        data-bs-toggle="modal" data-bs-target="#bookingModal">
                                     Book @Model.User.Name.Split(' ')[0]
                                 </button>
+                            }
+                            else if (!ViewBag.IsSelf)
+                            {
+                                <a asp-controller="Profile" asp-action="LoginForm"
+                                   class="btn btn-primary fw-bold rounded-pill px-5 py-2 w-100 shadow-sm">
+                                    Book @Model.User.Name.Split(' ')[0]
+                                </a>
                             }
                             else
                             {
@@ -208,6 +216,76 @@
     </div>
 </section>
 
+@* Booking Modal *@
+@if (!ViewBag.IsSelf)
+{
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <form asp-controller="Bookings" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="petsitterId" value="@Model.Id" />
+
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title text-primary-darkblue fw-bold">Book @Model.User.Name.Split(' ')[0]</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary-darkblue small">Service Type</label>
+                            <select name="serviceType" class="form-select rounded-3" required>
+                                <option value="Boarding" selected="@(Model.serviceType == PetLink.Models.Enums.ServiceType.Boarding)">Boarding</option>
+                                <option value="Walking" selected="@(Model.serviceType == PetLink.Models.Enums.ServiceType.Walking)">Walking</option>
+                                <option value="HouseSitting" selected="@(Model.serviceType == PetLink.Models.Enums.ServiceType.HouseSitting)">House Sitting</option>
+                            </select>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-primary-darkblue small">Start Date</label>
+                                <input type="date" name="startDate" class="form-control rounded-3" required min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-primary-darkblue small">End Date</label>
+                                <input type="date" name="endDate" class="form-control rounded-3" required min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-primary-darkblue small">Pet Name</label>
+                                <input type="text" name="petName" class="form-control rounded-3" placeholder="e.g. Rex" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-primary-darkblue small">Pet Species</label>
+                                <input type="text" name="petSpecies" class="form-control rounded-3" placeholder="e.g. Dog" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary-darkblue small">Message to Sitter</label>
+                            <textarea name="message" class="form-control rounded-3" rows="3" placeholder="Tell the sitter about your pet's needs..."></textarea>
+                        </div>
+
+                        <div class="p-3 rounded-3 mb-0" style="background-color: var(--petlink-grey-bg);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary-darkblue fw-bold">Rate: @Model.HourlyRate.ToString("0")€ / hr</span>
+                                <span class="text-primary fw-bold" id="estimatedTotal">Estimated: 0.00€</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill fw-bold px-5">Send Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
 <section class="featured-section py-5 mt-4 border-top"
          style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
     <div class="container">
@@ -249,6 +327,23 @@
 
 @section Scripts {
     <script>
+        var hourlyRate = @Model.HourlyRate.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+
+        function updateEstimatedTotal() {
+            var startDate = new Date($('input[name="startDate"]').val());
+            var endDate = new Date($('input[name="endDate"]').val());
+
+            if (startDate && endDate && endDate > startDate) {
+                var hours = (endDate - startDate) / (1000 * 60 * 60);
+                var total = hours * hourlyRate;
+                $('#estimatedTotal').text('Estimated: ' + total.toFixed(2) + '€');
+            } else {
+                $('#estimatedTotal').text('Estimated: 0.00€');
+            }
+        }
+
+        $('input[name="startDate"], input[name="endDate"]').on('change', updateEstimatedTotal);
+
         $(document).ready(function() {
             var petsitterId = @Model.UserId;
             var favoriteBtn = $('.favorite-petsitter-btn');
