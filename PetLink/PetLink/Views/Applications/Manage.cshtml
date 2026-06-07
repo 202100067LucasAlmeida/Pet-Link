@@ -51,19 +51,19 @@
                                     <td>
                                         @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
                                         {
-                                            <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #d39e00; border-color: rgba(255, 193, 7, 0.3) !important;">Pending</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-pending">Pending</span>
                                         }
                                         else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
                                         {
-                                            <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.3) !important;">Approved</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-confirmed">Approved</span>
                                         }
                                         else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Completed)
                                         {
-                                            <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; border-color: rgba(13, 110, 253, 0.3) !important;">Completed</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-completed">Completed</span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill px-3 py-2 border fw-bold" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: rgba(220, 53, 69, 0.3) !important;">Rejected</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-rejected">Rejected</span>
                                         }
                                     </td>
                                     <td class="pe-4">

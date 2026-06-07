@@ -118,8 +118,8 @@ function updateLocationField(city, lat, lng) {
             locationInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         }
 
-        locationInput.style.borderColor = '#28a745';
-        locationInput.style.backgroundColor = '#f0fff4';
+        locationInput.style.borderColor = 'var(--petlink-success)';
+        locationInput.style.backgroundColor = 'var(--petlink-success-bg)';
         setTimeout(() => {
             locationInput.style.borderColor = '';
             locationInput.style.backgroundColor = '';

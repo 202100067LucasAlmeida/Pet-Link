@@ -228,7 +228,7 @@
                                             <div>
                                                 <div class="d-flex align-items-center gap-2 mb-1">
                                                     <h6 class="fw-bold text-primary-darkblue mb-0">@unverifiedUser.Name</h6>
-                                                    <span class="badge rounded-pill px-2 py-1" style="font-size: 0.65rem; background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                                                    <span class="badge rounded-pill px-2 py-1 badge-status-pending" style="font-size: 0.65rem;">
                                                         @unverifiedUser.Role
                                                     </span>
                                                 </div>
@@ -362,11 +362,11 @@
                                     <div class="d-flex align-items-center gap-3">
                                         @if (app.Status == ApplicationStatus.Pending)
                                         {
-                                            <span class="badge rounded-pill px-3 border fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #d39e00; border-color: rgba(255, 193, 7, 0.3) !important;">In Review</span>
+                                            <span class="badge rounded-pill px-3 border fw-bold badge-status-pending">In Review</span>
                                         }
                                         else if (app.Status == ApplicationStatus.Approved)
                                         {
-                                            <span class="badge rounded-pill px-3 border fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border-color: rgba(40, 167, 69, 0.3) !important;">Approved</span>
+                                            <span class="badge rounded-pill px-3 border fw-bold badge-status-confirmed">Approved</span>
                                         }
                                         
                                         <a asp-controller="AnimalListings" asp-action="Details" asp-route-id="@app.AnimalListingId"

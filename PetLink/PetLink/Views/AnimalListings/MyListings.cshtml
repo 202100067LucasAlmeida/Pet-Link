@@ -48,13 +48,11 @@
                                     <td>
                                         @if (item.Status.ToString() == "Published")
                                         {
-                                            <span class="badge rounded-pill px-3"
-                                                  style="background-color: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3);">Published</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-confirmed">Published</span>
                                         }
                                         else
                                         {
-                                            <span class="badge rounded-pill px-3"
-                                                  style="background-color: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid rgba(255, 193, 7, 0.3);">Pending</span>
+                                            <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-pending">Pending</span>
                                         }
                                     </td>
                                     <td class="small opacity-75">@item.CreatedAt.ToString("dd/MM/yyyy")</td>
@@ -67,7 +65,7 @@
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm py-1 px-3"
-                                                   style="background-color: var(--petlink-card-bg); color: #dc3545;"
+                                                   style="background-color: var(--petlink-card-bg); color: var(--petlink-danger);"
                                                    onclick="event.stopPropagation();">
                                                 <i class="bi bi-trash"></i>
                                             </a>

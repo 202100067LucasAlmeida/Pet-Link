@@ -1,12 +1,24 @@
 /* VARIÁVEIS GLOBAIS (Light Mode por defeito) */
 :root {
-    --petlink-dark: #022845;
+    --petlink-dark: #0a1628;
     --petlink-primary: #05528F;
-    --petlink-secondary: #858585;
-    --petlink-highlight: #087CD9;
-    --petlink-grey-bg: #F8FAFC;
+    --petlink-secondary: #64748b;
+    --petlink-highlight: #0d8ce8;
+    --petlink-grey-bg: #f0f4f8;
     --petlink-card-bg: #ffffff;
-    --petlink-border: #dee2e6;
+    --petlink-border: #d1d9e6;
+    --petlink-light-bg: #e2ebf3;
+
+    --petlink-map-accent: #087CD9;
+    --petlink-success: #28a745;
+    --petlink-success-bg: #f0fff4;
+    --petlink-warning: #d39e00;
+    --petlink-danger: #dc3545;
+    --petlink-danger-rgb: 220, 53, 69;
+    --petlink-info: #0d6efd;
+    --petlink-online: #10b981;
+    --petlink-star: #ffc107;
+    --petlink-muted-icon: #9ca3af;
 
     --font-primary: "Poetsen One", sans-serif;
     --font-display: "Oxygen", sans-serif;
@@ -14,13 +26,24 @@
 
 /* VARIÁVEIS DARK MODE */
 html.dark-mode {
-    --petlink-dark: #F8FAFC;
-    --petlink-primary: #f5f5f5;
-    --petlink-secondary: #b0b0b0;
-    --petlink-highlight: #47a6f0;
-    --petlink-grey-bg: #021727;
-    --petlink-card-bg: #1a3d5c;
-    --petlink-border: #022845;
+    --petlink-dark: #e2e8f0;
+    --petlink-primary: #4a90d9;
+    --petlink-secondary: #94a3b8;
+    --petlink-highlight: #60a5fa;
+    --petlink-grey-bg: #0f172a;
+    --petlink-card-bg: #1e293b;
+    --petlink-border: #334155;
+    --petlink-light-bg: #263548;
+    --petlink-map-accent: #60a5fa;
+    --petlink-success: #4ade80;
+    --petlink-success-bg: rgba(74, 222, 128, 0.15);
+    --petlink-warning: #fbbf24;
+    --petlink-danger: #f87171;
+    --petlink-danger-rgb: 248, 113, 113;
+    --petlink-info: #60a5fa;
+    --petlink-online: #34d399;
+    --petlink-star: #fbbf24;
+    --petlink-muted-icon: #64748b;
 }
 
 /* ESTILOS BASE */
@@ -119,14 +142,13 @@ footer {
 .btn-primary {
     background-color: var(--petlink-primary);
     border-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
-    /* Garante contraste no texto */
+    color: #ffffff;
 }
 
 .btn-primary:hover {
     background-color: var(--petlink-highlight);
     border-color: var(--petlink-highlight);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
 }
 
 .btn-secondary {
@@ -137,7 +159,7 @@ footer {
 
 .btn-secondary:hover {
     background-color: var(--petlink-primary);
-    color: var(--petlink-card-bg);
+    color: #ffffff;
     border-color: var(--petlink-primary);
 }
 
@@ -149,7 +171,7 @@ footer {
 
 .btn-outline-primary:hover {
     background-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
 }
 
 .btn-heart {
@@ -206,6 +228,10 @@ footer {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12) !important;
 }
 
+html.dark-mode .pet-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
 .pet-card .card-body {
     flex: 1;
     display: flex;
@@ -245,8 +271,7 @@ footer {
     bottom: 15px;
     left: 15px;
     background-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
-    /* Cor de fundo clara para o texto */
+    color: #ffffff;
     font-size: 0.7rem;
     padding: 5px 10px;
     letter-spacing: 0.5px;
@@ -265,7 +290,6 @@ footer {
 
 .pet-tag-green {
     background-color: rgba(25, 135, 84, 0.2);
-    /* Verde translúcido para adaptar ao fundo */
     color: #28a745;
 }
 
@@ -362,7 +386,7 @@ footer {
 
 /* HERO SECTION  */
 .hero-section {
-    background-color: var(--petlink-dark);
+    background-color: #0a1628;
     background-size: cover;
     background-position: center;
     padding: 120px 0 180px 0;
@@ -374,8 +398,14 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, rgba(2, 40, 69, 0.85) 0%, rgba(2, 40, 69, 0.95) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, #0a1628 85%, transparent) 0%, color-mix(in srgb, #0a1628 95%, transparent) 100%);
     z-index: 0;
+}
+
+html.dark-mode .hero-section .text-primary-light,
+html.dark-mode .hero-section .text-highlight-light,
+html.dark-mode .hero-section .text-secondary-grey {
+    color: var(--petlink-dark) !important;
 }
 
 /* SEARCH  */
@@ -418,22 +448,6 @@ footer {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 1rem;
-}
-
-.animal-type-btn {
-    border: 1px solid var(--petlink-border);
-    background-color: var(--petlink-card-bg);
-    color: var(--petlink-dark);
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.2s;
-}
-
-.animal-type-btn.active,
-.animal-type-btn:hover {
-    background-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
-    border-color: var(--petlink-primary);
 }
 
 /* FEATURES  */
@@ -566,7 +580,7 @@ html.dark-mode #chatBox .text-secondary-grey {
     min-width: 36px;
     height: 36px;
     background-color: var(--petlink-primary);
-    color: white;
+    color: #ffffff;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -574,13 +588,8 @@ html.dark-mode #chatBox .text-secondary-grey {
     font-weight: bold;
     font-size: 0.9rem;
 }
-
-html.dark-mode .bg-white {
-    background-color: var(--petlink-card-bg) !important;
-}
-
 .help-card {
-    background-color: var(--petlink-highlight);
+    background: linear-gradient(135deg, var(--petlink-highlight), var(--petlink-primary));
     border-radius: 20px;
     padding: 30px;
     position: relative;
@@ -610,7 +619,7 @@ html.dark-mode .bg-white {
     position: absolute;
     top: 25px;
     right: 25px;
-    background-color: #ffffff;
+    background-color: var(--petlink-card-bg);
     color: var(--petlink-highlight);
     width: 50px;
     height: 50px;
@@ -619,11 +628,11 @@ html.dark-mode .bg-white {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-help {
-    background-color: #ffffff;
+    background-color: var(--petlink-card-bg);
     color: var(--petlink-highlight) !important;
     font-family: var(--font-display);
     font-weight: 700;
@@ -632,32 +641,6 @@ html.dark-mode .bg-white {
     border: none;
     text-decoration: none;
     display: inline-block;
-}
-
-/* NOTIFICAÇÃO  */
-.toast-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
-    padding: 12px 24px;
-    border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
 /* FORMULÁRIOS  */
@@ -730,7 +713,7 @@ hr {
 input[type="radio"]:checked+.animal-type-btn {
     background-color: var(--petlink-primary);
     border-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
     opacity: 1;
 }
 
@@ -738,62 +721,6 @@ input[type="radio"]:checked+.animal-type-btn {
     background-color: var(--petlink-light-bg);
     border-color: var(--petlink-highlight);
     color: var(--petlink-primary);
-}
-
-.transition-all {
-    transition: all 0.2s ease;
-}
-
-/* ==================== ESTILOS DO PERFIL ==================== */
-
-/* Hover effect for messages */
-.hover-message {
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.hover-message:hover {
-    background-color: var(--petlink-light-bg);
-    transform: translateX(5px);
-}
-
-.transition-all {
-    transition: all 0.2s ease;
-}
-
-/* Carrossel de Saved Pets */
-#savedPetsCarousel {
-    overflow: hidden;
-}
-
-#carouselTrack {
-    display: flex;
-    transition: transform 0.3s ease;
-}
-
-.carousel-card {
-    flex: 0 0 calc(50% - 0.5rem);
-    min-width: calc(50% - 0.5rem);
-}
-
-.carousel-card .position-relative {
-    height: 140px;
-    overflow: hidden;
-    border-radius: 12px 12px 0 0;
-}
-
-.carousel-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-/* Botões desabilitados do carrossel */
-#scrollLeftBtn:disabled,
-#scrollRightBtn:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
 }
 
 /* Rating stars */
@@ -823,10 +750,10 @@ input[type="radio"]:checked+.animal-type-btn {
     top: 20px;
     right: 20px;
     background: var(--petlink-primary);
-    color: white;
+    color: #ffffff;
     padding: 12px 24px;
     border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     z-index: 9999;
     animation: slideIn 0.3s ease;
 }
@@ -845,7 +772,7 @@ input[type="radio"]:checked+.animal-type-btn {
 /* Botões de favorito petsitter */
 .favorite-petsitter-btn,
 .btn-heart {
-    background: white !important;
+    background: var(--petlink-card-bg) !important;
     border: none !important;
     border-radius: 50% !important;
     width: 35px !important;
@@ -853,7 +780,7 @@ input[type="radio"]:checked+.animal-type-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
 }
@@ -871,4 +798,205 @@ input[type="radio"]:checked+.animal-type-btn {
 .favorite-petsitter-btn i.text-danger,
 .btn-heart i.text-danger {
     color: #dc3545 !important;
+}
+/* BOOTSTRAP UTILITY OVERRIDES FOR DARK MODE */
+
+/* BOOKING STATUS BADGES */
+.badge-status-pending {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #d39e00 !important;
+    border-color: rgba(255, 193, 7, 0.3) !important;
+}
+html.dark-mode .badge-status-pending {
+    background-color: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(251, 191, 36, 0.3) !important;
+}
+.badge-status-confirmed {
+    background-color: rgba(40, 167, 69, 0.1) !important;
+    color: #28a745 !important;
+    border-color: rgba(40, 167, 69, 0.3) !important;
+}
+html.dark-mode .badge-status-confirmed {
+    background-color: rgba(74, 222, 128, 0.15) !important;
+    color: #4ade80 !important;
+    border-color: rgba(74, 222, 128, 0.3) !important;
+}
+.badge-status-completed {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    color: #0d6efd !important;
+    border-color: rgba(13, 110, 253, 0.3) !important;
+}
+html.dark-mode .badge-status-completed {
+    background-color: rgba(96, 165, 250, 0.15) !important;
+    color: #60a5fa !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+}
+.badge-status-cancelled {
+    background-color: rgba(108, 117, 125, 0.1) !important;
+    color: #6c757d !important;
+    border-color: rgba(108, 117, 125, 0.3) !important;
+}
+html.dark-mode .badge-status-cancelled {
+    background-color: rgba(148, 163, 184, 0.15) !important;
+    color: #94a3b8 !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+}
+.badge-status-rejected {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border-color: rgba(220, 53, 69, 0.3) !important;
+}
+html.dark-mode .badge-status-rejected {
+    background-color: rgba(248, 113, 113, 0.15) !important;
+    color: #f87171 !important;
+    border-color: rgba(248, 113, 113, 0.3) !important;
+}
+
+html.dark-mode .text-muted {
+    color: var(--petlink-secondary) !important;
+}
+
+html.dark-mode .text-dark {
+    color: var(--petlink-dark) !important;
+}
+
+html.dark-mode .bg-white {
+    background-color: var(--petlink-card-bg) !important;
+}
+
+html.dark-mode .bg-light {
+    background-color: var(--petlink-grey-bg) !important;
+}
+
+html.dark-mode .btn-light {
+    background-color: var(--petlink-card-bg);
+    border-color: var(--petlink-border);
+    color: var(--petlink-dark);
+}
+
+html.dark-mode .btn-light:hover {
+    background-color: var(--petlink-light-bg);
+    border-color: var(--petlink-highlight);
+    color: var(--petlink-primary);
+}
+
+/* BOOTSTRAP COMPONENT DARK MODE OVERRIDES */
+html.dark-mode .navbar-toggler {
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(226, 232, 240, 0.75)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+html.dark-mode .btn-close {
+    filter: invert(1) brightness(200%);
+}
+
+html.dark-mode .modal-content {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+}
+
+html.dark-mode .modal-header,
+html.dark-mode .modal-footer {
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .table {
+    --bs-table-bg: var(--petlink-card-bg);
+    --bs-table-color: var(--petlink-dark);
+    --bs-table-striped-bg: var(--petlink-light-bg);
+    --bs-table-hover-bg: var(--petlink-light-bg);
+    color: var(--petlink-dark);
+}
+
+html.dark-mode .table > :not(caption) > * > * {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .page-link {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .page-link:hover {
+    background-color: var(--petlink-light-bg);
+    color: var(--petlink-highlight);
+}
+
+html.dark-mode .page-item.disabled .page-link {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-secondary);
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .page-item.active .page-link {
+    background-color: var(--petlink-primary);
+    border-color: var(--petlink-primary);
+    color: #ffffff;
+}
+
+html.dark-mode .list-group-item {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .list-group-item-action:hover,
+html.dark-mode .list-group-item-action:focus {
+    background-color: var(--petlink-light-bg);
+    color: var(--petlink-primary);
+}
+
+html.dark-mode .list-group-item-action.active {
+    background-color: var(--petlink-primary);
+    border-color: var(--petlink-primary);
+    color: #ffffff;
+}
+
+html.dark-mode .alert-success {
+    background-color: rgba(74, 222, 128, 0.15) !important;
+    color: #4ade80 !important;
+    border-color: rgba(74, 222, 128, 0.3) !important;
+}
+
+html.dark-mode .alert-danger {
+    background-color: rgba(248, 113, 113, 0.15) !important;
+    color: #f87171 !important;
+    border-color: rgba(248, 113, 113, 0.3) !important;
+}
+
+html.dark-mode .alert-warning {
+    background-color: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+    border-color: rgba(251, 191, 36, 0.3) !important;
+}
+
+html.dark-mode .alert-info {
+    background-color: rgba(96, 165, 250, 0.15) !important;
+    color: #60a5fa !important;
+    border-color: rgba(96, 165, 250, 0.3) !important;
+}
+
+html.dark-mode .alert-secondary {
+    background-color: rgba(148, 163, 184, 0.15) !important;
+    color: #94a3b8 !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+html.dark-mode .input-group-text {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-color: var(--petlink-border);
+}
+
+html.dark-mode .accordion-item {
+    background-color: var(--petlink-card-bg);
+    color: var(--petlink-dark);
+    border-color: var(--petlink-border);
 }

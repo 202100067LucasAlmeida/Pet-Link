@@ -27,7 +27,6 @@
 .digit {
     font-family: var(--font-primary);
     color: var(--petlink-primary);
-    /* Já estava dinâmico */
     font-size: 8rem;
     line-height: 1;
 }
@@ -60,7 +59,7 @@
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     background-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
     text-decoration: none;
     border-radius: 50px;
     font-size: 1rem;
@@ -69,7 +68,7 @@
 
 .btn-home:hover {
     background-color: var(--petlink-highlight);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
     text-decoration: none;
 }
 

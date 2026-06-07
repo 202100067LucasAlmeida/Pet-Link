@@ -246,7 +246,7 @@
 
                 var userMarker = L.circleMarker([userLat, userLng], {
                     radius: 8,
-                    fillColor: "#087CD9",
+                    fillColor: "var(--petlink-map-accent)",
                     color: "#fff",
                     weight: 2,
                     opacity: 1,
@@ -254,8 +254,8 @@
                 }).addTo(map).bindPopup("<b style='color: var(--petlink-primary-darkblue);'>You are here!</b>").openPopup();
 
                 L.circle([userLat, userLng], {
-                    color: '#087CD9',
-                    fillColor: '#087CD9',
+                    color: 'var(--petlink-map-accent)',
+                    fillColor: 'var(--petlink-map-accent)',
                     fillOpacity: 0.1,
                     radius: 15000 
                 }).addTo(map);

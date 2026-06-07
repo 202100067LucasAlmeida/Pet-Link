@@ -216,7 +216,7 @@
                             <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
                             <h6 style="margin: 0; font-weight: bold;">${pet.name}</h6>
                             <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
-                            <p style="margin: 5px 0; font-size: 10px; color: #087CD9;">
+                            <p style="margin: 5px 0; font-size: 10px; color: var(--petlink-map-accent);">
                                 <i class="bi bi-geo-alt"></i> ${distance} km away
                             </p>
                             <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
@@ -309,7 +309,7 @@
                     var userMarker = L.marker([userLat, userLng], {
                         icon: L.divIcon({
                             className: 'user-location-marker',
-                            html: '<div style="background: #087CD9; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #087CD9;"></div>',
+                            html: '<div style="background: var(--petlink-map-accent); width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--petlink-map-accent);"></div>',
                             iconSize: [22, 22],
                             iconAnchor: [11, 11]
                         })
@@ -318,8 +318,8 @@
                     // círculo do radius com distâancia real
                     radiusCircle = L.circle([userLat, userLng], {
                         radius: radiusInMeters,
-                        color: "#087CD9",
-                        fillColor: "#087CD9",
+                        color: "var(--petlink-map-accent)",
+                        fillColor: "var(--petlink-map-accent)",
                         weight: 2,
                         opacity: 0.6,
                         fillOpacity: 0.1
@@ -384,8 +384,8 @@
                                 }
                                 radiusCircle = L.circle([userLat, userLng], {
                                     radius: newRadiusKm * 1000,
-                                    color: "#087CD9",
-                                    fillColor: "#087CD9",
+                                    color: "var(--petlink-map-accent)",
+                                    fillColor: "var(--petlink-map-accent)",
                                     weight: 2,
                                     opacity: 0.6,
                                     fillOpacity: 0.1
@@ -408,7 +408,7 @@
                     var errorControl = L.control({ position: 'topright' });
                     errorControl.onAdd = function() {
                         var div = L.DomUtil.create('div', 'info legend');
-                        div.innerHTML = '<div style="background: #ff6b6b; color: white; padding: 8px 15px; border-radius: 8px;"><i class="bi bi-exclamation-triangle"></i> Location access denied. Showing all pets.</div>';
+                        div.innerHTML = '<div style="background: var(--petlink-danger); color: white; padding: 8px 15px; border-radius: 8px;"><i class="bi bi-exclamation-triangle"></i> Location access denied. Showing all pets.</div>';
                         return div;
                     };
                     errorControl.addTo(map);

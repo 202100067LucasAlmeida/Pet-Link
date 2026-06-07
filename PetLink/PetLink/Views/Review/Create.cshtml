@@ -25,7 +25,7 @@
                                 <div class="d-flex gap-2">
                                     @for (int i = 1; i <= 5; i++)
                                     {
-                                        <i class="bi bi-star fs-1 rating-star" data-rating="@i" style="cursor: pointer; color: #ccc;"></i>
+                                        <i class="bi bi-star fs-1 rating-star" data-rating="@i" style="cursor: pointer; color: var(--petlink-muted-icon);"></i>
                                     }
                                 </div>
                                 <input type="hidden" asp-for="Rating" id="ratingValue" />
@@ -84,9 +84,9 @@
                 $('.rating-star').each(function() {
                     var starRating = $(this).data('rating');
                     if (starRating <= rating) {
-                        $(this).removeClass('bi-star').addClass('bi-star-fill').css('color', '#ffc107');
+                        $(this).removeClass('bi-star').addClass('bi-star-fill').css('color', 'var(--petlink-star)');
                     } else {
-                        $(this).removeClass('bi-star-fill').addClass('bi-star').css('color', '#ccc');
+                        $(this).removeClass('bi-star-fill').addClass('bi-star').css('color', 'var(--petlink-muted-icon)');
                     }
                 });
             }

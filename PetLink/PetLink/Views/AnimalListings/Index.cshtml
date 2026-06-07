@@ -140,7 +140,7 @@
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-geo-alt me-2"></i> LOCATION</div>
                         <div class="input-group">
-                            <span class="input-group-text bg-white text-secondary-grey border-end-0"><i
+                            <span class="input-group-text text-secondary-grey border-end-0"><i
                                 class="bi bi-geo-alt"></i>
                             </span>
                             <input type="text" name="location" class="form-control border-start-0 ps-0"
@@ -302,25 +302,25 @@
                                     <div class="d-flex flex-wrap gap-2 mt-auto pt-3 border-top" style="border-color: var(--petlink-border) !important;">
                                         @if (item.IsVaccinated)
                                         {
-                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.2); font-size: 0.65rem;">
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold badge-status-confirmed" style="font-size: 0.65rem;">
                                                 <i class="bi bi-shield-check me-1"></i> VACCINATED
                                             </span>
                                         }
                                         @if (item.IsDewormed)
                                         {
-                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(32, 201, 151, 0.1); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.2); font-size: 0.65rem;">
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold badge-status-confirmed" style="font-size: 0.65rem;">
                                                 <i class="bi bi-capsule me-1"></i> DEWORMED
                                             </span>
                                         }
                                         @if (item.IsSterilized)
                                         {
-                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; border: 1px solid rgba(13, 110, 253, 0.2); font-size: 0.65rem;">
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold badge-status-confirmed" style="font-size: 0.65rem;">
                                                 <i class="bi bi-heart-pulse me-1"></i> STERILIZED
                                             </span>
                                         }
                                         @if (!item.IsVaccinated && !item.IsDewormed && !item.IsSterilized)
                                         {
-                                            <span class="badge rounded-pill px-2 py-1 fw-bold" style="background-color: rgba(255, 193, 7, 0.1); color: #d39e00; border: 1px solid rgba(255, 193, 7, 0.2); font-size: 0.65rem;">
+                                            <span class="badge rounded-pill px-2 py-1 fw-bold badge-status-pending" style="font-size: 0.65rem;">
                                                 <i class="bi bi-exclamation-triangle-fill me-1"></i> NEEDS VET
                                             </span>
                                         }
@@ -355,7 +355,7 @@
                                     
                                     @* BOTÃO ANTERIOR *@
                                     <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                                        <a class="page-link border-0 shadow-sm rounded-3 me-2 @(currentPage == 1 ? "text-secondary-grey" : "text-dark")" 
+                                        <a class="page-link border-0 shadow-sm rounded-3 me-2" 
                                         href="@Url.Action("Index", new { page = currentPage - 1 })">
                                             <i class="bi bi-chevron-left"></i>
                                         </a>
@@ -365,8 +365,7 @@
                                     @for (int i = 1; i <= totalPages; i++)
                                     {
                                         <li class="page-item @(i == currentPage ? "active" : "")">
-                                            <a class="page-link border-0 shadow-sm rounded-3 me-2 @(i != currentPage ? "text-dark" : "")"
-                                            style="@(i == currentPage ? "background-color: var(--petlink-dark); color: white;" : "")" 
+                                            <a class="page-link border-0 shadow-sm rounded-3 me-2"
                                             href="@Url.Action("Index", new { page = i })">
                                                 @i
                                             </a>
@@ -375,7 +374,7 @@
 
                                     @* BOTÃO SEGUINTE *@
                                     <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                                        <a class="page-link border-0 shadow-sm rounded-3 text-dark @(currentPage == totalPages ? "text-secondary-grey" : "text-dark")" 
+                                        <a class="page-link border-0 shadow-sm rounded-3" 
                                         href="@Url.Action("Index", new { page = currentPage + 1 })">
                                             <i class="bi bi-chevron-right"></i>
                                         </a>
@@ -547,7 +546,7 @@
 
                     var userMarker = L.circleMarker([userLat, userLng], {
                         radius: 8,
-                        fillColor: "#087CD9",
+                        fillColor: "var(--petlink-map-accent)",
                         color: "#fff",
                         weight: 2,
                         opacity: 1,
@@ -555,8 +554,8 @@
                     }).addTo(map).bindPopup("<b style='color: var(--petlink-primary-darkblue);'>You are here!</b>").openPopup();
 
                     L.circle([userLat, userLng], {
-                        color: '#087CD9',
-                        fillColor: '#087CD9',
+                        color: 'var(--petlink-map-accent)',
+                        fillColor: 'var(--petlink-map-accent)',
                         fillOpacity: 0.1,
                         radius: 15000 
                     }).addTo(map);

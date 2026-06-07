@@ -5,7 +5,7 @@
 }
 
 <section class="breadcrumb-section py-3"
-         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+         style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border); color: var(--petlink-dark);">
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
@@ -27,8 +27,7 @@
                 <h4 class="fw-bold text-primary-darkblue mb-0">Filters</h4>
             </div>
 
-            <div class="card filter-card rounded-4 shadow-sm p-4"
-                 style="background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border);">
+            <div class="card filter-card rounded-4 shadow-sm p-4">
                 <form method="get" asp-action="Search" asp-controller="Petsitter">
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-briefcase me-2"></i> SERVICE TYPE</div>
@@ -74,7 +73,7 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <a asp-controller="Petsitter" asp-action="Index"
-                                   class="btn btn-primary w-100 fw-bold py-2 rounded-3">Reset All</a>
+                                   class="btn btn-outline-primary w-100 fw-bold py-2 rounded-3">Reset All</a>
                             </div>
                             <div class="col-6">
                                 <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">Apply Filters</button>
@@ -93,10 +92,11 @@
                         <p class="text-muted mb-0">Showing @Model.Count() verified sitters</p>
                         <div class="d-flex gap-2 flex-wrap mb-4">
                             <span class="badge rounded-pill py-2 px-3 fw-semibold border"
-                                  style="background-color: rgba(8, 124, 217, 0.1); color: var(--petlink-highlight); border-color: rgba(8, 124, 217, 0.2) !important;">
+                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-highlight); border-color: var(--petlink-highlight) !important;">
                                 Boarding <i class="bi bi-x ms-1 cursor-pointer"></i>
                             </span>
-                            <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                            <span class="badge rounded-pill py-2 px-3 fw-semibold border"
+                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
                                 Small Dogs <i class="bi bi-x ms-1 cursor-pointer"></i>
                             </span>
                         </div>
@@ -123,8 +123,7 @@
                 @foreach (var item in Model)
                 {
                     <div class="col-md-6 col-xl-4">
-                        <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column"
-                             style="background-color: var(--petlink-card-bg);">
+                        <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column">
                             
                             <div class="position-relative" style="height: 250px; overflow: hidden;">
                                 <a asp-action="Details" asp-route-id="@item.Id">
@@ -145,7 +144,7 @@
                                 {
                                     <button class="favorite-petsitter-btn" 
                                             data-petsitter-id="@item.UserId"
-                                            style="position: absolute; bottom: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; cursor: pointer;">
+                                            style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">
                                         <i class="bi bi-heart"></i>
                                     </button>
                                 }
@@ -162,16 +161,16 @@
                                         </p>
                                     </div>
                                     <div class="text-end">
-                                        <span class="fw-bold fs-5 text-primary">@item.HourlyRate.ToString("0")€</span>
-                                        <div class="text-muted"
-                                             style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px; color: var(--petlink-dark) !important; opacity: 0.6;">
+                                        <span class="fw-bold fs-5 text-primary-blue">@item.HourlyRate.ToString("0")€</span>
+                                        <div class="text-secondary-grey"
+                                             style="font-size: 0.6rem; font-weight: 800; letter-spacing: 0.5px; opacity: 0.6;">
                                             PER HOUR
                                         </div>
                                     </div>
                                 </div>
 
-                                <p class="text-muted small mt-3 mb-3"
-                                   style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--petlink-dark) !important; opacity: 0.8;">
+                                <p class="text-secondary-grey small mt-3 mb-3"
+                                   style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0.8;">
                                     @item.Bio
                                 </p>
 

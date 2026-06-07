@@ -31,7 +31,7 @@ function initChat(currentUserId) {
         console.log("Mensagem recebida de:", senderId);
         const isMine = parseInt(senderId) === parseInt(currentUserId);
         const msgHtml = generateMessageHtml(content, timeStr, isMine);
-        
+
         const chatContainer = document.getElementById("chatWindow");
         if (chatContainer) {
             chatContainer.insertAdjacentHTML("beforeend", msgHtml);
@@ -62,7 +62,7 @@ function generateMessageHtml(content, time, isMine) {
     const alignment = isMine ? "justify-content-end" : "justify-content-start";
     const bubbleStyle = isMine
         ? "background-color: var(--petlink-primary); color: white; border-bottom-right-radius: 4px;"
-        : "background-color: white; color: var(--petlink-dark); border-bottom-left-radius: 4px;";
+        : "background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-bottom-left-radius: 4px;";
 
     return `
         <div class="d-flex mb-4 ${alignment}">
@@ -81,24 +81,24 @@ $(document).on("submit", "#sendMessageForm", function (e) {
     const receiverId = $("#receiverId").val();
     const animalId = $("#animalId").val(); // <-- LER O ID DO ANIMAL DO HTML
     const content = $("#messageInput").val();
-    
+
     if (content.trim() && receiverId && connection) {
         // Limpar input imediatamente para melhor UX
         $("#messageInput").val("").focus();
 
         // Enviar DIRETAMENTE para o teu Hub C# (que trata da BD e do E-mail)
-        connection.invoke("SendChatMessage", 
-            parseInt(receiverId), 
-            animalId ? parseInt(animalId) : null, 
+        connection.invoke("SendChatMessage",
+            parseInt(receiverId),
+            animalId ? parseInt(animalId) : null,
             content.trim()
         )
-        .then(() => {
-            scrollToBottom();
-        })
-        .catch(err => {
-            console.error("Erro ao enviar via Hub:", err);
-            alert("Could not send message. Try again.");
-        });
+            .then(() => {
+                scrollToBottom();
+            })
+            .catch(err => {
+                console.error("Erro ao enviar via Hub:", err);
+                alert("Could not send message. Try again.");
+            });
     }
 });
 
@@ -108,7 +108,7 @@ $(document).ready(function () {
     if (currentUserId) {
         initChat(currentUserId);
     }
-    
+
     // Garantir scroll no primeiro load
     scrollToBottom();
 });
