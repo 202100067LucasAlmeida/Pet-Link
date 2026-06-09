@@ -128,35 +128,115 @@ namespace PetLink
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Name,Species,Location,AgeMonths,Description,IsVaccinated,IsDewormed,IsSterilized")] AnimalListing animalListing,
-            IFormFile? mainPhoto, IFormFile? galleryPhotos)
+        public async Task<IActionResult> Create(
+            [Bind("Name,Species,Location,AgeMonths,Description")] AnimalListing animalListing,
+            IFormFile? mainPhoto,
+            IFormFile[]? galleryPhotos,
+            bool IsVaccinated,
+            bool IsDewormed,
+            bool IsSterilized,
+            IFormFile[]? vaccinationDocuments,
+            IFormFile[]? dewormingDocuments,
+            IFormFile[]? sterilizationDocuments)
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
 
+            // Store checkbox values in ViewBag for preserving state
+            ViewBag.IsVaccinated = IsVaccinated;
+            ViewBag.IsDewormed = IsDewormed;
+            ViewBag.IsSterilized = IsSterilized;
+
             // ========== VALIDAÇÕES ==========
-            // Validação da idade
             if (animalListing.AgeMonths < 0)
                 ModelState.AddModelError("AgeMonths", "Age must be 0 or greater.");
 
-            // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE (OBRIGATÓRIO PELO MENOS UMA) ==========
-            if (!animalListing.IsVaccinated && !animalListing.IsDewormed && !animalListing.IsSterilized)
+            if (!IsVaccinated && !IsDewormed && !IsSterilized)
             {
                 ModelState.AddModelError("IsVaccinated", "Please confirm at least one health status (Vaccinated, Dewormed, or Sterilized).");
             }
 
-            // Validação da foto principal
+            // Only validate main photo if this is the initial submission
+            // Don't validate if we're returning from a validation error
             if (mainPhoto == null || mainPhoto.Length == 0)
+            {
                 ModelState.AddModelError("mainPhoto", "A main photo is required.");
+            }
 
             if (ModelState.IsValid)
             {
+                // Set basic properties
                 animalListing.TutorId = int.Parse(userIdClaim);
                 animalListing.Status = ListingStatus.Pending;
                 animalListing.CreatedAt = DateTime.Now;
-                animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
 
+                // Upload the main photo
+                if (mainPhoto != null && mainPhoto.Length > 0)
+                {
+                    animalListing.ImageUrl = await UploadImage(mainPhoto, "animals");
+                }
+
+                // Save the animal listing to get an ID
                 _context.Add(animalListing);
+                await _context.SaveChangesAsync();
+
+                // Add Vaccination Documents
+                if (IsVaccinated && vaccinationDocuments != null && vaccinationDocuments.Any())
+                {
+                    foreach (var doc in vaccinationDocuments.Where(d => d != null && d.Length > 0))
+                    {
+                        var filePath = await UploadImage(doc, "health-documents/vaccinations");
+                        var healthDoc = new HealthDocument
+                        {
+                            Name = $"Vaccination Document - {DateTime.Now:yyyy-MM-dd HH:mm}",
+                            Type = HealthDocumentType.Vaccine,
+                            FilePath = filePath,
+                            IsVerified = false,
+                            UploadedAt = DateTime.UtcNow,
+                            AnimalListingId = animalListing.Id
+                        };
+                        _context.HealthDocuments.Add(healthDoc);
+                    }
+                }
+
+                // Add Deworming Documents
+                if (IsDewormed && dewormingDocuments != null && dewormingDocuments.Any())
+                {
+                    foreach (var doc in dewormingDocuments.Where(d => d != null && d.Length > 0))
+                    {
+                        var filePath = await UploadImage(doc, "health-documents/deworming");
+                        var healthDoc = new HealthDocument
+                        {
+                            Name = $"Deworming Document - {DateTime.Now:yyyy-MM-dd HH:mm}",
+                            Type = HealthDocumentType.Deworming,
+                            FilePath = filePath,
+                            IsVerified = false,
+                            UploadedAt = DateTime.UtcNow,
+                            AnimalListingId = animalListing.Id
+                        };
+                        _context.HealthDocuments.Add(healthDoc);
+                    }
+                }
+
+                // Add Sterilization Documents
+                if (IsSterilized && sterilizationDocuments != null && sterilizationDocuments.Any())
+                {
+                    foreach (var doc in sterilizationDocuments.Where(d => d != null && d.Length > 0))
+                    {
+                        var filePath = await UploadImage(doc, "health-documents/sterilization");
+                        var healthDoc = new HealthDocument
+                        {
+                            Name = $"Sterilization Document - {DateTime.Now:yyyy-MM-dd HH:mm}",
+                            Type = HealthDocumentType.Sterilization,
+                            FilePath = filePath,
+                            IsVerified = false,
+                            UploadedAt = DateTime.UtcNow,
+                            AnimalListingId = animalListing.Id
+                        };
+                        _context.HealthDocuments.Add(healthDoc);
+                    }
+                }
+
                 await _context.SaveChangesAsync();
 
                 await _notificationService.CreateNewListingNotificationForAdminsAsync(
@@ -165,9 +245,11 @@ namespace PetLink
                     animalListing.TutorId
                 );
 
+                TempData["Success"] = "Your listing has been created successfully!";
                 return RedirectToAction(nameof(MyListings));
             }
 
+            // If validation fails, return to the form
             return View(animalListing);
         }
 
@@ -193,7 +275,7 @@ namespace PetLink
         [ValidateAntiForgeryToken]
         [Authorize]
         // 1. ADICIONADOS OS 3 BOOLEANOS AQUI PARA CAPTURAR AS CHECKBOXES DO FORMULÁRIO HTML
-        public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto, bool isVaccinated, bool isDewormed, bool isSterilized)
+        public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto, bool isVaccinated, bool isDewormed, bool isSterilized, int[] verifiedDocuments)
         {
             if (id != animalListing.Id) return NotFound();
 
@@ -259,6 +341,36 @@ namespace PetLink
                         existingListing.HealthDocuments.Add(new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" });
                     else if (!isSterilized && steDoc != null)
                         existingListing.HealthDocuments.Remove(steDoc);
+
+                    if (isAdmin && verifiedDocuments != null && verifiedDocuments.Any())
+                    {
+                        var currentAdminId = int.Parse(userIdClaim);
+                        foreach (var docId in verifiedDocuments)
+                        {
+                            var doc = await _context.HealthDocuments.FindAsync(docId);
+                            if (doc != null && doc.AnimalListingId == existingListing.Id)
+                            {
+                                doc.IsVerified = true;
+                                doc.VerifiedAt = DateTime.Now;
+                                doc.VerifiedByAdminId = currentAdminId;
+                            }
+                        }
+                    }
+
+                    // Optionally, unverify documents that were not checked
+                    if (isAdmin && ModelState.IsValid)
+                    {
+                        var allDocs = existingListing.HealthDocuments;
+                        foreach (var doc in allDocs)
+                        {
+                            if (verifiedDocuments == null || !verifiedDocuments.Contains(doc.Id))
+                            {
+                                doc.IsVerified = false;
+                                doc.VerifiedAt = null;
+                                doc.VerifiedByAdminId = null;
+                            }
+                        }
+                    }
 
 
                     if (isAdmin)

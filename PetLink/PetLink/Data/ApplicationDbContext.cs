@@ -20,6 +20,9 @@ namespace PetLink.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<FavoritePetsitter> FavoritePetsitters { get; set; }
 
+        public DbSet<HealthDocument> HealthDocuments { get; set; }
+
+
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Booking> Bookings { get; set; }
@@ -161,6 +164,12 @@ namespace PetLink.Data
             .WithMany()
             .HasForeignKey(b => b.PetsitterId)
             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HealthDocument>()
+            .HasOne(h => h.AnimalListing)
+            .WithMany(a => a.HealthDocuments)
+            .HasForeignKey(h => h.AnimalListingId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

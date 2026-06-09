@@ -126,24 +126,65 @@
                         <div class="bg-light p-3 rounded-3 mb-3">
                             <div class="d-flex flex-wrap gap-4">
                                 <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsVaccinated" id="IsVaccinated" />
+                                    <input class="form-check-input health-check" type="checkbox"
+                                           asp-for="IsVaccinated" id="IsVaccinated"
+                                           data-proof="vaccinationProofDiv" />
                                     <label class="form-check-label fw-semibold text-success" asp-for="IsVaccinated">
                                         <i class="bi bi-shield-check"></i> Vaccinated
                                     </label>
                                 </div>
                                 <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsDewormed" id="IsDewormed" />
+                                    <input class="form-check-input health-check" type="checkbox"
+                                           asp-for="IsDewormed" id="IsDewormed"
+                                           data-proof="dewormingProofDiv" />
                                     <label class="form-check-label fw-semibold text-success" asp-for="IsDewormed">
                                         <i class="bi bi-capsule"></i> Dewormed
                                     </label>
                                 </div>
                                 <div class="form-check form-switch fs-6">
-                                    <input class="form-check-input health-check" type="checkbox" asp-for="IsSterilized" id="IsSterilized" />
+                                    <input class="form-check-input health-check" type="checkbox"
+                                           asp-for="IsSterilized" id="IsSterilized"
+                                           data-proof="sterilizationProofDiv" />
                                     <label class="form-check-label fw-semibold text-success" asp-for="IsSterilized">
                                         <i class="bi bi-scissors"></i> Sterilized
                                     </label>
                                 </div>
                             </div>
+
+
+                            <!-- Vaccination Proof Upload -->
+                            <div id="vaccinationProofDiv" class="mt-3 pt-3 border-top" style="display: none;">
+                                <label class="form-label fw-semibold text-primary-darkblue">
+                                    <i class="bi bi-file-earmark-medical"></i> Vaccination Proof Documents
+                                </label>
+                                <input type="file" name="vaccinationDocuments" class="form-control proof-file"
+                                       accept="image/*,application/pdf" multiple />
+                                <small class="text-secondary-grey">Upload vaccination certificates, vet records, etc. (Images or PDF)</small>
+                                <div class="text-danger small mt-1" style="display: none;"></div>
+                            </div>
+
+                            <!-- Deworming Proof Upload -->
+                            <div id="dewormingProofDiv" class="mt-3 pt-3 border-top" style="display: none;">
+                                <label class="form-label fw-semibold text-primary-darkblue">
+                                    <i class="bi bi-file-earmark-medical"></i> Deworming Proof Documents
+                                </label>
+                                <input type="file" name="dewormingDocuments" class="form-control proof-file"
+                                       accept="image/*,application/pdf" multiple />
+                                <small class="text-secondary-grey">Upload deworming certificates or records</small>
+                                <div class="text-danger small mt-1" style="display: none;"></div>
+                            </div>
+
+                            <!-- Sterilization Proof Upload -->
+                            <div id="sterilizationProofDiv" class="mt-3 pt-3 border-top" style="display: none;">
+                                <label class="form-label fw-semibold text-primary-darkblue">
+                                    <i class="bi bi-file-earmark-medical"></i> Sterilization Proof Documents
+                                </label>
+                                <input type="file" name="sterilizationDocuments" class="form-control proof-file"
+                                       accept="image/*,application/pdf" multiple />
+                                <small class="text-secondary-grey">Upload sterilization certificates or vet records</small>
+                                <div class="text-danger small mt-1" style="display: none;"></div>
+                            </div>
+
 
                             <div id="healthError" class="text-danger small mt-2" style="display: none;">
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -163,6 +204,8 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/createListing.js" asp-append-version="true"></script>
 
 @section Scripts {
     <script>

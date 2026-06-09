@@ -212,7 +212,59 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- In Details.cshtml, add this after the health information display -->
+                    @if (User.IsInRole("Admin") && Model.HealthDocuments.Any())
+                    {
+                        <div class="card mt-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Document Verification Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Document Type</th>
+                                                <th>Document</th>
+                                                <th>Verification Status</th>
+                                                <th>Verified By</th>
+                                                <th>Verified At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var doc in Model.HealthDocuments)
+                                            {
+                                                <tr>
+                                                    <td>@doc.Type</td>
+                                                    <td>
+                                                        <a href="@doc.FilePath" target="_blank" class="btn btn-sm btn-link">
+                                                            View Document
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        @if (doc.IsVerified)
+                                                        {
+                                                            <span class="badge bg-success">Verified</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Pending</span>
+                                                        }
+                                                    </td>
+                                                    <td>@(doc.VerifiedByAdmin?.Email ?? "N/A")</td>
+                                                    <td>@(doc.VerifiedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
+
+
                 <!-- ========== FIM MEDICAL HISTORY ========== -->
 
                 @* Temperamento com Badges Opacas (Melhor para Dark Mode) *@

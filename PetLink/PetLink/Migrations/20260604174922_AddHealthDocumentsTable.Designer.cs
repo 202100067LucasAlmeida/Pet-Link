@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetLink.Data;
 
@@ -11,9 +12,11 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260604174922_AddHealthDocumentsTable")]
+    partial class AddHealthDocumentsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,59 +136,6 @@ namespace PetLink.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Applications");
-                });
-
-            modelBuilder.Entity("PetLink.Models.Booking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PetName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PetSpecies")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PetsitterId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PetsitterId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("PetLink.Models.Event", b =>
@@ -612,25 +562,6 @@ namespace PetLink.Migrations
                         .IsRequired();
 
                     b.Navigation("AnimalListing");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PetLink.Models.Booking", b =>
-                {
-                    b.HasOne("PetLink.Models.Petsitter", "Petsitter")
-                        .WithMany()
-                        .HasForeignKey("PetsitterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PetLink.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Petsitter");
 
                     b.Navigation("User");
                 });
