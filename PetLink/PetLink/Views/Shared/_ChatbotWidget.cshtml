@@ -1,0 +1,49 @@
+@* Floating chatbot widget - PetLink Buddy *@
+<div id="chatbot-container">
+    <div id="chatbot-notification" class="hidden-notif">
+        <span>Hi! Need help finding a pet?</span>
+        <button id="chatbot-notif-close" title="Dismiss">&times;</button>
+    </div>
+
+    <div id="chatbot-toggle" title="Chat with PetLink Buddy">
+        <span id="chatbot-toggle-icon" style="font-size: 1.8rem; line-height: 1;">🐶</span>
+    </div>
+
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <div id="chatbot-avatar-display">🐶</div>
+            <div id="chatbot-header-info">
+                <span id="chatbot-title">PetLink Buddy</span>
+                <span id="chatbot-status">Online</span>
+            </div>
+            <button id="chatbot-settings" title="Change avatar">
+                <i class="bi bi-gear-fill"></i>
+            </button>
+            <button id="chatbot-close" title="Close">&times;</button>
+        </div>
+
+        <div id="chatbot-avatar-menu">
+            <div class="chatbot-avatar-option" data-emoji="🐶">🐶 Dog</div>
+            <div class="chatbot-avatar-option" data-emoji="🐱">🐱 Cat</div>
+            <div class="chatbot-avatar-option" data-emoji="🐦">🐦 Bird</div>
+            <div class="chatbot-avatar-option" data-emoji="🐹">🐹 Rodent</div>
+            <div class="chatbot-avatar-option" data-emoji="🤖">🤖 Robot</div>
+        </div>
+
+        <div id="chatbot-messages">
+            <div class="chatbot-msg bot">
+                <div class="chatbot-bubble bot-bubble">
+                    Hey there! 👋 I'm your PetLink Buddy. Ask me about adoptions, finding pets, or anything about the
+                    platform!
+                </div>
+            </div>
+        </div>
+
+        <div id="chatbot-input-area">
+            <input type="text" id="chatbot-input" placeholder="Type a message..." autocomplete="off" />
+            <button id="chatbot-send" title="Send">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+</div>
