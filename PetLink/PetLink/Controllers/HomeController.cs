@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,12 @@ namespace PetLink.Controllers
             return View(recentPets);
         }
 
+        // !! DEV !!
+        public IActionResult TestError()
+        {
+            throw new Exception("Isto é um teste para forçar o erro 500!");
+        }
+
         // Carrega a página de política de privacidade
         public IActionResult Privacy()
         {
@@ -36,7 +43,7 @@ namespace PetLink.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        
+
         // Método utilizado para mostrar a página de erro da aplicação
         public IActionResult Error()
         {
