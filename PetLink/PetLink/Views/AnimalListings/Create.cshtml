@@ -24,7 +24,7 @@
                 <div class="card-body p-4 p-md-5">
 
                     <form asp-action="Create" method="post" enctype="multipart/form-data" id="createListingForm">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 fw-semibold small"></div>
+                        <div asp-validation-summary="All" class="text-danger mb-3 fw-semibold small"></div>
 
                         <!-- 1. Basic Information Section -->
                         <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2"
@@ -127,26 +127,35 @@
                             <div class="d-flex flex-wrap gap-4">
                                 <div class="form-check form-switch fs-6">
                                     <input class="form-check-input health-check" type="checkbox"
-                                           asp-for="IsVaccinated" id="IsVaccinated"
-                                           data-proof="vaccinationProofDiv" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsVaccinated">
+                                           name="IsVaccinated" id="IsVaccinated"
+                                           value="true"
+                                           data-proof="vaccinationProofDiv"
+                                           checked="@(ViewBag.IsVaccinated == true)" />
+                                    <input type="hidden" name="IsVaccinated" value="false" />
+                                    <label class="form-check-label fw-semibold text-success" for="IsVaccinated">
                                         <i class="bi bi-shield-check"></i> Vaccinated
                                     </label>
                                 </div>
                                 <div class="form-check form-switch fs-6">
                                     <input class="form-check-input health-check" type="checkbox"
-                                           asp-for="IsDewormed" id="IsDewormed"
-                                           data-proof="dewormingProofDiv" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsDewormed">
-                                        <i class="bi bi-capsule"></i> Dewormed
+                                           name="IsDewormed" id="IsDewormed"
+                                           value="true"
+                                           data-proof="dewormingProofDiv"
+                                           checked="@(ViewBag.IsDewormed == true)" />
+                                    <input type="hidden" name="IsDewormed" value="false" />
+                                    <label class="form-check-label fw-semibold text-success" for="IsDewormed">
+                                        <i class="bi bi-shield-check"></i> Dewormed
                                     </label>
                                 </div>
                                 <div class="form-check form-switch fs-6">
                                     <input class="form-check-input health-check" type="checkbox"
-                                           asp-for="IsSterilized" id="IsSterilized"
-                                           data-proof="sterilizationProofDiv" />
-                                    <label class="form-check-label fw-semibold text-success" asp-for="IsSterilized">
-                                        <i class="bi bi-scissors"></i> Sterilized
+                                           name="IsSterilized" id="IsSterilized"
+                                           value="true"
+                                           data-proof="sterilizationProofDiv"
+                                           checked="@(ViewBag.IsSterilized == true)" />
+                                    <input type="hidden" name="IsSterilized" value="false" />
+                                    <label class="form-check-label fw-semibold text-success" for="IsSterilized">
+                                        <i class="bi bi-shield-check"></i> Sterilized
                                     </label>
                                 </div>
                             </div>

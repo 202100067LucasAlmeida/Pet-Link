@@ -147,6 +147,11 @@ namespace PetLink
             ViewBag.IsDewormed = IsDewormed;
             ViewBag.IsSterilized = IsSterilized;
 
+            ModelState.Remove("Tutor");
+            ModelState.Remove("Favorites");
+            ModelState.Remove("Photos");
+            ModelState.Remove("HealthDocuments");
+
             // ========== VALIDAÇÕES ==========
             if (animalListing.AgeMonths < 0)
                 ModelState.AddModelError("AgeMonths", "Age must be 0 or greater.");
