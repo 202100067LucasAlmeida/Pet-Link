@@ -265,7 +265,10 @@ namespace PetLink
         {
             if (id == null) return NotFound();
 
-            var animalListing = await _context.AnimalListings.FindAsync(id);
+            var animalListing = await _context.AnimalListings
+                .Include(a => a.HealthDocuments)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (animalListing == null) return NotFound();
 
             int userId = int.Parse(User.FindFirst("UserId").Value);
@@ -506,6 +509,7 @@ namespace PetLink
         {
             var allListings = await _context.AnimalListings
                 .Include(a => a.Tutor)
+                .Include(a => a.HealthDocuments)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
