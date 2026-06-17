@@ -88,6 +88,9 @@
                                     <input type="text" asp-for="City" class="form-control"
                                            style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark); border: 1px solid var(--petlink-border);"
                                            placeholder="@(Model?.City)"/>
+
+                                    <input type="hidden" name="Lat" id="latInput" value="@(Model.GetLatitude())" />
+                                    <input type="hidden" name="Lon" id="lonInput" value="@(Model.GetLongitude())" />
                                 </div>
                             </div>
                             

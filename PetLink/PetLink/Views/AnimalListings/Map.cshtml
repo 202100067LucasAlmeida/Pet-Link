@@ -153,8 +153,8 @@
             location = p.Location,
             ageMonths = p.AgeMonths,
             imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
-            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
-            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : null,
+            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : null
         })));
 
         // ========== DISTANCE CALCULATION FUNCTION ==========
@@ -231,12 +231,6 @@
         }
 
         var petsByLocation = {};
-        
-        petsArray.forEach(function(pet) {
-            var key = pet.lat + "_" + pet.lng;
-            if (!petsByLocation[key]) { petsByLocation[key] = []; }
-            petsByLocation[key].push(pet);
-        });
 
         var map = L.map('fullMap', { zoomControl: false }).setView([38.7223, -9.1393], 13);
 
@@ -254,39 +248,88 @@
             popupAnchor: [0, -30]
         });
 
-        // pontos no mapa com os pets
-        Object.keys(petsByLocation).forEach(function(gpsKey) {
-            var petsHere = petsByLocation[gpsKey];
-            var coords = gpsKey.split('_');
-            var lat = parseFloat(coords[0].replace(',', '.'));
-            var lng = parseFloat(coords[1].replace(',', '.'));
-
-            if (!isNaN(lat) && !isNaN(lng)) {
-                var marker = L.marker([lat, lng], {icon: petIcon});
-                
-                // pop up dos pets
-                var popupContent = `<div style="text-align: center; min-width: 170px;">`;
-                petsHere.forEach(function(pet) {
-                    popupContent += `
-                        <div style="margin-bottom: 10px; text-align: left;">
-                            <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
-                            <h6 style="margin: 0; font-weight: bold;">${pet.name}</h6>
-                            <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
-                            <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
-                        </div>`;
+         // Geocodifica um texto de localização via Nominatim (apenas usado como fallback)
+        async function geocodeLocation(locationText) {
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationText)}&format=json&limit=1&countrycodes=pt`;
+                const res = await fetch(url, {
+                    headers: { 'Accept-Language': 'pt' }
                 });
-                popupContent += `</div>`;
-                marker.bindPopup(popupContent);
-                
-                // associar os pontos com os pets
-                petsHere.forEach(function(pet) {
-                    allMarkers.push({
-                        marker: marker,
-                        pet: pet
-                    });
-                });
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                }
+            } catch (e) {
+                console.warn('Geocoding failed for:', locationText, e);
             }
-        });
+            return null;
+        }
+
+
+        function createMarkerForLocation(lat, lng, petsHere) {
+            var marker = L.marker([lat, lng], { icon: petIcon });
+            var popupContent = `<div style="text-align: center; min-width: 170px;">`;
+            petsHere.forEach(function(pet) {
+                popupContent += `
+                    <div style="margin-bottom: 10px; text-align: left;">
+                        <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
+                        <h6 style="margin: 0; font-weight: bold;">${pet.name}</h6>
+                        <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
+                        <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
+                    </div>`;
+            });
+            popupContent += `</div>`;
+            marker.bindPopup(popupContent);
+            petsHere.forEach(function(pet) {
+                allMarkers.push({ marker: marker, pet: pet });
+            });
+        }
+
+
+        async function initPetMarkers() {
+            const geocodeCache = {};
+
+            for (const pet of petsArray) {
+                let lat = (pet.lat !== null && pet.lat !== undefined && pet.lat !== "") ? parseFloat(pet.lat) : null;
+                let lng = (pet.lng !== null && pet.lng !== undefined && pet.lng !== "") ? parseFloat(pet.lng) : null;
+
+                // Fallback: geocodificar a localização escrita no anúncio
+                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
+                    if (pet.location) {
+                        if (!geocodeCache[pet.location]) {
+                            // Nominatim: máx 1 pedido/segundo
+                            await new Promise(resolve => setTimeout(resolve, 1100));
+                            geocodeCache[pet.location] = await geocodeLocation(pet.location);
+                        }
+                        const coords = geocodeCache[pet.location];
+                        if (coords) { lat = coords.lat; lng = coords.lng; }
+                    }
+                }
+
+                // Sem coordenadas de todo: ignorar este animal
+                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) continue;
+
+                pet.lat = lat;
+                pet.lng = lng;
+
+                var key = lat + "_" + lng;
+                if (!petsByLocation[key]) { petsByLocation[key] = []; }
+                petsByLocation[key].push(pet);
+            }
+
+            // Criar marcadores após geocodificação completa
+            Object.keys(petsByLocation).forEach(function(gpsKey) {
+                var petsHere = petsByLocation[gpsKey];
+                var parts = gpsKey.split('_');
+                var lat = parseFloat(parts[0]);
+                var lng = parseFloat(parts[1]);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    createMarkerForLocation(lat, lng, petsHere);
+                }
+            });
+        }
+
+        initPetMarkers();
 
         // juntar a geolocalização com o radius do range
         if (navigator.geolocation) {
@@ -397,22 +440,87 @@
                     }, 100);
                     
                 },
-                function (error) {
+                async function (error) {
                     console.warn("Location access unavailable: " + error.message);
                     map.removeControl(loadingControl);
-                    
-                    allMarkers.forEach(function(markerData) {
-                        markerData.marker.addTo(map);
-                    });
-                    
-                    var errorControl = L.control({ position: 'topright' });
-                    errorControl.onAdd = function() {
+
+                    // Tentar geocodificar a cidade da barra de pesquisa, senão usar centro de Portugal
+                    var searchCity = "@(ViewBag.CurrentLocation ?? "")".trim();
+                    var fallbackLat = 39.6945;
+                    var fallbackLng = -8.1302;
+
+                    if (searchCity !== "") {
+                        var coords = await geocodeLocation(searchCity);
+                        if (coords) {
+                            fallbackLat = coords.lat;
+                            fallbackLng = coords.lng;
+                        }
+                    }
+
+                    userLocation = { lat: fallbackLat, lng: fallbackLng };
+
+                    // Marcador da localização estimada
+                    L.marker([fallbackLat, fallbackLng], {
+                        icon: L.divIcon({
+                            className: 'user-location-marker',
+                            html: '<div style="background: #aaa; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #aaa;"></div>',
+                            iconSize: [22, 22],
+                            iconAnchor: [11, 11]
+                        })
+                    }).addTo(map).bindPopup(searchCity !== "" ? "<b>📍 " + searchCity + "</b><br>Estimated location" : "<b>📍 Portugal</b><br>Enable location for better results");
+
+                    // Círculo do radius à volta da localização estimada
+                    radiusCircle = L.circle([fallbackLat, fallbackLng], {
+                        radius: radiusInKm * 1000,
+                        color: "#aaa",
+                        fillColor: "#aaa",
+                        weight: 2,
+                        opacity: 0.5,
+                        fillOpacity: 0.08
+                    }).addTo(map);
+
+                    // Aplicar filtro de distância com a localização estimada
+                    filterPetsByDistance(fallbackLat, fallbackLng, radiusInKm);
+
+                    // Slider de radius
+                    var radiusControl = L.control({ position: 'topright' });
+                    radiusControl.onAdd = function() {
                         var div = L.DomUtil.create('div', 'info legend');
-                        div.innerHTML = '<div style="background: var(--petlink-danger); color: white; padding: 8px 15px; border-radius: 8px;"><i class="bi bi-exclamation-triangle"></i> Location access denied. Showing all pets.</div>';
+                        div.innerHTML = `
+                            <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-width: 180px;">
+                                <label style="font-size: 12px; font-weight: bold;">Filter radius: <span id="radiusValue">${radiusInKm}</span> km</label>
+                                <input type="range" id="radiusSlider" min="1" max="80" step="1" value="${radiusInKm}" style="width: 100%; margin-top: 5px;">
+                                <div style="font-size: 10px; color: gray; margin-top: 5px;">
+                                    <i class="bi bi-exclamation-circle"></i> Location estimated${searchCity !== "" ? " (" + searchCity + ")" : " (Portugal)"}
+                                </div>
+                            </div>
+                        `;
                         return div;
                     };
-                    errorControl.addTo(map);
-                    setTimeout(() => map.removeControl(errorControl), 5000);
+                    radiusControl.addTo(map);
+
+                    setTimeout(function() {
+                        var slider = document.getElementById('radiusSlider');
+                        var radiusValueEl = document.getElementById('radiusValue');
+                        if (slider) {
+                            slider.addEventListener('input', function(e) {
+                                var newRadiusKm = parseFloat(e.target.value);
+                                radiusValueEl.innerText = newRadiusKm;
+                                if (radiusCircle) map.removeLayer(radiusCircle);
+                                radiusCircle = L.circle([fallbackLat, fallbackLng], {
+                                    radius: newRadiusKm * 1000,
+                                    color: "#aaa",
+                                    fillColor: "#aaa",
+                                    weight: 2,
+                                    opacity: 0.5,
+                                    fillOpacity: 0.08
+                                }).addTo(map);
+                                filterPetsByDistance(fallbackLat, fallbackLng, newRadiusKm);
+                            });
+                        }
+                    }, 100);
+
+                    map.setView([fallbackLat, fallbackLng], 10);
                 },
                 {
                     enableHighAccuracy: true,
@@ -421,5 +529,6 @@
                 }
             );
         }
+
     </script>
 }

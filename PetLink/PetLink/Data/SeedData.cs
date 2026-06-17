@@ -41,7 +41,7 @@ namespace PetLink.Data
                     Role = UserRole.Shelter,
                     IsVerified = true,
                     Phone = "+351 234 567 890",
-                    City = null,
+                    City = "Braga",
                     Bio = "Animal shelter specializing in rescue dogs and cats",
                     ProfilePicture = "/images/avatars/sunnypaws.jpg",
                     CreatedAt = DateTime.Now.AddDays(-180)
@@ -57,7 +57,7 @@ namespace PetLink.Data
                     Role = UserRole.User,
                     IsVerified = false,
                     Phone = "+351 912 345 679",
-                    City = "Setubal",
+                    City = "Setúbal",
                     Bio = "Pet lover looking for adoption",
                     ProfilePicture = "/images/avatars/joaosilva.jpg",
                     CreatedAt = DateTime.Now.AddDays(-30)
