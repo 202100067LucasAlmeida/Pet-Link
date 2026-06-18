@@ -139,6 +139,13 @@
 
         <div class="col-lg-8 col-xl-9 position-relative h-100">
             <div id="fullMap" style="height: 100%; width: 100%; z-index: 1;"></div>
+            <!-- Spinner overlay durante geocodificação -->
+            <div id="mapSpinner" style="display:none;position:absolute;inset:0;z-index:999;background:rgba(255,255,255,0.6);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+                <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="fw-semibold text-primary-darkblue mb-0" style="font-size:14px;">Loading map markers...</p>
+            </div>
         </div>
 
     </div>
@@ -146,6 +153,7 @@
 
 @section Scripts {
     <script>
+        // ========== DADOS DO SERVIDOR ==========
         var petsArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
             id = p.Id,
             name = p.Name,
@@ -157,104 +165,86 @@
             lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : null
         })));
 
-        // ========== DISTANCE CALCULATION FUNCTION ==========
-        // Haversine formula - calculates real distance between two coordinates in kilometers
+        var sheltersArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            ((List<PetLink.Models.User>)ViewBag.Shelters).Select(u => new {
+                id = u.Id,
+                name = u.Name,
+                city = u.City ?? "",
+                lat = u.GetLatitude(),
+                lng = u.GetLongitude(),
+                profileUrl = "/Profile/ViewProfile/" + u.Id
+            })
+        ));
+
+        var petSittersArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            ((List<PetLink.Models.User>)ViewBag.PetSitters).Select(u => new {
+                id = u.Id,
+                name = u.Name,
+                city = u.City ?? "",
+                lat = u.GetLatitude(),
+                lng = u.GetLongitude(),
+                profileUrl = "/Profile/ViewProfile/" + u.Id
+            })
+        ));
+
+        // ========== HAVERSINE: DISTÂNCIA REAL ENTRE DOIS PONTOS ==========
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Earth's radius in kilometers
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                       Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; // Distance in kilometers
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        // Configuração do radius do mapa
+        // ========== ESTADO GLOBAL ==========
         var radiusInKm = 25;
-        
-        var radiusInMeters = radiusInKm * 1000; // vonversão para metros
-        
+        var radiusInMeters = radiusInKm * 1000;
         var userLocation = null;
         var radiusCircle = null;
-        var allMarkers = []; //localização dos pets (precisamos mexer nisso tmbm)
-        
+        var allMarkers = [];       // { marker, pet } — animais
+        var allUserMarkers = [];   // { marker, user } — shelters e petsitters
+        var currentSlides = {};    // estado de navegação nos popups com múltiplos pets
 
-        function filterPetsByDistance(userLat, userLng, maxDistanceKm) {
-            var visiblePets = [];
-            var hiddenCount = 0;
-            
-            allMarkers.forEach(function(markerData) {
-                var pet = markerData.pet;
-                var petLat = parseFloat(pet.lat);
-                var petLng = parseFloat(pet.lng);
-                
-                var distance = calculateDistance(userLat, userLng, petLat, petLng);
-                
-                if (distance <= maxDistanceKm) {
-                    markerData.marker.addTo(map);
-                    visiblePets.push({pet: pet, distance: distance});
-                } else {
-                    map.removeLayer(markerData.marker);
-                    hiddenCount++;
-                }
-            });
-            
-            // Sort visible pets by distance (closest first)
-            visiblePets.sort((a, b) => a.distance - b.distance);
-            
-            // Update popup content with distance info
-            visiblePets.forEach(function(item) {
-                var pet = item.pet;
-                var distance = item.distance.toFixed(1);
-                
-                // Find the marker and update its popup
-                var markerData = allMarkers.find(m => m.pet.id === pet.id);
-                if (markerData) {
-                    var newPopupContent = `
-                        <div style="text-align: center; min-width: 170px;">
-                            <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
-                            <h6 style="margin: 0; font-weight: bold;">${pet.name}</h6>
-                            <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
-                            <p style="margin: 5px 0; font-size: 10px; color: var(--petlink-map-accent);">
-                                <i class="bi bi-geo-alt"></i> ${distance} km away
-                            </p>
-                            <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
-                        </div>`;
-                    markerData.marker.bindPopup(newPopupContent);
-                }
-            });
-            
-            // Show summary
-            console.log(`Showing ${visiblePets.length} pets within ${maxDistanceKm}km (${hiddenCount} hidden)`);
-            return visiblePets;
-        }
-
-        var petsByLocation = {};
-
-        var map = L.map('fullMap', { zoomControl: false }).setView([38.7223, -9.1393], 13);
-
+        // ========== MAPA BASE ==========
+        var map = L.map('fullMap', { zoomControl: false }).setView([38.7223, -9.1393], 7);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
-
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap'
         }).addTo(map);
 
-        var petIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1076/1076928.png', 
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30]
+        // ========== ÍCONES ==========
+        var petIcon = L.divIcon({
+            className: '',
+            html: '<div style="background:#3DAA6E;width:34px;height:34px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;">🐾</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 34],
+            popupAnchor: [0, -36]
         });
 
-         // Geocodifica um texto de localização via Nominatim (apenas usado como fallback)
+        var shelterIcon = L.divIcon({
+            className: '',
+            html: '<div style="background:#4A90D9;width:34px;height:34px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;">🏠</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17],
+            popupAnchor: [0, -20]
+        });
+
+        var petSitterIcon = L.divIcon({
+            className: '',
+            html: '<div style="background:#E8A838;width:34px;height:34px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;">🧑</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17],
+            popupAnchor: [0, -20]
+        });
+
+        // ========== GEOCODIFICAÇÃO (NOMINATIM FALLBACK) ==========
         async function geocodeLocation(locationText) {
             try {
                 const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationText)}&format=json&limit=1&countrycodes=pt`;
-                const res = await fetch(url, {
-                    headers: { 'Accept-Language': 'pt' }
-                });
+                const res = await fetch(url, { headers: { 'Accept-Language': 'pt' } });
                 const data = await res.json();
                 if (data && data.length > 0) {
                     return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
@@ -265,26 +255,118 @@
             return null;
         }
 
-
-        function createMarkerForLocation(lat, lng, petsHere) {
-            var marker = L.marker([lat, lng], { icon: petIcon });
-            var popupContent = `<div style="text-align: center; min-width: 170px;">`;
-            petsHere.forEach(function(pet) {
-                popupContent += `
-                    <div style="margin-bottom: 10px; text-align: left;">
-                        <img src="${pet.imageUrl}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 5px;">
-                        <h6 style="margin: 0; font-weight: bold;">${pet.name}</h6>
-                        <p style="margin: 0; font-size: 11px; color: gray;">${pet.species} • ${pet.location}</p>
-                        <a href="/AnimalListings/Details/${pet.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size: 11px; border-radius: 20px;">View</a>
-                    </div>`;
+        // ========== FILTRO DE DISTÂNCIA (com agrupamento por marcador) ==========
+        function filterPetsByDistance(userLat, userLng, maxDistanceKm) {
+            // 1. Calcular distância de cada pet e separar visíveis
+            var visiblePets = [];
+            allMarkers.forEach(function(markerData) {
+                var pet = markerData.pet;
+                var distance = calculateDistance(userLat, userLng, parseFloat(pet.lat), parseFloat(pet.lng));
+                if (distance <= maxDistanceKm) {
+                    visiblePets.push({ pet: pet, marker: markerData.marker, distance: distance });
+                }
             });
-            popupContent += `</div>`;
-            marker.bindPopup(popupContent);
-            petsHere.forEach(function(pet) {
-                allMarkers.push({ marker: marker, pet: pet });
+
+            // 2. Agrupar pelos marcadores (um marcador pode ter vários pets)
+            var markerGroups = {};
+            visiblePets.forEach(function(item) {
+                var markerId = L.Util.stamp(item.marker);
+                if (!markerGroups[markerId]) {
+                    markerGroups[markerId] = { marker: item.marker, pets: [], distance: item.distance };
+                }
+                markerGroups[markerId].pets.push({ pet: item.pet, distance: item.distance });
+                if (item.distance < markerGroups[markerId].distance) {
+                    markerGroups[markerId].distance = item.distance;
+                }
+            });
+
+            // 3. Esconder todos os marcadores de pets
+            allMarkers.forEach(function(md) { map.removeLayer(md.marker); });
+
+            // 4. Mostrar os visíveis e reconstruir popups com todos os pets do grupo
+            var seen = new Set();
+            Object.values(markerGroups).forEach(function(group) {
+                var markerId = L.Util.stamp(group.marker);
+                if (seen.has(markerId)) return;
+                seen.add(markerId);
+
+                group.marker.addTo(map);
+                group.pets.sort((a, b) => a.distance - b.distance);
+
+                if (group.pets.length === 1) {
+                    // Popup simples
+                    var p = group.pets[0].pet;
+                    var dist = group.pets[0].distance.toFixed(1);
+                    group.marker.bindPopup(`
+                        <div style="min-width:170px;">
+                            <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
+                            <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
+                            <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
+                            <p style="margin:5px 0;font-size:10px;color:var(--petlink-map-accent);">
+                                <i class="bi bi-geo-alt"></i> ${dist} km away
+                            </p>
+                            <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
+                        </div>`);
+                } else {
+                    // Popup com navegação para múltiplos pets
+                    var total = group.pets.length;
+                    var slidesHtml = '';
+                    group.pets.forEach(function(item, index) {
+                        var p = item.pet;
+                        var dist = item.distance.toFixed(1);
+                        slidesHtml += `
+                            <div id="slide-${markerId}-${index}" style="display:${index === 0 ? 'block' : 'none'};">
+                                <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
+                                <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
+                                <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
+                                <p style="margin:5px 0;font-size:10px;color:var(--petlink-map-accent);">
+                                    <i class="bi bi-geo-alt"></i> ${dist} km away
+                                </p>
+                                <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
+                            </div>`;
+                    });
+                    group.marker.bindPopup(`
+                        <div style="min-width:170px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <button onclick="changeSlide('${markerId}',-1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8249;</button>
+                                <span id="counter-${markerId}" style="font-size:10px;color:gray;">1 / ${total}</span>
+                                <button onclick="changeSlide('${markerId}',1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8250;</button>
+                            </div>
+                            ${slidesHtml}
+                        </div>`);
+                }
+            });
+
+            console.log(`Showing ${visiblePets.length} pets within ${maxDistanceKm}km`);
+            return visiblePets;
+        }
+
+        // ========== FILTRO DE DISTÂNCIA PARA SHELTERS E PETSITTERS ==========
+        function filterUsersByDistance(userLat, userLng, maxDistanceKm) {
+            allUserMarkers.forEach(function(md) {
+                var u = md.user;
+                var dist = calculateDistance(userLat, userLng, parseFloat(u.lat), parseFloat(u.lng));
+                if (dist <= maxDistanceKm) {
+                    md.marker.addTo(map);
+                } else {
+                    map.removeLayer(md.marker);
+                }
             });
         }
 
+        // Navegação entre pets no mesmo popup
+        function changeSlide(markerId, direction, total) {
+            if (currentSlides[markerId] === undefined) currentSlides[markerId] = 0;
+            var current = currentSlides[markerId];
+            document.getElementById('slide-' + markerId + '-' + current).style.display = 'none';
+            current = (current + direction + total) % total;
+            currentSlides[markerId] = current;
+            document.getElementById('slide-' + markerId + '-' + current).style.display = 'block';
+            document.getElementById('counter-' + markerId).textContent = (current + 1) + ' / ' + total;
+        }
+
+        // ========== INICIALIZAÇÃO DOS MARCADORES DE PETS ==========
+        var petsByLocation = {};
 
         async function initPetMarkers() {
             const geocodeCache = {};
@@ -293,11 +375,9 @@
                 let lat = (pet.lat !== null && pet.lat !== undefined && pet.lat !== "") ? parseFloat(pet.lat) : null;
                 let lng = (pet.lng !== null && pet.lng !== undefined && pet.lng !== "") ? parseFloat(pet.lng) : null;
 
-                // Fallback: geocodificar a localização escrita no anúncio
                 if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
                     if (pet.location) {
                         if (!geocodeCache[pet.location]) {
-                            // Nominatim: máx 1 pedido/segundo
                             await new Promise(resolve => setTimeout(resolve, 1100));
                             geocodeCache[pet.location] = await geocodeLocation(pet.location);
                         }
@@ -306,229 +386,276 @@
                     }
                 }
 
-                // Sem coordenadas de todo: ignorar este animal
                 if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) continue;
 
                 pet.lat = lat;
                 pet.lng = lng;
 
-                var key = lat + "_" + lng;
+                // Usar "|" como separador para evitar conflitos com coordenadas negativas
+                var key = lat + "|" + lng;
                 if (!petsByLocation[key]) { petsByLocation[key] = []; }
                 petsByLocation[key].push(pet);
             }
 
-            // Criar marcadores após geocodificação completa
+            // Criar marcadores agrupados por localização
             Object.keys(petsByLocation).forEach(function(gpsKey) {
                 var petsHere = petsByLocation[gpsKey];
-                var parts = gpsKey.split('_');
+                var parts = gpsKey.split('|');
                 var lat = parseFloat(parts[0]);
                 var lng = parseFloat(parts[1]);
                 if (!isNaN(lat) && !isNaN(lng)) {
-                    createMarkerForLocation(lat, lng, petsHere);
+                    var marker = L.marker([lat, lng], { icon: petIcon });
+
+                    if (petsHere.length === 1) {
+                        var p = petsHere[0];
+                        marker.bindPopup(`
+                            <div style="min-width:170px;">
+                                <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
+                                <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
+                                <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
+                                <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
+                            </div>`);
+                    } else {
+                        var total = petsHere.length;
+                        var markerId = L.Util.stamp(marker);
+                        var slidesHtml = '';
+                        petsHere.forEach(function(p, index) {
+                            slidesHtml += `
+                                <div id="slide-${markerId}-${index}" style="display:${index === 0 ? 'block' : 'none'};">
+                                    <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
+                                    <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
+                                    <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
+                                    <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
+                                </div>`;
+                        });
+                        marker.bindPopup(`
+                            <div style="min-width:170px;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                    <button onclick="changeSlide('${markerId}',-1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8249;</button>
+                                    <span id="counter-${markerId}" style="font-size:10px;color:gray;">1 / ${total}</span>
+                                    <button onclick="changeSlide('${markerId}',1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8250;</button>
+                                </div>
+                                ${slidesHtml}
+                            </div>`);
+                    }
+
+                    petsHere.forEach(function(pet) {
+                        allMarkers.push({ marker: marker, pet: pet });
+                    });
                 }
             });
         }
 
-        initPetMarkers();
+        // ========== INICIALIZAÇÃO DOS MARCADORES DE UTILIZADORES (SHELTERS / PETSITTERS) ==========
+        async function initUserMarkers(usersArray, icon, labelType) {
+            const geocodeCache = {};
+            for (const user of usersArray) {
+                let lat = (user.lat !== null && user.lat !== undefined && user.lat !== "") ? parseFloat(user.lat) : null;
+                let lng = (user.lng !== null && user.lng !== undefined && user.lng !== "") ? parseFloat(user.lng) : null;
 
-        // juntar a geolocalização com o radius do range
-        if (navigator.geolocation) {
-            var loadingControl = L.control({ position: 'topright' });
-            loadingControl.onAdd = function() {
-                var div = L.DomUtil.create('div', 'info legend');
-                div.innerHTML = '<div style="background: white; padding: 8px 15px; border-radius: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"><i class="bi bi-hourglass-split"></i> Getting your location...</div>';
-                return div;
-            };
-            loadingControl.addTo(map);
-            
-            navigator.geolocation.getCurrentPosition(
-                function (position) {
-                    var userLat = position.coords.latitude;
-                    var userLng = position.coords.longitude;
-                    userLocation = { lat: userLat, lng: userLng };
-                    
-                    map.removeControl(loadingControl);
-                    
-                    var userMarker = L.marker([userLat, userLng], {
-                        icon: L.divIcon({
-                            className: 'user-location-marker',
-                            html: '<div style="background: var(--petlink-map-accent); width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--petlink-map-accent);"></div>',
-                            iconSize: [22, 22],
-                            iconAnchor: [11, 11]
-                        })
-                    }).addTo(map).bindPopup("<b>You are here!</b><br>Showing pets within " + radiusInKm + " km");
-                    
-                    // círculo do radius com distâancia real
-                    radiusCircle = L.circle([userLat, userLng], {
-                        radius: radiusInMeters,
-                        color: "var(--petlink-map-accent)",
-                        fillColor: "var(--petlink-map-accent)",
-                        weight: 2,
-                        opacity: 0.6,
-                        fillOpacity: 0.1
-                    }).addTo(map);
-                    
-                    
-                    var visiblePets = filterPetsByDistance(userLat, userLng, radiusInKm);
-                    
-                    // criar grupos pros pontinhos no mapa
-                    var visibleMarkers = [userMarker];
-                    allMarkers.forEach(function(markerData) {
-                        if (map.hasLayer(markerData.marker)) {
-                            visibleMarkers.push(markerData.marker);
+                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
+                    if (user.city) {
+                        if (!geocodeCache[user.city]) {
+                            await new Promise(resolve => setTimeout(resolve, 1100));
+                            geocodeCache[user.city] = await geocodeLocation(user.city);
                         }
-                    });
-                    
-                    if (visibleMarkers.length > 0) {
-                        var bounds = L.featureGroup(visibleMarkers).getBounds();
-                        map.fitBounds(bounds.pad(0.1), { maxZoom: 13 });
-                    } else {
-                        map.setView([userLat, userLng], 12);
+                        const coords = geocodeCache[user.city];
+                        if (coords) { lat = coords.lat; lng = coords.lng; }
+                    }
+                }
 
-                        var noPetsControl = L.control({ position: 'bottomleft' });
-                        noPetsControl.onAdd = function() {
+                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) continue;
+
+                user.lat = lat;
+                user.lng = lng;
+
+                var marker = L.marker([lat, lng], { icon: icon });
+                marker.bindPopup(`
+                    <div style="text-align:center;min-width:150px;">
+                        <p style="margin:0 0 4px;font-size:10px;color:gray;text-transform:uppercase;letter-spacing:0.5px;">${labelType}</p>
+                        <h6 style="margin:0 0 6px;font-weight:bold;">${user.name}</h6>
+                        <p style="margin:0 0 8px;font-size:11px;color:gray;">
+                            <i class="bi bi-geo-alt"></i> ${user.city || ""}
+                        </p>
+                        <a href="${user.profileUrl}" class="btn btn-sm btn-primary w-100" style="font-size:11px;border-radius:20px;">View Profile</a>
+                    </div>`);
+                // Não adicionar ao mapa ainda — filterUsersByDistance trata disso
+                allUserMarkers.push({ marker: marker, user: user });
+            }
+        }
+
+        // ========== ARRANQUE: pets primeiro, depois shelters/petsitters, depois geolocalização ==========
+        document.getElementById('mapSpinner').style.display = 'flex';
+        initPetMarkers().then(function() {
+            document.getElementById('mapSpinner').style.display = 'none';
+            initUserMarkers(sheltersArray, shelterIcon, "Shelter");
+            initUserMarkers(petSittersArray, petSitterIcon, "PetSitter");
+
+            if (navigator.geolocation) {
+                var loadingControl = L.control({ position: 'topright' });
+                loadingControl.onAdd = function() {
+                    var div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML = '<div style="background:white;padding:8px 15px;border-radius:20px;box-shadow:0 0 10px rgba(0,0,0,0.1);"><i class="bi bi-hourglass-split"></i> Getting your location...</div>';
+                    return div;
+                };
+                loadingControl.addTo(map);
+
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        var userLat = position.coords.latitude;
+                        var userLng = position.coords.longitude;
+                        userLocation = { lat: userLat, lng: userLng };
+
+                        map.removeControl(loadingControl);
+
+                        L.marker([userLat, userLng], {
+                            icon: L.divIcon({
+                                className: 'user-location-marker',
+                                html: '<div style="background:var(--petlink-map-accent);width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px var(--petlink-map-accent);"></div>',
+                                iconSize: [22, 22],
+                                iconAnchor: [11, 11]
+                            })
+                        }).addTo(map).bindPopup("<b>You are here!</b><br>Showing pets within " + radiusInKm + " km");
+
+                        radiusCircle = L.circle([userLat, userLng], {
+                            radius: radiusInMeters,
+                            color: "var(--petlink-map-accent)",
+                            fillColor: "var(--petlink-map-accent)",
+                            weight: 2, opacity: 0.6, fillOpacity: 0.1
+                        }).addTo(map);
+
+                        var visiblePets = filterPetsByDistance(userLat, userLng, radiusInKm);
+                        filterUsersByDistance(userLat, userLng, radiusInKm);
+
+                        var visibleMarkers = [];
+                        allMarkers.forEach(function(md) {
+                            if (map.hasLayer(md.marker)) visibleMarkers.push(md.marker);
+                        });
+
+                        if (visibleMarkers.length > 0) {
+                            var bounds = L.featureGroup(visibleMarkers).getBounds();
+                            map.fitBounds(bounds.pad(0.1), { maxZoom: 13 });
+                        } else {
+                            map.setView([userLat, userLng], 12);
+                            var noPetsControl = L.control({ position: 'bottomleft' });
+                            noPetsControl.onAdd = function() {
+                                var div = L.DomUtil.create('div', 'info legend');
+                                div.innerHTML = '<div style="background:white;padding:10px 20px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.1);"><i class="bi bi-info-circle"></i> No pets found within ' + radiusInKm + ' km</div>';
+                                return div;
+                            };
+                            noPetsControl.addTo(map);
+                            setTimeout(() => map.removeControl(noPetsControl), 5000);
+                        }
+
+                        var radiusControl = L.control({ position: 'topright' });
+                        radiusControl.onAdd = function() {
                             var div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML = '<div style="background: white; padding: 10px 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"><i class="bi bi-info-circle"></i> No pets found within ' + radiusInKm + ' km of your location</div>';
+                            div.innerHTML = `
+                                <div style="background:white;padding:10px 15px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.1);min-width:180px;">
+                                    <label style="font-size:12px;font-weight:bold;">Filter radius: <span id="radiusValue">${radiusInKm}</span> km</label>
+                                    <input type="range" id="radiusSlider" min="1" max="80" step="1" value="${radiusInKm}" style="width:100%;margin-top:5px;">
+                                    <div style="font-size:10px;color:gray;margin-top:5px;">
+                                        <i class="bi bi-info-circle"></i> Showing pets within radius
+                                    </div>
+                                </div>`;
                             return div;
                         };
+                        radiusControl.addTo(map);
 
-                        noPetsControl.addTo(map);
-                        setTimeout(() => map.removeControl(noPetsControl), 5000);
-                    }
-                    
-                    // filtro do range em si
-                    var radiusControl = L.control({ position: 'topright' });
-                    radiusControl.onAdd = function() {
-                        var div = L.DomUtil.create('div', 'info legend');
-                        div.innerHTML = `
-                            <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-width: 180px;">
-                                <label style="font-size: 12px; font-weight: bold;">Filter radius: <span id="radiusValue">${radiusInKm}</span> km</label>
-                                <input type="range" id="radiusSlider" min="1" max="80" step="1" value="${radiusInKm}" style="width: 100%; margin-top: 5px;">
-                                <div style="font-size: 10px; color: gray; margin-top: 5px;">
-                                    <i class="bi bi-info-circle"></i> Showing pets within radius
-                                </div>
-                            </div>
-                        `;
-                        return div;
-                    };
-                    radiusControl.addTo(map);
-                    
-                    //slider
-                    setTimeout(function() {
-                        var slider = document.getElementById('radiusSlider');
-                        var radiusValue = document.getElementById('radiusValue');
-                        if (slider) {
-                            slider.addEventListener('input', function(e) {
-                                var newRadiusKm = parseFloat(e.target.value);
-                                radiusValue.innerText = newRadiusKm;
-                                
-                                if (radiusCircle) {
-                                    map.removeLayer(radiusCircle);
-                                }
-                                radiusCircle = L.circle([userLat, userLng], {
-                                    radius: newRadiusKm * 1000,
-                                    color: "var(--petlink-map-accent)",
-                                    fillColor: "var(--petlink-map-accent)",
-                                    weight: 2,
-                                    opacity: 0.6,
-                                    fillOpacity: 0.1
-                                }).addTo(map);
-                                
-                                filterPetsByDistance(userLat, userLng, newRadiusKm);
-                            });
+                        setTimeout(function() {
+                            var slider = document.getElementById('radiusSlider');
+                            var radiusValueEl = document.getElementById('radiusValue');
+                            if (slider) {
+                                slider.addEventListener('input', function(e) {
+                                    var newRadiusKm = parseFloat(e.target.value);
+                                    radiusValueEl.innerText = newRadiusKm;
+                                    if (radiusCircle) map.removeLayer(radiusCircle);
+                                    radiusCircle = L.circle([userLat, userLng], {
+                                        radius: newRadiusKm * 1000,
+                                        color: "var(--petlink-map-accent)",
+                                        fillColor: "var(--petlink-map-accent)",
+                                        weight: 2, opacity: 0.6, fillOpacity: 0.1
+                                    }).addTo(map);
+                                    filterPetsByDistance(userLat, userLng, newRadiusKm);
+                                    filterUsersByDistance(userLat, userLng, newRadiusKm);
+                                });
+                            }
+                        }, 100);
+                    },
+
+                    async function (error) {
+                        console.warn("Location access unavailable: " + error.message);
+                        map.removeControl(loadingControl);
+
+                        var searchCity = "@(ViewBag.CurrentLocation ?? "")".trim();
+                        var fallbackLat = 39.6945;
+                        var fallbackLng = -8.1302;
+
+                        if (searchCity !== "") {
+                            var coords = await geocodeLocation(searchCity);
+                            if (coords) { fallbackLat = coords.lat; fallbackLng = coords.lng; }
                         }
-                    }, 100);
-                    
-                },
-                async function (error) {
-                    console.warn("Location access unavailable: " + error.message);
-                    map.removeControl(loadingControl);
 
-                    // Tentar geocodificar a cidade da barra de pesquisa, senão usar centro de Portugal
-                    var searchCity = "@(ViewBag.CurrentLocation ?? "")".trim();
-                    var fallbackLat = 39.6945;
-                    var fallbackLng = -8.1302;
+                        userLocation = { lat: fallbackLat, lng: fallbackLng };
 
-                    if (searchCity !== "") {
-                        var coords = await geocodeLocation(searchCity);
-                        if (coords) {
-                            fallbackLat = coords.lat;
-                            fallbackLng = coords.lng;
-                        }
-                    }
+                        L.marker([fallbackLat, fallbackLng], {
+                            icon: L.divIcon({
+                                className: 'user-location-marker',
+                                html: '<div style="background:#aaa;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #aaa;"></div>',
+                                iconSize: [22, 22],
+                                iconAnchor: [11, 11]
+                            })
+                        }).addTo(map).bindPopup(searchCity !== "" ? "<b>📍 " + searchCity + "</b><br>Estimated location" : "<b>📍 Portugal</b><br>Enable location for better results");
 
-                    userLocation = { lat: fallbackLat, lng: fallbackLng };
+                        radiusCircle = L.circle([fallbackLat, fallbackLng], {
+                            radius: radiusInKm * 1000,
+                            color: "#aaa", fillColor: "#aaa",
+                            weight: 2, opacity: 0.5, fillOpacity: 0.08
+                        }).addTo(map);
 
-                    // Marcador da localização estimada
-                    L.marker([fallbackLat, fallbackLng], {
-                        icon: L.divIcon({
-                            className: 'user-location-marker',
-                            html: '<div style="background: #aaa; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #aaa;"></div>',
-                            iconSize: [22, 22],
-                            iconAnchor: [11, 11]
-                        })
-                    }).addTo(map).bindPopup(searchCity !== "" ? "<b>📍 " + searchCity + "</b><br>Estimated location" : "<b>📍 Portugal</b><br>Enable location for better results");
+                        filterPetsByDistance(fallbackLat, fallbackLng, radiusInKm);
+                        filterUsersByDistance(fallbackLat, fallbackLng, radiusInKm);
 
-                    // Círculo do radius à volta da localização estimada
-                    radiusCircle = L.circle([fallbackLat, fallbackLng], {
-                        radius: radiusInKm * 1000,
-                        color: "#aaa",
-                        fillColor: "#aaa",
-                        weight: 2,
-                        opacity: 0.5,
-                        fillOpacity: 0.08
-                    }).addTo(map);
+                        var radiusControl = L.control({ position: 'topright' });
+                        radiusControl.onAdd = function() {
+                            var div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML = `
+                                <div style="background:white;padding:10px 15px;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,0.1);min-width:180px;">
+                                    <label style="font-size:12px;font-weight:bold;">Filter radius: <span id="radiusValue">${radiusInKm}</span> km</label>
+                                    <input type="range" id="radiusSlider" min="1" max="80" step="1" value="${radiusInKm}" style="width:100%;margin-top:5px;">
+                                    <div style="font-size:10px;color:gray;margin-top:5px;">
+                                        <i class="bi bi-exclamation-circle"></i> Location estimated${searchCity !== "" ? " (" + searchCity + ")" : " (Portugal)"}
+                                    </div>
+                                </div>`;
+                            return div;
+                        };
+                        radiusControl.addTo(map);
 
-                    // Aplicar filtro de distância com a localização estimada
-                    filterPetsByDistance(fallbackLat, fallbackLng, radiusInKm);
+                        setTimeout(function() {
+                            var slider = document.getElementById('radiusSlider');
+                            var radiusValueEl = document.getElementById('radiusValue');
+                            if (slider) {
+                                slider.addEventListener('input', function(e) {
+                                    var newRadiusKm = parseFloat(e.target.value);
+                                    radiusValueEl.innerText = newRadiusKm;
+                                    if (radiusCircle) map.removeLayer(radiusCircle);
+                                    radiusCircle = L.circle([fallbackLat, fallbackLng], {
+                                        radius: newRadiusKm * 1000,
+                                        color: "#aaa", fillColor: "#aaa",
+                                        weight: 2, opacity: 0.5, fillOpacity: 0.08
+                                    }).addTo(map);
+                                    filterPetsByDistance(fallbackLat, fallbackLng, newRadiusKm);
+                                    filterUsersByDistance(fallbackLat, fallbackLng, newRadiusKm);
+                                });
+                            }
+                        }, 100);
 
-                    // Slider de radius
-                    var radiusControl = L.control({ position: 'topright' });
-                    radiusControl.onAdd = function() {
-                        var div = L.DomUtil.create('div', 'info legend');
-                        div.innerHTML = `
-                            <div style="background: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); min-width: 180px;">
-                                <label style="font-size: 12px; font-weight: bold;">Filter radius: <span id="radiusValue">${radiusInKm}</span> km</label>
-                                <input type="range" id="radiusSlider" min="1" max="80" step="1" value="${radiusInKm}" style="width: 100%; margin-top: 5px;">
-                                <div style="font-size: 10px; color: gray; margin-top: 5px;">
-                                    <i class="bi bi-exclamation-circle"></i> Location estimated${searchCity !== "" ? " (" + searchCity + ")" : " (Portugal)"}
-                                </div>
-                            </div>
-                        `;
-                        return div;
-                    };
-                    radiusControl.addTo(map);
-
-                    setTimeout(function() {
-                        var slider = document.getElementById('radiusSlider');
-                        var radiusValueEl = document.getElementById('radiusValue');
-                        if (slider) {
-                            slider.addEventListener('input', function(e) {
-                                var newRadiusKm = parseFloat(e.target.value);
-                                radiusValueEl.innerText = newRadiusKm;
-                                if (radiusCircle) map.removeLayer(radiusCircle);
-                                radiusCircle = L.circle([fallbackLat, fallbackLng], {
-                                    radius: newRadiusKm * 1000,
-                                    color: "#aaa",
-                                    fillColor: "#aaa",
-                                    weight: 2,
-                                    opacity: 0.5,
-                                    fillOpacity: 0.08
-                                }).addTo(map);
-                                filterPetsByDistance(fallbackLat, fallbackLng, newRadiusKm);
-                            });
-                        }
-                    }, 100);
-
-                    map.setView([fallbackLat, fallbackLng], 10);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        }
+                        map.setView([fallbackLat, fallbackLng], 10);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            }
+        }); // fim do initPetMarkers().then
 
     </script>
 }

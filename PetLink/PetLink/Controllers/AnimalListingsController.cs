@@ -573,6 +573,14 @@ namespace PetLink
 
             var results = await query.ToListAsync();
 
+            // Buscar shelters e petsitters com coordenadas ou cidade
+            var serviceUsers = await _context.Users
+                .Where(u => (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter)
+                         && (!string.IsNullOrEmpty(u.Lat) || !string.IsNullOrEmpty(u.City)))
+                .ToListAsync();
+
+            ViewBag.Shelters = serviceUsers.Where(u => u.Role == UserRole.Shelter).ToList();
+            ViewBag.PetSitters = serviceUsers.Where(u => u.Role == UserRole.PetSitter).ToList();
             ViewBag.CurrentSpecies = species;
             ViewBag.CurrentLocation = location;
             ViewBag.CurrentAge = age;
