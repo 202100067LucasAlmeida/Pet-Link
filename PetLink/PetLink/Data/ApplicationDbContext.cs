@@ -26,6 +26,7 @@ namespace PetLink.Data
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Resource> Resources { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -170,6 +171,15 @@ namespace PetLink.Data
             .WithMany(a => a.HealthDocuments)
             .HasForeignKey(h => h.AnimalListingId)
             .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Species);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Category);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Type);
 
         }
     }
