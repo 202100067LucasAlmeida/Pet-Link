@@ -177,9 +177,7 @@
             species = p.Species.ToString(),
             location = p.Location,
             ageMonths = p.AgeMonths,
-            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
-            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : null,
-            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : null
+            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl
         })));
 
         var sheltersArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
@@ -187,8 +185,6 @@
                 id = u.Id,
                 name = u.Name,
                 city = u.City ?? "",
-                lat = u.GetLatitude(),
-                lng = u.GetLongitude(),
                 profileUrl = "/Profile/ViewProfile/" + u.Id
             })
         ));
@@ -198,8 +194,6 @@
                 id = u.Id,
                 name = u.Name,
                 city = u.City ?? "",
-                lat = u.GetLatitude(),
-                lng = u.GetLongitude(),
                 profileUrl = "/Profile/ViewProfile/" + u.Id
             })
         ));
@@ -387,117 +381,145 @@
 
         async function initPetMarkers() {
             const geocodeCache = {};
+            const groups = {}; // chave: location text normalizado
 
+            // 1. Agrupar todos os pets pela sua localização (texto)
             for (const pet of petsArray) {
-                let lat = (pet.lat !== null && pet.lat !== undefined && pet.lat !== "") ? parseFloat(pet.lat) : null;
-                let lng = (pet.lng !== null && pet.lng !== undefined && pet.lng !== "") ? parseFloat(pet.lng) : null;
-
-                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
-                    if (pet.location) {
-                        if (!geocodeCache[pet.location]) {
-                            await new Promise(resolve => setTimeout(resolve, 1100));
-                            geocodeCache[pet.location] = await geocodeLocation(pet.location);
-                        }
-                        const coords = geocodeCache[pet.location];
-                        if (coords) { lat = coords.lat; lng = coords.lng; }
-                    }
-                }
-
-                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) continue;
-
-                pet.lat = lat;
-                pet.lng = lng;
-
-                // Usar "|" como separador para evitar conflitos com coordenadas negativas
-                var key = lat + "|" + lng;
-                if (!petsByLocation[key]) { petsByLocation[key] = []; }
-                petsByLocation[key].push(pet);
+                const key = (pet.location || "").trim().toLowerCase();
+                if (!key) continue;
+                if (!groups[key]) groups[key] = { locationText: pet.location, pets: [] };
+                groups[key].pets.push(pet);
             }
 
-            // Criar marcadores agrupados por localização
-            Object.keys(petsByLocation).forEach(function(gpsKey) {
-                var petsHere = petsByLocation[gpsKey];
-                var parts = gpsKey.split('|');
-                var lat = parseFloat(parts[0]);
-                var lng = parseFloat(parts[1]);
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    var marker = L.marker([lat, lng], { icon: petIcon });
+            // 2. Para cada grupo único, geocodificar UMA VEZ e criar o marker
+            for (const key of Object.keys(groups)) {
+                const group = groups[key];
 
-                    if (petsHere.length === 1) {
-                        var p = petsHere[0];
-                        marker.bindPopup(`
-                            <div style="min-width:170px;">
+                if (!geocodeCache[key]) {
+                    await new Promise(resolve => setTimeout(resolve, 1100)); // respeitar rate limit Nominatim
+                    geocodeCache[key] = await geocodeLocation(group.locationText);
+                }
+                const coords = geocodeCache[key];
+                if (!coords) continue;
+
+                const lat = coords.lat, lng = coords.lng;
+
+                // Guardar coords nos pets para o filtro de distância funcionar
+                group.pets.forEach(p => { p.lat = lat; p.lng = lng; });
+
+                const marker = L.marker([lat, lng], { icon: petIcon });
+                const markerId = L.Util.stamp(marker);
+
+                if (group.pets.length === 1) {
+                    const p = group.pets[0];
+                    marker.bindPopup(`
+                        <div style="min-width:170px;">
+                            <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
+                            <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
+                            <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
+                            <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
+                        </div>`);
+                } else {
+                    const total = group.pets.length;
+                    let slidesHtml = '';
+                    group.pets.forEach((p, index) => {
+                        slidesHtml += `
+                            <div id="slide-${markerId}-${index}" style="display:${index === 0 ? 'block' : 'none'};">
                                 <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
                                 <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
                                 <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
                                 <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
-                            </div>`);
-                    } else {
-                        var total = petsHere.length;
-                        var markerId = L.Util.stamp(marker);
-                        var slidesHtml = '';
-                        petsHere.forEach(function(p, index) {
-                            slidesHtml += `
-                                <div id="slide-${markerId}-${index}" style="display:${index === 0 ? 'block' : 'none'};">
-                                    <img src="${p.imageUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:5px;">
-                                    <h6 style="margin:0;font-weight:bold;">${p.name}</h6>
-                                    <p style="margin:0;font-size:11px;color:gray;">${p.species} • ${p.location}</p>
-                                    <a href="/AnimalListings/Details/${p.id}" class="btn btn-sm btn-primary w-100 mt-1" style="font-size:11px;border-radius:20px;">View</a>
-                                </div>`;
-                        });
-                        marker.bindPopup(`
-                            <div style="min-width:170px;">
-                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                                    <button onclick="changeSlide('${markerId}',-1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8249;</button>
-                                    <span id="counter-${markerId}" style="font-size:10px;color:gray;">1 / ${total}</span>
-                                    <button onclick="changeSlide('${markerId}',1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">&#8250;</button>
-                                </div>
-                                ${slidesHtml}
-                            </div>`);
-                    }
-
-                    petsHere.forEach(function(pet) {
-                        allMarkers.push({ marker: marker, pet: pet });
+                            </div>`;
                     });
+                    marker.bindPopup(`
+                        <div style="min-width:170px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <button onclick="changeSlide('${markerId}',-1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;">&#8249;</button>
+                                <span id="counter-${markerId}" style="font-size:10px;color:gray;">1 / ${total}</span>
+                                <button onclick="changeSlide('${markerId}',1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;">&#8250;</button>
+                            </div>
+                            ${slidesHtml}
+                        </div>`);
                 }
-            });
+
+                group.pets.forEach(pet => allMarkers.push({ marker, pet }));
+            }
         }
 
         // ========== INICIALIZAÇÃO DOS MARCADORES DE UTILIZADORES (SHELTERS / PETSITTERS) ==========
         async function initUserMarkers(usersArray, icon, labelType) {
             const geocodeCache = {};
-            for (const user of usersArray) {
-                let lat = (user.lat !== null && user.lat !== undefined && user.lat !== "") ? parseFloat(user.lat) : null;
-                let lng = (user.lng !== null && user.lng !== undefined && user.lng !== "") ? parseFloat(user.lng) : null;
+            const groups = {}; // chave: city text normalizado
 
-                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
-                    if (user.city) {
-                        if (!geocodeCache[user.city]) {
-                            await new Promise(resolve => setTimeout(resolve, 1100));
-                            geocodeCache[user.city] = await geocodeLocation(user.city);
-                        }
-                        const coords = geocodeCache[user.city];
-                        if (coords) { lat = coords.lat; lng = coords.lng; }
-                    }
+            // 1. Agrupar por cidade
+            for (const user of usersArray) {
+                const key = (user.city || "").trim().toLowerCase();
+                if (!key) continue;
+                if (!groups[key]) groups[key] = { cityText: user.city, users: [] };
+                groups[key].users.push(user);
+            }
+
+            // 2. Geocodificar UMA VEZ por cidade e criar marker
+            for (const key of Object.keys(groups)) {
+                const group = groups[key];
+
+                // Tentar coordenadas guardadas no 1º utilizador do grupo
+                let lat = null, lng = null;
+                const firstUser = group.users[0];
+                if (firstUser.lat && firstUser.lng) {
+                    lat = parseFloat(firstUser.lat);
+                    lng = parseFloat(firstUser.lng);
                 }
 
-                if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) continue;
+                if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+                    if (!geocodeCache[key]) {
+                        await new Promise(resolve => setTimeout(resolve, 1100));
+                        geocodeCache[key] = await geocodeLocation(group.cityText);
+                    }
+                    const coords = geocodeCache[key];
+                    if (!coords) continue;
+                    lat = coords.lat; lng = coords.lng;
+                }
 
-                user.lat = lat;
-                user.lng = lng;
+                // Guardar coords em todos os utilizadores do grupo
+                group.users.forEach(u => { u.lat = lat; u.lng = lng; });
 
-                var marker = L.marker([lat, lng], { icon: icon });
-                marker.bindPopup(`
-                    <div style="text-align:center;min-width:150px;">
-                        <p style="margin:0 0 4px;font-size:10px;color:gray;text-transform:uppercase;letter-spacing:0.5px;">${labelType}</p>
-                        <h6 style="margin:0 0 6px;font-weight:bold;">${user.name}</h6>
-                        <p style="margin:0 0 8px;font-size:11px;color:gray;">
-                            <i class="bi bi-geo-alt"></i> ${user.city || ""}
-                        </p>
-                        <a href="${user.profileUrl}" class="btn btn-sm btn-primary w-100" style="font-size:11px;border-radius:20px;">View Profile</a>
-                    </div>`);
-                // Não adicionar ao mapa ainda — filterUsersByDistance trata disso
-                allUserMarkers.push({ marker: marker, user: user });
+                const marker = L.marker([lat, lng], { icon: icon });
+                const markerId = L.Util.stamp(marker);
+
+                if (group.users.length === 1) {
+                    const u = group.users[0];
+                    marker.bindPopup(`
+                        <div style="text-align:center;min-width:150px;">
+                            <p style="margin:0 0 4px;font-size:10px;color:gray;text-transform:uppercase;">${labelType}</p>
+                            <h6 style="margin:0 0 6px;font-weight:bold;">${u.name}</h6>
+                            <p style="margin:0 0 8px;font-size:11px;color:gray;"><i class="bi bi-geo-alt"></i> ${u.city}</p>
+                            <a href="${u.profileUrl}" class="btn btn-sm btn-primary w-100" style="font-size:11px;border-radius:20px;">View Profile</a>
+                        </div>`);
+                } else {
+                    const total = group.users.length;
+                    let slidesHtml = '';
+                    group.users.forEach((u, index) => {
+                        slidesHtml += `
+                            <div id="slide-${markerId}-${index}" style="display:${index === 0 ? 'block' : 'none'};">
+                                <p style="margin:0 0 4px;font-size:10px;color:gray;text-transform:uppercase;">${labelType}</p>
+                                <h6 style="margin:0 0 6px;font-weight:bold;">${u.name}</h6>
+                                <p style="margin:0 0 8px;font-size:11px;color:gray;"><i class="bi bi-geo-alt"></i> ${u.city}</p>
+                                <a href="${u.profileUrl}" class="btn btn-sm btn-primary w-100" style="font-size:11px;border-radius:20px;">View Profile</a>
+                            </div>`;
+                    });
+                    marker.bindPopup(`
+                        <div style="text-align:center;min-width:150px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <button onclick="changeSlide('${markerId}',-1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;">&#8249;</button>
+                                <span id="counter-${markerId}" style="font-size:10px;color:gray;">1 / ${total}</span>
+                                <button onclick="changeSlide('${markerId}',1,${total})" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 4px;">&#8250;</button>
+                            </div>
+                            ${slidesHtml}
+                        </div>`);
+                }
+
+                group.users.forEach(u => allUserMarkers.push({ marker, user: u }));
             }
         }
 

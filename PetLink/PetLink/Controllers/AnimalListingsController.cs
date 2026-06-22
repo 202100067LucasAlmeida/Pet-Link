@@ -559,7 +559,6 @@ namespace PetLink
         public async Task<IActionResult> Map(Species? species, string? location, Age? age)
         {
             var query = _context.AnimalListings
-                .Include(t => t.Tutor)
                 .Where(p => p.Status == ListingStatus.Published);
 
             if (species.HasValue)
@@ -576,7 +575,7 @@ namespace PetLink
             // Buscar shelters e petsitters com coordenadas ou cidade
             var serviceUsers = await _context.Users
                 .Where(u => (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter)
-                         && (!string.IsNullOrEmpty(u.Lat) || !string.IsNullOrEmpty(u.City)))
+                         && !string.IsNullOrEmpty(u.City))
                 .ToListAsync();
 
             ViewBag.Shelters = serviceUsers.Where(u => u.Role == UserRole.Shelter).ToList();

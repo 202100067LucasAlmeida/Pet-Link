@@ -467,9 +467,7 @@
             species = p.Species.ToString(),
             location = p.Location,
             ageMonths = p.AgeMonths,
-            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
-            lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
-            lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+            imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl
         })));
 
         var petsByLocation = {};

@@ -31,8 +31,6 @@ namespace PetLink.Data
                     CreatedAt = DateTime.Now.AddDays(-365)
                 };
 
-                admin.UpdateCoordinates(null, null);
-
                 var shelter = new User
                 {
                     Name = "Sunny Paws Shelter",
@@ -47,8 +45,6 @@ namespace PetLink.Data
                     CreatedAt = DateTime.Now.AddDays(-180)
                 };
 
-                shelter.UpdateCoordinates(null, null);
-
                 var particular = new User
                 {
                     Name = "João Silva",
@@ -62,8 +58,6 @@ namespace PetLink.Data
                     ProfilePicture = "/images/avatars/joaosilva.jpg",
                     CreatedAt = DateTime.Now.AddDays(-30)
                 };
-
-                particular.UpdateCoordinates("38.548168", "-8.901205");
 
                 // Pet Sitters completos
                 var sitter1 = new User
@@ -80,8 +74,6 @@ namespace PetLink.Data
                     CreatedAt = DateTime.Now.AddDays(-90)
                 };
 
-                sitter1.UpdateCoordinates("38.548168", "-8.901205");
-
                 var sitter2 = new User
                 {
                     Name = "Marcus Chen",
@@ -96,8 +88,6 @@ namespace PetLink.Data
                     CreatedAt = DateTime.Now.AddDays(-120)
                 };
 
-                sitter2.UpdateCoordinates(null, null);
-
                 var sitter3 = new User
                 {
                     Name = "Elena Smith",
@@ -111,8 +101,6 @@ namespace PetLink.Data
                     ProfilePicture = "/images/avatars/elenasmith.jpg",
                     CreatedAt = DateTime.Now.AddDays(-60)
                 };
-
-                sitter3.UpdateCoordinates(null, null);
 
                 // Salva users primeiro para gerar IDs
                 context.Users.AddRange(admin, shelter, particular, sitter1, sitter2, sitter3);

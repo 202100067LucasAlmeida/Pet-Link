@@ -31,16 +31,6 @@ namespace PetLink.Models
         
         public string? Phone { get; set; }
         public string? City { get; set; }
-        public string? Lat { get; set; }
-        public string? Lon { get; set; }
-
-        public void UpdateCoordinates(string lat, string lon)
-        {
-            Lat = lat;
-            Lon = lon;
-        }
-        public string GetLatitude() => Lat;
-        public string GetLongitude() => Lon;
 
         public string? Bio { get; set; }
         public string? ProfilePicture { get; set; }
