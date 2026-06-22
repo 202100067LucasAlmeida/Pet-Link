@@ -1,0 +1,144 @@
+@model PetLink.Models.Resource
+@using PetLink.Models.Enums
+@{
+    ViewData["Title"] = Model.Title;
+    var isYouTube = !string.IsNullOrEmpty(Model.MediaUrl) &&
+        (Model.MediaUrl.Contains("youtube.com/watch?v=") || Model.MediaUrl.Contains("youtu.be/"));
+    var youtubeId = "";
+    if (isYouTube)
+    {
+        if (Model.MediaUrl.Contains("youtube.com/watch?v="))
+        {
+            youtubeId = Model.MediaUrl.Split("v=").Last().Split("&").First();
+        }
+        else if (Model.MediaUrl.Contains("youtu.be/"))
+        {
+            youtubeId = Model.MediaUrl.Split("youtu.be/").Last().Split("?").First();
+        }
+    }
+}
+
+<section class="breadcrumb-section py-3" style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-highlight-darkblue">RESOURCES</a></li>
+                <li class="breadcrumb-item active text-highlight-blue">@Model.Title</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                @if (!string.IsNullOrEmpty(Model.MediaUrl))
+                {
+                    if (isYouTube)
+                    {
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/@youtubeId" title="@Model.Title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@Model.MediaUrl" alt="@Model.Title" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;">
+                    }
+                }
+
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="display-5 fw-bold text-primary-darkblue mb-2">@Model.Title</h1>
+                            <div class="d-flex gap-2 mb-3">
+                                <span class="badge bg-primary rounded-pill">@Model.Type</span>
+                                <span class="badge bg-info rounded-pill">@Model.Species</span>
+                                <span class="badge bg-secondary rounded-pill">@Model.Category</span>
+                            </div>
+                        </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary rounded-pill">
+                                    <i class="bi bi-pencil me-1"></i>Edit
+                                </a>
+                                <button type="button" class="btn btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <hr style="border-color: var(--petlink-border);">
+
+                    <div class="mt-4" style="line-height: 1.8; color: var(--petlink-dark);">
+                        @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top" style="border-color: var(--petlink-border);">
+                        <small class="text-muted">
+                            <i class="bi bi-calendar me-1"></i> Published on @Model.CreatedAt.ToString("dd MMMM yyyy")
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white py-3 rounded-top-4">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Resource Info</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="bi bi-type me-2 text-primary"></i>
+                            <strong>Type:</strong> @Model.Type
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-tag me-2 text-primary"></i>
+                            <strong>Species:</strong> @Model.Species
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-bookmark me-2 text-primary"></i>
+                            <strong>Category:</strong> @Model.Category
+                        </li>
+                    </ul>
+                    <hr>
+                    <a asp-action="Index" class="btn btn-outline-primary rounded-pill w-100">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Resources
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Resource
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+                <p class="text-muted small">This action cannot be undone. All data related to this resource will be permanently removed.</p>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger rounded-pill">
+                        <i class="bi bi-trash me-1"></i>Delete Resource
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

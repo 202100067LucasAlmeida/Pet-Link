@@ -6,11 +6,30 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetLink.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateBD : Migration
+    public partial class AddResources : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Resources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MediaUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Species = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resources", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -25,6 +44,8 @@ namespace PetLink.Migrations
                     IsExternalLogin = table.Column<bool>(type: "bit", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Lat = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Lon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -61,6 +82,37 @@ namespace PetLink.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganizerId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApprovedBy = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Users_OrganizerId",
+                        column: x => x.OrganizerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -198,7 +250,7 @@ namespace PetLink.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HealthDocument",
+                name: "HealthDocuments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -207,17 +259,25 @@ namespace PetLink.Migrations
                     Type = table.Column<int>(type: "int", nullable: false),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AnimalListingId = table.Column<int>(type: "int", nullable: false)
+                    AnimalListingId = table.Column<int>(type: "int", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    VerifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    VerifiedByAdminId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HealthDocument", x => x.Id);
+                    table.PrimaryKey("PK_HealthDocuments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HealthDocument_AnimalListings_AnimalListingId",
+                        name: "FK_HealthDocuments_AnimalListings_AnimalListingId",
                         column: x => x.AnimalListingId,
                         principalTable: "AnimalListings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_HealthDocuments_Users_VerifiedByAdminId",
+                        column: x => x.VerifiedByAdminId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -322,6 +382,42 @@ namespace PetLink.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    PetsitterId = table.Column<int>(type: "int", nullable: false),
+                    ServiceType = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PetName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PetSpecies = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Petsitters_PetsitterId",
+                        column: x => x.PetsitterId,
+                        principalTable: "Petsitters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnimalListings_TutorId",
                 table: "AnimalListings",
@@ -341,6 +437,41 @@ namespace PetLink.Migrations
                 name: "IX_Applications_UserId",
                 table: "Applications",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_PetsitterId",
+                table: "Bookings",
+                column: "PetsitterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_Location",
+                table: "Events",
+                column: "Location");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_OrganizerId",
+                table: "Events",
+                column: "OrganizerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_StartDate",
+                table: "Events",
+                column: "StartDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_Status",
+                table: "Events",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_Type",
+                table: "Events",
+                column: "Type");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FavoritePets_AnimalListingId",
@@ -365,9 +496,14 @@ namespace PetLink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HealthDocument_AnimalListingId",
-                table: "HealthDocument",
+                name: "IX_HealthDocuments_AnimalListingId",
+                table: "HealthDocuments",
                 column: "AnimalListingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HealthDocuments_VerifiedByAdminId",
+                table: "HealthDocuments",
+                column: "VerifiedByAdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ListingsNotifications_AnimalListingId",
@@ -400,6 +536,21 @@ namespace PetLink.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Resources_Category",
+                table: "Resources",
+                column: "Category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resources_Species",
+                table: "Resources",
+                column: "Species");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resources_Type",
+                table: "Resources",
+                column: "Type");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_AnimalListingId",
                 table: "Reviews",
                 column: "AnimalListingId");
@@ -426,13 +577,19 @@ namespace PetLink.Migrations
                 name: "Applications");
 
             migrationBuilder.DropTable(
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
                 name: "FavoritePets");
 
             migrationBuilder.DropTable(
                 name: "FavoritePetsitters");
 
             migrationBuilder.DropTable(
-                name: "HealthDocument");
+                name: "HealthDocuments");
 
             migrationBuilder.DropTable(
                 name: "ListingsNotifications");
@@ -441,10 +598,13 @@ namespace PetLink.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Petsitters");
+                name: "Resources");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "Petsitters");
 
             migrationBuilder.DropTable(
                 name: "AnimalListings");

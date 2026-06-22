@@ -41,6 +41,11 @@
                class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Events" && currentAction == "Manage" ? "active" : "")">
                 <i class="bi bi-calendar-check me-2"></i>Manage Events
             </a>
+
+            <a asp-controller="Resources" asp-action="Manage"
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Resources" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-book me-2"></i>Manage Resources
+            </a>
         }
 
         <p class="small mb-2 mt-4 px-3 fw-bold opacity-50 text-primary-darkblue"

@@ -1,0 +1,120 @@
+@model IEnumerable<PetLink.Models.Resource>
+@using PetLink.Models.Enums
+
+@{
+    ViewData["Title"] = "Manage Resources";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-primary-blue fw-bold mb-0">
+                    <i class="bi bi-book me-2"></i>Manage Resources
+                </h2>
+                <a asp-action="Create" class="btn btn-primary rounded-pill">
+                    <i class="bi bi-plus-circle me-2"></i>Create Resource
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show rounded-3 border-0" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-book fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No resources yet. Create your first resource!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Species</th>
+                                        <th>Category</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var resource in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@resource.Title</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(resource.Type == ResourceType.Video ? "bg-info" : "bg-primary") rounded-pill">@resource.Type</span>
+                                            </td>
+                                            <td>@resource.Species</td>
+                                            <td>@resource.Category</td>
+                                            <td>
+                                                <small class="text-muted">@resource.CreatedAt.ToString("dd MMM yyyy")</small>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <a asp-action="Details" asp-route-id="@resource.Id" class="btn btn-sm btn-outline-primary rounded-pill" title="View">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@resource.Id" class="btn btn-sm btn-outline-warning rounded-pill" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" title="Delete" data-bs-toggle="modal" data-bs-target="#deleteModal-@resource.Id">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+
+                                                <!-- Delete Modal -->
+                                                <div class="modal fade" id="deleteModal-@resource.Id" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content rounded-4 border-0 shadow">
+                                                            <div class="modal-header border-bottom-0">
+                                                                <h5 class="modal-title fw-bold text-danger">
+                                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Resource
+                                                                </h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Are you sure you want to delete <strong>@resource.Title</strong>?</p>
+                                                                <p class="text-muted small">This action cannot be undone.</p>
+                                                            </div>
+                                                            <div class="modal-footer border-top-0">
+                                                                <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                                                                <form asp-action="Delete" asp-route-id="@resource.Id" method="post" style="display: inline;">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <button type="submit" class="btn btn-danger rounded-pill">
+                                                                        <i class="bi bi-trash me-1"></i>Delete
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

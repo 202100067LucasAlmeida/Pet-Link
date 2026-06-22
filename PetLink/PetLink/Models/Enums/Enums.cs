@@ -74,4 +74,18 @@ namespace PetLink.Models.Enums
         Completed,
         Cancelled
     }
+
+    public enum ResourceType
+    {
+        Article,
+        Video
+    }
+
+    public enum ResourceCategory
+    {
+        Health,
+        Training,
+        Nutrition,
+        General
+    }
 }

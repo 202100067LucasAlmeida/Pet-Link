@@ -12,8 +12,8 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260607175242_AddBookingsTable")]
-    partial class AddBookingsTable
+    [Migration("20260622141803_AddResources")]
+    partial class AddResources
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,6 +328,9 @@ namespace PetLink.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -339,11 +342,19 @@ namespace PetLink.Migrations
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("VerifiedByAdminId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalListingId");
 
-                    b.ToTable("HealthDocument");
+                    b.HasIndex("VerifiedByAdminId");
+
+                    b.ToTable("HealthDocuments");
                 });
 
             modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
@@ -472,6 +483,50 @@ namespace PetLink.Migrations
                     b.ToTable("Petsitters");
                 });
 
+            modelBuilder.Entity("PetLink.Models.Resource", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MediaUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Species")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Species");
+
+                    b.HasIndex("Type");
+
+                    b.ToTable("Resources");
+                });
+
             modelBuilder.Entity("PetLink.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -544,6 +599,12 @@ namespace PetLink.Migrations
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Lat")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lon")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -684,7 +745,13 @@ namespace PetLink.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PetLink.Models.User", "VerifiedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("VerifiedByAdminId");
+
                     b.Navigation("AnimalListing");
+
+                    b.Navigation("VerifiedByAdmin");
                 });
 
             modelBuilder.Entity("PetLink.Models.ListingsNotification", b =>
