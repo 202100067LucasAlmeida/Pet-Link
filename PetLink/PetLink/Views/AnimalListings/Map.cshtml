@@ -52,24 +52,39 @@
                                 <label class="btn btn-outline-secondary btn-sm w-100 rounded-pill fw-bold" for="allPets">All Pets</label>
                             </div>
                             <div class="col-6">
-                                <input type="radio" class="btn-check" name="species" value="@Species.Dog" id="dog" 
+                                <input type="radio" class="btn-check" name="species" value="@Species.Dog" id="dog"
                                     @(ViewBag.CurrentSpecies?.ToString() == Species.Dog.ToString() ? "checked" : "")>
-                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="dog">🐶 Dogs</label>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="dog">Dogs</label>
                             </div>
                             <div class="col-6">
-                                <input type="radio" class="btn-check" name="species" value="@Species.Cat" id="cat" 
+                                <input type="radio" class="btn-check" name="species" value="@Species.Cat" id="cat"
                                     @(ViewBag.CurrentSpecies?.ToString() == Species.Cat.ToString() ? "checked" : "")>
-                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="cat">🐱 Cats</label>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="cat">Cats</label>
                             </div>
                             <div class="col-6">
-                                <input type="radio" class="btn-check" name="species" value="@Species.Bird" id="bird" 
+                                <input type="radio" class="btn-check" name="species" value="@Species.Rodent" id="rodent"
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Rodent.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="rodent">Rodents</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Bird" id="bird"
                                     @(ViewBag.CurrentSpecies?.ToString() == Species.Bird.ToString() ? "checked" : "")>
-                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="bird">🦜 Birds</label>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="bird">Birds</label>
                             </div>
                             <div class="col-6">
-                                <input type="radio" class="btn-check" name="species" value="@Species.Other" id="other" 
+                                <input type="radio" class="btn-check" name="species" value="@Species.Reptile" id="reptile"
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Reptile.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="reptile">Reptiles</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Fish" id="fish"
+                                    @(ViewBag.CurrentSpecies?.ToString() == Species.Fish.ToString() ? "checked" : "")>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="fish">Fish</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="species" value="@Species.Other" id="other"
                                     @(ViewBag.CurrentSpecies?.ToString() == Species.Other.ToString() ? "checked" : "")>
-                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="other">🐾 Others</label>
+                                <label class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold" for="other">Other</label>
                             </div>
                         </div>
                     </div>
@@ -77,10 +92,12 @@
                     <!-- FILTRO DE IDADE -->
                     <div class="mb-4">
                         <label class="small fw-bold text-secondary-grey mb-2"><i class="bi bi-clock me-1"></i> AGE</label>
-                        <select name="age" class="form-select form-select-sm rounded-pill border-0 text-center fw-bold text-primary-darkblue shadow-sm" style="background-color: var(--petlink-grey-bg);">
+                        <select name="age" class="form-select form-select-sm rounded-pill border-0 text-center fw-bold text-primary-darkblue shadow-sm"
+                                style="background-color: var(--petlink-grey-bg);">
                             <option value="">Any Age</option>
-                            <option value="@Age.Puppy" selected="@(ViewBag.CurrentAge?.ToString() == Age.Puppy.ToString())">Baby</option>
-                            <option value="@Age.Adult" selected="@(ViewBag.CurrentAge?.ToString() == Age.Adult.ToString())">Adult</option>
+                            <option value="@Age.Puppy" selected="@(ViewBag.CurrentAge?.ToString() == Age.Puppy.ToString())">Puppy (0-1 yr)</option>
+                            <option value="@Age.Adult" selected="@(ViewBag.CurrentAge?.ToString() == Age.Adult.ToString())">Adult (1-7 yrs)</option>
+                            <option value="@Age.Senior" selected="@(ViewBag.CurrentAge?.ToString() == Age.Senior.ToString())">Senior (7+ yrs)</option>
                         </select>
                     </div>
 

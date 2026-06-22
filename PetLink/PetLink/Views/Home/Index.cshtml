@@ -33,9 +33,13 @@
                                 <select name="species" class="form-select text-highlight-blue border-0"
                                         style="background-color: var(--petlink-grey-bg);">
                                     <option value="">All Animals</option>
-                                    <option value="Dog">Dogs</option>
-                                    <option value="Cat">Cats</option>
-                                    <option value="Bird">Birds</option>
+                                    <option value="@Species.Dog">Dogs</option>
+                                    <option value="@Species.Cat">Cats</option>
+                                    <option value="@Species.Rodent">Rodents</option>
+                                    <option value="@Species.Bird">Birds</option>
+                                    <option value="@Species.Reptile">Reptiles</option>
+                                    <option value="@Species.Fish">Fish</option>
+                                    <option value="@Species.Other">Other</option>
                                 </select>
                             </div>
 
@@ -45,8 +49,8 @@
                                         style="background-color: var(--petlink-grey-bg);">
                                     <option value="">Any Age</option>
                                     <option value="@Age.Puppy">Puppy (0-1 yr)</option>
-                                    <option value="@Age.Adult">Adult (1-3 yrs)</option>
-                                    <option value="@Age.Senior">Senior (3-7 yrs)</option>
+                                    <option value="@Age.Adult">Adult (1-7 yrs)</option>
+                                    <option value="@Age.Senior">Senior (7+ yrs)</option>
                                 </select>
                             </div>
 

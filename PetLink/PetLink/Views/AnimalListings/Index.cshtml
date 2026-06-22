@@ -11,7 +11,10 @@
         {
             Species.Dog => "Dogs",
             Species.Cat => "Cats",
+            Species.Rodent => "Rodents",
             Species.Bird => "Birds",
+            Species.Reptile => "Reptiles",
+            Species.Fish => "Fish",
             Species.Other => "Others",
             _ => species.ToString()
         };
@@ -62,47 +65,41 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Dog" id="dog"
-                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                                                    Species.Dog.ToString() ? "checked" : "") hidden>
-                                <label for="dog" class="btn animal-type-btn w-100 rounded-3">
-                                    <i class="bi bi-list-task me-1"></i>Dogs
-                                </label>
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Dog.ToString() ? "checked" : "") hidden>
+                                <label for="dog" class="btn animal-type-btn w-100 rounded-3">Dogs</label>
                             </div>
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Cat" id="cat"
-                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                Species.Cat.ToString() ? "checked" : "") hidden>
-                                <label for="cat" class="btn animal-type-btn w-100 rounded-3">
-                                    <i class="bi bi-list-task me-1"></i>Cats
-                                </label>
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Cat.ToString() ? "checked" : "") hidden>
+                                <label for="cat" class="btn animal-type-btn w-100 rounded-3">Cats</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" name="species" value="@Species.Rodent" id="rodent"
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Rodent.ToString() ? "checked" : "") hidden>
+                                <label for="rodent" class="btn animal-type-btn w-100 rounded-3">Rodents</label>
                             </div>
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Bird" id="bird"
-                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                Species.Bird.ToString() ? "checked" : "") hidden>
-                                <label for="bird" class="btn animal-type-btn w-100 rounded-3">
-                                    <i class="bi bi-list-task me-1"></i>Birds
-                                </label>
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Bird.ToString() ? "checked" : "") hidden>
+                                <label for="bird" class="btn animal-type-btn w-100 rounded-3">Birds</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" name="species" value="@Species.Reptile" id="reptile"
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Reptile.ToString() ? "checked" : "") hidden>
+                                <label for="reptile" class="btn animal-type-btn w-100 rounded-3">Reptiles</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" name="species" value="@Species.Fish" id="fish"
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Fish.ToString() ? "checked" : "") hidden>
+                                <label for="fish" class="btn animal-type-btn w-100 rounded-3">Fish</label>
                             </div>
                             <div class="col-6">
                                 <input type="radio" name="species" value="@Species.Other" id="other"
-                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() ==
-                                Species.Other.ToString() ? "checked" : "") hidden>
-                                <label for="other" class="btn animal-type-btn w-100 rounded-3">
-                                    <i class="bi bi-list-task me-1"></i>Others
-                                </label>
+                                @(ViewBag.CurrentSpecies != null && ViewBag.CurrentSpecies.ToString() == Species.Other.ToString() ? "checked" : "") hidden>
+                                <label for="other" class="btn animal-type-btn w-100 rounded-3">Others</label>
                             </div>
                         </div>
                     </div>
-
-                    <!--BREED-->
-                    @* <div class="mb-4">
-                        <div class="filter-section-title"><i class="bi bi-tag me-2"></i> BREED</div>
-                        <p style="color: red; font-size:x-small;">'BREED' filter is not available at this moment</p>
-                        <select class="form-select rounded-3 py-2 text-secondary-grey fw-semibold fs-6">
-                            <option>All Breeds</option>
-                        </select>
-                    </div> *@
 
                     <!--AGE-->
                     <div class="mb-4">
@@ -149,7 +146,7 @@
                     </div>
 
                     <!--RANGE-->
-                    <div class="mb-5">
+                    @* <div class="mb-5">
                         <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
                         <input type="range" name="range" class="form-range" min="0" max="500" id="rangeInput"
                                value="@(ViewBag.CurrentRange ?? "0")">
@@ -158,7 +155,7 @@
                             <span class="current-range-filter" id="rangeValue">@(ViewBag.CurrentRange ?? "0") km</span>
                             <span>500km</span>
                         </div>
-                    </div>
+                    </div> *@
 
                     <div class="mb-4">
                         <div class="row g-2">

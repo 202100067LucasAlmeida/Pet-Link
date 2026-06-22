@@ -16,8 +16,7 @@ namespace PetLink.Models.Enums
 
         Puppy,
         Adult,
-        Senior,
-        Unkown
+        Senior
     }
 
     public enum ServiceType
