@@ -457,5 +457,111 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
 
             return $"/images/events/{fileName}";
         }
+
+        // POST: Events/RegisterInterest/5
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> RegisterInterest(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Json(new { success = false, message = "User not authenticated" });
+            }
+
+            int userId = int.Parse(userIdClaim);
+
+            // Verificar se o evento existe e está aprovado
+            var eventItem = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == id && e.Status == EventStatus.Approved);
+
+            if (eventItem == null)
+            {
+                return Json(new { success = false, message = "Event not found or not available" });
+            }
+
+            // Verificar se já está registado
+            var existingInterest = await _context.EventInterests
+                .FirstOrDefaultAsync(ei => ei.EventId == id && ei.UserId == userId);
+
+            if (existingInterest != null)
+            {
+                // Se já estiver registado, remover (toggle)
+                _context.EventInterests.Remove(existingInterest);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, registered = false, message = "Interest removed" });
+            }
+
+            // Registrar interesse
+            var interest = new EventInterest
+            {
+                EventId = id,
+                UserId = userId,
+                RegisteredAt = DateTime.Now,
+                IsConfirmed = false
+            };
+
+            _context.EventInterests.Add(interest);
+            await _context.SaveChangesAsync();
+
+            // Notificar o organizador
+            await _notificationService.CreateNewEventInterestNotificationAsync(
+                eventItem.OrganizerId,
+                eventItem.Name,
+                id,
+                userId,
+                User.Identity.Name
+            );
+
+            return Json(new { success = true, registered = true, message = "You are now registered for this event!" });
+        }
+
+        // GET: Events/InterestedUsers/5
+        [HttpGet]
+        public async Task<IActionResult> InterestedUsers(int id)
+        {
+            var eventItem = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (eventItem == null) return NotFound();
+
+            // Verificar se o utilizador atual é o organizador ou admin
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            bool isOrganizer = userIdClaim != null && eventItem.OrganizerId.ToString() == userIdClaim;
+            bool isAdmin = User.IsInRole("Admin");
+
+            if (!isOrganizer && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            var interestedUsers = await _context.EventInterests
+                .Where(ei => ei.EventId == id)
+                .Include(ei => ei.User)
+                .OrderByDescending(ei => ei.RegisteredAt)
+                .ToListAsync();
+
+            ViewBag.EventName = eventItem.Name;
+            return View(interestedUsers);
+        }
+
+        // GET: Events/CheckInterest/5
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CheckInterest(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Json(new { registered = false });
+            }
+
+            int userId = int.Parse(userIdClaim);
+
+            var registered = await _context.EventInterests
+                .AnyAsync(ei => ei.EventId == id && ei.UserId == userId);
+
+            return Json(new { registered = registered });
+        }
     }
 }

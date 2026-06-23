@@ -130,6 +130,26 @@
                         </div>
                     }
 
+                    !-- Botão de registar interesse (apenas para utilizadores autenticados que não são o organizador) -->
+    @if (User.Identity.IsAuthenticated && Model.Status == EventStatus.Approved)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        bool isOrganizer = userId != null && Model.OrganizerId.ToString() == userId;
+        
+        if (!isOrganizer)
+        {
+            <div class="mt-3">
+                <button class="btn btn-primary rounded-pill w-100 fw-bold" id="registerInterestBtn" data-event-id="@Model.Id">
+                    <i class="bi bi-calendar-plus me-2"></i>Register Interest
+                </button>
+                <div id="interestStatus" class="mt-2 text-center small" style="display: none;">
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>
+                    <span>You are registered for this event</span>
+                </div>
+            </div>
+        }
+    }
+
                     @if (User.IsInRole("Shelter"))
                     {
                         <hr>
@@ -170,3 +190,61 @@
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var eventId = @Model.Id;
+            var registerBtn = $('#registerInterestBtn');
+            var interestStatus = $('#interestStatus');
+
+            // Verificar se já está registado
+            $.ajax({
+                url: '/Events/CheckInterest/' + eventId,
+                type: 'GET',
+                success: function(data) {
+                    if (data.registered) {
+                        registerBtn.hide();
+                        interestStatus.show();
+                    }
+                }
+            });
+
+            // Registar interesse
+            registerBtn.click(function() {
+                $.ajax({
+                    url: '/Events/RegisterInterest/' + eventId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.registered) {
+                                registerBtn.hide();
+                                interestStatus.show();
+                                showNotification('You are now registered for this event!');
+                            } else {
+                                registerBtn.show();
+                                interestStatus.hide();
+                                showNotification('Interest removed.');
+                            }
+                        } else {
+                            showNotification(response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        showNotification('Error registering interest. Please try again.', 'error');
+                    }
+                });
+            });
+
+            function showNotification(message, type) {
+                var toast = $(`<div class="toast-notification">${message}</div>`);
+                $('body').append(toast);
+                setTimeout(() => toast.fadeOut(300, function() { $(this).remove(); }), 2000);
+            }
+        });
+    </script>
+}

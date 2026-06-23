@@ -27,6 +27,9 @@ namespace PetLink.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Resource> Resources { get; set; }
+
+        public DbSet<EventInterest> EventInterests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -180,6 +183,22 @@ namespace PetLink.Data
 
             modelBuilder.Entity<Resource>()
             .HasIndex(r => r.Type);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasOne(ei => ei.Event)
+            .WithMany()
+            .HasForeignKey(ei => ei.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasOne(ei => ei.User)
+            .WithMany()
+            .HasForeignKey(ei => ei.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasIndex(ei => new { ei.EventId, ei.UserId })
+            .IsUnique();
 
         }
     }

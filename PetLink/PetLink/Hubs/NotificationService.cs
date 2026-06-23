@@ -204,5 +204,99 @@ namespace PetLink.Hubs
         _context.ListingsNotifications.Add(notification);
         await _context.SaveChangesAsync();
     }
+
+        public async Task CreateNewEventInterestNotificationAsync(int organizerId, string eventName, int eventId, int userId, string userName)
+    {
+        // Notificar o organizador
+        var notification = new ListingsNotification
+        {
+            UserId = organizerId,
+            Title = "New Event Interest! 🎯",
+            Message = $"User {userName} has shown interest in your event '{eventName}'.",
+            AnimalListingId = null,
+            IsRead = false,
+            CreatedAt = DateTime.Now
+        };
+        _context.ListingsNotifications.Add(notification);
+
+        // Notificar o utilizador que se registou 
+        var userNotification = new ListingsNotification
+        {
+            UserId = userId,
+            Title = "Event Registration Confirmed ✅",
+            Message = $"You are now registered for '{eventName}'. We'll keep you updated!",
+            AnimalListingId = null,
+            IsRead = false,
+            CreatedAt = DateTime.Now
+        };
+        _context.ListingsNotifications.Add(userNotification);
+
+        await _context.SaveChangesAsync();
+    }
+
+    // Método para notificações de proximidade da data do evento
+    public async Task SendEventReminderNotificationsAsync()
+    {
+        var upcomingEvents = await _context.Events
+            .Where(e => e.Status == EventStatus.Approved && e.StartDate > DateTime.Now)
+            .ToListAsync();
+
+        foreach (var eventItem in upcomingEvents)
+        {
+            // Verificar se está a 1 dia ou 1 hora do evento
+            var timeUntilEvent = eventItem.StartDate - DateTime.Now;
+            
+            if (timeUntilEvent.TotalDays <= 1 && timeUntilEvent.TotalDays > 0)
+            {
+                // Enviar notificação para todos os interessados
+                var interestedUsers = await _context.EventInterests
+                    .Where(ei => ei.EventId == eventItem.Id)
+                    .Include(ei => ei.User)
+                    .ToListAsync();
+
+                foreach (var interest in interestedUsers)
+                {
+                    var notification = new ListingsNotification
+                    {
+                        UserId = interest.UserId,
+                        Title = $"Event Reminder: {eventItem.Name} is tomorrow! ⏰",
+                        Message = $"Don't forget! '{eventItem.Name}' is happening tomorrow at {eventItem.StartDate.ToString("HH:mm")} at {eventItem.Location}.",
+                        AnimalListingId = null,
+                        IsRead = false,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.ListingsNotifications.Add(notification);
+                }
+            }
+            else if (timeUntilEvent.TotalHours <= 1 && timeUntilEvent.TotalHours > 0)
+            {
+                // Enviar notificação para todos os interessados (1 hora antes)
+                var interestedUsers = await _context.EventInterests
+                    .Where(ei => ei.EventId == eventItem.Id)
+                    .Include(ei => ei.User)
+                    .ToListAsync();
+
+                foreach (var interest in interestedUsers)
+                {
+                    var notification = new ListingsNotification
+                    {
+                        UserId = interest.UserId,
+                        Title = $"Event Starting Soon: {eventItem.Name}! ⏰",
+                        Message = $"'{eventItem.Name}' is starting in less than an hour at {eventItem.Location}! See you there! 🎉",
+                        AnimalListingId = null,
+                        IsRead = false,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.ListingsNotifications.Add(notification);
+                }
+            }
+
+            
         }
+
+        await _context.SaveChangesAsync();
+    }
+
+    
+    }
 }

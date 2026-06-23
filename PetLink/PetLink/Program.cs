@@ -34,6 +34,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IChatbotService, ChatbotService>();
+builder.Services.AddHostedService<EventReminderService>();
 
 var app = builder.Build();
 
