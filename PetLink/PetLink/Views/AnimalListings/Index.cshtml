@@ -145,18 +145,6 @@
                         </div>
                     </div>
 
-                    <!--RANGE-->
-                    @* <div class="mb-5">
-                        <div class="filter-section-title"><i class="bi bi-sliders me-2"></i> RANGE</div>
-                        <input type="range" name="range" class="form-range" min="0" max="500" id="rangeInput"
-                               value="@(ViewBag.CurrentRange ?? "0")">
-                        <div class="d-flex justify-content-between text-secondary-grey small mt-1">
-                            <span>0km</span>
-                            <span class="current-range-filter" id="rangeValue">@(ViewBag.CurrentRange ?? "0") km</span>
-                            <span>500km</span>
-                        </div>
-                    </div> *@
-
                     <div class="mb-4">
                         <div class="row g-2">
                             <div class="col-6">
@@ -458,9 +446,8 @@
                 setTimeout(() => toast.fadeOut(300, function () { $(this).remove(); }), 2000);
             }
         });
-    </script>
 
-    <script>
+
         var petsArray = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(p => new {
             id = p.Id,
             name = p.Name,

@@ -460,6 +460,7 @@ namespace PetLink
         {
             var query = _context.AnimalListings
                 .Include(t => t.Tutor)
+                .Include(a => a.HealthDocuments)
                 .Where(p => p.Status == ListingStatus.Published);
 
             ViewBag.ActiveFilters = new Dictionary<string, object>();
@@ -526,6 +527,7 @@ namespace PetLink
             int currentUserId = int.Parse(userIdClaim);
 
             var myListings = await _context.AnimalListings
+                .Include(a => a.HealthDocuments)
                 .Where(a => a.TutorId == currentUserId)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();

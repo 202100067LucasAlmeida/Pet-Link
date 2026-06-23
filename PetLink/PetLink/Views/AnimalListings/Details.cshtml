@@ -200,10 +200,10 @@
                                     }
                                     else
                                     {
-                                        <i class="bi bi-info-circle text-secondary" style="font-size: 2rem;"></i>
+                                        <i class="bi bi-info-circle text-danger" style="font-size: 2rem;"></i>
                                     }
                                 </div>
-                                <h6 class="fw-bold mb-1 @(Model.IsSterilized ? "text-success" : "text-secondary")">
+                                <h6 class="fw-bold mb-1 @(Model.IsSterilized ? "text-success" : "text-danger")">
                                     @(Model.IsSterilized ? "STERILIZED" : "NOT STERILIZED")
                                 </h6>
                                 <small class="text-secondary-grey">
