@@ -31,9 +31,9 @@
                                 <tr>
                                     <td class="ps-4 py-3">
                                         <div class="d-flex align-items-center">
-                                            <img src="@(string.IsNullOrEmpty(app.User?.ProfilePicture) ? "/images/default-avatar.jpg" : app.User?.ProfilePicture)" 
-                                                 class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0" 
-                                                 style="width: 40px; height: 40px;" />
+                                            <img src="@(string.IsNullOrEmpty(app.User?.ProfilePicture) ? "/images/default-avatar.jpg" : app.User?.ProfilePicture)"
+                                                 class="rounded-circle me-3 flex-shrink-0"
+                                                 style="width: 40px; height: 40px; object-fit: cover;" />
                                             <div>
                                                 <strong class="text-primary-darkblue d-block mb-1">@app.User?.Name</strong>
                                                 <small class="text-muted">@app.User?.Email</small>
@@ -47,7 +47,7 @@
                                             @app.AnimalListing?.Name
                                         </a>
                                     </td>
-                                    <td class="text-secondary-grey">@app.SubmittedAt.ToString("MMM dd, yyyy")</td>
+                                    <td class="text-secondary-grey small">@app.SubmittedAt.ToString("MMM dd, yyyy")</td>
                                     <td>
                                         @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
                                         {
@@ -74,30 +74,20 @@
                                                 <i class="bi bi-chat-text me-1"></i> Message
                                             </button>
 
-                                            @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
+                                            @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending
+                                                                                    && app.AnimalListing?.Status != PetLink.Models.Enums.ListingStatus.Adopted)
                                             {
-                                                <form asp-action="Approve" method="post" class="m-0">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="id" value="@app.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-success rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" title="Approve">
-                                                        <i class="bi bi-check-lg"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success rounded-pill fw-bold shadow-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#confirmModal-@app.Id">
+                                                    <i class="bi bi-check-lg me-1"></i>
+                                                </button>
                                                 <form asp-action="Reject" method="post" class="m-0">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="id" value="@app.Id" />
                                                     <button type="submit" class="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" title="Reject">
                                                         <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                </form>
-                                            }
-                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
-                                            {
-                                                <form asp-action="Complete" method="post" class="m-0">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="id" value="@app.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-primary rounded-pill fw-bold shadow-sm">
-                                                        Complete Adoption
                                                     </button>
                                                 </form>
                                             }
@@ -124,6 +114,41 @@
                                                         <p class="mb-0 fst-italic">"@app.Message"</p>
                                                     </div>
                                                 }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal de confirmação de aceitação -->
+                                <div class="modal fade" id="confirmModal-@app.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content rounded-4 border-0 shadow">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title text-primary-darkblue fw-bold">
+                                                    <i class="bi bi-exclamation-circle me-2 text-warning"></i>Confirm Adoption
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body px-4 py-3 text-secondary-grey">
+                                                <p>Are you sure you want to accept <strong>@app.User?.Name</strong>'s request for <strong>@app.AnimalListing?.Name</strong>?</p>
+                                                <p class="mb-0 small text-muted">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    All other pending applications for this animal will be automatically rejected and applicants notified.
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0">
+                                                <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                                <form asp-controller="Applications"
+                                                      asp-action="Approve"
+                                                      asp-route-id="@app.Id"
+                                                      method="post" class="m-0">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-success rounded-pill fw-bold">
+                                                        <i class="bi bi-check-lg me-1"></i> Yes, I'm sure
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

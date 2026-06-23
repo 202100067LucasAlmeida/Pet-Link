@@ -1,0 +1,187 @@
+﻿@model IEnumerable<PetLink.Models.Application>
+
+@{
+    ViewData["Title"] = "Received Applications";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="text-primary-darkblue fw-bold mb-4">
+                <i class="bi bi-inbox-fill me-2"></i> Received Adoption Requests
+            </h2>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info border-0 rounded-4 text-center p-5"
+                     style="background-color: var(--petlink-light-bg);">
+                    <i class="bi bi-inbox mb-3 d-block" style="font-size: 3rem; color: var(--petlink-primary);"></i>
+                    <h4 class="fw-bold text-primary-darkblue">No requests received yet</h4>
+                    <p class="text-secondary-grey">When someone applies to adopt one of your animals, it will appear here.</p>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden"
+                     style="background-color: var(--petlink-card-bg);">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead style="background-color: var(--petlink-grey-bg);">
+                                <tr>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3 ps-4">Applicant</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Pet</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Submitted</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3">Status</th>
+                                    <th class="border-0 text-uppercase small fw-bold text-muted py-3 pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                                @foreach (var app in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(app.User?.ProfilePicture) ? "/images/default-avatar.jpg" : app.User.ProfilePicture)"
+                                                     class="rounded-circle me-3 flex-shrink-0"
+                                                     style="width: 40px; height: 40px; object-fit: cover;" />
+                                                <div>
+                                                    <strong class="text-primary-darkblue d-block">@app.User?.Name</strong>
+                                                    <small class="text-muted">@app.User?.Email</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a asp-controller="AnimalListings" asp-action="Details"
+                                               asp-route-id="@app.AnimalListingId" target="_blank"
+                                               class="text-decoration-none fw-bold text-primary">
+                                                @app.AnimalListing?.Name
+                                            </a>
+                                        </td>
+                                        <td class="text-secondary-grey small">
+                                            @app.SubmittedAt.ToString("MMM dd, yyyy")
+                                        </td>
+                                        <td>
+                                            @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-pending">Pending</span>
+                                            }
+                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Approved)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-confirmed">Accepted</span>
+                                            }
+                                            else if (app.Status == PetLink.Models.Enums.ApplicationStatus.Completed)
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-completed">Completed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold badge-status-rejected">Rejected</span>
+                                            }
+                                        </td>
+                                        <td class="pe-4">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @* Botão para ver a mensagem do candidato *@
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-secondary rounded-pill fw-bold"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#messageModal-@app.Id">
+                                                    <i class="bi bi-chat-text me-1"></i> Message
+                                                </button>
+
+                                                @* Só mostra "Accept" se o pedido ainda estiver pendente
+                                                   e o anúncio não estiver já adotado *@
+                                                @if (app.Status == PetLink.Models.Enums.ApplicationStatus.Pending
+                                                                                        && app.AnimalListing?.Status != PetLink.Models.Enums.ListingStatus.Adopted)
+                                                {
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-success rounded-pill fw-bold shadow-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal-@app.Id">
+                                                        <i class="bi bi-check-lg me-1"></i>
+                                                    </button>
+
+                                                    <form asp-action="Reject" method="post" class="m-0">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@app.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" title="Reject">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal com a mensagem do candidato -->
+                                    <div class="modal fade" id="messageModal-@app.Id" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content rounded-4 border-0 shadow">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title text-primary-darkblue fw-bold">
+                                                        Message from @app.User?.Name
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body p-4 text-secondary-grey">
+                                                    @if (string.IsNullOrEmpty(app.Message))
+                                                    {
+                                                        <em class="text-muted">No message provided.</em>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="p-3 rounded-3" style="background-color: var(--petlink-grey-bg);">
+                                                            <p class="mb-0 fst-italic">"@app.Message"</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal de confirmação de aceitação -->
+                                    <div class="modal fade" id="confirmModal-@app.Id" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content rounded-4 border-0 shadow">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title text-primary-darkblue fw-bold">
+                                                        <i class="bi bi-exclamation-circle me-2 text-warning"></i>Confirm Adoption
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body px-4 py-3 text-secondary-grey">
+                                                    <p>Are you sure you want to accept <strong>@app.User?.Name</strong>'s request for <strong>@app.AnimalListing?.Name</strong>?</p>
+                                                    <p class="mb-0 small text-muted">
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        All other pending applications for this animal will be automatically rejected and applicants notified.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer border-0 pt-0">
+                                                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+                                                        Cancel
+                                                    </button>
+                                                    <form asp-controller="Applications"
+                                                          asp-action="Approve"
+                                                          asp-route-id="@app.Id"
+                                                          method="post" class="m-0">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-success rounded-pill fw-bold">
+                                                            <i class="bi bi-check-lg me-1"></i> Yes, I'm sure
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

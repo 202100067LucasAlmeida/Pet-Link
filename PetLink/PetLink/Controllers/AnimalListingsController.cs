@@ -535,6 +535,25 @@ namespace PetLink
             return View(myListings);
         }
 
+        // GET: AnimalListings/MyReceivedApplications
+        [Authorize]
+        public async Task<IActionResult> MyReceivedApplications()
+        {
+            var userIdString = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
+            int currentUserId = int.Parse(userIdString);
+
+            // Buscar todos os pedidos feitos a anúncios que pertencem ao utilizador atual
+            var applications = await _context.Applications
+                .Include(a => a.User)
+                .Include(a => a.AnimalListing)
+                .Where(a => a.AnimalListing.TutorId == currentUserId)
+                .OrderByDescending(a => a.SubmittedAt)
+                .ToListAsync();
+
+            return View(applications);
+        }
+
         private bool AnimalListingExists(int id)
         {
             return _context.AnimalListings.Any(e => e.Id == id);
