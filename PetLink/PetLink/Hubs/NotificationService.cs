@@ -211,8 +211,8 @@ namespace PetLink.Hubs
         var notification = new ListingsNotification
         {
             UserId = organizerId,
-            Title = "New Event Interest! 🎯",
-            Message = $"User {userName} has shown interest in your event '{eventName}'.",
+            Title = "New Event Enrollment! 🎯",
+            Message = $"User {userName} has registered for your event '{eventName}'.",
             AnimalListingId = null,
             IsRead = false,
             CreatedAt = DateTime.Now
