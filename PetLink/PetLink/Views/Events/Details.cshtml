@@ -130,7 +130,6 @@
                         </div>
                     }
 
-                    !-- Botão de registar interesse (apenas para utilizadores autenticados que não são o organizador) -->
     @if (User.Identity.IsAuthenticated && Model.Status == EventStatus.Approved)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -140,7 +139,7 @@
         {
             <div class="mt-3">
                 <button class="btn btn-primary rounded-pill w-100 fw-bold" id="registerInterestBtn" data-event-id="@Model.Id">
-                    <i class="bi bi-calendar-plus me-2"></i>Register Interest
+                    <i class="bi bi-calendar-plus me-2"></i>Enroll
                 </button>
                 <div id="interestStatus" class="mt-2 text-center small" style="display: none;">
                     <i class="bi bi-check-circle-fill text-success me-1"></i>
