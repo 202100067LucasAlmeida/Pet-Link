@@ -102,14 +102,29 @@
                                 @Model.Description
                             </p>
 
-                            @if (!ViewBag.IsOwner)
+                            @if (ViewBag.IsOwner != null && ViewBag.IsOwner)
                             {
-                                @if (ViewBag.HasApplied != null && ViewBag.HasApplied)
+                                @* Tutor do anúncio *@
+                                <div class="alert alert-info border-0 rounded-4 text-center"
+                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                    <i class="bi bi-info-circle me-2"></i>This is your pet's listing.
+                                </div>
+                            }
+                            else if (User.IsInRole("User") || User.IsInRole("PetSitter"))
+                            {
+                                @* Pode adotar — User e PetSitter *@
+                                @if (Model.Status == PetLink.Models.Enums.ListingStatus.Adopted)
                                 {
                                     <div class="alert border-0 rounded-4 text-center"
                                          style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
-                                        <i class="bi bi-check me-2"></i> You have already applied to adopt
-                                        @Model.Name!
+                                        <i class="bi bi-heart-fill me-2"></i>@Model.Name has already found a home.
+                                    </div>
+                                }
+                                else if (ViewBag.HasApplied != null && ViewBag.HasApplied)
+                                {
+                                    <div class="alert border-0 rounded-4 text-center"
+                                         style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                        <i class="bi bi-check me-2"></i>You have already applied to adopt @Model.Name!
                                     </div>
                                 }
                                 else
@@ -118,20 +133,15 @@
                                             data-bs-toggle="modal" data-bs-target="#adoptModal">
                                         Adopt @Model.Name
                                     </button>
-
                                     <p class="mt-3 small text-secondary-grey">
                                         By clicking "Adopt", you agree to our
                                         <a href="#" class="text-decoration-none">Adoption Terms</a>.
                                     </p>
                                 }
                             }
-                            else
-                            {
-                                <div class="alert alert-info border-0 rounded-4 text-center"
-                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
-                                    <i class="bi bi-info-circle me-2"></i>This is your pet's listing.
-                                </div>
-                            }
+
+                            @* Admin e Shelter que não são donos: não vêem nada *@
+
                         </div>
                     </div>
                 </div>
@@ -213,7 +223,7 @@
                         </div>
                     </div>
 
-                    <!-- In Details.cshtml, add this after the health information display -->
+
                     @if (User.IsInRole("Admin") && Model.HealthDocuments.Any())
                     {
                         <div class="card mt-4">
