@@ -13,7 +13,9 @@
             </div>
         
             <div class="col-lg-9">
-                <h2 class="text-primary-blue mb-4">My Favorites</h2>
+                <h2 class="text-primary-blue fw-bold mb-0">
+                    <i class="bi bi-heart-fill me-2"></i>My Favorites
+                </h2>
 
                 <!-- SECÇÃO: ANIMAIS FAVORITOS -->
                 <div class="mb-5">
@@ -24,7 +26,7 @@
                     @if (Model.FavoritePets == null || !Model.FavoritePets.Any())
                     {
                         <div class="text-center py-5 bg-primary-light rounded-3">
-                            <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
+                            <i class="bi bi-heart" style="font-size: 3rem; color: var(--petlink-muted-icon);"></i>
                             <p class="text-muted mt-2">No favorite pets yet</p>
                             <a asp-controller="AnimalListings" asp-action="Index"
                                    class="btn btn-sm btn-primary rounded-pill">
@@ -81,7 +83,7 @@
                     @if (Model.FavoritePetsitters == null || !Model.FavoritePetsitters.Any())
                     {
                         <div class="text-center py-5 bg-primary-light rounded-3">
-                            <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
+                            <i class="bi bi-heart" style="font-size: 3rem; color: var(--petlink-muted-icon);"></i>
                             <p class="text-muted mt-2">No favorite petsitters yet</p>
                             <a asp-controller="Petsitter" asp-action="Index" class="btn btn-sm btn-primary rounded-pill">
                                 Browse Petsitters

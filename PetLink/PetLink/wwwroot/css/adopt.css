@@ -1,5 +1,4 @@
-﻿/* MODAL ADOÇÃO DINÂMICO */
-.adopt-modal-overlay {
+﻿.adopt-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -14,9 +13,7 @@
 
 .adopt-modal-container {
     background-color: var(--petlink-card-bg);
-    /* Dinâmico */
     color: var(--petlink-dark);
-    /* Dinâmico */
     border-radius: 20px;
     max-width: 500px;
     width: 90%;
@@ -47,7 +44,7 @@
 
 .adopt-modal-header h3 {
     margin: 0;
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
     font-weight: bold;
     font-family: var(--font-primary);
 }
@@ -109,7 +106,7 @@
 
 .adopt-confirm-btn {
     background-color: var(--petlink-primary);
-    color: var(--petlink-grey-bg);
+    color: #ffffff;
     padding: 10px 20px;
     border: none;
     border-radius: 25px;

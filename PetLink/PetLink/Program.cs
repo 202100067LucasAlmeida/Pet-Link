@@ -19,7 +19,7 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie(options =>
 {
     options.LoginPath = "/Profile/LoginForm";
-    options.AccessDeniedPath = "/Profile/AccessDenied";
+    options.AccessDeniedPath = "/Errors/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
 }).AddGoogle(options =>
 {
@@ -33,16 +33,20 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IChatbotService, ChatbotService>();
+builder.Services.AddHostedService<EventReminderService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Errors/ServerFault");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithReExecute("/Errors/Status", "?code={0}");
 
 using (var scope = app.Services.CreateScope())
 {

@@ -35,6 +35,13 @@ namespace PetLink.Controllers
 
             // Precisamos de ir buscar o animal para saber quem é o Tutor (Destinatário da Mensagem) e o Nome
             var animal = await _context.AnimalListings.FindAsync(AnimalListingId);
+
+            if (animal.Status == ListingStatus.Adopted)
+            {
+                TempData["Error"] = "This animal has already been adopted and is no longer available.";
+                return RedirectToAction("Details", "AnimalListings", new { id = AnimalListingId });
+            }
+
             if (animal == null) return NotFound();
 
             // 1. Evitar que a pessoa se candidate duas vezes ao mesmo animal
@@ -94,19 +101,83 @@ namespace PetLink.Controllers
 
         // POST: Applications/Approve/5
         [HttpPost]
-        [Authorize(Roles = "Admin,Shelter")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
         {
-            var application = await _context.Applications.FindAsync(id);
-            if (application == null) return NotFound();
+            var userIdString = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdString)) return Challenge();
+            int currentUserId = int.Parse(userIdString);
 
-            application.Status = ApplicationStatus.Approved;
-            application.UpdatedAt = DateTime.Now;
+            // Carregar a candidatura aceite com o anúncio associado
+            var acceptedApp = await _context.Applications
+                .Include(a => a.AnimalListing)
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (acceptedApp == null) return NotFound();
+
+            // Segurança: só o dono do anúncio pode aceitar
+            if (acceptedApp.AnimalListing.TutorId != currentUserId)
+                return Forbid();
+
+            // Só faz sentido aceitar candidaturas pendentes
+            if (acceptedApp.Status != ApplicationStatus.Pending)
+            {
+                TempData["Error"] = "This application is no longer pending.";
+                return RedirectToAction("MyListings", "AnimalListings");
+            }
+
+            var listingId = acceptedApp.AnimalListingId;
+
+            // 1. Aceitar esta candidatura
+            acceptedApp.Status = ApplicationStatus.Approved;
+            acceptedApp.UpdatedAt = DateTime.Now;
+
+            // 2. Marcar o anúncio como adotado
+            acceptedApp.AnimalListing.Status = ListingStatus.Adopted;
+
+            // 3. Rejeitar e notificar todos os outros candidatos pendentes
+            var otherPendingApps = await _context.Applications
+                .Include(a => a.User)
+                .Where(a => a.AnimalListingId == listingId
+                         && a.Id != id
+                         && a.Status == ApplicationStatus.Pending)
+                .ToListAsync();
+
+            foreach (var app in otherPendingApps)
+            {
+                app.Status = ApplicationStatus.Rejected;
+                app.UpdatedAt = DateTime.Now;
+
+                // Notificação para cada candidato rejeitado
+                _context.ListingsNotifications.Add(new ListingsNotification
+                {
+                    UserId = app.UserId,
+                    Title = "Adoption Update",
+                    Message = $"Unfortunately, {acceptedApp.AnimalListing.Name} has already been adopted by another family. Thank you for your interest!",
+                    AnimalListingId = listingId,
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            // 4. Notificação para o candidato aceite
+            _context.ListingsNotifications.Add(new ListingsNotification
+            {
+                UserId = acceptedApp.UserId,
+                Title = "Adoption Accepted! 🎉",
+                Message = $"Congratulations! Your adoption request for {acceptedApp.AnimalListing.Name} has been accepted. The tutor will be in touch soon.",
+                AnimalListingId = listingId,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            });
+
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Application approved!";
-            return RedirectToAction(nameof(Manage));
+            TempData["Success"] = $"Adoption accepted! All other pending applications for {acceptedApp.AnimalListing.Name} have been rejected and applicants notified.";
+            return RedirectToAction("MyReceivedApplications", "AnimalListings");
         }
+
 
         // POST: Applications/Complete/5
         [HttpPost]

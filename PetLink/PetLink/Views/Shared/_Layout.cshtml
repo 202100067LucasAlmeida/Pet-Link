@@ -26,7 +26,7 @@
     <script>
         // Verifica a preferência guardada antes de renderizar o body
         if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
         }
     </script>
 </head>
@@ -36,7 +36,7 @@
         <nav class="navbar navbar-expand-lg custom-navbar">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center text-primary-blue fw-bold fs-4" asp-controller="Home"
-                       asp-action="Index">
+                   asp-action="Index">
                     <img src="~/images/logo.png" alt="PetLink Logo" height="40"
                          class="d-inline-block align-text-top me-2" />PETLINK
                 </a>
@@ -56,7 +56,10 @@
                         <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Petsitter"
                                                          asp-action="Index">Petsitting</a>
                         </li>
-                        <li class="nav-item me-4"><a class="nav-link text-primary-blue" href="#">Resources</a></li>
+                        <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Events"
+                                                         asp-action="Index">Events</a>
+                        </li>
+                        <li class="nav-item me-4"><a class="nav-link text-primary-blue" asp-controller="Resources" asp-action="Index">Resources</a></li>
 
                         <li class="nav-item me-4">
                             <a class="nav-link text-primary-blue" id="theme-toggle" style="cursor: pointer;">
@@ -68,7 +71,7 @@
                         {
                             <li class="nav-item me-3">
                                 <a class="nav-link text-highlight-darkblue fw-bold" asp-controller="Profile"
-                                       asp-action="MyProfile">
+                                   asp-action="MyProfile">
                                     <i class="bi bi-person-circle me-1"></i> Hey, @User.Identity.Name.Split(' ')[0]!
                                 </a>
                             </li>
@@ -82,9 +85,8 @@
                             <li class="nav-item me-3"><a class="nav-link text-primary-blue" asp-controller="Profile"
                                                              asp-action="LoginForm">Login</a>
                             </li>
-                            <li class="nav-item"><a
-                                class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-primary-light"
-                                asp-controller="Profile" asp-action="SignUpForm">Sign Up</a>
+                            <li class="nav-item"><a class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm"
+                                                        asp-controller="Profile" asp-action="SignUpForm">Sign Up</a>
                             </li>
                         }
                     </ul>
@@ -100,10 +102,10 @@
     <footer class="pt-5 pb-3" style="background-color: var(--petlink-grey-bg); color: var(--petlink-dark);">
         <div class="container">
             <div class="row g-4">
-        
+
                 <div class="col-lg-3 col-md-6">
                     <a class="navbar-brand fw-bold fs-4 text-primary-blue d-block mb-3" asp-controller="Home"
-                           asp-action="Index">
+                       asp-action="Index">
                         <img src="~/images/logo.png" alt="PetLink" height="30" class="me-2" />PETLINK
                     </a>
                     <p class="small opacity-75">
@@ -182,8 +184,8 @@
                     <div class="bg-primary bg-opacity-10 p-3 rounded-4">
                         <p class="extra-small text-primary-blue fw-bold mb-2">NEWSLETTER</p>
                         <div class="input-group input-group-sm">
-                            <input type="email" class="form-control border-0 bg-white" placeholder="Your email"
-                                   style="color: var(--petlink-primary-blue);" />
+                            <input type="email" class="form-control border-0" placeholder="Your email"
+                                   style="background-color: var(--petlink-card-bg); color: var(--petlink-dark);" />
                             <button class="btn btn-primary" type="button"><i class="bi bi-send"></i></button>
                         </div>
                     </div>
@@ -209,9 +211,12 @@
         </div>
     </footer>
 
+    @await Html.PartialAsync("_ChatbotWidget")
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/chatbot.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

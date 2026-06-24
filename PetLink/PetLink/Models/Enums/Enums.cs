@@ -16,8 +16,7 @@ namespace PetLink.Models.Enums
 
         Puppy,
         Adult,
-        Senior,
-        Unkown
+        Senior
     }
 
     public enum ServiceType
@@ -65,5 +64,28 @@ namespace PetLink.Models.Enums
         Vaccine,      // Vacina
         Deworming,    // Desparasitação 
         Sterilization // Esterilização
+    }
+
+    public enum BookingStatus
+    {
+        Pending,
+        Confirmed,
+        Rejected,
+        Completed,
+        Cancelled
+    }
+
+    public enum ResourceType
+    {
+        Article,
+        Video
+    }
+
+    public enum ResourceCategory
+    {
+        Health,
+        Training,
+        Nutrition,
+        General
     }
 }

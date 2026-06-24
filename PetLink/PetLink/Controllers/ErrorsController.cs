@@ -1,30 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PetLink.Data;
 
 namespace PetLink.Controllers
 {
     public class ErrorsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public ErrorsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IActionResult> AccessDenied()
+        [Route("Errors/ServerFault")]
+        public IActionResult ServerFault()
         {
             return View();
         }
 
-        public async Task<IActionResult> FileMissing()
+        [Route("Errors/AccessDenied")]
+        public IActionResult AccessDenied()
         {
             return View();
         }
 
-        public async Task<IActionResult> ServerFault()
+        [Route("Errors/Status")]
+        public IActionResult Status(int code)
         {
-            return View();
+            if (code == 404)
+            {
+                return View("FileMissing");
+            }
+
+            return View("ServerFault");
         }
     }
 }

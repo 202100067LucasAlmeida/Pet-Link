@@ -1,0 +1,129 @@
+@model IEnumerable<PetLink.Models.Resource>
+@using PetLink.Models.Enums
+
+@{
+    ViewData["Title"] = "Educational Resources";
+}
+
+<section class="breadcrumb-section py-3" style="background-color: var(--petlink-card-bg); border-bottom: 1px solid var(--petlink-border);">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-highlight-darkblue">HOME</a></li>
+                <li class="breadcrumb-item active text-highlight-blue" aria-current="page">RESOURCES</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-3 mb-4 mb-lg-0">
+            <div class="card filter-card rounded-4 shadow-sm p-4" style="background-color: var(--petlink-card-bg); border: 1px solid var(--petlink-border);">
+                <h4 class="fw-bold text-primary-darkblue mb-3">Filters</h4>
+
+                <form method="get" asp-action="Index" id="filterForm">
+                    <div class="mb-4">
+                        <label class="filter-section-title"><i class="bi bi-search me-2"></i> SEARCH</label>
+                        <input type="text" name="search" class="form-control rounded-3" placeholder="Search resources..." value="@ViewBag.CurrentSearch" style="background-color: var(--petlink-grey-bg);">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="filter-section-title"><i class="bi bi-tag me-2"></i> SPECIES</label>
+                        <select name="species" class="form-select rounded-3" style="background-color: var(--petlink-grey-bg);">
+                            <option value="">All Species</option>
+                            @foreach (Species s in Enum.GetValues(typeof(Species)))
+                            {
+                                <option value="@s" selected="@(ViewBag.CurrentSpecies != null && (Species)ViewBag.CurrentSpecies == s)">@s</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="filter-section-title"><i class="bi bi-bookmark me-2"></i> CATEGORY</label>
+                        <select name="category" class="form-select rounded-3" style="background-color: var(--petlink-grey-bg);">
+                            <option value="">All Categories</option>
+                            @foreach (ResourceCategory c in Enum.GetValues(typeof(ResourceCategory)))
+                            {
+                                <option value="@c" selected="@(ViewBag.CurrentCategory != null && (ResourceCategory)ViewBag.CurrentCategory == c)">@c</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">Apply Filters</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill py-2 mt-2">Reset</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary-darkblue mb-1">Resources</h1>
+                    <p class="text-muted">@Model.Count() resources found</p>
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5 bg-primary-light rounded-4">
+                    <i class="bi bi-book fs-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">No resources found</h4>
+                    <p class="text-muted">Try adjusting your filters or check back later for new resources.</p>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var resource in Model)
+                    {
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 hover-shadow transition-all" style="background-color: var(--petlink-card-bg);">
+                                @if (!string.IsNullOrEmpty(resource.MediaUrl))
+                                {
+                                    <div class="position-relative" style="height: 200px; overflow: hidden;">
+                                        @if (resource.Type == ResourceType.Video)
+                                        {
+                                            <img src="@resource.MediaUrl" alt="@resource.Title" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<div style=\'height:200px;display:flex;align-items:center;justify-content:center;background:var(--petlink-grey-bg);\'><i class=\'bi bi-play-circle-fill\' style=\'font-size:4rem;color:var(--petlink-primary);\'></i></div>'">
+                                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.3);">
+                                                <i class="bi bi-play-circle-fill" style="font-size: 4rem; color: white; opacity: 0.9;"></i>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <img src="@resource.MediaUrl" alt="@resource.Title" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<div style=\'height:200px;display:flex;align-items:center;justify-content:center;background:var(--petlink-grey-bg);\'><i class=\'bi bi-file-text\' style=\'font-size:4rem;color:var(--petlink-primary);\'></i></div>'">
+                                        }
+                                        <span class="badge bg-primary position-absolute top-0 end-0 m-3 rounded-pill">@resource.Type</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="position-relative" style="height: 200px; overflow: hidden; background: var(--petlink-grey-bg); display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi @(resource.Type == ResourceType.Video ? "bi-play-circle-fill" : "bi-file-text")" style="font-size: 4rem; color: var(--petlink-primary);"></i>
+                                        <span class="badge bg-primary position-absolute top-0 end-0 m-3 rounded-pill">@resource.Type</span>
+                                    </div>
+                                }
+                                <div class="card-body">
+                                    <div class="d-flex gap-2 mb-2">
+                                        <span class="badge bg-info rounded-pill">@resource.Species</span>
+                                        <span class="badge bg-secondary rounded-pill">@resource.Category</span>
+                                    </div>
+                                    <h5 class="fw-bold text-primary-darkblue mb-2">@resource.Title</h5>
+                                    <p class="small mb-3" style="color: var(--petlink-dark); opacity: 0.8;">
+                                        @(!string.IsNullOrEmpty(resource.Content) && resource.Content.Length > 120 ? resource.Content.Substring(0, 120) + "..." : resource.Content ?? "")
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">@resource.CreatedAt.ToString("dd MMM yyyy")</small>
+                                        <a asp-action="Details" asp-route-id="@resource.Id" class="btn btn-outline-primary rounded-pill btn-sm">
+                                            @(resource.Type == ResourceType.Video ? "Watch Video" : "Read More")
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

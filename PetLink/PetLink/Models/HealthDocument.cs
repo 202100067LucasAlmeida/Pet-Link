@@ -27,5 +27,15 @@ namespace PetLink.Models
 
         [ForeignKey("AnimalListingId")]
         public AnimalListing AnimalListing { get; set; }
+
+        //verificações da saúde
+        public bool IsVerified { get; set; } = false;
+
+        public DateTime? VerifiedAt { get; set; }
+
+        public int? VerifiedByAdminId { get; set; }
+
+        [ForeignKey("VerifiedByAdminId")]
+        public User VerifiedByAdmin { get; set; }
     }
 }

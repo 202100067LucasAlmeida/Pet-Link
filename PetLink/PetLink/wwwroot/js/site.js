@@ -158,7 +158,7 @@ function updatePasswordRequirement(req, isValid) {
     var text = $('#' + req + 'Text');
     if (isValid) {
         icon.removeClass('bi-circle').addClass('bi-check-circle-fill text-success');
-        text.css('color', '#28a745');
+        text.css('color', 'var(--petlink-success)');
     } else {
         icon.removeClass('bi-check-circle-fill text-success').addClass('bi-circle');
         text.css('color', '');

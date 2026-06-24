@@ -33,9 +33,13 @@
                                 <select name="species" class="form-select text-highlight-blue border-0"
                                         style="background-color: var(--petlink-grey-bg);">
                                     <option value="">All Animals</option>
-                                    <option value="Dog">Dogs</option>
-                                    <option value="Cat">Cats</option>
-                                    <option value="Bird">Birds</option>
+                                    <option value="@Species.Dog">Dogs</option>
+                                    <option value="@Species.Cat">Cats</option>
+                                    <option value="@Species.Rodent">Rodents</option>
+                                    <option value="@Species.Bird">Birds</option>
+                                    <option value="@Species.Reptile">Reptiles</option>
+                                    <option value="@Species.Fish">Fish</option>
+                                    <option value="@Species.Other">Other</option>
                                 </select>
                             </div>
 
@@ -45,8 +49,8 @@
                                         style="background-color: var(--petlink-grey-bg);">
                                     <option value="">Any Age</option>
                                     <option value="@Age.Puppy">Puppy (0-1 yr)</option>
-                                    <option value="@Age.Adult">Adult (1-3 yrs)</option>
-                                    <option value="@Age.Senior">Senior (3-7 yrs)</option>
+                                    <option value="@Age.Adult">Adult (1-7 yrs)</option>
+                                    <option value="@Age.Senior">Senior (7+ yrs)</option>
                                 </select>
                             </div>
 
@@ -170,9 +174,7 @@
         species = p.Species.ToString(),
         location = p.Location,
         ageMonths = p.AgeMonths,
-        imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl,
-        lat = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLatitude()) ? p.Tutor.GetLatitude() : "38.7223",
-        lng = p.Tutor != null && !string.IsNullOrEmpty(p.Tutor.GetLongitude()) ? p.Tutor.GetLongitude() : "-9.1393"
+        imageUrl = string.IsNullOrEmpty(p.ImageUrl) ? "/images/default-pet.jpg" : p.ImageUrl
     })));
 
     var petsByLocation = {};
@@ -246,7 +248,7 @@
 
                 var userMarker = L.circleMarker([userLat, userLng], {
                     radius: 8,
-                    fillColor: "#087CD9",
+                    fillColor: "var(--petlink-map-accent)",
                     color: "#fff",
                     weight: 2,
                     opacity: 1,
@@ -254,8 +256,8 @@
                 }).addTo(map).bindPopup("<b style='color: var(--petlink-primary-darkblue);'>You are here!</b>").openPopup();
 
                 L.circle([userLat, userLng], {
-                    color: '#087CD9',
-                    fillColor: '#087CD9',
+                    color: 'var(--petlink-map-accent)',
+                    fillColor: 'var(--petlink-map-accent)',
                     fillOpacity: 0.1,
                     radius: 15000 
                 }).addTo(map);

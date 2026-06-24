@@ -1,3 +1,4 @@
+@using PetLink.Models.Enums
 @model PetLink.Models.AnimalListing
 
 @{
@@ -101,6 +102,7 @@
                         <!-- ========== HEALTH INFORMATION SECTION ========== -->
                         <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2 mt-4"
                             style="border-color: var(--petlink-border) !important;">Health Information</h5>
+
                         <div class="d-flex flex-wrap gap-4 mb-4 p-3 rounded-3"
                              style="background-color: var(--petlink-grey-bg); border: 1px solid var(--petlink-border);">
                             <div class="form-check form-switch fs-6">
@@ -121,15 +123,6 @@
                                     <i class="bi bi-scissors"></i> Sterilized
                                 </label>
                             </div>
-
-                            <!-- TESTE DE VER A IMAGEM (copiei da foto main)-->
-                            <div class="col-md-3 text-center">
-                                <img src="@(string.IsNullOrEmpty(Model.VaccinationProofUrl) ? "no vaccination" : Model.VaccinationProofUrl)"
-                                     class="img-thumbnail rounded-3 shadow-sm mb-2"
-                                     style="max-height: 120px; width: 100%; object-fit: cover; background-color: var(--petlink-card-bg); border-color: var(--petlink-border);"
-                                     onerror="this.src='/images/default-pet.jpg'" />
-                            </div>
-
                         </div>
 
                         <div id="healthError" class="text-danger small mb-3" style="display: none;">
@@ -141,6 +134,130 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <h5 class="fw-bold text-danger mb-3 border-bottom pb-2 mt-4">Admin Controls</h5>
+
+                            <h5 class="fw-bold text-primary-darkblue mb-3 border-bottom pb-2 mt-4"
+                                style="border-color: var(--petlink-border) !important;">
+                                <i class="bi bi-file-medical me-2"></i> Health Documents Verification
+                            </h5>
+
+                            <div class="bg-light p-3 rounded-3 mb-3">
+                                <div class="row">
+                                    <!-- Vaccination Documents -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-success text-white">
+                                                <i class="bi bi-shield-check me-1"></i> Vaccination Documents
+                                            </div>
+                                            <div class="card-body">
+                                                @if (Model.HealthDocuments.Any(d => d.Type == HealthDocumentType.Vaccine))
+                                                {
+                                                    var vaccineDocs = Model.HealthDocuments.Where(d => d.Type == HealthDocumentType.Vaccine).ToList();
+                                                    foreach (var doc in vaccineDocs)
+                                                    {
+                                                        <div class="mb-2">
+                                                            <a href="@doc.FilePath" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-1">
+                                                                <i class="bi bi-file-earmark-pdf"></i> View Document
+                                                            </a>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       id="verifyVaccine_@doc.Id"
+                                                                       name="VerifiedDocuments" value="@doc.Id"
+                                                                       @(doc.IsVerified ? "checked" : "") />
+                                                                <label class="form-check-label small" for="verifyVaccine_@doc.Id">
+                                                                    Mark as Verified
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted small mb-0">No vaccination documents uploaded</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Deworming Documents -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-info text-white">
+                                                <i class="bi bi-capsule me-1"></i> Deworming Documents
+                                            </div>
+                                            <div class="card-body">
+                                                @if (Model.HealthDocuments.Any(d => d.Type == HealthDocumentType.Deworming))
+                                                {
+                                                    var dewormingDocs = Model.HealthDocuments.Where(d => d.Type == HealthDocumentType.Deworming).ToList();
+                                                    foreach (var doc in dewormingDocs)
+                                                    {
+                                                        <div class="mb-2">
+                                                            <a href="@doc.FilePath" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-1">
+                                                                <i class="bi bi-file-earmark-pdf"></i> View Document
+                                                            </a>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       id="verifyDeworming_@doc.Id"
+                                                                       name="VerifiedDocuments" value="@doc.Id"
+                                                                       @(doc.IsVerified ? "checked" : "") />
+                                                                <label class="form-check-label small" for="verifyDeworming_@doc.Id">
+                                                                    Mark as Verified
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted small mb-0">No deworming documents uploaded</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sterilization Documents -->
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-warning text-dark">
+                                                <i class="bi bi-scissors me-1"></i> Sterilization Documents
+                                            </div>
+                                            <div class="card-body">
+                                                @if (Model.HealthDocuments.Any(d => d.Type == HealthDocumentType.Sterilization))
+                                                {
+                                                    var sterilizationDocs = Model.HealthDocuments.Where(d => d.Type == HealthDocumentType.Sterilization).ToList();
+                                                    foreach (var doc in sterilizationDocs)
+                                                    {
+                                                        <div class="mb-2">
+                                                            <a href="@doc.FilePath" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-1">
+                                                                <i class="bi bi-file-earmark-pdf"></i> View Document
+                                                            </a>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                       id="verifySterilization_@doc.Id"
+                                                                       name="VerifiedDocuments" value="@doc.Id"
+                                                                       @(doc.IsVerified ? "checked" : "") />
+                                                                <label class="form-check-label small" for="verifySterilization_@doc.Id">
+                                                                    Mark as Verified
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted small mb-0">No sterilization documents uploaded</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Verification Status Summary -->
+                                <div class="alert alert-secondary mt-3">
+                                    <strong>Verification Summary:</strong>
+                                    <span class="badge bg-success ms-2">@Model.HealthDocuments.Count(d => d.IsVerified) / @Model.HealthDocuments.Count documents verified</span>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Status" class="form-label fw-semibold text-primary-darkblue">Status</label>

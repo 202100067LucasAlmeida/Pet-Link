@@ -1,99 +1,149 @@
 ﻿@using PetLink.Models.Enums
 @{
     ViewData["Title"] = "User Side Bar";
+
     var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    bool isAdmin = userRole == UserRole.Admin.ToString();
+    bool isShelter = userRole == UserRole.Shelter.ToString();
+    bool isPetSitter = userRole == UserRole.PetSitter.ToString();
+    bool isUser = userRole == UserRole.User.ToString();
 }
 
 <div class="sidebar-wrapper" style="padding-top: 20px;">
-    
     <div class="list-group list-group-flush mb-3 sidebar-profile">
-        @* Título da Secção Principal (Dashboard/Profile) *@
+
+
+        @* User Dashboard - todos *@
         <p class="small mb-2 px-3 fw-bold opacity-50 text-primary-darkblue"
-               style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+           style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
             User Dashboard
         </p>
 
         <a asp-controller="Profile" asp-action="MyProfile"
-               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyProfile" && currentController == "Profile" ? "active" : "")">
-            <i class="bi @(currentAction == "MyProfile" ? "bi-person-circle" : "bi-person-circle") me-2"></i>My Profile
+           class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyProfile" && currentController == "Profile" ? "active" : "")">
+            <i class="bi bi-person-circle me-2"></i>My Profile
         </a>
 
-        @if (userRole == UserRole.Admin.ToString())
+        @* ── ADMIN ── *@
+        @if (isAdmin)
         {
             <p class="small mb-2 mt-4 px-3 fw-bold opacity-50 text-primary-darkblue"
-                   style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+               style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
                 Admin Controls
             </p>
-            
+
             <a asp-controller="Users" asp-action="Index"
-                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Users" ? "active" : "")">
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Users" ? "active" : "")">
                 <i class="bi bi-people-fill me-2"></i>Manage Users
             </a>
-            
             <a asp-controller="AnimalListings" asp-action="Manage"
-                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "Manage" ? "active" : "")">
-                <i class="bi bi-card-list me-2"></i>Manage Listings
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-postcard-fill me-2"></i>Manage Listings
+            </a>
+            <a asp-controller="Applications" asp-action="Manage"
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Applications" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-clipboard-check-fill me-2"></i>Manage Applications
+            </a>
+            <a asp-controller="Events" asp-action="Manage"
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Events" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-calendar-check me-2"></i>Manage Events
+            </a>
+            <a asp-controller="Resources" asp-action="Manage"
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Resources" && currentAction == "Manage" ? "active" : "")">
+                <i class="bi bi-book me-2"></i>Manage Resources
             </a>
         }
 
+        @* ── ACTIVIDADE (todos) ── *@
         <p class="small mb-2 mt-4 px-3 fw-bold opacity-50 text-primary-darkblue"
-               style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+           style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
             Activity
         </p>
 
-        @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString() || userRole ==
-                                UserRole.Shelter.ToString())
+
+        @* ── ACTIVIDADE (todos exceto Admin) ── *@       
+        @if (isUser || isPetSitter || isShelter)
         {
+            @* My Listings — todos podem ter anúncios *@
             <a asp-controller="AnimalListings" asp-action="MyListings"
-                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyListings" ? "active" : "")">
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyListings" ? "active" : "")">
                 <i class="bi bi-list-stars me-2"></i>My Listings
             </a>
-        }
-        
-        @if (userRole == UserRole.Shelter.ToString() || userRole == UserRole.Admin.ToString())
-        {
-            <a asp-controller="Applications" asp-action="Manage"
-                   class="list-group-item list-group-item-action mb-1 rounded-pill">
-                <i class="bi bi-file-earmark-ruled-fill me-2"></i>Applications
+
+            @* Received Applications — pedidos recebidos nos seus anúncios *@
+            <a asp-controller="AnimalListings" asp-action="MyReceivedApplications"
+               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyReceivedApplications" ? "active" : "")">
+                <i class="bi bi-file-earmark-check-fill me-2"></i>My Listings Applications
             </a>
-        }
-        
-        @if (userRole == UserRole.User.ToString() || userRole == UserRole.PetSitter.ToString())
-        {
-            <a asp-controller="Favorites" asp-action="Index"
+
+            @* My Applications — candidaturas enviadas (User e PetSitter podem adotar; Shelter normalmente não) *@
+            @if (isUser || isPetSitter)
+            {
+                <a asp-controller="AnimalListings" asp-action="MyApplications"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "MyApplications" ? "active" : "")">
+                    <i class="bi bi-person-lines-fill me-2"></i>My Applications
+                </a>
+            }
+
+            @* Shelter: criação e gestão de eventos *@
+            @if (isShelter)
+            {
+                <a asp-controller="Events" asp-action="Create"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Events" && currentAction == "Create" ? "active" : "")">
+                    <i class="bi bi-calendar-plus me-2"></i>Create Event
+                </a>
+                <a asp-controller="Events" asp-action="MyEvents"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Events" && currentAction == "MyEvents" ? "active" : "")">
+                    <i class="bi bi-calendar-event me-2"></i>My Events
+                </a>
+            }
+
+            @* PetSitter: bookings recebidos *@
+            @if (isPetSitter)
+            {
+                <a asp-controller="Bookings" asp-action="Manage"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Bookings" && currentAction == "Manage" ? "active" : "")">
+                    <i class="bi bi-calendar-check-fill me-2"></i>Booking Requests
+                </a>
+            }
+
+            @* Favoritos e Bookings feitos — User e PetSitter *@
+            @if (isUser || isPetSitter)
+            {
+                <a asp-controller="Bookings" asp-action="MyBookings"
+                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Bookings" && currentAction == "MyBookings" ? "active" : "")">
+                    <i class="bi bi-journal-bookmark-fill me-2"></i>My Bookings
+                </a>
+                <a asp-controller="Favorites" asp-action="Index"
                    class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Favorites" ? "active" : "")">
-                <i class="bi bi-heart-fill me-2"></i>My Favorites
-            </a>
+                    <i class="bi bi-heart-fill me-2"></i>My Favorites
+                </a>
+            }
         }
 
-        @if (userRole == UserRole.User.ToString())
-        {
-            <a asp-controller="AnimalListings" asp-action="MyApplications"
-                   class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "AnimalListings" && currentAction == "MyApplications" ? "active" : "")">
-                <i class="bi bi-file-earmark-text-fill me-2"></i>My Applications
-            </a>
-        }
-
+        @* Messages — todos *@
         <a asp-controller="Messages" asp-action="Index"
-               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Messages" ? "active" : "")">
+           class="list-group-item list-group-item-action mb-1 rounded-pill @(currentController == "Messages" ? "active" : "")">
             <i class="bi bi-chat-left-dots-fill me-2"></i>Messages
         </a>
     </div>
 
-    @* Secção de Suporte (IDÊNTICA AO HELP CENTER) *@
+    @* Suporte - todos *@
     <p class="small mt-4 mb-2 px-3 fw-bold opacity-50 text-primary-darkblue"
-           style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
+       style="letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase;">
         Support
     </p>
+
     <div class="list-group list-group-flush sidebar-profile">
         <a asp-controller="Profile" asp-action="HelpCenter"
-               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "HelpCenter" ? "active" : "")">
+           class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "HelpCenter" ? "active" : "")">
             <i class="bi bi-question-circle-fill me-2"></i>Help Center
         </a>
         <a asp-controller="Profile" asp-action="AccountSettings"
-               class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "AccountSettings" ? "active" : "")">
+           class="list-group-item list-group-item-action mb-1 rounded-pill @(currentAction == "AccountSettings" ? "active" : "")">
             <i class="bi bi-gear-fill me-2"></i>Account Settings
         </a>
     </div>

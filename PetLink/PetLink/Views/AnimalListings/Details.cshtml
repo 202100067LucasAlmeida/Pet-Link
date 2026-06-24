@@ -102,14 +102,29 @@
                                 @Model.Description
                             </p>
 
-                            @if (!ViewBag.IsOwner)
+                            @if (ViewBag.IsOwner != null && ViewBag.IsOwner)
                             {
-                                @if (ViewBag.HasApplied != null && ViewBag.HasApplied)
+                                @* Tutor do anúncio *@
+                                <div class="alert alert-info border-0 rounded-4 text-center"
+                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                    <i class="bi bi-info-circle me-2"></i>This is your pet's listing.
+                                </div>
+                            }
+                            else if (User.IsInRole("User") || User.IsInRole("PetSitter"))
+                            {
+                                @* Pode adotar — User e PetSitter *@
+                                @if (Model.Status == PetLink.Models.Enums.ListingStatus.Adopted)
                                 {
                                     <div class="alert border-0 rounded-4 text-center"
                                          style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
-                                        <i class="bi bi-check me-2"></i> You have already applied to adopt
-                                        @Model.Name!
+                                        <i class="bi bi-heart-fill me-2"></i>@Model.Name has already found a home.
+                                    </div>
+                                }
+                                else if (ViewBag.HasApplied != null && ViewBag.HasApplied)
+                                {
+                                    <div class="alert border-0 rounded-4 text-center"
+                                         style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
+                                        <i class="bi bi-check me-2"></i>You have already applied to adopt @Model.Name!
                                     </div>
                                 }
                                 else
@@ -118,20 +133,15 @@
                                             data-bs-toggle="modal" data-bs-target="#adoptModal">
                                         Adopt @Model.Name
                                     </button>
-
                                     <p class="mt-3 small text-secondary-grey">
                                         By clicking "Adopt", you agree to our
                                         <a href="#" class="text-decoration-none">Adoption Terms</a>.
                                     </p>
                                 }
                             }
-                            else
-                            {
-                                <div class="alert alert-info border-0 rounded-4 text-center"
-                                     style="background-color: var(--petlink-light-bg); color: var(--petlink-primary);">
-                                    <i class="bi bi-info-circle me-2"></i>This is your pet's listing.
-                                </div>
-                            }
+
+                            @* Admin e Shelter que não são donos: não vêem nada *@
+
                         </div>
                     </div>
                 </div>
@@ -200,10 +210,10 @@
                                     }
                                     else
                                     {
-                                        <i class="bi bi-info-circle text-secondary" style="font-size: 2rem;"></i>
+                                        <i class="bi bi-info-circle text-danger" style="font-size: 2rem;"></i>
                                     }
                                 </div>
-                                <h6 class="fw-bold mb-1 @(Model.IsSterilized ? "text-success" : "text-secondary")">
+                                <h6 class="fw-bold mb-1 @(Model.IsSterilized ? "text-success" : "text-danger")">
                                     @(Model.IsSterilized ? "STERILIZED" : "NOT STERILIZED")
                                 </h6>
                                 <small class="text-secondary-grey">
@@ -212,7 +222,59 @@
                             </div>
                         </div>
                     </div>
+
+
+                    @if (User.IsInRole("Admin") && Model.HealthDocuments.Any())
+                    {
+                        <div class="card mt-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-check2-circle me-2"></i>Document Verification Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Document Type</th>
+                                                <th>Document</th>
+                                                <th>Verification Status</th>
+                                                <th>Verified By</th>
+                                                <th>Verified At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var doc in Model.HealthDocuments)
+                                            {
+                                                <tr>
+                                                    <td>@doc.Type</td>
+                                                    <td>
+                                                        <a href="@doc.FilePath" target="_blank" class="btn btn-sm btn-link">
+                                                            View Document
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        @if (doc.IsVerified)
+                                                        {
+                                                            <span class="badge bg-success">Verified</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Pending</span>
+                                                        }
+                                                    </td>
+                                                    <td>@(doc.VerifiedByAdmin?.Email ?? "N/A")</td>
+                                                    <td>@(doc.VerifiedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
+
+
                 <!-- ========== FIM MEDICAL HISTORY ========== -->
 
                 @* Temperamento com Badges Opacas (Melhor para Dark Mode) *@
@@ -222,15 +284,15 @@
                     </h3>
                     <div class="d-flex gap-3 flex-wrap">
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                              class="badge-status-completed">
                             <i class="bi bi-people me-1"></i> Kid Friendly
                         </span>
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                              class="badge-status-completed">
                             <i class="bi bi-house-heart me-1"></i> Calm at Home
                         </span>
                         <span class="badge rounded-pill border py-2 px-3 fw-bold"
-                              style="background-color: rgba(13, 202, 240, 0.1); color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3) !important;">
+                              class="badge-status-completed">
                             <i class="bi bi-chat-heart me-1"></i> Social
                         </span>
                     </div>

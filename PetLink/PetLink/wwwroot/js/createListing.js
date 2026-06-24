@@ -69,36 +69,35 @@ function validateHealth() {
 }
 
 function validateProofs() {
+    // Documents are optional - always return true
+    // Just show helpful messages but don't block submission
     const healthChecks = document.querySelectorAll('.health-check');
-    let isValid = true;
 
     healthChecks.forEach(checkbox => {
         if (checkbox.checked) {
             const proofDivId = checkbox.getAttribute('data-proof');
             const proofDiv = document.getElementById(proofDivId);
             const proofInput = proofDiv.querySelector('.proof-file');
-            const proofErrorSpan = proofDiv.querySelector('.text-danger');
+
+            let proofErrorSpan = proofDiv.querySelector('.text-danger');
+            if (!proofErrorSpan) {
+                proofErrorSpan = document.createElement('div');
+                proofErrorSpan.className = 'text-info small mt-1';
+                proofDiv.appendChild(proofErrorSpan);
+            }
 
             if (!proofInput.files || proofInput.files.length === 0) {
-                isValid = false;
-                proofInput.classList.add('is-invalid');
-                if (!proofErrorSpan || !proofErrorSpan.innerText.includes('Proof is required')) {
-                    const errorSpan = proofErrorSpan || document.createElement('span');
-                    errorSpan.className = 'text-danger small mt-1';
-                    errorSpan.style.display = 'block';
-                    errorSpan.innerText = 'Proof document is required';
-                    if (!proofErrorSpan) proofDiv.appendChild(errorSpan);
-                }
+                proofErrorSpan.style.display = 'block';
+                proofErrorSpan.innerHTML = '<i class="bi bi-info-circle"></i> Tip: Uploading proof documents helps admins verify your listing';
+                proofErrorSpan.classList.remove('text-danger');
+                proofErrorSpan.classList.add('text-info');
             } else {
-                proofInput.classList.remove('is-invalid');
-                if (proofErrorSpan && proofErrorSpan.innerText.includes('Proof is required')) {
-                    proofErrorSpan.style.display = 'none';
-                }
+                proofErrorSpan.style.display = 'none';
             }
         }
     });
 
-    return isValid;
+    return true; // Always return true - documents are optional
 }
 
 // Toggle da submissão de documento para cada checkbox ativa
@@ -110,7 +109,14 @@ function toggleProofUpload(checkbox) {
         proofDiv.style.display = 'block';
         // Add required attribute to file input
         const proofInput = proofDiv.querySelector('.proof-file');
-        if (proofInput) proofInput.required = true;
+        if (proofInput) {
+            proofInput.required = true;
+            // Add visual indicator that document is required
+            const label = proofDiv.querySelector('.form-label');
+            if (label && !label.innerHTML.includes('*')) {
+                label.innerHTML = label.innerHTML + '<span class="text-danger ms-1">*</span>';
+            }
+        }
     } else {
         proofDiv.style.display = 'none';
         // Remove required attribute and clear file input
@@ -119,14 +125,60 @@ function toggleProofUpload(checkbox) {
             proofInput.required = false;
             proofInput.value = ''; // Clear the file input
             proofInput.classList.remove('is-invalid');
+            // Remove asterisk from label
+            const label = proofDiv.querySelector('.form-label');
+            if (label) {
+                label.innerHTML = label.innerHTML.replace('<span class="text-danger ms-1">*</span>', '');
+            }
             // Remove any error messages
             const errorSpan = proofDiv.querySelector('.text-danger');
-            if (errorSpan && errorSpan.innerText.includes('Proof is required')) {
+            if (errorSpan) {
                 errorSpan.style.display = 'none';
+                errorSpan.innerHTML = '';
             }
         }
     }
 }
+
+// Add file preview functionality for proof documents
+function addFilePreviewListeners() {
+    const proofInputs = document.querySelectorAll('.proof-file');
+
+    proofInputs.forEach(input => {
+        input.addEventListener('change', function (e) {
+            const proofDiv = this.closest('[id$="ProofDiv"]');
+            const files = Array.from(this.files);
+
+            // Create or update preview container
+            let previewContainer = proofDiv.querySelector('.file-preview-container');
+            if (!previewContainer) {
+                previewContainer = document.createElement('div');
+                previewContainer.className = 'file-preview-container mt-2';
+                proofDiv.appendChild(previewContainer);
+            }
+
+            // Clear previous preview
+            previewContainer.innerHTML = '';
+
+            if (files.length > 0) {
+                const badge = document.createElement('div');
+                badge.className = 'alert alert-info alert-sm mb-0';
+                badge.innerHTML = `<i class="bi bi-paperclip"></i> ${files.length} file(s) selected: ${files.map(f => f.name).join(', ')}`;
+                previewContainer.appendChild(badge);
+            }
+
+            // Re-validate proofs when files are selected
+            validateProofs();
+        });
+    });
+}
+
+// Call this function after DOM is ready
+document.addEventListener('DOMContentLoaded', function () {
+    addFilePreviewListeners();
+});
+
+
 
 
 document.querySelector('input[name="AgeMonths"]').addEventListener('input', function () {
@@ -151,14 +203,17 @@ document.addEventListener('change', function (e) {
     }
 });
 
+
+
 // Submissão do formulário
 document.getElementById('createListingForm').addEventListener('submit', function (e) {
     const isAgeValid = validateAge();
     const isPhotoValid = validatePhoto();
     const isHealthValid = validateHealth();
-    const isProofsValid = validateProofs();
+    // Don't validate proofs as required, just show warnings
+    validateProofs(); // This will show warnings but won't block submission
 
-    if (!isAgeValid || !isPhotoValid || !isHealthValid || !isProofsValid) {
+    if (!isAgeValid || !isPhotoValid || !isHealthValid) {
         e.preventDefault();
 
         if (!isAgeValid) {
@@ -168,9 +223,24 @@ document.getElementById('createListingForm').addEventListener('submit', function
             document.getElementById('mainPhotoArea').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else if (!isHealthValid) {
             document.getElementById('healthError').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else if (!isProofsValid) {
-            document.querySelector('.proof-file.is-invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+    }
+});
+
+// Check if there's a validation error for main photo on page load
+document.addEventListener('DOMContentLoaded', function () {
+    addFilePreviewListeners();
+
+    // Check if main photo error exists from server validation
+    const mainPhotoError = document.getElementById('photoError');
+    const mainPhotoInput = document.getElementById('mainPhoto');
+
+    if (mainPhotoError && mainPhotoError.style.display !== 'none') {
+        // Show a helpful message
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'alert alert-warning alert-sm mt-2';
+        errorMessage.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please select a main photo again due to validation errors.';
+        document.getElementById('mainPhotoArea').appendChild(errorMessage);
     }
 });
 

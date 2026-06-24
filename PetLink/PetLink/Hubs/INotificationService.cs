@@ -17,5 +17,12 @@ namespace PetLink.Hubs
 
         Task CreateNewUserNotificationForAdminsAsync(int userId, string userName, string userEmail, UserRole userRole);
 
+        Task CreateNewEventNotificationForAdminsAsync(int eventId, string eventName, int organizerId);
+        Task CreateEventApprovalNotificationAsync(int organizerId, string eventName, int eventId, bool isApproved, string rejectionReason = null);
+
+        Task CreateNewEventInterestNotificationAsync(int organizerId, string eventName, int eventId, int userId, string userName);
+
+        Task SendEventReminderNotificationsAsync();
     }
-}
+    }
+

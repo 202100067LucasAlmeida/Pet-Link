@@ -1,0 +1,77 @@
+@model PetLink.Models.Resource
+@using PetLink.Models.Enums
+
+@{
+    ViewData["Title"] = "Create Resource";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-0 pt-4">
+                    <h2 class="text-primary-darkblue fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>Create Resource
+                    </h2>
+                    <p class="text-muted">Publish an educational article or video for the community.</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">Title</label>
+                            <input asp-for="Title" class="form-control rounded-3" placeholder="Enter resource title" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Type" class="form-label fw-bold">Type</label>
+                                <select asp-for="Type" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<ResourceType>()">
+                                    <option value="">Select type</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Species" class="form-label fw-bold">Species</label>
+                                <select asp-for="Species" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<Species>()">
+                                    <option value="">Select species</option>
+                                </select>
+                                <span asp-validation-for="Species" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Category" class="form-label fw-bold">Category</label>
+                                <select asp-for="Category" class="form-select rounded-3" asp-items="Html.GetEnumSelectList<ResourceCategory>()">
+                                    <option value="">Select category</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="MediaUrl" class="form-label fw-bold">Media URL</label>
+                                <input asp-for="MediaUrl" class="form-control rounded-3" placeholder="YouTube link or image URL" />
+                                <span asp-validation-for="MediaUrl" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label fw-bold">Content</label>
+                            <textarea asp-for="Content" class="form-control rounded-3" rows="10" placeholder="Write your article content here..."></textarea>
+                            <span asp-validation-for="Content" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2">
+                                <i class="bi bi-save me-2"></i>Create Resource
+                            </button>
+                            <a asp-action="Manage" class="btn btn-outline-secondary rounded-pill px-4 py-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+@model IEnumerable<PetLink.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("~/Views/Shared/UserSideBar.cshtml")
+        </div>
+
+        <div class="col-lg-9">
+            <h2 class="text-primary-blue fw-bold mb-0">
+                <i class="bi bi-journal-bookmark-fill me-2"></i>My Bookings
+            </h2>
+
+            @if (!Model.Any())
+            {
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center" style="background-color: var(--petlink-card-bg);">
+                    <i class="bi bi-calendar-check mb-3 opacity-25" style="font-size: 4rem; color: var(--petlink-primary);"></i>
+                    <h4 class="text-primary-darkblue fw-bold">No bookings yet</h4>
+                    <p class="text-muted mb-4">Find a trusted sitter and book their services.</p>
+                    <a asp-controller="Petsitter" asp-action="Index" class="btn btn-primary rounded-pill px-5 fw-bold">
+                        Find Sitters
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var booking in Model)
+                    {
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="@(string.IsNullOrEmpty(booking.Petsitter?.User?.ProfilePicture) ? "/images/default-avatar.jpg" : booking.Petsitter?.User?.ProfilePicture)"
+                                                 class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;" />
+                                            <div>
+                                                <h5 class="fw-bold text-primary-darkblue mb-1">@booking.Petsitter?.User?.Name</h5>
+                                                <span class="badge rounded-pill px-3 py-2 border fw-bold @(booking.Status == PetLink.Models.Enums.BookingStatus.Pending ? "badge-status-pending" :
+                                                      booking.Status == PetLink.Models.Enums.BookingStatus.Confirmed ? "badge-status-confirmed" :
+                                                      booking.Status == PetLink.Models.Enums.BookingStatus.Completed ? "badge-status-completed" :
+                                                      booking.Status == PetLink.Models.Enums.BookingStatus.Cancelled ? "badge-status-cancelled" :
+                                                      "badge-status-rejected")">
+                                                    @booking.Status
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="fw-bold fs-5 text-primary">@booking.TotalPrice.ToString("0.00")€</span>
+                                            <div class="text-muted" style="font-size: 0.7rem;">TOTAL</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block fw-bold text-uppercase">Service</small>
+                                            <span class="text-primary-darkblue">@booking.ServiceType</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block fw-bold text-uppercase">Start</small>
+                                            <span class="text-primary-darkblue">@booking.StartDate.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block fw-bold text-uppercase">End</small>
+                                            <span class="text-primary-darkblue">@booking.EndDate.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <small class="text-muted d-block fw-bold text-uppercase">Pet</small>
+                                            <span class="text-primary-darkblue">@(booking.PetName ?? "Not specified")</span>
+                                        </div>
+                                    </div>
+
+                                    @if (!string.IsNullOrEmpty(booking.Message))
+                                    {
+                                        <div class="p-3 rounded-3 mb-3" style="background-color: var(--petlink-grey-bg);">
+                                            <small class="text-muted d-block fw-bold mb-1">Your message:</small>
+                                            <p class="mb-0 text-primary-darkblue">@booking.Message</p>
+                                        </div>
+                                    }
+
+                                    <div class="d-flex gap-2">
+                                        @if (booking.Status == PetLink.Models.Enums.BookingStatus.Pending || booking.Status == PetLink.Models.Enums.BookingStatus.Confirmed)
+                                        {
+                                            <form asp-action="Cancel" method="post" class="m-0">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@booking.Id" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill fw-bold" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                                </button>
+                                            </form>
+                                        }
+                                        <a asp-controller="Messages" asp-action="Index" asp-route-id="@booking.Petsitter?.UserId"
+                                           class="btn btn-outline-primary btn-sm rounded-pill fw-bold">
+                                            <i class="bi bi-chat-dots me-1"></i> Message
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

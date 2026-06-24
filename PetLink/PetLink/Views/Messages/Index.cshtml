@@ -22,9 +22,10 @@
                         <div class="col-md-4 border-end d-flex flex-column"
                              style="background-color: var(--petlink-card-bg); border-color: var(--petlink-border) !important;">
                             <div class="p-4 border-bottom" style="border-color: var(--petlink-border) !important;">
-                                <h3 class="mb-3 text-primary-darkblue" style="font-family: var(--font-primary);">
-                                    Messages
-                                </h3>
+                                
+                                <h2 class="text-primary-blue fw-bold mb-0">
+                                    <i class="bi bi-chat-left-dots-fill me-2"></i>Messages
+                                </h2>
                                 @* Barra de Pesquisa Dinâmica *@
                                 <div class="input-group input-group-sm rounded-pill border"
                                      style="background-color: var(--petlink-grey-bg); border-color: var(--petlink-border) !important;">
@@ -103,7 +104,7 @@
                                                 <h6 class="mb-0 fw-bold" style="color: var(--petlink-dark);">
                                                     @Model.ActiveConversation.OtherUserName
                                                 </h6>
-                                                <small class="fw-bold" style="color: #10b981; font-size: 0.7rem;">●
+                                                <small class="fw-bold" style="color: var(--petlink-online); font-size: 0.7rem;">●
                                                     ONLINE
                                                 </small>
                                             </div>

@@ -20,7 +20,16 @@ namespace PetLink.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<FavoritePetsitter> FavoritePetsitters { get; set; }
 
+        public DbSet<HealthDocument> HealthDocuments { get; set; }
+
+
         public DbSet<ListingsNotification> ListingsNotifications { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Resource> Resources { get; set; }
+
+        public DbSet<EventInterest> EventInterests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -129,7 +138,67 @@ namespace PetLink.Data
             .HasIndex(f => new { f.UserId, f.PetsitterId })
             .IsUnique();
 
+            modelBuilder.Entity<Event>()
+            .HasOne(e => e.Organizer)
+            .WithMany()
+            .HasForeignKey(e => e.OrganizerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
+            // Índices para pesquisa
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Status);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.StartDate);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Type);
+
+            modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Location);
+
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Petsitter)
+            .WithMany()
+            .HasForeignKey(b => b.PetsitterId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HealthDocument>()
+            .HasOne(h => h.AnimalListing)
+            .WithMany(a => a.HealthDocuments)
+            .HasForeignKey(h => h.AnimalListingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Species);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Category);
+
+            modelBuilder.Entity<Resource>()
+            .HasIndex(r => r.Type);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasOne(ei => ei.Event)
+            .WithMany()
+            .HasForeignKey(ei => ei.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasOne(ei => ei.User)
+            .WithMany()
+            .HasForeignKey(ei => ei.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EventInterest>()
+            .HasIndex(ei => new { ei.EventId, ei.UserId })
+            .IsUnique();
 
         }
     }
