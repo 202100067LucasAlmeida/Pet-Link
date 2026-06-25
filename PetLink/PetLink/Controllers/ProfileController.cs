@@ -388,10 +388,11 @@ namespace PetLink.Controllers
             }
 
             var favoritePetsitters = await _context.FavoritePetsitters
-            .Where(f => f.UserId == userId)
-            .Include(f => f.Petsitter)
-            .Select(f => f.Petsitter)
-            .ToListAsync();
+                .Where(f => f.UserId == userId)
+                .Include(f => f.Petsitter)
+                    .ThenInclude(p => p.User)
+                .Select(f => f.Petsitter)
+                .ToListAsync();
 
             var viewModel = new ProfileViewModel
             {

@@ -17,7 +17,7 @@ namespace PetLink.Models.ViewModels
         public int TotalApplications { get; set; }
         public int UnreadMessages { get; set; }
         public int DaysSinceJoined { get; set; }
-        public List<User> FavoritePetsitters { get; set; }
+        public List<Petsitter> FavoritePetsitters { get; set; }
 
         public List<ListingsNotification> RecentNotifications { get; set; }
 

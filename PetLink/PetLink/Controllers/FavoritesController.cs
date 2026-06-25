@@ -45,6 +45,7 @@ namespace PetLink.Controllers
     var favoritePetsitters = await _context.FavoritePetsitters
         .Where(f => f.UserId == userId)
         .Include(f => f.Petsitter)
+        .ThenInclude(p => p.User)
         .Select(f => f.Petsitter)
         .ToListAsync();
 
@@ -143,6 +144,7 @@ namespace PetLink.Controllers
             var favoritePetsitters = await _context.FavoritePetsitters
             .Where(f => f.UserId == userId)
             .Include(f => f.Petsitter)
+                .ThenInclude(p => p.User)
             .Select(f => f.Petsitter)
             .ToListAsync();
 
@@ -168,8 +170,8 @@ namespace PetLink.Controllers
                 }
 
         // Verificar se o petsitter existe e é realmente um PetSitter
-                var petsitter = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == petsitterId && u.Role == UserRole.PetSitter);
+                var petsitter = await _context.Petsitters
+                    .FirstOrDefaultAsync(p => p.UserId == petsitterId);
 
                 if (petsitter == null)
                 {
@@ -190,7 +192,7 @@ namespace PetLink.Controllers
                     var favorite = new FavoritePetsitter
                     {
                         UserId = userId,
-                        PetsitterId = petsitterId,
+                        PetsitterId = petsitter.Id,
                         CreatedAt = DateTime.Now
                     };
                     _context.FavoritePetsitters.Add(favorite);

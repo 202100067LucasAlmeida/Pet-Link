@@ -21,6 +21,6 @@ namespace PetLink.Models
         public virtual User User { get; set; }
 
         [ForeignKey("PetsitterId")]
-        public virtual User Petsitter { get; set; }
+        public virtual Petsitter Petsitter { get; set; }
     }
 }

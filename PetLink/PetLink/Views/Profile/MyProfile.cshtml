@@ -405,7 +405,7 @@
                         {
                             foreach (var petsitter in Model.FavoritePetsitters)
                             {
-                                allFavorites.Add(new { Type = "Petsitter", Id = petsitter.Id, Name = petsitter.Name, Location = petsitter.City, AgeMonths = 0, ImageUrl = petsitter.ProfilePicture, Species = "PETSITTER" });
+                                allFavorites.Add(new { Type = "Petsitter", Id = petsitter.Id, Name = petsitter.User.Name, Location = petsitter.User.City, AgeMonths = 0, ImageUrl = petsitter.User.ProfilePicture, Species = "PETSITTER" });
                             }
                         }
                     }
