@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetLink.Data;
 
@@ -11,9 +12,11 @@ using PetLink.Data;
 namespace PetLink.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260625181816_AddEventSupportOptions")]
+    partial class AddEventSupportOptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -766,7 +769,7 @@ namespace PetLink.Migrations
 
             modelBuilder.Entity("PetLink.Models.FavoritePetsitter", b =>
                 {
-                    b.HasOne("PetLink.Models.Petsitter", "Petsitter")
+                    b.HasOne("PetLink.Models.User", "Petsitter")
                         .WithMany()
                         .HasForeignKey("PetsitterId")
                         .OnDelete(DeleteBehavior.Restrict)

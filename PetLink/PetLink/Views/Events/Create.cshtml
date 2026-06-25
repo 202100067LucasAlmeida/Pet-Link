@@ -67,6 +67,30 @@
                             <span asp-validation-for="Location" class="text-danger small"></span>
                         </div>
 
+                        <div class="card bg-light rounded-4 mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-primary-darkblue mb-3">
+                                    <i class="bi bi-hand-thumbs-up me-2"></i>Support Options (Optional)
+                                </h6>
+                                <p class="text-muted small mb-3">Let people know how they can help support this event.</p>
+
+                                <div class="d-flex flex-wrap gap-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" asp-for="AcceptsDonations" id="acceptsDonations" />
+                                        <label class="form-check-label fw-semibold text-success" for="acceptsDonations">
+                                            <i class="bi bi-currency-euro me-1"></i> Accepts Donations
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" asp-for="AcceptsVolunteers" id="acceptsVolunteers" />
+                                        <label class="form-check-label fw-semibold text-primary" for="acceptsVolunteers">
+                                            <i class="bi bi-people me-1"></i> Accepts Volunteers
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-4">
                             <label class="form-label fw-bold">Event Image</label>
                             <input type="file" name="imageFile" class="form-control rounded-3" accept="image/*" />

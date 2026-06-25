@@ -248,6 +248,8 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             existingEvent.Location = model.Location;
             existingEvent.Type = model.Type;
             existingEvent.UpdatedAt = DateTime.Now;
+            existingEvent.AcceptsDonations = model.AcceptsDonations;
+            existingEvent.AcceptsVolunteers = model.AcceptsVolunteers;
 
             if (imageFile != null && imageFile.Length > 0)
             {

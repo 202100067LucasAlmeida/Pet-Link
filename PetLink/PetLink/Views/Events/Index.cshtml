@@ -98,6 +98,27 @@
                                 </div>
                                 <div class="card-body">
                                     <h5 class="fw-bold text-primary-darkblue mb-2">@eventItem.Name</h5>
+                                    
+                                    <!-- ========== BADGES DE DOAÇÕES E VOLUNTARIADO ========== -->
+                                    @if (eventItem.AcceptsDonations || eventItem.AcceptsVolunteers)
+                                    {
+                                        <div class="d-flex gap-1 flex-wrap mb-2">
+                                            @if (eventItem.AcceptsDonations)
+                                            {
+                                                <span class="badge bg-success rounded-pill" style="font-size: 0.65rem;">
+                                                    <i class="bi bi-currency-euro me-1"></i>Donations
+                                                </span>
+                                            }
+                                            @if (eventItem.AcceptsVolunteers)
+                                            {
+                                                <span class="badge bg-info text-dark rounded-pill" style="font-size: 0.65rem;">
+                                                    <i class="bi bi-people me-1"></i>Volunteers
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    <!-- ========== FIM BADGES ========== -->
+                                    
                                     <p class="text-muted small mb-2">
                                         <i class="bi bi-calendar-event me-1"></i> @eventItem.StartDate.ToString("dd MMM yyyy, HH:mm")
                                         @if (eventItem.EndDate.HasValue)

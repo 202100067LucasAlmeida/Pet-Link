@@ -39,10 +39,13 @@ namespace PetLink.Models
         public DateTime? UpdatedAt { get; set; }
         public DateTime? ApprovedAt { get; set; }
         public int? ApprovedBy { get; set; } // AdminId que aprovou
-
+        
         // Navigation properties
         [ForeignKey("OrganizerId")]
         public virtual User Organizer { get; set; }
+
+        public bool AcceptsDonations { get; set; } = false;
+        public bool AcceptsVolunteers { get; set; } = false;
     }
 
     public enum EventType
