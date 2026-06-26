@@ -171,7 +171,7 @@ namespace PetLink.Controllers
 
         // Verificar se o petsitter existe e é realmente um PetSitter
                 var petsitter = await _context.Petsitters
-                    .FirstOrDefaultAsync(p => p.UserId == petsitterId);
+                    .FirstOrDefaultAsync(p => p.Id == petsitterId);
 
                 if (petsitter == null)
                 {
@@ -179,7 +179,7 @@ namespace PetLink.Controllers
                 }
 
                 var existingFavorite = await _context.FavoritePetsitters
-                    .FirstOrDefaultAsync(f => f.UserId == userId && f.PetsitterId == petsitterId);
+                    .FirstOrDefaultAsync(f => f.UserId == userId && f.PetsitterId == petsitter.Id);
 
                 if (existingFavorite != null)
                 {
@@ -212,16 +212,14 @@ namespace PetLink.Controllers
         {
             var userIdClaim = User.FindFirst("UserId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-            {
-                 return Json(false);
-            }
+                return Json(false);
 
             var isFavorited = await _context.FavoritePetsitters
-            .AnyAsync(f => f.UserId == userId && f.PetsitterId == petsitterId);
+                .AnyAsync(f => f.UserId == userId && f.PetsitterId == petsitterId);
 
             return Json(isFavorited);
         }
 
-        
+
     }
 }

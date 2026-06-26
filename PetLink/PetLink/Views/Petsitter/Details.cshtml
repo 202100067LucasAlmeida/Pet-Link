@@ -56,11 +56,10 @@
                          onerror="this.src='/images/default-avatar.jpg'" />
                     
                     @* Botão coração *@
-                    @if (User.IsInRole("User"))
+                    @if (User.IsInRole("User") || User.IsInRole("PetSitter"))
                     {
-                        <button class="btn-heart favorite-petsitter-btn position-absolute top-0 end-0 m-3" 
-                                data-petsitter-id="@Model.UserId"
-                                style="background: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;">
+                        <button class="btn-heart favorite-petsitter-btn position-absolute top-0 end-0 m-3"
+                                data-petsitter-id="@Model.Id">
                             <i class="bi bi-heart fs-4"></i>
                         </button>
                     }
@@ -345,7 +344,7 @@
         $('input[name="startDate"], input[name="endDate"]').on('change', updateEstimatedTotal);
 
         $(document).ready(function() {
-            var petsitterId = @Model.UserId;
+            var petsitterId = @Model.Id;
             var favoriteBtn = $('.favorite-petsitter-btn');
             
             // Função para atualizar o ícone do coração 
