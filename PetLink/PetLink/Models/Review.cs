@@ -21,9 +21,7 @@ namespace PetLink.Models
         [Required]
         [Range(1, 5)]
         public int Rating { get; set; } // Nota de 1 a 5 estrelas
-
-        [MaxLength(500)]
-        public string Comment { get; set; } // Comentário da avaliação
+    
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

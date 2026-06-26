@@ -211,6 +211,10 @@ namespace PetLink.Controllers
             booking.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
+            return RedirectToAction("Create", "Review", new { 
+            reviewedId = booking.PetsitterId,
+            reviewType = "Petsitter"  });
+
             TempData["Success"] = "Booking marked as completed.";
             return RedirectToAction(nameof(Manage));
         }

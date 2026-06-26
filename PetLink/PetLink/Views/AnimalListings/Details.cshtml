@@ -305,6 +305,17 @@
                         </a>
                     </div>
                 }
+
+                <!--  Botão para shelter avaliar adotante -->
+                @if (User.Identity.IsAuthenticated && ViewBag.CanReviewAdopter != null && ViewBag.CanReviewAdopter == true)
+                {
+                    <div class="mt-4">
+                        <button type="button" class="btn btn-outline-success rounded-pill" onclick="window.location.href='/Review/Create?animalListingId=@Model.Id&reviewType=Adoption'">
+                            <i class="bi bi-star-fill me-2"></i> Rate Adopter
+                        </button>
+                    </div>
+                }
+               
             </div>
 
             <div class="col-lg-4">

@@ -32,7 +32,6 @@ namespace PetLink
         {
             var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
-                .Include(a => a.HealthDocuments)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (listing == null) return NotFound();
@@ -51,6 +50,7 @@ namespace PetLink
             bool hasApplied = false;
             ApplicationStatus? myApplicationStatus = null;
             bool canReview = false;
+            bool canReviewAdopter = false;  // Declarar aqui no início
 
             if (isAuthenticated && !isOwner)
             {
@@ -70,17 +70,39 @@ namespace PetLink
                     hasApplied = true;
                     myApplicationStatus = application.Status;
 
-                    // Lógica para verificar se pode avaliar (apenas se a adoção foi concluída)
-                    if (application.Status == ApplicationStatus.Completed)
+                    // Lógica para verificar se pode avaliar (com Completed OU Approved)
+                    if (application.Status == ApplicationStatus.Completed || 
+                        application.Status == ApplicationStatus.Approved)
                     {
                         var existingReview = await _context.Reviews
-                            .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && r.AnimalListingId == id);
+                            .FirstOrDefaultAsync(r => r.ReviewerId == currentUserId && 
+                                                    r.AnimalListingId == id);
 
                         bool canReceiveReview = listing.Tutor != null &&
-                                                (listing.Tutor.Role == UserRole.User || listing.Tutor.Role == UserRole.PetSitter);
+                                                (listing.Tutor.Role == UserRole.User || 
+                                                listing.Tutor.Role == UserRole.PetSitter);
 
                         canReview = existingReview == null && canReceiveReview;
                     }
+                }
+            }
+
+            // Verificar se o Shelter pode avaliar o adotante (com Completed OU Approved)
+            if (isAuthenticated && isOwner && listing.TutorId == currentUserId)
+            {
+                var completedApplication = await _context.Applications
+                    .FirstOrDefaultAsync(a => a.AnimalListingId == id && 
+                                            (a.Status == ApplicationStatus.Completed || 
+                                             a.Status == ApplicationStatus.Approved));
+                
+                if (completedApplication != null)
+                {
+                    var existingReview = await _context.Reviews
+                        .FirstOrDefaultAsync(r => r.ReviewerId == listing.TutorId && 
+                                                r.ReviewedId == completedApplication.UserId &&
+                                                r.AnimalListingId == id);
+                    
+                    canReviewAdopter = existingReview == null;
                 }
             }
 
@@ -88,11 +110,8 @@ namespace PetLink
             ViewBag.HasApplied = hasApplied;
             ViewBag.MyApplicationStatus = myApplicationStatus;
             ViewBag.CanReview = canReview;
-            ViewBag.OtherPets = await _context.AnimalListings
-                .Include(a => a.HealthDocuments)
-                .Where(a => a.Id != id && a.Status == ListingStatus.Published)
-                .Take(4)
-                .ToListAsync();
+            ViewBag.CanReviewAdopter = canReviewAdopter;  // Passar para a view
+            ViewBag.OtherPets = await _context.AnimalListings.Where(a => a.Id != id).Take(4).ToListAsync();
 
             return View(listing);
         }
@@ -282,14 +301,13 @@ namespace PetLink
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        // 1. ADICIONADOS OS 3 BOOLEANOS AQUI PARA CAPTURAR AS CHECKBOXES DO FORMULÁRIO HTML
         public async Task<IActionResult> Edit(int id, AnimalListing animalListing, IFormFile? mainPhoto, bool isVaccinated, bool isDewormed, bool isSterilized, int[] verifiedDocuments)
         {
             if (id != animalListing.Id) return NotFound();
 
             var existingListing = await _context.AnimalListings
                 .Include(a => a.Tutor)
-                .Include(a => a.HealthDocuments) // 2. CRÍTICO: Carregar os documentos de saúde existentes!
+                .Include(a => a.HealthDocuments)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (existingListing == null) return NotFound();
@@ -306,12 +324,11 @@ namespace PetLink
             ModelState.Remove("Favorites");
             ModelState.Remove("Photos");
             ModelState.Remove("mainPhoto");
-            ModelState.Remove("HealthDocuments"); // Prevenir erros de validação
+            ModelState.Remove("HealthDocuments");
 
             var oldStatus = existingListing.Status.ToString();
 
             // ========== VALIDAÇÃO DAS CHECKBOXES DE SAÚDE ==========
-            // Usamos os parâmetros booleanos do método em vez do animalListing
             if (!isVaccinated && !isDewormed && !isSterilized)
             {
                 ModelState.AddModelError("IsVaccinated", "Please confirm at least one health status (Vaccinated, Dewormed, or Sterilized).");
@@ -328,22 +345,18 @@ namespace PetLink
                     existingListing.Description = animalListing.Description;
 
                     // ========== ATUALIZAR AS CONDIÇÕES DE SAÚDE ==========
-
-                    // Vacinação: Se a checkbox está ativa e não existe documento, criamos. Se está desativada e existe, apagamos.
                     var vacDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Vaccine);
                     if (isVaccinated && vacDoc == null)
                         existingListing.HealthDocuments.Add(new HealthDocument { Name = "Boletim de Vacinas", Type = HealthDocumentType.Vaccine, FilePath = "/images/placeholders/proof_vacination.png" });
                     else if (!isVaccinated && vacDoc != null)
                         existingListing.HealthDocuments.Remove(vacDoc);
 
-                    // Desparasitação
                     var dewDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Deworming);
                     if (isDewormed && dewDoc == null)
                         existingListing.HealthDocuments.Add(new HealthDocument { Name = "Comprovativo Desparasitação", Type = HealthDocumentType.Deworming, FilePath = "/images/placeholders/proof_vacination.png" });
                     else if (!isDewormed && dewDoc != null)
                         existingListing.HealthDocuments.Remove(dewDoc);
 
-                    // Esterilização
                     var steDoc = existingListing.HealthDocuments.FirstOrDefault(d => d.Type == HealthDocumentType.Sterilization);
                     if (isSterilized && steDoc == null)
                         existingListing.HealthDocuments.Add(new HealthDocument { Name = "Certificado Esterilização", Type = HealthDocumentType.Sterilization, FilePath = "/images/placeholders/proof_vacination.png" });
@@ -365,7 +378,6 @@ namespace PetLink
                         }
                     }
 
-                    // Optionally, unverify documents that were not checked
                     if (isAdmin && ModelState.IsValid)
                     {
                         var allDocs = existingListing.HealthDocuments;
@@ -379,7 +391,6 @@ namespace PetLink
                             }
                         }
                     }
-
 
                     if (isAdmin)
                     {
@@ -543,7 +554,6 @@ namespace PetLink
             if (string.IsNullOrEmpty(userIdString)) return Challenge();
             int currentUserId = int.Parse(userIdString);
 
-            // Buscar todos os pedidos feitos a anúncios que pertencem ao utilizador atual
             var applications = await _context.Applications
                 .Include(a => a.User)
                 .Include(a => a.AnimalListing)
@@ -593,7 +603,6 @@ namespace PetLink
 
             var results = await query.ToListAsync();
 
-            // Buscar shelters e petsitters com coordenadas ou cidade
             var serviceUsers = await _context.Users
                 .Where(u => (u.Role == UserRole.Shelter || u.Role == UserRole.PetSitter)
                          && !string.IsNullOrEmpty(u.City))
