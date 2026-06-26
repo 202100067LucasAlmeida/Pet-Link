@@ -51,7 +51,8 @@
                                         @if (item.Role.ToString() == "Admin")
                                         {
                                             <span class="badge rounded-pill fw-bold px-3 border"
-                                                  class="badge-status-rejected">
+                                                  class="badge-status-rejected"
+                                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
                                                 @item.Role
                                             </span>
                                         }
@@ -68,14 +69,16 @@
                                         @if (item.IsVerified)
                                         {
                                             <span class="badge rounded-pill fw-bold px-3 border"
-                                                  class="badge-status-confirmed">
+                                                  class="badge-status-confirmed"
+                                                  style="background-color: #1d8528; color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
                                                 <i class="bi bi-check-circle me-1"></i> Yes
                                             </span>
                                         }
                                         else
                                         {
                                             <span class="badge rounded-pill fw-bold px-3 border"
-                                                  class="badge-status-pending">
+                                                  class="badge-status-pending"
+                                                  style="background-color: #b09927; color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
                                                 <i class="bi bi-hourglass-split me-1"></i> Pending
                                             </span>
                                         }
