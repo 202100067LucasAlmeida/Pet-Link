@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "How It Works";
+}
+
+<section class="py-5" style="background-color: var(--petlink-grey-bg);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-primary small fw-bold">GETTING STARTED</span>
+            <h1 class="display-5 fw-bold text-primary-darkblue">How PetLink Works</h1>
+            <p class="lead text-secondary-grey">Finding your perfect companion has never been easier.</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 text-center p-4" style="background-color: var(--petlink-card-bg);">
+                    <div class="mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                            <i class="bi bi-search text-primary fs-2"></i>
+                        </div>
+                    </div>
+                    <div class="badge bg-primary rounded-pill mb-2" style="width: fit-content; margin: 0 auto;">Step 1</div>
+                    <h4 class="fw-bold text-primary-darkblue">Browse Pets</h4>
+                    <p class="text-secondary-grey">Explore hundreds of animals available for adoption. Filter by species, age, and location to find your match.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 text-center p-4" style="background-color: var(--petlink-card-bg);">
+                    <div class="mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                            <i class="bi bi-send text-primary fs-2"></i>
+                        </div>
+                    </div>
+                    <div class="badge bg-primary rounded-pill mb-2" style="width: fit-content; margin: 0 auto;">Step 2</div>
+                    <h4 class="fw-bold text-primary-darkblue">Send a Request</h4>
+                    <p class="text-secondary-grey">Found a pet you love? Send an adoption request to the shelter with a short message about yourself.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm h-100 text-center p-4" style="background-color: var(--petlink-card-bg);">
+                    <div class="mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                            <i class="bi bi-house-heart text-primary fs-2"></i>
+                        </div>
+                    </div>
+                    <div class="badge bg-primary rounded-pill mb-2" style="width: fit-content; margin: 0 auto;">Step 3</div>
+                    <h4 class="fw-bold text-primary-darkblue">Welcome Home</h4>
+                    <p class="text-secondary-grey">Once approved, complete the process with the shelter and welcome your new companion home!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 rounded-4 shadow-sm p-4" style="background-color: var(--petlink-card-bg);">
+                    <h4 class="fw-bold text-primary-darkblue mb-3"><i class="bi bi-shield-check text-success me-2"></i>Safe & Trusted</h4>
+                    <p class="text-secondary-grey mb-0">All shelters are verified by our team. Every listing goes through a review process before being published.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 rounded-4 shadow-sm p-4" style="background-color: var(--petlink-card-bg);">
+                    <h4 class="fw-bold text-primary-darkblue mb-3"><i class="bi bi-chat-dots text-primary me-2"></i>Direct Communication</h4>
+                    <p class="text-secondary-grey mb-0">Chat directly with shelters through our messaging system to ask questions and get updates on your application.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 rounded-4 shadow-sm p-4" style="background-color: var(--petlink-card-bg);">
+                    <h4 class="fw-bold text-primary-darkblue mb-3"><i class="bi bi-star text-warning me-2"></i>Rate Your Experience</h4>
+                    <p class="text-secondary-grey mb-0">After adoption, leave a rating to help the community make informed decisions and celebrate great shelters.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 rounded-4 shadow-sm p-4" style="background-color: var(--petlink-card-bg);">
+                    <h4 class="fw-bold text-primary-darkblue mb-3"><i class="bi bi-geo-alt text-danger me-2"></i>Find Nearby</h4>
+                    <p class="text-secondary-grey mb-0">Use our interactive map to discover animals and shelters near you and plan your visit.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a asp-controller="AnimalListings" asp-action="Index" class="btn btn-primary rounded-pill px-5 py-3 fw-bold fs-5">
+                <i class="bi bi-paw me-2"></i>Start Browsing
+            </a>
+        </div>
+    </div>
+</section>
