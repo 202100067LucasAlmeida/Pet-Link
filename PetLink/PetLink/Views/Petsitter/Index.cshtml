@@ -28,20 +28,23 @@
             </div>
 
             <div class="card filter-card rounded-4 shadow-sm p-4">
-                <form method="get" asp-action="Search" asp-controller="Petsitter">
+                <form method="get" asp-action="Search" asp-controller="Petsitter" id="filterForm">
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-briefcase me-2"></i> SERVICE TYPE</div>
-                        
+
                         <div class="form-check mb-2 mt-3">
-                            <input class="form-check-input" type="radio" name="serviceType" value="Boarding" id="srvBoarding" checked>
+                            <input class="form-check-input" type="radio" name="serviceType" value="Boarding" id="srvBoarding"
+                                   @(ViewBag.CurrentServiceType != null && ViewBag.CurrentServiceType.ToString() == "Boarding" ? "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="srvBoarding">Boarding</label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="serviceType" value="Walking" id="srvWalking">
+                            <input class="form-check-input" type="radio" name="serviceType" value="Walking" id="srvWalking"
+                                   @(ViewBag.CurrentServiceType != null && ViewBag.CurrentServiceType.ToString() == "Walking" ? "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="srvWalking">Walking</label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="serviceType" value="HouseSitting" id="srvHouse">
+                            <input class="form-check-input" type="radio" name="serviceType" value="HouseSitting" id="srvHouse"
+                                   @(ViewBag.CurrentServiceType != null && ViewBag.CurrentServiceType.ToString() == "HouseSitting" ? "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="srvHouse">House Sitting</label>
                         </div>
                     </div>
@@ -49,10 +52,11 @@
                     <div class="mb-4">
                         <div class="filter-section-title"><i class="bi bi-cash me-2"></i> PRICE RANGE</div>
                         <div class="mt-3">
-                            <input type="range" class="form-range" name="maxRate" min="0" max="30" id="priceRange" value="30">
+                            <input type="range" class="form-range" name="maxRate" min="0" max="30" id="priceRange"
+                                   value="@(ViewBag.CurrentMaxRate ?? 30)">
                             <div class="d-flex justify-content-between text-muted small mt-1">
                                 <span>0€/hr</span>
-                                <span>30€/hr</span>
+                                <span id="priceRangeLabel">@(ViewBag.CurrentMaxRate ?? 30)€/hr</span>
                             </div>
                         </div>
                     </div>
@@ -60,11 +64,13 @@
                     <div class="mb-5">
                         <div class="filter-section-title"><i class="bi bi-heart me-2"></i> PET PREFERENCES</div>
                         <div class="form-check mb-2 mt-3">
-                            <input class="form-check-input" type="radio" name="petPreferences" value="SmallDogs" id="prefSmallDogs" checked>
+                            <input class="form-check-input" type="radio" name="petPreferences" value="SmallDogs" id="prefSmallDogs"
+                                   @(ViewBag.CurrentPetPreferences != null && ViewBag.CurrentPetPreferences.ToString() == "SmallDogs" ? "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="prefSmallDogs">Small Dogs</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="petPreferences" value="Cats" id="prefCats">
+                            <input class="form-check-input" type="radio" name="petPreferences" value="Cats" id="prefCats"
+                                   @(ViewBag.CurrentPetPreferences != null && ViewBag.CurrentPetPreferences.ToString() == "Cats" ? "checked" : "")>
                             <label class="form-check-label text-muted small fw-semibold" for="prefCats">Cats only</label>
                         </div>
                     </div>
@@ -90,16 +96,37 @@
                     <div>
                         <h1 class="display-6 fw-bold mb-1 text-primary-darkblue">Find a Trusted Sitter</h1>
                         <p class="text-muted mb-0">Showing @Model.Count() verified sitters</p>
-                        <div class="d-flex gap-2 flex-wrap mb-4">
-                            <span class="badge rounded-pill py-2 px-3 fw-semibold border"
-                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-highlight); border-color: var(--petlink-highlight) !important;">
-                                Boarding <i class="bi bi-x ms-1 cursor-pointer"></i>
-                            </span>
-                            <span class="badge rounded-pill py-2 px-3 fw-semibold border"
-                                  style="background-color: var(--petlink-light-bg); color: var(--petlink-primary); border-color: var(--petlink-primary) !important;">
-                                Small Dogs <i class="bi bi-x ms-1 cursor-pointer"></i>
-                            </span>
-                        </div>
+
+                        <!-- Active Filters Display -->
+                        @if (ViewBag.ActiveFilters != null && ViewBag.ActiveFilters.Count > 0)
+                        {
+                            <div class="d-flex gap-2 flex-wrap mb-4 mt-2">
+                                @foreach (var filter in ViewBag.ActiveFilters)
+                                {
+                                    string filterDisplayName = filter.Key switch
+                                    {
+                                        "ServiceType" => filter.Value.ToString() == "HouseSitting" ? "House Sitting" : filter.Value.ToString(),
+                                        "PetPreferences" => filter.Value.ToString() == "SmallDogs" ? "Small Dogs" : filter.Value.ToString(),
+                                        "MaxRate" => $"Up to {filter.Value}€/hr",
+                                        _ => filter.Value.ToString()
+                                    };
+
+                                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary py-2 px-3 fw-semibold border border-primary border-opacity-25">
+                                        @filterDisplayName
+                                        <i class="bi bi-x ms-1 cursor-pointer"
+                                           data-filter-key="@filter.Key"
+                                           data-filter-value="@filter.Value"
+                                           onclick="removeFilter(this)"></i>
+                                    </span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex gap-2 flex-wrap mb-4 mt-2">
+                                <span class="text-secondary-grey small">No active filters</span>
+                            </div>
+                        }
                     </div>
                     <div class="mt-3 mt-md-0 d-flex align-items-center">
                         <form method="get" asp-action="Search" asp-controller="Petsitter"
@@ -115,7 +142,7 @@
                                 <option value="price_desc" selected="@(Context.Request.Query["sort"] == "price_desc")">Price: High to Low</option>
                             </select>
                         </form>
-                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -124,7 +151,7 @@
                 {
                     <div class="col-md-6 col-xl-4">
                         <div class="card pet-card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column">
-                            
+
                             <div class="position-relative" style="height: 250px; overflow: hidden;">
                                 <a asp-action="Details" asp-route-id="@item.Id">
                                     <img src="@(string.IsNullOrEmpty(item.User.ProfilePicture) ? "/images/default-avatar.jpg" : item.User.ProfilePicture)"
@@ -138,11 +165,11 @@
                                       style="background-color: var(--petlink-card-bg); color: var(--petlink-dark); border-color: var(--petlink-border) !important; z-index: 5;">
                                     <i class="bi bi-star-fill text-warning"></i> @item.Rating.ToString("0.0")
                                 </span>
-                                
-                                @* BOTÃO CORAÇÃO NO CANTO INFERIOR DIREITO - SEM A CLASSE btn-heart *@
+
+                                @* BOTÃO CORAÇÃO NO CANTO INFERIOR DIREITO *@
                                 @if (User.IsInRole("User") || User.IsInRole("PetSitter"))
                                 {
-                                    <button class="favorite-petsitter-btn" 
+                                    <button class="favorite-petsitter-btn"
                                             data-petsitter-id="@item.Id"
                                             style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">
                                         <i class="bi bi-heart"></i>
@@ -197,6 +224,34 @@
 
 @section Scripts {
     <script>
+
+        // REMOVE ACTIVE FILTER BADGE
+        function removeFilter(element) {
+            var filterKey = element.getAttribute('data-filter-key');
+            var form = document.getElementById('filterForm');
+
+            // Encontrar o input correspondente no formulário e limpa-o
+            var input = form.querySelector('[name="' + filterKey.charAt(0).toLowerCase() + filterKey.slice(1) + '"]');
+            if (input) {
+                if (input.type === 'radio') {
+                    // Desmarcar todos os radios do mesmo grupo
+                    var radios = form.querySelectorAll('[name="' + input.name + '"]');
+                    radios.forEach(function(r) { r.checked = false; });
+                } else {
+                    input.value = '';
+                }
+            }
+
+            form.submit();
+        }
+
+        // PRICE RANGE LABEL DINÂMICO
+        document.getElementById('priceRange').addEventListener('input', function() {
+            document.getElementById('priceRangeLabel').textContent = this.value + '€/hr';
+        });
+
+
+        // FAVORITOS PETSITTERS
         $(document).ready(function() {
             function updateHeartIcon(button, isFavorited) {
                 if (isFavorited) {
@@ -205,12 +260,12 @@
                     button.innerHTML = '<i class="bi bi-heart"></i>';
                 }
             }
-            
+
             // Verificar estado inicial de cada botão
             $('.favorite-petsitter-btn').each(function() {
                 var button = this;
                 var petsitterId = $(button).data('petsitter-id');
-                
+
                 $.ajax({
                     url: '@Url.Action("CheckPetsitter", "Favorites")',
                     type: 'GET',
@@ -220,15 +275,15 @@
                     }
                 });
             });
-            
+
             // Toggle favorito
             $(document).on('click', '.favorite-petsitter-btn', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 var button = this;
                 var petsitterId = $(button).data('petsitter-id');
-                
+
                 $.ajax({
                     url: '@Url.Action("TogglePetsitter", "Favorites")',
                     type: 'POST',
@@ -241,7 +296,7 @@
                     }
                 });
             });
-            
+
             function showNotification(message) {
                 $('.toast-notification').remove();
                 var toast = $(`<div class="toast-notification">${message}</div>`);

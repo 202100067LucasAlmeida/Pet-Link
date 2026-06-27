@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PetLink.Data;
 using PetLink.Models;
 using PetLink.Models.Enums;
@@ -95,6 +96,24 @@ namespace PetLink.Controllers
             };
 
             var results = await query.ToListAsync();
+
+
+            // Na action Search do PetsitterController
+            var activeFilters = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(serviceType.ToString()))
+                activeFilters["ServiceType"] = serviceType;
+
+            if (maxRate < 30)
+                activeFilters["MaxRate"] = maxRate;
+
+            if (!string.IsNullOrEmpty(petPreferences.ToString()))
+                activeFilters["PetPreferences"] = petPreferences;
+
+            ViewBag.ActiveFilters = activeFilters;
+            ViewBag.CurrentServiceType = serviceType;
+            ViewBag.CurrentMaxRate = maxRate;
+            ViewBag.CurrentPetPreferences = petPreferences;
 
             return View("Index", results);
         }
