@@ -116,7 +116,7 @@ namespace PetLink.Controllers
                 .OrderByDescending(b => b.CreatedAt)
                 .ToListAsync();
 
-            return View(bookings);
+            return View("ManageBookings", bookings);
         }
 
         [HttpPost]
@@ -214,9 +214,6 @@ namespace PetLink.Controllers
             return RedirectToAction("Create", "Review", new { 
             reviewedId = booking.PetsitterId,
             reviewType = "Petsitter"  });
-
-            TempData["Success"] = "Booking marked as completed.";
-            return RedirectToAction(nameof(Manage));
         }
     }
 }

@@ -124,25 +124,6 @@
                                             </div>
                                         </td>
                                     </tr>
-
-                                    @if (!string.IsNullOrEmpty(booking.Message))
-                                    {
-                                        <div class="modal fade" id="messageModal-@booking.Id" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content rounded-4 border-0 shadow">
-                                                    <div class="modal-header border-0 pb-0">
-                                                        <h5 class="modal-title text-primary-darkblue fw-bold">Message from @booking.User?.Name</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body p-4 text-secondary-grey">
-                                                        <div class="p-3 rounded-3" style="background-color: var(--petlink-grey-bg);">
-                                                            <p class="mb-0 fst-italic">"@booking.Message"</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
                                 }
                             </tbody>
                         </table>
@@ -152,3 +133,26 @@
         </div>
     </div>
 </div>
+
+
+@foreach (var booking in Model)
+{
+    @if (!string.IsNullOrEmpty(booking.Message))
+    {
+        <div class="modal fade" id="messageModal-@booking.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title text-primary-darkblue fw-bold">Message from @booking.User?.Name</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-secondary-grey">
+                        <div class="p-3 rounded-3" style="background-color: var(--petlink-grey-bg);">
+                            <p class="mb-0 fst-italic">"@booking.Message"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
