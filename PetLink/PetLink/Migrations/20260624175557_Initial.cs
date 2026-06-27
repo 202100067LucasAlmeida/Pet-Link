@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetLink.Migrations
 {
     /// <inheritdoc />
-    public partial class AddResources : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,8 +44,6 @@ namespace PetLink.Migrations
                     IsExternalLogin = table.Column<bool>(type: "bit", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Lat = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Lon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -383,6 +381,34 @@ namespace PetLink.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventInterests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventInterests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EventInterests_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventInterests_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
@@ -446,6 +472,17 @@ namespace PetLink.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",
                 table: "Bookings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventInterests_EventId_UserId",
+                table: "EventInterests",
+                columns: new[] { "EventId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventInterests_UserId",
+                table: "EventInterests",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -580,7 +617,7 @@ namespace PetLink.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "Events");
+                name: "EventInterests");
 
             migrationBuilder.DropTable(
                 name: "FavoritePets");
@@ -605,6 +642,9 @@ namespace PetLink.Migrations
 
             migrationBuilder.DropTable(
                 name: "Petsitters");
+
+            migrationBuilder.DropTable(
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "AnimalListings");

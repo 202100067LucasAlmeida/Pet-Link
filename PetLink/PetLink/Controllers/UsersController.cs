@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PetLink.Data;
 using Microsoft.AspNetCore.Authorization;
 using PetLink.Models;
+
 namespace PetLink.Controllers
 {
     [Authorize]
@@ -49,6 +50,7 @@ namespace PetLink.Controllers
 
         // GET: Users/Edit/5
         // Mostra o formulário de edição de um utilizador
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -60,32 +62,35 @@ namespace PetLink.Controllers
         }
 
         // POST: Users/Edit/5
-        // Recebe os dados editados do utilizador e atualiza na base de dados
+        // Atualiza apenas os campos permitidos, preservando os restantes dados do utilizador
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,PasswordHash,Role,IsVerified")] User user)
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,Role,IsVerified")] User user)
         {
             if (id != user.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id)) return NotFound();
-                    else throw;
-                }
+                var rows = await _context.Users
+                    .Where(u => u.Id == id)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(u => u.Name, user.Name)
+                        .SetProperty(u => u.Email, user.Email)
+                        .SetProperty(u => u.Role, user.Role)
+                        .SetProperty(u => u.IsVerified, user.IsVerified)
+                    );
+
+                Console.WriteLine($"Linhas afetadas: {rows}");
                 return RedirectToAction(nameof(Index));
             }
+
             return View(user);
         }
 
         // GET: Users/Delete/5
         // Mostra a página de confirmação para eliminar um utilizador
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -102,6 +107,7 @@ namespace PetLink.Controllers
         // Remove o utilizador da base de dados após confirmação
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -120,9 +126,9 @@ namespace PetLink.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-
         // GET: Users/Create
         // Mostra o formulário para criar um novo utilizador
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -132,6 +138,7 @@ namespace PetLink.Controllers
         // Recebe os dados do novo utilizador e guarda na base de dados
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Name,Email,PasswordHash,Role,IsVerified")] User user)
         {
             // Verifica se o email já existe
