@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using PetLink.Data;
 using PetLink.Hubs;
 using PetLink.Models;
 using PetLink.Models.Enums;
 using PetLink.Models.ViewModels;
+using PetLink.Services;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
@@ -24,13 +26,18 @@ namespace PetLink.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService;
 
         // 2. Adiciona ao construtor
-        public ProfileController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, INotificationService notificationService)
+        public ProfileController(ApplicationDbContext context, 
+                                 IWebHostEnvironment webHostEnvironment, 
+                                 INotificationService notificationService, 
+                                 IEmailService emailService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
             _notificationService = notificationService;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -85,6 +92,7 @@ namespace PetLink.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult ForgotPasswordForm()
         {
             return View();
@@ -650,6 +658,129 @@ namespace PetLink.Controllers
                 principal);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == model.Email);
+
+            if (user == null)
+            {
+                return Json(new
+                {
+                    success = true
+                });
+            }
+
+            if (user.IsExternalLogin)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "This account uses Google login. Please reset your password via Google."
+                });
+            }
+
+            user.PasswordResetToken = Guid.NewGuid().ToString();
+
+            user.PasswordResetTokenExpiry =
+                DateTime.UtcNow.AddHours(1);
+
+            await _context.SaveChangesAsync();
+
+            var resetLink =
+                Url.Action(
+                    "ResetPassword",
+                    "Profile",
+                    new { token = user.PasswordResetToken },
+                    Request.Scheme);
+
+            Console.WriteLine("RESET LINK: " + resetLink);
+
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Reset your password",
+                $@"
+                <h2>Password Recovery</h2>
+                <p>Click the link below:</p>
+                <a href='{resetLink}'>Reset Password</a>
+                ");
+
+            return Json(new
+            {
+                success = true
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return RedirectToAction("LoginForm");
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    u.PasswordResetToken == token &&
+                    u.PasswordResetTokenExpiry > DateTime.UtcNow);
+
+            if (user == null)
+                return BadRequest("Invalid or expired token");
+
+            return View(new ResetPasswordViewModel
+            {
+                Token = token
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(
+    ResetPasswordViewModel model)
+        {
+            if (model.Password != model.ConfirmPassword)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Passwords do not match"
+                });
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    u.PasswordResetToken == model.Token);
+
+            if (user == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid token"
+                });
+            }
+
+            if (user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Token expired"
+                });
+            }
+
+            user.PasswordHash =
+                UserHashHelpers.HashPassword(model.Password);
+
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+
+            await _context.SaveChangesAsync();
+
+            return Json(new
+            {
+                success = true
+            });
         }
 
         public IActionResult HelpCenter()
