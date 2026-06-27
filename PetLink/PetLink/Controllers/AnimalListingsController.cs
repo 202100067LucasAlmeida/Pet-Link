@@ -30,8 +30,12 @@ namespace PetLink
         // GET: AnimalListings/Details/5
         public async Task<IActionResult> Details(int id)
         {
+        
             var listing = await _context.AnimalListings
                 .Include(a => a.Tutor)
+                .Include(a => a.Photos)
+                .Include(a => a.HealthDocuments)
+                    .ThenInclude(d => d.VerifiedByAdmin)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (listing == null) return NotFound();
@@ -110,8 +114,12 @@ namespace PetLink
             ViewBag.HasApplied = hasApplied;
             ViewBag.MyApplicationStatus = myApplicationStatus;
             ViewBag.CanReview = canReview;
-            ViewBag.CanReviewAdopter = canReviewAdopter;  // Passar para a view
-            ViewBag.OtherPets = await _context.AnimalListings.Where(a => a.Id != id).Take(4).ToListAsync();
+            ViewBag.CanReviewAdopter = canReviewAdopter;
+            ViewBag.OtherPets = await _context.AnimalListings
+                .Include(a => a.HealthDocuments)
+                .Where(a => a.Id != id && a.Status == ListingStatus.Published)
+                .Take(4)
+                .ToListAsync();
 
             return View(listing);
         }
