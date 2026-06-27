@@ -15,88 +15,126 @@
             <div class="text-center mb-5">
                 <h1 class="display-5 fw-bold text-primary-darkblue mb-3" style="font-family: var(--font-primary);">
                     How can we help you and your companion?
-                </h1>
-                <p class="text-secondary-grey mb-4">Search for answers about pet adoption, care tips, and managing your sanctuary account.</p>
                 
-                <div class="position-relative mx-auto" style="max-width: 600px;">
-                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-grey"></i>
-                    <input type="text" class="form-control form-control-lg ps-5 rounded-pill border-0 shadow-sm" 
-                           style="background-color: var(--petlink-card-bg); color: var(--petlink-dark);"
-                           placeholder="Search for 'How to adopt' or 'Safety guide'...">
-                </div>
-                <div class="mt-3 small">
-                    <span class="text-secondary-grey">Popular: </span>
-                    <a href="#" class="text-primary-darkblue text-decoration-none mx-1">Application status</a> • 
-                    <a href="#" class="text-primary-darkblue text-decoration-none mx-1">Shelter policies</a> • 
-                    <a href="#" class="text-primary-darkblue text-decoration-none mx-1">Verification</a>
-                </div>
             </div>
 
             @* Top Topics Cards *@
             <div class="row g-4 mb-5">
                 <div class="col-md-8">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 position-relative overflow-hidden hover-lift" 
-                         style="background-color: var(--petlink-card-bg);">
-                        <i class="bi bi-arrow-up-right position-absolute top-0 end-0 m-4 text-secondary-grey opacity-50"></i>
-                        <div class="p-2 bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 50px; height: 50px;">
-                            <i class="bi bi-paw-fill text-primary fs-4"></i>
-                        </div>
-                        <h3 class="h4 fw-bold text-primary-darkblue mb-3">Adoption Process</h3>
-                        <p class="text-secondary-grey small">From meeting your new best friend to the final paperwork. Learn about our curated matching system and home visit guidelines.</p>
+                        <a asp-controller="Home" asp-action="HowItWorks" class="text-decoration-none">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 position-relative overflow-hidden hover-lift" 
+                                style="background-color: var(--petlink-card-bg);">
+                                <i class="bi bi-arrow-up-right position-absolute top-0 end-0 m-4 text-secondary-grey opacity-50"></i>
+                                <div class="p-2 bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 50px; height: 50px;">
+                                    <i class="bi bi-paw-fill text-primary fs-4"></i>
+                                </div>
+                                <h3 class="h4 fw-bold text-primary-darkblue mb-3">Adoption Process</h3>
+                                <p class="text-secondary-grey small">From meeting your new best friend to the final paperwork. Learn about our curated matching system and home visit guidelines.</p>
+                            </div>
+                        </a>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-white hover-lift" 
-                         style="background-color: var(--petlink-dark);">
-                        <div class="p-2 bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 50px; height: 50px; background-color: var(--petlink-highlight);">
-                            <i class="bi bi-shield-check text-white fs-4"></i>
-                        </div>
-                        <h3 class="h4 fw-bold mb-3" style="color: var(--petlink-grey-bg);">Trust & Safety</h3>
-                        <p class="small opacity-75" style="color: var(--petlink-grey-bg);">Our sanctuary guidelines, verification protocols, and community standards for a safe environment.</p>
+                    <div class="col-md-4">
+                        <a asp-controller="Home" asp-action="Policies" class="text-decoration-none">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-white hover-lift" 
+                                style="background-color: var(--petlink-dark);">
+                                <div class="p-2 bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 50px; height: 50px; background-color: var(--petlink-highlight);">
+                                    <i class="bi bi-shield-check text-white fs-4"></i>
+                                </div>
+                                <h3 class="h4 fw-bold mb-3" style="color: var(--petlink-grey-bg);">Trust & Safety</h3>
+                                <p class="small opacity-75" style="color: var(--petlink-grey-bg);">Our sanctuary guidelines, verification protocols, and community standards for a safe environment.</p>
+                            </div>
+                        </a>
                     </div>
                 </div>
                 
                 @* Secondary Topic Cards *@
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 text-center hover-lift" style="background-color: var(--petlink-card-bg);">
-                        <i class="bi bi-house-heart text-primary fs-3 mb-3"></i>
-                        <h5 class="fw-bold text-primary-darkblue">Sitter Tips</h5>
-                        <p class="extra-small text-secondary-grey">Expert advice on providing the best care while hosting furry guests.</p>
-                    </div>
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center" style="background-color: var(--petlink-card-bg);">
+                    <i class="bi bi-house-heart text-primary fs-3 mb-3"></i>
+                    <h5 class="fw-bold text-primary-darkblue">Sitter Tips</h5>
+                    <p class="extra-small text-secondary-grey">Always confirm the pet's routine, feeding schedule, and any medical needs before the stay. Keep the owner updated with photos and messages.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 text-center hover-lift" style="background-color: var(--petlink-card-bg);">
-                        <i class="bi bi-person-gear text-primary fs-3 mb-3"></i>
-                        <h5 class="fw-bold text-primary-darkblue">Account Issues</h5>
-                        <p class="extra-small text-secondary-grey">Manage your profile, update privacy settings, or recover access.</p>
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center" style="background-color: var(--petlink-card-bg);">
+                    <i class="bi bi-person-gear text-primary fs-3 mb-3"></i>
+                    <h5 class="fw-bold text-primary-darkblue">Account Issues</h5>
+                    <p class="extra-small text-secondary-grey">To update your email or password, go to Account Settings. If you've lost access, use the "Forgot Password" option on the login page.</p>
                 </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 text-center hover-lift" style="background-color: var(--petlink-card-bg);">
-                        <i class="bi bi-bug text-danger fs-3 mb-3"></i>
-                        <h5 class="fw-bold text-primary-darkblue">Troubleshooting</h5>
-                        <p class="extra-small text-secondary-grey">Quick fixes for common technical questions and app performance.</p>
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center" style="background-color: var(--petlink-card-bg);">
+                    <i class="bi bi-bug text-danger fs-3 mb-3"></i>
+                    <h5 class="fw-bold text-primary-darkblue">Troubleshooting</h5>
+                    <p class="extra-small text-secondary-grey">If the page isn't loading correctly, try clearing your browser cache or reloading. For persistent issues, contact our support team.</p>
                 </div>
             </div>
 
             @* Popular Questions *@
             <div class="mb-5">
                 <h2 class="h4 fw-bold text-primary-darkblue text-center mb-4">Popular Questions</h2>
-                <div class="d-grid gap-3">
-                    @foreach (var q in new[] { 
-                        "01. What is the typical adoption timeline?", 
-                        "02. How do I verify my home for petsitting?", 
-                        "03. Can I change my listed location after joining?", 
-                        "04. PetLink Trust: Is my data shared with agencies?" 
-                    })
-                    {
-                        <div class="card border-0 shadow-sm rounded-4 px-4 py-3 hover-lift d-flex flex-row justify-content-between align-items-center" 
-                             style="background-color: var(--petlink-card-bg); cursor: pointer;">
-                            <span class="fw-bold text-primary-darkblue">@q</span>
-                            <i class="bi bi-chevron-right text-secondary-grey small"></i>
+                <div class="accordion d-grid gap-3" id="faqAccordion">
+                    
+                    <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold text-primary-darkblue rounded-4" 
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#faq1"
+                                    style="background-color: var(--petlink-card-bg);">
+                                01. What is the typical adoption timeline?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary-grey">
+                                The adoption process typically takes between 3 to 14 days. After submitting your request, the shelter reviews your application within 2–5 business days. If approved, you'll be contacted to arrange a meet-and-greet before finalising the adoption.
+                            </div>
                         </div>
-                    }
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold text-primary-darkblue rounded-4" 
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#faq2"
+                                    style="background-color: var(--petlink-card-bg);">
+                                02. How do I verify my home for petsitting?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary-grey">
+                                To become a verified petsitter on PetLink, go to your Account Settings and complete your petsitter profile. Our team will review your application and may request photos of your space. Verification usually takes 2–3 business days.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold text-primary-darkblue rounded-4" 
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#faq3"
+                                    style="background-color: var(--petlink-card-bg);">
+                                03. Can I change my listed location after joining?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary-grey">
+                                Yes! You can update your location at any time by going to Account Settings and editing your profile. Changes are reflected immediately across the platform.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden" style="background-color: var(--petlink-card-bg);">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold text-primary-darkblue rounded-4" 
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#faq4"
+                                    style="background-color: var(--petlink-card-bg);">
+                                04. PetLink Trust: Is my data shared with agencies?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-secondary-grey">
+                                No. PetLink does not sell or share your personal data with third-party agencies. Your information is only used to facilitate the adoption and petsitting process within our platform. For more details, please read our <a asp-controller="Home" asp-action="Policies" class="text-primary-darkblue">Policies & Protections</a> page.
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -108,12 +146,12 @@
                         <h2 class="display-6 fw-bold mb-3" style="font-family: var(--font-primary); color: var(--petlink-grey-bg);">Still need a paw?</h2>
                         <p class="opacity-75 mb-4" style="color: var(--petlink-grey-bg);">Our support team of pet lovers is available 24/7 to assist you with complex cases or technical issues.</p>
                         <div class="d-flex flex-column flex-sm-row gap-3">
-                            <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" style="background-color: var(--petlink-highlight);">
+                            <a href="mailto:support@petlink.com" 
+                            class="btn btn-primary rounded-pill px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" 
+                            style="background-color: var(--petlink-highlight);">
                                 <i class="bi bi-chat-dots-fill"></i> Contact Support
-                            </button>
-                            <button class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold opacity-75" style="color: var(--petlink-grey-bg);">
-                                Browse Full FAQ
-                            </button>
+                            </a>
+                            
                         </div>
                     </div>
                     <div class="col-lg-6 text-center mt-4 mt-lg-0">
