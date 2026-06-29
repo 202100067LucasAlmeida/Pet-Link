@@ -12,12 +12,23 @@ using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão de eventos criados por abrigos.
+    /// Permite criar, editar, aprovar, rejeitar e eliminar eventos,
+    /// bem como gerir o interesse dos utilizadores e pesquisar eventos aprovados.
+    /// </summary>
     public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly INotificationService _notificationService;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de eventos.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
+        /// <param name="webHostEnvironment">Ambiente de execução da aplicação web.</param>
+        /// <param name="notificationService">Serviço responsável pelo envio de notificações.</param>
         public EventsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, INotificationService notificationService)
         {
             _context = context;
@@ -25,7 +36,15 @@ namespace PetLink.Controllers
             _notificationService = notificationService;
         }
 
-        // GET: Events/Index - Listagem pública de eventos aprovados
+        /// <summary>
+        /// Apresenta a listagem pública de eventos aprovados,
+        /// permitindo filtrar por localização, datas e tipo de evento.
+        /// </summary>
+        /// <param name="location">Localização para filtrar os eventos (opcional).</param>
+        /// <param name="startDate">Data de início mínima para filtrar os eventos (opcional).</param>
+        /// <param name="endDate">Data de fim máxima para filtrar os eventos (opcional).</param>
+        /// <param name="type">Tipo de evento para filtrar (opcional).</param>
+        /// <returns>Vista com a lista de eventos que correspondem aos filtros aplicados.</returns>
         public async Task<IActionResult> Index(string? location, DateTime? startDate, DateTime? endDate, EventType? type)
         {
             var query = _context.Events
@@ -65,7 +84,12 @@ namespace PetLink.Controllers
             return View(events);
         }
 
-        // GET: Events/Details/5
+        /// <summary>
+        /// Apresenta os detalhes de um evento.
+        /// Eventos não aprovados só são visíveis pelo organizador ou por administradores.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Vista com os detalhes do evento.</returns>
         public async Task<IActionResult> Details(int id)
         {
             var eventItem = await _context.Events
@@ -92,7 +116,11 @@ namespace PetLink.Controllers
             return View(eventItem);
         }
 
-        // GET: Events/Create
+        /// <summary>
+        /// Apresenta o formulário de criação de um novo evento.
+        /// Apenas acessível a utilizadores com o papel de Shelter.
+        /// </summary>
+        /// <returns>Vista de criação de evento.</returns>
         [Authorize(Roles = "Shelter")]
         public IActionResult Create()
         {
@@ -101,7 +129,14 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // POST: Events/Create
+        /// <summary>
+        /// Cria um novo evento com estado pendente de aprovação.
+        /// Efetua o upload da imagem, guarda o evento e notifica os administradores.
+        /// Apenas acessível a utilizadores com o papel de Shelter.
+        /// </summary>
+        /// <param name="model">Dados do evento a criar.</param>
+        /// <param name="imageFile">Imagem do evento (opcional).</param>
+        /// <returns>Redireciona para os eventos do organizador caso a criação seja bem-sucedida.</returns>
         [HttpPost]
         [Authorize(Roles = "Shelter")]
         public async Task<IActionResult> Create(Event model, IFormFile? imageFile)
@@ -191,7 +226,12 @@ namespace PetLink.Controllers
             }
         }
 
-        // GET: Events/Edit/5
+        /// <summary>
+        /// Apresenta o formulário de edição de um evento existente.
+        /// Apenas o organizador do evento ou um administrador podem aceder.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Vista de edição do evento.</returns>
         [Authorize(Roles = "Shelter,Admin")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -209,95 +249,107 @@ namespace PetLink.Controllers
             return View(eventItem);
         }
 
-        // POST: Events/Edit/5
-[HttpPost]
-[ValidateAntiForgeryToken]
-[Authorize(Roles = "Shelter,Admin")]
-public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
-{
-    Console.WriteLine("=== EDIT POST - CHAMADO ===");
-    
-    if (id != model.Id) return NotFound();
-
-    var existingEvent = await _context.Events.FindAsync(id);
-    if (existingEvent == null) return NotFound();
-
-    var userIdClaim = User.FindFirst("UserId")?.Value;
-    if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
-
-    int userId = int.Parse(userIdClaim);
-    bool isAdmin = User.IsInRole("Admin");
-
-    if (existingEvent.OrganizerId != userId && !isAdmin) return Forbid();
-
-    ModelState.Remove("ImageUrl");
-    ModelState.Remove("Organizer");
-    ModelState.Remove("ApprovedBy");
-    ModelState.Remove("ApprovedAt");
-    ModelState.Remove("CreatedAt");
-    ModelState.Remove("UpdatedAt");
-
-    if (ModelState.IsValid)
-    {
-        try
+        /// <summary>
+        /// Atualiza as informações de um evento existente.
+        /// Quando editado pelo organizador, o evento regressa ao estado pendente de aprovação.
+        /// Quando editado por um administrador, o estado pode ser alterado manualmente.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <param name="model">Dados atualizados do evento.</param>
+        /// <param name="imageFile">Nova imagem do evento (opcional).</param>
+        /// <returns>Redireciona para a lista correspondente após guardar.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Shelter,Admin")]
+        public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
         {
-            existingEvent.Name = model.Name;
-            existingEvent.Description = model.Description;
-            existingEvent.StartDate = model.StartDate;
-            existingEvent.EndDate = model.EndDate;
-            existingEvent.Location = model.Location;
-            existingEvent.Type = model.Type;
-            existingEvent.UpdatedAt = DateTime.Now;
-            existingEvent.AcceptsDonations = model.AcceptsDonations;
-            existingEvent.AcceptsVolunteers = model.AcceptsVolunteers;
+            Console.WriteLine("=== EDIT POST - CHAMADO ===");
+    
+            if (id != model.Id) return NotFound();
 
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                existingEvent.ImageUrl = await UploadImage(imageFile);
-            }
+            var existingEvent = await _context.Events.FindAsync(id);
+            if (existingEvent == null) return NotFound();
 
-            // ========== REGRA IMPORTANTE ==========
-            // Se não for admin (ou seja, é o shelter a editar), o evento volta a Pending
-            // Se for admin a editar, mantém o status atual ou pode alterar manualmente
-            if (!isAdmin)
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Challenge();
+
+            int userId = int.Parse(userIdClaim);
+            bool isAdmin = User.IsInRole("Admin");
+
+            if (existingEvent.OrganizerId != userId && !isAdmin) return Forbid();
+
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("Organizer");
+            ModelState.Remove("ApprovedBy");
+            ModelState.Remove("ApprovedAt");
+            ModelState.Remove("CreatedAt");
+            ModelState.Remove("UpdatedAt");
+
+            if (ModelState.IsValid)
             {
-                // Shelter a editar: evento volta para aprovação
-                existingEvent.Status = EventStatus.Pending;
-                existingEvent.ApprovedAt = null;
-                existingEvent.ApprovedBy = null;
-                
-            }
-            else
-            {
-                // Admin a editar: pode alterar o status manualmente
-                if (existingEvent.Status != model.Status)
+                try
                 {
-                    existingEvent.Status = model.Status;
-                    existingEvent.ApprovedAt = model.Status == EventStatus.Approved ? DateTime.Now : null;
-                    existingEvent.ApprovedBy = model.Status == EventStatus.Approved ? userId : null;
+                    existingEvent.Name = model.Name;
+                    existingEvent.Description = model.Description;
+                    existingEvent.StartDate = model.StartDate;
+                    existingEvent.EndDate = model.EndDate;
+                    existingEvent.Location = model.Location;
+                    existingEvent.Type = model.Type;
+                    existingEvent.UpdatedAt = DateTime.Now;
+                    existingEvent.AcceptsDonations = model.AcceptsDonations;
+                    existingEvent.AcceptsVolunteers = model.AcceptsVolunteers;
+
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        existingEvent.ImageUrl = await UploadImage(imageFile);
+                    }
+
+                    // ========== REGRA IMPORTANTE ==========
+                    // Se não for admin (ou seja, é o shelter a editar), o evento volta a Pending
+                    // Se for admin a editar, mantém o status atual ou pode alterar manualmente
+                    if (!isAdmin)
+                    {
+                        // Shelter a editar: evento volta para aprovação
+                        existingEvent.Status = EventStatus.Pending;
+                        existingEvent.ApprovedAt = null;
+                        existingEvent.ApprovedBy = null;
+                
+                    }
+                    else
+                    {
+                        // Admin a editar: pode alterar o status manualmente
+                        if (existingEvent.Status != model.Status)
+                        {
+                            existingEvent.Status = model.Status;
+                            existingEvent.ApprovedAt = model.Status == EventStatus.Approved ? DateTime.Now : null;
+                            existingEvent.ApprovedBy = model.Status == EventStatus.Approved ? userId : null;
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Event updated. New status: {existingEvent.Status}");
+
+                    TempData["Success"] = !isAdmin 
+                        ? "Event updated! It will be visible again after admin approval." 
+                        : "Event updated successfully!";
+
+                    return RedirectToAction(isAdmin ? nameof(Manage) : nameof(MyEvents));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    TempData["Error"] = $"Error: {ex.Message}";
                 }
             }
 
-            await _context.SaveChangesAsync();
-            Console.WriteLine($"Event updated. New status: {existingEvent.Status}");
-
-            TempData["Success"] = !isAdmin 
-                ? "Event updated! It will be visible again after admin approval." 
-                : "Event updated successfully!";
-
-            return RedirectToAction(isAdmin ? nameof(Manage) : nameof(MyEvents));
+            return View(model);
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            TempData["Error"] = $"Error: {ex.Message}";
-        }
-    }
 
-    return View(model);
-}
-
-        // GET: Events/MyEvents - Eventos criados pela shelter
+        /// <summary>
+        /// Lista todos os eventos criados pelo abrigo autenticado.
+        /// Apenas acessível a utilizadores com o papel de Shelter.
+        /// </summary>
+        /// <returns>Vista com os eventos do organizador.</returns>
         [Authorize(Roles = "Shelter")]
         public async Task<IActionResult> MyEvents()
         {
@@ -314,8 +366,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return View(events);
         }
 
-        
-        // GET: Events/Manage - Admin apenas
+        /// <summary>
+        /// Apresenta a área de gestão de eventos para administradores,
+        /// separando os eventos pendentes de aprovação dos já aprovados.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <returns>Vista de gestão com eventos pendentes e aprovados.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
         {
@@ -337,7 +393,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return View();
         }
 
-        // POST: Events/Approve/5
+        /// <summary>
+        /// Aprova um evento pendente e notifica o organizador.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Redireciona para a gestão de eventos.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Approve(int id)
@@ -371,7 +432,14 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return RedirectToAction(nameof(Manage));
         }
 
-        // POST: Events/Reject/5
+        /// <summary>
+        /// Rejeita um evento pendente e notifica o organizador,
+        /// podendo incluir um motivo de rejeição.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <param name="rejectionReason">Motivo da rejeição (opcional).</param>
+        /// <returns>Redireciona para a gestão de eventos.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Reject(int id, string? rejectionReason)
@@ -398,7 +466,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return RedirectToAction(nameof(Manage));
         }
 
-        // GET: Events/Search - API para pesquisa rápida
+        /// <summary>
+        /// Pesquisa eventos aprovados por nome, descrição ou localização.
+        /// Devolve os resultados em formato JSON para utilização em pesquisas rápidas.
+        /// </summary>
+        /// <param name="query">Texto a pesquisar.</param>
+        /// <returns>Lista JSON com os eventos correspondentes (máximo de 10 resultados).</returns>
         [HttpGet]
         public async Task<IActionResult> Search(string query)
         {
@@ -414,7 +487,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return Json(events);
         }
 
-        // POST: Events/Delete/5
+        /// <summary>
+        /// Remove definitivamente um evento.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Redireciona para a gestão de eventos.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -440,6 +518,11 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return RedirectToAction(nameof(Manage));
         }
 
+        /// <summary>
+        /// Guarda uma imagem no servidor e devolve o respetivo caminho relativo.
+        /// </summary>
+        /// <param name="file">Imagem enviada pelo utilizador.</param>
+        /// <returns>Caminho relativo da imagem guardada.</returns>
         private async Task<string> UploadImage(IFormFile file)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
@@ -460,7 +543,13 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return $"/images/events/{fileName}";
         }
 
-        // POST: Events/RegisterInterest/5
+        /// <summary>
+        /// Regista ou remove o interesse de um utilizador num evento aprovado.
+        /// Caso o utilizador já esteja registado, o interesse é removido (comportamento de toggle).
+        /// Notifica o organizador sempre que um novo interesse é registado.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Resposta JSON indicando o resultado da operação.</returns>
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> RegisterInterest(int id)
@@ -518,7 +607,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return Json(new { success = true, registered = true, message = "You are now registered for this event!" });
         }
 
-        // GET: Events/InterestedUsers/5
+        /// <summary>
+        /// Lista os utilizadores que registaram interesse num evento.
+        /// Apenas acessível pelo organizador do evento ou por administradores.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Vista com a lista de utilizadores interessados.</returns>
         [HttpGet]
         public async Task<IActionResult> InterestedUsers(int id)
         {
@@ -547,7 +641,12 @@ public async Task<IActionResult> Edit(int id, Event model, IFormFile? imageFile)
             return View(interestedUsers);
         }
 
-        // GET: Events/CheckInterest/5
+        /// <summary>
+        /// Verifica se o utilizador autenticado tem interesse registado num evento.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="id">Identificador do evento.</param>
+        /// <returns>Resposta JSON com a propriedade <c>registered</c> a indicar o estado do interesse.</returns>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> CheckInterest(int id)

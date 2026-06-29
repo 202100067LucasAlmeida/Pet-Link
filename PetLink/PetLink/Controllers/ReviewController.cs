@@ -11,17 +11,35 @@ using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
+
+    /// <summary>
+    /// Controlador responsável pela gestão de avaliações entre utilizadores.
+    /// Permite criar avaliações de adoção (entre adotante e abrigo) e de pet sitting,
+    /// bem como consultar as avaliações recebidas por um utilizador.
+    /// </summary>
     [Authorize]
     public class ReviewController : Controller
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de avaliações.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
         public ReviewController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Review/Create/5
+        /// <summary>
+        /// Apresenta o formulário de criação de uma avaliação.
+        /// Determina o utilizador a avaliar e valida se o utilizador autenticado
+        /// tem permissão para o fazer, de acordo com o tipo de avaliação (adoção ou pet sitting).
+        /// </summary>
+        /// <param name="animalListingId">Identificador do anúncio de animal associado à avaliação.</param>
+        /// <param name="reviewedId">Identificador do utilizador a avaliar (obrigatório para avaliações de pet sitting).</param>
+        /// <param name="reviewType">Tipo de avaliação: "Adoption" ou "Petsitter".</param>
+        /// <returns>Vista de criação de avaliação ou redirecionamento caso a operação não seja permitida.</returns>
         [HttpGet]
         public async Task<IActionResult> Create(int animalListingId, int? reviewedId = null, string reviewType = "Adoption")
         {
@@ -125,7 +143,13 @@ namespace PetLink.Controllers
             return View(viewModel);
         }
 
-        // POST: Review/Create
+        /// <summary>
+        /// Submete uma nova avaliação após validar permissões e duplicações.
+        /// A validação de permissões é repetida no servidor de acordo com o tipo de avaliação,
+        /// garantindo que o utilizador autenticado tem efetivamente direito a avaliar.
+        /// </summary>
+        /// <param name="model">Dados da avaliação submetida.</param>
+        /// <returns>Redireciona para os detalhes do anúncio ou para as reservas, dependendo do tipo de avaliação.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateReviewViewModel model)
@@ -220,7 +244,13 @@ namespace PetLink.Controllers
             return RedirectToAction("Details", "AnimalListings", new { id = model.AnimalListingId });
         }
 
-        // GET: Review/UserReviews/5
+        /// <summary>
+        /// Apresenta as avaliações recebidas por um utilizador,
+        /// incluindo a classificação média e o total de avaliações.
+        /// Apenas utilizadores e pet sitters podem receber avaliações.
+        /// </summary>
+        /// <param name="userId">Identificador do utilizador a consultar.</param>
+        /// <returns>Vista com as avaliações do utilizador e respetivas estatísticas.</returns>
         [HttpGet]
         public async Task<IActionResult> UserReviews(int userId)
         {

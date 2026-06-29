@@ -16,11 +16,19 @@ using System.Text.RegularExpressions;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Modelo utilizado para receber pedidos de verificação de email via JSON.
+    /// </summary>
     public class EmailCheckRequest
     {
         public string Email { get; set; }
     }
 
+    /// <summary>
+    /// Controlador responsável pela gestão de perfis e autenticação de utilizadores.
+    /// Cobre o registo, login, logout, autenticação via Google,
+    /// recuperação de password, definições de conta e painel de perfil.
+    /// </summary>
     public class ProfileController : BaseController
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +36,13 @@ namespace PetLink.Controllers
         private readonly INotificationService _notificationService;
         private readonly IEmailService _emailService;
 
-        // 2. Adiciona ao construtor
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de perfil.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
+        /// <param name="webHostEnvironment">Ambiente de execução da aplicação web.</param>
+        /// <param name="notificationService">Serviço responsável pelo envio de notificações.</param>
+        /// <param name="emailService">Serviço responsável pelo envio de emails.</param>
         public ProfileController(ApplicationDbContext context, 
                                  IWebHostEnvironment webHostEnvironment, 
                                  INotificationService notificationService, 
@@ -41,9 +55,10 @@ namespace PetLink.Controllers
         }
 
         /// <summary>
-        /// GET: Profile/LoginForm - Displays login form
-        /// Redirects authenticated users to Home/Index
+        /// Apresenta o formulário de início de sessão.
+        /// Utilizadores já autenticados são redirecionados para a página inicial.
         /// </summary>
+        /// <returns>Vista do formulário de login ou redirecionamento.</returns>
         [HttpGet]
         public IActionResult LoginForm()
         {
@@ -51,7 +66,15 @@ namespace PetLink.Controllers
             return View();
         }
 
-        // Recebe os dados do formulário 
+        /// <summary>
+        /// Processa o início de sessão com email e password.
+        /// Em caso de sucesso, cria o cookie de autenticação.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="email">Email do utilizador.</param>
+        /// <param name="password">Password do utilizador.</param>
+        /// <param name="rememberMe">Indica se a sessão deve ser persistente.</param>
+        /// <returns>Resposta JSON com o resultado da autenticação.</returns>
         [HttpPost]
         public async Task<IActionResult> LoginForm(string email, string password, bool rememberMe)
         {
@@ -84,7 +107,11 @@ namespace PetLink.Controllers
             return Json(new { success = true });
         }
 
-        // Mostra a página de Registo 
+        /// <summary>
+        /// Apresenta o formulário de registo de nova conta.
+        /// Utilizadores já autenticados são redirecionados para a página inicial.
+        /// </summary>
+        /// <returns>Vista do formulário de registo ou redirecionamento.</returns>
         [HttpGet]
         public IActionResult SignUpForm()
         {
@@ -92,13 +119,20 @@ namespace PetLink.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Apresenta o formulário de recuperação de password.
+        /// </summary>
+        /// <returns>Vista do formulário de recuperação de password.</returns>  
         [HttpGet]
         public IActionResult ForgotPasswordForm()
         {
             return View();
         }
 
-        // Faz o Logout
+        /// <summary>
+        /// Termina a sessão do utilizador autenticado e redireciona para a página inicial.
+        /// </summary>
+        /// <returns>Redirecionamento para a página inicial.</returns>
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -106,9 +140,12 @@ namespace PetLink.Controllers
         }
 
 
-        // sprint 2 -----------
-
-        // Verificação do Email
+        /// <summary>
+        /// Verifica se um endereço de email já se encontra registado na plataforma.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="request">Objeto com o email a verificar.</param>
+        /// <returns>Resposta JSON com a propriedade <c>isAvailable</c> a indicar a disponibilidade do email.</returns>
         [HttpPost]
         public async Task<IActionResult> ValidateEmail([FromBody] EmailCheckRequest request)
         {
@@ -119,7 +156,13 @@ namespace PetLink.Controllers
             return Json(new { isAvailable = !emailExists });
         }
 
-        // Verificaçõesdo sign up e criação de conta
+        /// <summary>
+        /// Valida os dados do formulário de registo e cria uma nova conta de utilizador.
+        /// Notifica os administradores após a criação bem-sucedida.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="model">Dados submetidos no formulário de registo.</param>
+        /// <returns>Resposta JSON com o resultado da validação e criação de conta.</returns>
         [HttpPost]
         public async Task<IActionResult> ValidateSignUp([FromBody] SignUpValidationModel model)
         {
@@ -206,7 +249,12 @@ namespace PetLink.Controllers
             return Json(new { success = true });
         }
 
-
+        /// <summary>
+        /// Valida os requisitos de complexidade de uma password.
+        /// Devolve um objeto JSON com o estado de cada requisito.
+        /// </summary>
+        /// <param name="model">Modelo com a password a validar.</param>
+        /// <returns>Resposta JSON com os requisitos cumpridos e por cumprir.</returns>
         [HttpPost]
         public IActionResult ValidatePassword([FromBody] PasswordValidationModel model)
         {
@@ -274,7 +322,10 @@ namespace PetLink.Controllers
         }
 
 
-        //account settings
+        /// <summary>
+        /// Apresenta as definições da conta do utilizador autenticado.
+        /// </summary>
+        /// <returns>Vista das definições de conta com os dados do utilizador.</returns>
         [HttpGet]
         public async Task<IActionResult> AccountSettings()
         {
@@ -300,9 +351,13 @@ namespace PetLink.Controllers
             return View(user);
         }
 
-        // My profile
-
-        // GET: Profile/MyProfile
+        /// <summary>
+        /// Apresenta o painel de perfil do utilizador autenticado.
+        /// Inclui animais guardados, candidaturas ativas, conversas recentes,
+        /// notificações, avaliações e, para administradores,
+        /// dados de gestão pendentes como anúncios, utilizadores e eventos.
+        /// </summary>
+        /// <returns>Vista do perfil com o ViewModel preenchido.</returns>
         [Authorize]
         public async Task<IActionResult> MyProfile()
         {
@@ -442,13 +497,23 @@ namespace PetLink.Controllers
             return View(viewModel);
         }
 
-        // POST: Profile/MarkNotificationAsRead
+        /// <summary>
+        /// Marca uma notificação específica como lida.
+        /// </summary>
+        /// <param name="notificationId">Identificador da notificação.</param>
+        /// <returns>Redireciona para o painel de perfil.</returns>
         [HttpPost]
         public async Task<IActionResult> MarkNotificationAsRead(int notificationId)
         {
             await _notificationService.MarkAsReadAsync(notificationId);
             return RedirectToAction(nameof(MyProfile));
         }
+
+        /// <summary>
+        /// Marca todas as notificações de um utilizador como lidas.
+        /// </summary>
+        /// <param name="userId">Identificador do utilizador.</param>
+        /// <returns>Redireciona para o painel de perfil.</returns>
 
         [HttpPost]
         public async Task<IActionResult> MarkAllNotificationAsRead(int userId)
@@ -457,7 +522,12 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(MyProfile));
         }
 
-        // POST: Profile/MarkMessagesAsRead
+        /// <summary>
+        /// Marca todas as mensagens não lidas do utilizador autenticado como lidas.
+        /// Acessível apenas a utilizadores com os papéis User ou PetSitter.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <returns>Resposta JSON com o resultado da operação.</returns>// POST: Profile/MarkMessagesAsRead
         [HttpPost]
         [Authorize(Roles = "User,PetSitter")]
         public async Task<IActionResult> MarkMessagesAsRead()
@@ -481,6 +551,15 @@ namespace PetLink.Controllers
             return Json(new { success = true });
         }
 
+        /// <summary>
+        /// Atualiza os dados da conta do utilizador autenticado,
+        /// incluindo nome, telefone, cidade, biografia e foto de perfil.
+        /// Caso solicitado, remove a foto de perfil atual e repõe a imagem por defeito.
+        /// </summary>
+        /// <param name="updatedUser">Dados atualizados do utilizador.</param>
+        /// <param name="profilePicture">Nova foto de perfil (opcional).</param>
+        /// <param name="removePhoto">Indica se a foto de perfil deve ser removida.</param>
+        /// <returns>Redireciona para as definições de conta após guardar.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateAccount(User updatedUser, IFormFile? profilePicture, bool removePhoto)
@@ -527,6 +606,11 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(AccountSettings));
         }
 
+        /// <summary>
+        /// Remove a foto de perfil do utilizador autenticado,
+        /// apaga o ficheiro físico do servidor e repõe a imagem por defeito.
+        /// </summary>
+        /// <returns>Redireciona para as definições de conta após a remoção.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveProfilePicture()
@@ -559,6 +643,12 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(AccountSettings));
         }
 
+        /// <summary>
+        /// Guarda um ficheiro de imagem de perfil no servidor
+        /// e devolve o respetivo caminho relativo.
+        /// </summary>
+        /// <param name="file">Ficheiro de imagem enviado pelo utilizador.</param>
+        /// <returns>Caminho relativo da imagem guardada.</returns>
         private async Task<string> SaveProfileFile(IFormFile file)
         {
             // 1. Criar um nome único (Ex: 550e8400-e29b-41d4.jpg)
@@ -585,6 +675,11 @@ namespace PetLink.Controllers
             return $"/images/avatars/{fileName}";
         }
 
+        /// <summary>
+        /// Inicia o fluxo de autenticação via Google,
+        /// redirecionando o utilizador para a página de login da Google.
+        /// </summary>
+        /// <returns>Desafio de autenticação com o esquema Google.</returns>
         public IActionResult LoginWithGoogle()
         {
             var redirectUrl = Url.Action("GoogleResponse");
@@ -592,6 +687,12 @@ namespace PetLink.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme); 
         }
 
+        /// <summary>
+        /// Processa a resposta de autenticação da Google.
+        /// Caso o utilizador não exista na plataforma, é criada uma nova conta automaticamente.
+        /// Em caso de sucesso, cria o cookie de autenticação da aplicação.
+        /// </summary>
+        /// <returns>Redireciona para a página inicial em caso de sucesso, ou para o login em caso de falha.</returns>
         [HttpGet]
         public async Task<IActionResult> GoogleResponse()
         {
@@ -660,6 +761,14 @@ namespace PetLink.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Processa o pedido de recuperação de password.
+        /// Gera um token de reset, guarda-o na base de dados e envia um email com o link de redefinição.
+        /// Contas com login externo via Google não suportam este fluxo.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="model">Modelo com o email para recuperação de password.</param>
+        /// <returns>Resposta JSON com o resultado da operação.</returns>
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -714,6 +823,14 @@ namespace PetLink.Controllers
             });
         }
 
+        /// <summary>
+        /// Processa o pedido de recuperação de password.
+        /// Gera um token de reset, guarda-o na base de dados e envia um email com o link de redefinição.
+        /// Contas com login externo via Google não suportam este fluxo.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="model">Modelo com o email para recuperação de password.</param>
+        /// <returns>Resposta JSON com o resultado da operação.</returns>
         [HttpGet]
         public async Task<IActionResult> ResetPassword(string token)
         {
@@ -734,6 +851,14 @@ namespace PetLink.Controllers
             });
         }
 
+        /// <summary>
+        /// Processa a redefinição de password com base no token fornecido.
+        /// Valida a correspondência das passwords e a validade do token
+        /// antes de atualizar a password na base de dados.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="model">Modelo com o token, nova password e confirmação.</param>
+        /// <returns>Resposta JSON com o resultado da operação.</returns>
         [HttpPost]
         public async Task<IActionResult> ResetPassword(
     ResetPasswordViewModel model)
@@ -783,6 +908,10 @@ namespace PetLink.Controllers
             });
         }
 
+        /// <summary>
+        /// Apresenta a página de centro de ajuda da plataforma.
+        /// </summary>
+        /// <returns>Vista do centro de ajuda.</returns>
         public IActionResult HelpCenter()
         {
             return View();

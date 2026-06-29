@@ -10,10 +10,21 @@ using PetLink.Models.Enums;
 
 namespace PetLink
 {
+    /// <summary>
+    /// Controlador responsável pela gestão dos anúncios de animais.
+    /// Permite criar, editar, visualizar, pesquisar e eliminar anúncios,
+    /// bem como gerir candidaturas e funcionalidades relacionadas com a adoção.
+    /// </summary>
     public class AnimalListingsController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de anúncios.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
+        /// <param name="notificationService">Serviço responsável pelo envio de notificações.</param>
 
         public AnimalListingsController(ApplicationDbContext context, INotificationService notificationService)
         {
@@ -21,13 +32,22 @@ namespace PetLink
             _notificationService = notificationService;
         }
 
-        // GET: AnimalListings
+        /// <summary>
+        /// Apresenta a lista de anúncios publicados.
+        /// </summary>
+        /// <returns>Vista com os anúncios disponíveis.</returns>
         public async Task<IActionResult> Index()
         {
             return await Search(null, null, null, null, null);
         }
 
-        // GET: AnimalListings/Details/5
+        /// <summary>
+        /// Apresenta os detalhes de um anúncio de adoção.
+        /// Também verifica permissões de acesso, histórico de mensagens,
+        /// candidaturas e possibilidade de avaliação.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>Vista com os detalhes do anúncio.</returns>
         public async Task<IActionResult> Details(int id)
         {
         
@@ -124,7 +144,10 @@ namespace PetLink
             return View(listing);
         }
 
-        // GET: Lista as candidaturas enviadas pelo Adotante
+        /// <summary>
+        /// Lista todas as candidaturas efetuadas pelo utilizador autenticado.
+        /// </summary>
+        /// <returns>Vista com as candidaturas submetidas.</returns>
         [Authorize]
         public async Task<IActionResult> MyApplications()
         {
@@ -143,7 +166,10 @@ namespace PetLink
             return View(myApplications);
         }
 
-        // GET: AnimalListings/Create
+        /// <summary>
+        /// Apresenta o formulário para criação de um novo anúncio.
+        /// </summary>
+        /// <returns>Vista de criação.</returns>
         [HttpGet]
         [Authorize]
         public IActionResult Create()
@@ -151,7 +177,12 @@ namespace PetLink
             return View();
         }
 
-        // POST: AnimalListings/Create
+        /// <summary>
+        /// Cria um novo anúncio de adoção.
+        /// Efetua validações, guarda imagens e documentos de saúde
+        /// e envia uma notificação para os administradores.
+        /// </summary>
+        /// <returns>Redireciona para os anúncios do utilizador caso a criação seja bem-sucedida.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -285,7 +316,11 @@ namespace PetLink
             return View(animalListing);
         }
 
-        // GET: AnimalListings/Edit/5
+        /// <summary>
+        /// Apresenta o formulário de edição de um anúncio existente.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>Vista de edição.</returns>
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
@@ -305,7 +340,13 @@ namespace PetLink
             return View(animalListing);
         }
 
-        // POST: AnimalListings/Edit/5
+        /// <summary>
+        /// Atualiza as informações de um anúncio.
+        /// Permite alterar dados, imagem principal,
+        /// documentos de saúde e estado do anúncio.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>Redireciona para a lista correspondente após guardar.</returns>  
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -446,7 +487,11 @@ namespace PetLink
             return View(animalListing);
         }
 
-        // GET: AnimalListings/Delete/5
+        /// <summary>
+        /// Apresenta a confirmação antes de eliminar um anúncio.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>Vista de confirmação.</returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -460,7 +505,11 @@ namespace PetLink
             return View(animalListing);
         }
 
-        // POST: AnimalListings/Delete/5
+        /// <summary>
+        /// Remove definitivamente um anúncio.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>Redireciona para a gestão de anúncios.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -475,6 +524,11 @@ namespace PetLink
             return RedirectToAction(nameof(Manage));
         }
 
+        /// <summary>
+        /// Pesquisa anúncios publicados aplicando filtros como
+        /// espécie, localização, idade e ordenação.
+        /// </summary>
+        /// <returns>Vista com os resultados da pesquisa.</returns>
         public async Task<IActionResult> Search(Species? species, string? location, Age? age, string? sort, string? range)
         {
             var query = _context.AnimalListings
@@ -523,7 +577,10 @@ namespace PetLink
             return View("Index", results);
         }
 
-        // GET: AnimalListings/Manage (Admin apenas)
+        /// <summary>
+        /// Permite aos administradores gerir todos os anúncios.
+        /// </summary>
+        /// <returns>Vista de gestão de anúncios.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Manage()
         {
@@ -536,7 +593,10 @@ namespace PetLink
             return View(allListings);
         }
 
-        // GET: Meus anúncios
+        /// <summary>
+        /// Lista todos os anúncios criados pelo utilizador autenticado.
+        /// </summary>
+        /// <returns>Vista com os anúncios do utilizador.</returns>
         [Authorize]
         public async Task<IActionResult> MyListings()
         {
@@ -554,7 +614,11 @@ namespace PetLink
             return View(myListings);
         }
 
-        // GET: AnimalListings/MyReceivedApplications
+        /// <summary>
+        /// Lista todas as candidaturas recebidas para os anúncios
+        /// pertencentes ao utilizador autenticado.
+        /// </summary>
+        /// <returns>Vista com as candidaturas recebidas.</returns>
         [Authorize]
         public async Task<IActionResult> MyReceivedApplications()
         {
@@ -572,11 +636,24 @@ namespace PetLink
             return View(applications);
         }
 
+        /// <summary>
+        /// Verifica se existe um anúncio com o identificador indicado.
+        /// </summary>
+        /// <param name="id">Identificador do anúncio.</param>
+        /// <returns>
+        /// <c>true</c> se existir; caso contrário, <c>false</c>.
+        /// </returns>y
         private bool AnimalListingExists(int id)
         {
             return _context.AnimalListings.Any(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Guarda uma imagem no servidor e devolve o respetivo caminho relativo.
+        /// </summary>
+        /// <param name="file">Imagem enviada pelo utilizador.</param>
+        /// <param name="subFolder">Subpasta onde a imagem será armazenada.</param>
+        /// <returns>Caminho relativo da imagem guardada.</returns> 
         private async Task<string> UploadImage(IFormFile file, string subFolder)
         {
             if (file == null || file.Length == 0) return null;
@@ -594,7 +671,12 @@ namespace PetLink
             return $"/images/{subFolder}/{fileName}";
         }
 
-        // GET: AnimalListings/Map
+        /// <summary>
+        /// Apresenta os anúncios publicados num mapa,
+        /// permitindo aplicar filtros por espécie, localização e idade.
+        /// Também disponibiliza a localização de abrigos e pet sitters.
+        /// </summary>
+        /// <returns>Vista do mapa com os resultados.</returns>
         public async Task<IActionResult> Map(Species? species, string? location, Age? age)
         {
             var query = _context.AnimalListings

@@ -8,6 +8,12 @@ using PetLink.Models.ViewModels;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão dos favoritos do utilizador autenticado.
+    /// Permite adicionar e remover anúncios de animais e pet sitters dos favoritos,
+    /// bem como consultar e verificar o estado de cada favorito.
+    /// Acessível apenas a utilizadores com os papéis User ou PetSitter.
+    /// </summary>
     [Authorize(Roles = "User, PetSitter")]
     public class FavoritesController : BaseController
     {
@@ -15,8 +21,10 @@ namespace PetLink.Controllers
         private readonly ILogger<FavoritesController> _logger;
 
         /// <summary>
-        /// Extracts authenticated user ID from claims with null safety
+        /// Inicializa uma nova instância do controlador de favoritos.
         /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
+        /// <param name="logger">Serviço de logging.</param>
 
         public FavoritesController(ApplicationDbContext context, ILogger<FavoritesController> logger)
         {
@@ -25,8 +33,10 @@ namespace PetLink.Controllers
         }
 
         /// <summary>
-        /// GET: Favorites/Index - Shows user's favorited listings
+        /// Apresenta os favoritos do utilizador autenticado,
+        /// incluindo tanto anúncios de animais como pet sitters guardados.
         /// </summary>
+        /// <returns>Vista com os favoritos do utilizador.</returns>
         public async Task<IActionResult> Index()
         {
             if (!GetCurrentUserId(out int userId))
@@ -59,7 +69,13 @@ namespace PetLink.Controllers
     return View("MyFavorites", viewModel);
         }
 
-        // POST: Favorites/Toggle/5
+        /// <summary>
+        /// Adiciona ou remove um anúncio de animal dos favoritos do utilizador (comportamento de toggle).
+        /// Caso o anúncio já esteja nos favoritos, é removido; caso contrário, é adicionado.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="animalListingId">Identificador do anúncio de animal.</param>
+        /// <returns>Resposta JSON indicando o resultado da operação e o novo estado do favorito.</returns>
         [HttpPost]
         public async Task<IActionResult> Toggle(int animalListingId)
         {
@@ -108,7 +124,15 @@ namespace PetLink.Controllers
             }
         }
 
-        // GET: Favorites/Check/5
+        /// <summary>
+        /// Verifica se um anúncio de animal se encontra nos favoritos do utilizador autenticado.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="animalListingId">Identificador do anúncio de animal.</param>
+        /// <returns>
+        /// Resposta JSON com <c>true</c> se o anúncio estiver nos favoritos;
+        /// caso contrário, <c>false</c>.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> Check(int animalListingId)
         {
@@ -124,7 +148,11 @@ namespace PetLink.Controllers
             return Json(isFavorited);
         }
 
-        // GET: Favorites/MyFavorites 
+        /// <summary>
+        /// Apresenta os favoritos do utilizador autenticado,
+        /// incluindo anúncios de animais e pet sitters guardados.
+        /// </summary>
+        /// <returns>Vista com os favoritos do utilizador.</returns>
         public async Task<IActionResult> MyFavorites()
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -157,7 +185,13 @@ namespace PetLink.Controllers
             return View(viewModel);
         }
 
-        // POST: Favorites/TogglePetsitter/5
+        /// <summary>
+        /// Adiciona ou remove um pet sitter dos favoritos do utilizador (comportamento de toggle).
+        /// Caso o pet sitter já esteja nos favoritos, é removido; caso contrário, é adicionado.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="petsitterId">Identificador do pet sitter.</param>
+        /// <returns>Resposta JSON indicando o resultado da operação e o novo estado do favorito.</returns>
         [HttpPost]
         public async Task<IActionResult> TogglePetsitter(int petsitterId)
         {
@@ -206,7 +240,15 @@ namespace PetLink.Controllers
             }
         }
 
-        // GET: Favorites/CheckPetsitter/5
+        /// <summary>
+        /// Verifica se um pet sitter se encontra nos favoritos do utilizador autenticado.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="petsitterId">Identificador do pet sitter.</param>
+        /// <returns>
+        /// Resposta JSON com <c>true</c> se o pet sitter estiver nos favoritos;
+        /// caso contrário, <c>false</c>.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> CheckPetsitter(int petsitterId)
         {

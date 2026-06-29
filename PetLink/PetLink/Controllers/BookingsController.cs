@@ -7,16 +7,38 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão de reservas de serviços de pet sitting.
+    /// Permite criar, confirmar, rejeitar, cancelar e concluir reservas,
+    /// bem como consultar as reservas do utilizador e gerir as reservas recebidas.
+    /// </summary>
     [Authorize]
     public class BookingsController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de reservas.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
         public BookingsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Cria uma nova reserva de serviço de pet sitting.
+        /// Valida as datas, calcula o preço total e envia uma mensagem
+        /// automática ao pet sitter com os detalhes da reserva.
+        /// </summary>
+        /// <param name="petsitterId">Identificador do pet sitter.</param>
+        /// <param name="serviceType">Tipo de serviço pretendido.</param>
+        /// <param name="startDate">Data e hora de início do serviço.</param>
+        /// <param name="endDate">Data e hora de fim do serviço.</param>
+        /// <param name="petName">Nome do animal (opcional).</param>
+        /// <param name="petSpecies">Espécie do animal (opcional).</param>
+        /// <param name="message">Mensagem adicional para o pet sitter (opcional).</param>
+        /// <returns>Redireciona para os detalhes do pet sitter após a criação da reserva.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int petsitterId, ServiceType serviceType, DateTime startDate, DateTime endDate, string? petName, string? petSpecies, string? message)
@@ -79,6 +101,10 @@ namespace PetLink.Controllers
             return RedirectToAction("Details", "Petsitter", new { id = petsitterId });
         }
 
+        /// <summary>
+        /// Lista todas as reservas efetuadas pelo utilizador autenticado.
+        /// </summary>
+        /// <returns>Vista com as reservas do utilizador.</returns>
         public async Task<IActionResult> MyBookings()
         {
             if (!GetCurrentUserId(out int userId))
@@ -94,6 +120,11 @@ namespace PetLink.Controllers
             return View(bookings);
         }
 
+        /// <summary>
+        /// Lista todas as reservas recebidas pelo pet sitter autenticado.
+        /// Requer que o utilizador possua um perfil de pet sitter.
+        /// </summary>
+        /// <returns>Vista com as reservas recebidas para gestão.</returns>
         public async Task<IActionResult> Manage()
         {
             if (!GetCurrentUserId(out int userId))
@@ -119,6 +150,12 @@ namespace PetLink.Controllers
             return View("ManageBookings", bookings);
         }
 
+        /// <summary>
+        /// Confirma uma reserva pendente.
+        /// Apenas o pet sitter associado à reserva pode efetuar esta ação.
+        /// </summary>
+        /// <param name="id">Identificador da reserva.</param>
+        /// <returns>Redireciona para a gestão de reservas.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Confirm(int id)
@@ -144,6 +181,12 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
+        /// <summary>
+        /// Rejeita uma reserva pendente.
+        /// Pode ser efetuado pelo pet sitter ou pelo utilizador que criou a reserva.
+        /// </summary>
+        /// <param name="id">Identificador da reserva.</param>
+        /// <returns>Redireciona para a gestão de reservas.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
@@ -169,6 +212,12 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
+        /// <summary>
+        /// Cancela uma reserva existente.
+        /// Apenas o utilizador que criou a reserva pode efetuar esta ação.
+        /// </summary>
+        /// <param name="id">Identificador da reserva.</param>
+        /// <returns>Redireciona para as reservas do utilizador.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
@@ -190,6 +239,12 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(MyBookings));
         }
 
+        /// <summary>
+        /// Marca uma reserva como concluída e redireciona para a criação de uma avaliação.
+        /// Apenas o pet sitter associado à reserva pode efetuar esta ação.
+        /// </summary>
+        /// <param name="id">Identificador da reserva.</param>
+        /// <returns>Redireciona para o formulário de avaliação do pet sitter.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Complete(int id)

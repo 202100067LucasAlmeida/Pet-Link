@@ -11,20 +11,37 @@ using System;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão de mensagens entre utilizadores.
+    /// Permite visualizar conversas agrupadas por utilizador e animal,
+    /// bem como enviar novas mensagens com notificação por email ao destinatário.
+    /// </summary>
     [Authorize]
     public class MessagesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de mensagens.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
+        /// <param name="emailService">Serviço responsável pelo envio de emails.</param>
         public MessagesController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
 
-        // GET: /Messages/Index/5?animalId=12
-        // Recebe o ID do destinatário (id) e opcionalmente o ID do animal (animalId)
+        /// <summary>
+        /// Apresenta a caixa de mensagens do utilizador autenticado.
+        /// As conversas são agrupadas por utilizador e por animal associado.
+        /// Caso seja fornecido um destinatário, a conversa correspondente é carregada como ativa.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador destinatário (opcional).</param>
+        /// <param name="animalId">Identificador do anúncio de animal associado à conversa (opcional).</param>
+        /// <returns>Vista com a lista de conversas e, se aplicável, a conversa ativa.</returns>
+
         public async Task<IActionResult> Index(int? id, int? animalId)
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;
@@ -101,7 +118,16 @@ namespace PetLink.Controllers
             return View(viewModel);
         }
 
-        // POST: /Messages/SendMessage
+        /// <summary>
+        /// Envia uma nova mensagem para o destinatário indicado.
+        /// A mensagem pode estar associada a um anúncio de animal específico.
+        /// Após o envio, é disparada uma notificação por email ao destinatário.
+        /// Devolve o resultado em formato JSON.
+        /// </summary>
+        /// <param name="receiverId">Identificador do utilizador destinatário.</param>
+        /// <param name="animalId">Identificador do anúncio de animal associado (opcional).</param>
+        /// <param name="content">Conteúdo da mensagem a enviar.</param>
+        /// <returns>Resposta JSON com o identificador da mensagem criada e a hora de envio.</returns> 
         [HttpPost]
         [Authorize]
         // Recebe também o animalId vindo do Javascript

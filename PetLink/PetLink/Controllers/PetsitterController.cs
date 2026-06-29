@@ -7,21 +7,41 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão e visualização de perfis de pet sitters.
+    /// Permite listar, pesquisar e consultar os detalhes de cada pet sitter,
+    /// incluindo o histórico de mensagens com o utilizador autenticado.
+    /// </summary>
     public class PetsitterController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de pet sitters.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
         public PetsitterController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Apresenta a listagem de todos os pet sitters disponíveis,
+        /// ordenados por avaliação por defeito.
+        /// </summary>
+        /// <returns>Vista com a lista de pet sitters.</returns>
         public async Task<IActionResult> Index()
         {
             return await Search(null, null, null, null);
         }
-
-        // GET: Petsitter/Details/5
+        
+        /// <summary>
+        /// Apresenta os detalhes do perfil de um pet sitter.
+        /// Caso o utilizador autenticado não seja o próprio pet sitter,
+        /// é também carregado o histórico de mensagens entre ambos.
+        /// </summary>
+        /// <param name="id">Identificador do pet sitter.</param>
+        /// <returns>Vista com os detalhes do pet sitter.</returns>
         public async Task<IActionResult> Details(int id)
         {
             var sitter = await _context.Petsitters
@@ -62,6 +82,15 @@ namespace PetLink.Controllers
             return View(sitter);
         }
 
+        /// <summary>
+        /// Pesquisa pet sitters aplicando filtros opcionais por tipo de serviço,
+        /// taxa horária máxima, preferências de animal e critério de ordenação.
+        /// </summary>
+        /// <param name="serviceType">Tipo de serviço oferecido (opcional).</param>
+        /// <param name="maxRate">Taxa horária máxima (opcional).</param>
+        /// <param name="petPreferences">Preferência de tipo de animal (opcional).</param>
+        /// <param name="sort">Critério de ordenação: "price_asc", "price_desc" ou avaliação por defeito (opcional).</param>
+        /// <returns>Vista com os resultados filtrados e ordenados.</returns>
         public async Task<IActionResult> Search(ServiceType? serviceType,
                                                 decimal? maxRate,
                                                 PetPreferences? petPreferences,

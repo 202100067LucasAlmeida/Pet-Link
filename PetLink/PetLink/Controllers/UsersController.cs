@@ -6,26 +6,43 @@ using PetLink.Models;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão administrativa de utilizadores.
+    /// Permite listar, consultar, criar, editar e eliminar utilizadores,
+    /// estando a maioria das operações reservadas a administradores.
+    /// </summary>
     [Authorize]
     public class UsersController : BaseController
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controlador de utilizadores.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados.</param>
         public UsersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Users
-        // Mostra a lista de todos os utilizadores registados
+        /// <summary>
+        /// Apresenta a lista de todos os utilizadores registados.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <returns>Vista com a lista de utilizadores.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());
         }
 
-        // GET: Users/Details/5
-        // Mostra os detalhes de um utilizador específico
+        /// <summary>
+        /// Apresenta os detalhes de um utilizador específico.
+        /// Caso o utilizador autenticado esteja identificado, carrega também
+        /// o histórico de mensagens entre ambos.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador.</param>
+        /// <returns>Vista com os detalhes do utilizador.</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -48,8 +65,12 @@ namespace PetLink.Controllers
             return View(user);
         }
 
-        // GET: Users/Edit/5
-        // Mostra o formulário de edição de um utilizador
+        /// <summary>
+        /// Apresenta o formulário de edição de um utilizador existente.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador.</param>
+        /// <returns>Vista de edição do utilizador.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -61,8 +82,13 @@ namespace PetLink.Controllers
             return View(user);
         }
 
-        // POST: Users/Edit/5
-        // Atualiza apenas os campos permitidos, preservando os restantes dados do utilizador
+        /// <summary>
+        /// Atualiza os dados permitidos de um utilizador (nome, email, papel e estado de verificação),
+        /// preservando os restantes campos. Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador.</param>
+        /// <param name="user">Dados atualizados do utilizador.</param>
+        /// <returns>Redireciona para a lista de utilizadores após guardar.</returns>
         [HttpPost]
         //[ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -88,8 +114,12 @@ namespace PetLink.Controllers
             return View(user);
         }
 
-        // GET: Users/Delete/5
-        // Mostra a página de confirmação para eliminar um utilizador
+        /// <summary>
+        /// Apresenta a página de confirmação antes de eliminar um utilizador.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador.</param>
+        /// <returns>Vista de confirmação.</returns>
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -103,8 +133,12 @@ namespace PetLink.Controllers
             return View(user);
         }
 
-        // POST: Users/Delete/5
-        // Remove o utilizador da base de dados após confirmação
+        /// <summary>
+        /// Remove definitivamente um utilizador da base de dados.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="id">Identificador do utilizador.</param>
+        /// <returns>Redireciona para a lista de utilizadores.</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -126,16 +160,23 @@ namespace PetLink.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        // GET: Users/Create
-        // Mostra o formulário para criar um novo utilizador
+        /// <summary>
+        /// Apresenta o formulário de criação de um novo utilizador.
+        /// Apenas acessível a administradores.
+        /// </summary>
+        /// <returns>Vista de criação de utilizador.</returns>
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Users/Create
-        // Recebe os dados do novo utilizador e guarda na base de dados
+        /// <summary>
+        /// Cria um novo utilizador, verificando previamente se o email
+        /// já se encontra registado na base de dados. Apenas acessível a administradores.
+        /// </summary>
+        /// <param name="user">Dados do utilizador a criar.</param>
+        /// <returns>Redireciona para a lista de utilizadores caso a criação seja bem-sucedida.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

@@ -11,19 +11,30 @@ using System.Threading.Tasks;
 
 namespace PetLink.Controllers
 {
+    /// <summary>
+    /// Controlador responsável por gerir todo o fluxo de candidaturas a adoção.
+    /// Inclui criação de candidaturas, aprovação, rejeição, conclusão e gestão administrativa.
+    /// Também coordena a criação de mensagens iniciais no chat e envio de emails de confirmação.
+    /// </summary>
     [Authorize]
     public class ApplicationsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService; // Adicionado para não dar erro no Complete
 
+        /// <summary>
+        /// Inicializa o controlador com acesso à base de dados e serviço de email.
+        /// </summary>
         public ApplicationsController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
 
-        // POST: /Applications/Create
+        /// <summary>
+        /// Cria uma nova candidatura de adoção para um animal.
+        /// Também gera automaticamente uma mensagem inicial no sistema de chat entre utilizador e tutor.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int AnimalListingId, string Message)
@@ -86,7 +97,9 @@ namespace PetLink.Controllers
             return RedirectToAction("Details", "AnimalListings", new { id = AnimalListingId });
         }
 
-        // GET: Applications/Manage
+        /// <summary>
+        /// Lista todas as candidaturas (acesso administrativo ou de abrigo).
+        /// </summary>
         [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Manage()
         {
@@ -99,7 +112,10 @@ namespace PetLink.Controllers
             return View(applications);
         }
 
-        // POST: Applications/Approve/5
+        /// <summary>
+        /// Aprova uma candidatura de adoção.
+        /// Marca o animal como adotado, rejeita candidaturas restantes e envia notificações.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
@@ -179,7 +195,9 @@ namespace PetLink.Controllers
         }
 
 
-        // POST: Applications/Complete/5
+        /// <summary>
+        /// Marca uma adoção como concluída e envia email de confirmação ao adotante.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Complete(int id)
@@ -208,7 +226,9 @@ namespace PetLink.Controllers
             return RedirectToAction(nameof(Manage));
         }
 
-        // POST: Applications/Reject/5
+        /// <summary>
+        /// Rejeita manualmente uma candidatura de adoção.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Admin,Shelter")]
         public async Task<IActionResult> Reject(int id)
