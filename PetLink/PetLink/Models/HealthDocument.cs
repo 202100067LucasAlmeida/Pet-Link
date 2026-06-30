@@ -5,6 +5,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa um documento comprovativo de saúde associado a um anúncio de animal,
+    /// como vacinação, desparasitação ou esterilização.
+    /// Pode ser verificado por um administrador.
+    /// </summary>
     public class HealthDocument
     {
         [Key]

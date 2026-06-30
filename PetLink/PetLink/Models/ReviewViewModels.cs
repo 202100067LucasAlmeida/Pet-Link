@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PetLink.Models.ViewModels
 {
+    /// <summary>
+    /// ViewModel utilizado para criação de uma nova avaliação (review).
+    /// Contém informação sobre o utilizador avaliado, o anúncio e a nota atribuída.
+    /// </summary>
     public class CreateReviewViewModel
     {
         public int AnimalListingId { get; set; }
@@ -17,6 +21,10 @@ namespace PetLink.Models.ViewModels
 
     }
 
+    /// <summary>
+    /// ViewModel utilizado para apresentar todas as reviews de um utilizador.
+    /// Inclui estatísticas e informação agregada da reputação.
+    /// </summary>
     public class UserReviewsViewModel
     {
         public User User { get; set; }
@@ -26,6 +34,10 @@ namespace PetLink.Models.ViewModels
         public bool CanReceiveReviews { get; set; }  // Adicionado
     }
 
+    /// <summary>
+    /// ViewModel utilizado para a página de perfil de um Tutor.
+    /// Contém dados do tutor, avaliações e anúncios associados.
+    /// </summary>
     public class TutorProfileViewModel
     {
         public User Tutor { get; set; }
@@ -35,6 +47,9 @@ namespace PetLink.Models.ViewModels
         public List<AnimalListing> Listings { get; set; }
     }
 
+    /// <summary>
+    /// Modelo simplificado utilizado para apresentação de uma review na UI.
+    /// </summary>
     public class ReviewDisplayViewModel
     {
         public int Id { get; set; }

@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace PetLink.Models.ViewModels
 {
+    /// <summary>
+    /// ViewModel utilizado na página de perfil do utilizador.
+    /// Reúne todas as informações necessárias para apresentar o perfil,
+    /// estatísticas, notificações, conversas, candidaturas e dados administrativos.
+    /// </summary>
     public class ProfileViewModel
     {
         public User User { get; set; }

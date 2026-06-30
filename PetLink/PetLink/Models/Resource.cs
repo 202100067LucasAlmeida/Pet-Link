@@ -3,6 +3,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa um recurso educativo da plataforma PetLink.
+    /// Estes recursos podem incluir artigos, vídeos ou outros conteúdos informativos
+    /// direcionados a diferentes espécies e categorias de cuidado animal.
+    /// </summary>
     public class Resource
     {
         [Key]

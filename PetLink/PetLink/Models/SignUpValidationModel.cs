@@ -1,5 +1,9 @@
 ﻿namespace PetLink.Models
 {
+    /// <summary>
+    /// Modelo utilizado para validação do processo de registo de utilizador.
+    /// Contém todos os dados necessários para criar uma nova conta na plataforma.
+    /// </summary>
     public class SignUpValidationModel
     {
         public string FullName { get; set; }

@@ -4,6 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa o perfil de um Pet Sitter registado na plataforma.
+    /// Contém informações sobre os serviços prestados, preferências,
+    /// localização, preço e classificação.
+    /// </summary>
     public class Petsitter
     {
         [Key]

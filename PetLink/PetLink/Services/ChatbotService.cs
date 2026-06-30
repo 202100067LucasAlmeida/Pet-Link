@@ -5,6 +5,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Services
 {
+    /// <summary>
+    /// Serviço responsável pelo chatbot inteligente da plataforma PetLink.
+    /// Interpreta mensagens do utilizador e devolve respostas contextuais
+    /// baseadas em dados reais da base de dados (adoção, petsitters, eventos, etc.).
+    /// </summary>
     public class ChatbotService : IChatbotService
     {
         private readonly ApplicationDbContext _context;

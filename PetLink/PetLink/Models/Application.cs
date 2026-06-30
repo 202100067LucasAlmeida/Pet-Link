@@ -5,6 +5,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa uma candidatura de adoção submetida por um utilizador
+    /// para um anúncio de animal específico.
+    /// Regista o progresso do processo de adoção e o respetivo estado.
+    /// </summary>
     public class Application
     {
         [Key]

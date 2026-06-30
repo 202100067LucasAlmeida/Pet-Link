@@ -4,6 +4,10 @@ using System;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa uma notificação enviada a um utilizador,
+    /// podendo estar associada a um anúncio de animal específico.
+    /// </summary>
     public class ListingsNotification
     {
         //as notificações vão ter a estrutura:

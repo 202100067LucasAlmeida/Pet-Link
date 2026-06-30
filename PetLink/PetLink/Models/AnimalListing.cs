@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa um anúncio de adoção de um animal.
+    /// Contém os dados do animal, o seu estado de saúde, fotografias,
+    /// o estado de publicação e o tutor (abrigo) responsável pelo anúncio.
+    /// </summary>
     public class AnimalListing
     {
         [Key]
@@ -66,6 +71,10 @@ namespace PetLink.Models
         [NotMapped]
         public string? SterilizationProofUrl => HealthDocuments?.FirstOrDefault(d => d.Type == HealthDocumentType.Sterilization)?.FilePath;
     }
+
+    /// <summary>
+    /// Representa uma fotografia da galeria de um anúncio de animal.
+    /// </summary>
     public class AnimalPhoto
     {
         [Key]

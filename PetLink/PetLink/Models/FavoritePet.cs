@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa a associação entre um utilizador e um anúncio de animal
+    /// que este marcou como favorito.
+    /// </summary>
     public class FavoritePet
     {
         [Key]

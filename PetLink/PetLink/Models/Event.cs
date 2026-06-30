@@ -5,6 +5,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa um evento criado por uma associação ou abrigo,
+    /// como ações de adoção, angariação de fundos, sensibilização ou voluntariado.
+    /// Está sujeito a aprovação por parte de um administrador antes de ser publicado.
+    /// </summary>
     public class Event
     {
         [Key]
@@ -48,6 +53,9 @@ namespace PetLink.Models
         public bool AcceptsVolunteers { get; set; } = false;
     }
 
+    /// <summary>
+    /// Tipos de evento disponíveis na plataforma.
+    /// </summary>
     public enum EventType
     {
         Adoption,
@@ -57,12 +65,20 @@ namespace PetLink.Models
         Other
     }
 
+    /// <summary>
+    /// Estado de um evento ao longo do seu ciclo de aprovação e realização.
+    /// </summary>
     public enum EventStatus
     {
-        Pending,    // Aguarda aprovação do Admin
-        Approved,   // Visível na listagem pública
-        Rejected,   // Rejeitado
-        Completed,  // Evento já realizado
-        Cancelled   // Cancelado
+        /// <summary>Aguarda aprovação do Admin.</summary>
+        Pending,
+        /// <summary>Visível na listagem pública.</summary>
+        Approved,
+        /// <summary>Rejeitado.</summary>
+        Rejected,
+        /// <summary>Evento já realizado.</summary>
+        Completed,
+        /// <summary>Cancelado.</summary>
+        Cancelled
     }
 }

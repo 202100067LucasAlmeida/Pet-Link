@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa uma avaliação deixada por um utilizador após uma adoção ou serviço de pet sitting.
+    /// Permite avaliar a experiência associada a um utilizador e a um anúncio específico.
+    /// </summary>
     public class Review
     {
         [Key]

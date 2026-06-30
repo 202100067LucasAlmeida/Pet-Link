@@ -5,6 +5,11 @@ using PetLink.Models.Enums;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa uma reserva de um serviço de pet sitting,
+    /// efetuada por um utilizador junto de um pet sitter.
+    /// Regista as datas, o preço calculado e o estado da reserva ao longo do seu ciclo de vida.
+    /// </summary>
     public class Booking
     {
         [Key]

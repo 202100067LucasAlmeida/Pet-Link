@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa o interesse manifestado por um utilizador num evento.
+    /// Permite registar a participação prevista e o respetivo estado de confirmação.
+    /// </summary>
     public class EventInterest
     {
         [Key]

@@ -7,8 +7,17 @@ using System.Collections.Generic;
 
 namespace PetLink.Data
 {
+    /// <summary>
+    /// Classe responsável por inicializar e popular a base de dados com dados iniciais (seed data).
+    /// Este processo é executado apenas quando a base de dados está vazia.
+    /// Inclui criação de utilizadores, petsitters, animais, mensagens, candidaturas, reviews, eventos e recursos.
+    /// </summary>
     public static class SeedData
     {
+        /// <summary>
+        /// Método principal de inicialização dos dados.
+        /// Verifica se existem dados na base de dados e, caso contrário, cria um conjunto completo de dados de teste.
+        /// </summary>
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new ApplicationDbContext(

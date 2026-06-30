@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace PetLink.Services
 {
+    /// <summary>
+    /// Configurações do serviço de email SMTP.
+    /// Contém dados necessários para autenticação e envio de emails.
+    /// </summary>
     public class EmailSettings
     {
         public string SmtpServer { get; set; }
@@ -15,6 +19,11 @@ namespace PetLink.Services
         public string SenderName { get; set; }
     }
 
+    /// <summary>
+    /// Serviço responsável pelo envio de emails na plataforma PetLink.
+    /// Utiliza MailKit para envio via SMTP com suporte a HTML.
+    /// Inclui emails transacionais como confirmação de adoção e notificações de mensagens.
+    /// </summary>
     public class EmailService : IEmailService
     {
         private readonly EmailSettings _emailSettings;

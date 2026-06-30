@@ -4,6 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetLink.Models
 {
+    /// <summary>
+    /// Representa uma mensagem trocada entre dois utilizadores através do sistema de chat.
+    /// A mensagem pode estar associada a um anúncio de adoção específico, permitindo
+    /// manter conversas independentes para cada animal.
+    /// </summary>
     public class Message
     {
         public int? AnimalListingId { get; set; } 
