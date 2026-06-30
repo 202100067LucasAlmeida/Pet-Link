@@ -1,0 +1,1 @@
+search_result['122']=["topic_0000000000000045.html","FavoritesController.TogglePetsitter Method","Adiciona ou remove um pet sitter dos favoritos do utilizador (comportamento de toggle).\r\nCaso o pet sitter já esteja nos favoritos, é removido; caso contrário, é adicionado.\r\nDevolve o resultado em fo..."];

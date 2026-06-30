@@ -1,0 +1,1 @@
+search_result['213']=["topic_000000000000007A.html","ResourcesController.Delete Method","Remove definitivamente um recurso.\r\nApenas acessível a administradores."];

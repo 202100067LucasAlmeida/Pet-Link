@@ -1,0 +1,1 @@
+search_result['41']=["topic_0000000000000016.html","AnimalListingsController.Map Method","Apresenta os anúncios publicados num mapa,\r\npermitindo aplicar filtros por espécie, localização e idade.\r\nTambém disponibiliza a localização de abrigos e pet sitters."];

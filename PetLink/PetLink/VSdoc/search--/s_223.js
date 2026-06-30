@@ -1,0 +1,1 @@
+search_result['223']=["topic_000000000000007E.html","ReviewController.Create (CreateReviewViewModel) Method","Submete uma nova avaliação após validar permissões e duplicações.\r\nA validação de permissões é repetida no servidor de acordo com o tipo de avaliação,\r\ngarantindo que o utilizador autenticado tem efet..."];

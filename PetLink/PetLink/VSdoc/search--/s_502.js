@@ -1,0 +1,1 @@
+search_result['502']=["topic_000000000000014C.html","Event Class","Representa um evento criado por uma associação ou abrigo,\r\ncomo ações de adoção, angariação de fundos, sensibilização ou voluntariado.\r\nEstá sujeito a aprovação por parte de um administrador antes de ..."];

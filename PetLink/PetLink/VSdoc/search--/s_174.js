@@ -1,0 +1,1 @@
+search_result['174']=["topic_000000000000005E.html","ProfileController.SignUpForm Method","Apresenta o formulário de registo de nova conta.\r\nUtilizadores já autenticados são redirecionados para a página inicial."];

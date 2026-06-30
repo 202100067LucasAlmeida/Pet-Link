@@ -1,0 +1,1 @@
+search_result['552']=["topic_0000000000000179.html","FavoritePetsitter Class","Representa a associação entre um utilizador e um pet sitter\r\nque este marcou como favorito."];

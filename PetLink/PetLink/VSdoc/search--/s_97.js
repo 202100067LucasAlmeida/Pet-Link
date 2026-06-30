@@ -1,0 +1,1 @@
+search_result['97']=["topic_0000000000000033_overloads--.html","EventsController.Create Method","Cria um novo evento com estado pendente de aprovação.\r\nEfetua o upload da imagem, guarda o evento e notifica os administradores.\r\nApenas acessível a utilizadores com o papel de Shelter."];

@@ -1,0 +1,1 @@
+search_result['178']=["topic_0000000000000062.html","ProfileController.ValidateSignUp Method","Valida os dados do formulário de registo e cria uma nova conta de utilizador.\r\nNotifica os administradores após a criação bem-sucedida.\r\nDevolve o resultado em formato JSON."];

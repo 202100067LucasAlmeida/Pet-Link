@@ -1,0 +1,1 @@
+search_result['110']=["topic_000000000000003E.html","EventsController.CheckInterest Method","Verifica se o utilizador autenticado tem interesse registado num evento.\r\nDevolve o resultado em formato JSON."];

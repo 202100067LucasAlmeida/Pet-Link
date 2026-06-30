@@ -1,0 +1,1 @@
+search_result['17']=["topic_0000000000000007.html","AnimalListingsController Class","Controlador responsável pela gestão dos anúncios de animais.\r\nPermite criar, editar, visualizar, pesquisar e eliminar anúncios,\r\nbem como gerir candidaturas e funcionalidades relacionadas com a adoção..."];

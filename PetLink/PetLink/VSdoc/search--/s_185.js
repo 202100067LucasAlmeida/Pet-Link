@@ -1,0 +1,1 @@
+search_result['185']=["topic_0000000000000069.html","ProfileController.UpdateAccount Method","Atualiza os dados da conta do utilizador autenticado,\r\nincluindo nome, telefone, cidade, biografia e foto de perfil.\r\nCaso solicitado, remove a foto de perfil atual e repõe a imagem por defeito."];

@@ -1,0 +1,1 @@
+search_result['239']=["topic_0000000000000086.html","UsersController.Delete Method","Apresenta a página de confirmação antes de eliminar um utilizador.\r\nApenas acessível a administradores."];

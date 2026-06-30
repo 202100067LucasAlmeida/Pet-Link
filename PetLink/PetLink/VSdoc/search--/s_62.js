@@ -1,0 +1,1 @@
+search_result['62']=["topic_0000000000000021.html","BookingsController Class","Controlador responsável pela gestão de reservas de serviços de pet sitting.\r\nPermite criar, confirmar, rejeitar, cancelar e concluir reservas,\r\nbem como consultar as reservas do utilizador e gerir as ..."];

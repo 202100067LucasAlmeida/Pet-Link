@@ -1,0 +1,1 @@
+search_result['793']=["topic_000000000000020B.html","SignUpValidationModel Class","Modelo utilizado para validação do processo de registo de utilizador.\r\nContém todos os dados necessários para criar uma nova conta na plataforma."];

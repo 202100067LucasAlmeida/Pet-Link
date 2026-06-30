@@ -1,0 +1,1 @@
+search_result['473']=["topic_0000000000000139.html","Booking Class","Representa uma reserva de um serviço de pet sitting,\r\nefetuada por um utilizador junto de um pet sitter.\r\nRegista as datas, o preço calculado e o estado da reserva ao longo do seu ciclo de vida."];

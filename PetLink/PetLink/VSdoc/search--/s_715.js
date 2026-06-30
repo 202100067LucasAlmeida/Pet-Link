@@ -1,0 +1,1 @@
+search_result['715']=["topic_00000000000001DB.html","ResetPasswordViewModel.Token Property","Token único gerado no pedido de recuperação de password.\r\nÉ usado para validar que o pedido é legítimo e não expirou."];

@@ -1,0 +1,1 @@
+search_result['69']=["topic_0000000000000023.html","BookingsController.Create Method","Cria uma nova reserva de serviço de pet sitting.\r\nValida as datas, calcula o preço total e envia uma mensagem\r\nautomática ao pet sitter com os detalhes da reserva."];

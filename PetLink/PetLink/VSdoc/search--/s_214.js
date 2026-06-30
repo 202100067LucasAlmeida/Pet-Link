@@ -1,0 +1,1 @@
+search_result['214']=["topic_000000000000007B.html","ReviewController Class","Controlador responsável pela gestão de avaliações entre utilizadores.\r\nPermite criar avaliações de adoção (entre adotante e abrigo) e de pet sitting,\r\nbem como consultar as avaliações recebidas por um..."];

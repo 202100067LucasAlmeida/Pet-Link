@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"PetLink Reference","topic_0000000000000247.html"],['195',"PetLink.Hubs Namespace","topic_000000000000009F.html"],['221',"INotificationService Interface","topic_00000000000000A7.html"],['222',"Methods","topic_00000000000000A7_methods--.html"],['225',"CreateNewEventInterestNotificationAsync Method","topic_00000000000000B2.html"]];

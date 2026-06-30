@@ -1,0 +1,1 @@
+search_result['7']=["topic_0000000000000002.html","ChatbotController Constructor","Inicializa uma nova instância do controlador do chatbot."];

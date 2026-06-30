@@ -1,0 +1,1 @@
+search_result['716']=["topic_00000000000001DC.html","ResetPasswordViewModel.Password Property","Nova palavra-passe definida pelo utilizador."];

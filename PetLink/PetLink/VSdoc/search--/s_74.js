@@ -1,0 +1,1 @@
+search_result['74']=["topic_0000000000000028.html","BookingsController.Cancel Method","Cancela uma reserva existente.\r\nApenas o utilizador que criou a reserva pode efetuar esta ação."];

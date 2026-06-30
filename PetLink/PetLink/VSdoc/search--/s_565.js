@@ -1,0 +1,1 @@
+search_result['565']=["topic_0000000000000181.html","FavoritesViewModel Class","ViewModel utilizado para apresentar os favoritos do utilizador,\r\nagrupando os anúncios de animais e os pet sitters guardados."];

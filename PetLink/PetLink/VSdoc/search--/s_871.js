@@ -1,0 +1,1 @@
+search_result['871']=["topic_000000000000023B.html","EmailService.SendEmailAsync Method","Envia um email genérico em formato HTML.\r\nMétodo base utilizado pelos restantes tipos de email."];

@@ -1,0 +1,1 @@
+search_result['717']=["topic_00000000000001DD.html","ResetPasswordViewModel.ConfirmPassword Property","Confirmação da nova palavra-passe para validação de consistência."];

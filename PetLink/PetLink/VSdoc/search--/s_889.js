@@ -1,0 +1,1 @@
+search_result['889']=["topic_0000000000000243.html","IEmailService.SendNewMessageNotificationAsync Method","Envia notificação de novo message no sistema de chat.\r\nInclui preview da mensagem e link direto para o chat."];

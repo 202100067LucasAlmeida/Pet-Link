@@ -1,0 +1,1 @@
+search_result['92']=["topic_0000000000000030.html","EventsController.Index Method","Apresenta a listagem pública de eventos aprovados,\r\npermitindo filtrar por localização, datas e tipo de evento."];

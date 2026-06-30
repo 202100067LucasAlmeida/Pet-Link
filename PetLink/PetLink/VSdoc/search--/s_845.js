@@ -1,0 +1,1 @@
+search_result['845']=["topic_0000000000000230.html","ChatbotService Class","Serviço responsável pelo chatbot inteligente da plataforma PetLink.\r\nInterpreta mensagens do utilizador e devolve respostas contextuais\r\nbaseadas em dados reais da base de dados (adoção, petsitters, e..."];

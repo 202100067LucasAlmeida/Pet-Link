@@ -1,0 +1,1 @@
+search_result['853']=["topic_0000000000000233.html","EmailSettings Class","Configurações do serviço de email SMTP.\r\nContém dados necessários para autenticação e envio de emails."];

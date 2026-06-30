@@ -1,0 +1,1 @@
+search_result['193']=["topic_000000000000006F_overloads--.html","ProfileController.ResetPassword Method","Processa a redefinição de password com base no token fornecido.\r\nValida a correspondência das passwords e a validade do token\r\nantes de atualizar a password na base de dados.\r\nDevolve o resultado em f..."];

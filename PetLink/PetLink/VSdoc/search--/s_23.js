@@ -1,0 +1,1 @@
+search_result['23']=["topic_0000000000000008.html","AnimalListingsController Constructor","Inicializa uma nova instância do controlador de anúncios."];

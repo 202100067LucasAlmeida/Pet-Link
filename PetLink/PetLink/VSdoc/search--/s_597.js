@@ -1,0 +1,1 @@
+search_result['597']=["topic_0000000000000192.html","ListingsNotification Class","Representa uma notificação enviada a um utilizador,\r\npodendo estar associada a um anúncio de animal específico."];

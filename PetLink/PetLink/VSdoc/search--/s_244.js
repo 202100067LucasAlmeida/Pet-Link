@@ -1,0 +1,1 @@
+search_result['244']=["topic_0000000000000089_overloads--.html","UsersController.Create Method","Cria um novo utilizador, verificando previamente se o email\r\njá se encontra registado na base de dados. Apenas acessível a administradores."];

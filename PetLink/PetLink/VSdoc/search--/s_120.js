@@ -1,0 +1,1 @@
+search_result['120']=["topic_0000000000000043.html","FavoritesController.Check Method","Verifica se um anúncio de animal se encontra nos favoritos do utilizador autenticado.\r\nDevolve o resultado em formato JSON."];

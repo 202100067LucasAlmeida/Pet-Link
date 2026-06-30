@@ -1,0 +1,1 @@
+search_result['137']=["topic_000000000000004F.html","MessagesController Class","Controlador responsável pela gestão de mensagens entre utilizadores.\r\nPermite visualizar conversas agrupadas por utilizador e animal,\r\nbem como enviar novas mensagens com notificação por email ao dest..."];

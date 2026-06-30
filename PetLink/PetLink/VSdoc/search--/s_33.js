@@ -1,0 +1,1 @@
+search_result['33']=["topic_000000000000000F.html","AnimalListingsController.Edit (Int32, AnimalListing, IFormFile, Boolean, Boolean, Boolean, Int32()) Method","Atualiza as informações de um anúncio.\r\nPermite alterar dados, imagem principal,\r\ndocumentos de saúde e estado do anúncio."];

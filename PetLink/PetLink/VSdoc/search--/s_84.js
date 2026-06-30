@@ -1,0 +1,1 @@
+search_result['84']=["topic_000000000000002D.html","ErrorsController.Status Method","Apresenta a página de erro correspondente ao código de estado HTTP recebido.\r\nO código 404 redireciona para a vista de recurso não encontrado;\r\nqualquer outro código apresenta a vista de erro de servi..."];

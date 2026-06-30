@@ -1,0 +1,1 @@
+search_result['782']=["topic_0000000000000205.html","ReviewDisplayViewModel Class","Modelo simplificado utilizado para apresentação de uma review na UI."];

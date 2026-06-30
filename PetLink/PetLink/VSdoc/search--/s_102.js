@@ -1,0 +1,1 @@
+search_result['102']=["topic_0000000000000036.html","EventsController.MyEvents Method","Lista todos os eventos criados pelo abrigo autenticado.\r\nApenas acessível a utilizadores com o papel de Shelter."];

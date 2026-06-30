@@ -1,0 +1,1 @@
+search_result['101']=["topic_0000000000000035_overloads--.html","EventsController.Edit Method","Atualiza as informações de um evento existente.\r\nQuando editado pelo organizador, o evento regressa ao estado pendente de aprovação.\r\nQuando editado por um administrador, o estado pode ser alterado ma..."];

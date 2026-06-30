@@ -1,0 +1,1 @@
+search_result['93']=["topic_0000000000000031.html","EventsController.Details Method","Apresenta os detalhes de um evento.\r\nEventos não aprovados só são visíveis pelo organizador ou por administradores."];

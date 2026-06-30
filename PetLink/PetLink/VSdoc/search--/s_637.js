@@ -1,0 +1,1 @@
+search_result['637']=["topic_00000000000001AB.html","ConversationSummary Class","Representa um resumo de uma conversa apresentada na lista lateral.\r\nInclui informações sobre o outro utilizador, o anúncio associado e a última mensagem."];

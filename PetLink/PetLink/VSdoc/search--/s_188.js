@@ -1,0 +1,1 @@
+search_result['188']=["topic_000000000000006C.html","ProfileController.GoogleResponse Method","Processa a resposta de autenticação da Google.\r\nCaso o utilizador não exista na plataforma, é criada uma nova conta automaticamente.\r\nEm caso de sucesso, cria o cookie de autenticação da aplicação."];

@@ -1,0 +1,1 @@
+search_result['718']=["topic_00000000000001DE.html","Resource Class","Representa um recurso educativo da plataforma PetLink.\r\nEstes recursos podem incluir artigos, vídeos ou outros conteúdos informativos\r\ndirecionados a diferentes espécies e categorias de cuidado animal..."];

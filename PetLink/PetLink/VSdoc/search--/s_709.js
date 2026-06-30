@@ -1,0 +1,1 @@
+search_result['709']=["topic_00000000000001DA.html","ResetPasswordViewModel Class","Modelo utilizado no processo de redefinição de palavra-passe.\r\nContém o token de validação e os dados necessários para definir uma nova password."];

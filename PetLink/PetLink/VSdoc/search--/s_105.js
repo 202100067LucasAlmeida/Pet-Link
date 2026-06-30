@@ -1,0 +1,1 @@
+search_result['105']=["topic_0000000000000039.html","EventsController.Reject Method","Rejeita um evento pendente e notifica o organizador,\r\npodendo incluir um motivo de rejeição.\r\nApenas acessível a administradores."];

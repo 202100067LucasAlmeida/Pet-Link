@@ -1,0 +1,1 @@
+c['596']=[['597',"AverageRating Property","topic_00000000000001FC.html",0],['598',"CanReceiveReviews Property","topic_00000000000001FE.html",0],['599',"Reviews Property","topic_00000000000001FB.html",0],['600',"TotalReviews Property","topic_00000000000001FD.html",0],['601',"User Property","topic_00000000000001FA.html",0]];

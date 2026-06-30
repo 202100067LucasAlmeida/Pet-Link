@@ -1,0 +1,1 @@
+search_result['30']=["topic_000000000000000D_overloads--.html","AnimalListingsController.Create Method","Cria um novo anúncio de adoção.\r\nEfetua validações, guarda imagens e documentos de saúde\r\ne envia uma notificação para os administradores."];

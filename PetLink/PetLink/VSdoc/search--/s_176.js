@@ -1,0 +1,1 @@
+search_result['176']=["topic_0000000000000060.html","ProfileController.Logout Method","Termina a sessão do utilizador autenticado e redireciona para a página inicial."];

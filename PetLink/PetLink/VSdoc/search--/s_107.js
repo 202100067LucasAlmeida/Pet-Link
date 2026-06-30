@@ -1,0 +1,1 @@
+search_result['107']=["topic_000000000000003B.html","EventsController.Delete Method","Remove definitivamente um evento.\r\nApenas acessível a administradores."];

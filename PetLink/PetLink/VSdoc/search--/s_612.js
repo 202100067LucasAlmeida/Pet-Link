@@ -1,0 +1,1 @@
+search_result['612']=["topic_000000000000019C.html","Message Class","Representa uma mensagem trocada entre dois utilizadores através do sistema de chat.\r\nA mensagem pode estar associada a um anúncio de adoção específico, permitindo\r\nmanter conversas independentes para ..."];

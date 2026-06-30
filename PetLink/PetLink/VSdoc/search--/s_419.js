@@ -1,0 +1,1 @@
+search_result['419']=["topic_0000000000000112.html","AnimalListing Class","Representa um anúncio de adoção de um animal.\r\nContém os dados do animal, o seu estado de saúde, fotografias,\r\no estado de publicação e o tutor (abrigo) responsável pelo anúncio."];

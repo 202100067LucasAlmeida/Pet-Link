@@ -1,0 +1,1 @@
+search_result['35']=["topic_0000000000000010.html","AnimalListingsController.Delete Method","Apresenta a confirmação antes de eliminar um anúncio."];

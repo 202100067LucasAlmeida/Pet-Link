@@ -1,0 +1,1 @@
+search_result['234']=["topic_0000000000000083.html","UsersController.Details Method","Apresenta os detalhes de um utilizador específico.\r\nCaso o utilizador autenticado esteja identificado, carrega também\r\no histórico de mensagens entre ambos."];

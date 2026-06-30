@@ -1,0 +1,1 @@
+search_result['573']=["topic_0000000000000184.html","ForgotPasswordViewModel Class","ViewModel utilizado para receber o pedido de recuperação de password,\r\ncontendo o email da conta a recuperar."];

@@ -1,0 +1,1 @@
+search_result['83']=["topic_000000000000002C.html","ErrorsController.AccessDenied Method","Apresenta a página de acesso negado.\r\nExibida quando o utilizador tenta aceder a um recurso sem as permissões necessárias."];

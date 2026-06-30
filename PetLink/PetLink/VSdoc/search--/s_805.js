@@ -1,0 +1,1 @@
+search_result['805']=["topic_0000000000000212.html","User Class","Representa um utilizador da plataforma PetLink.\r\nPode assumir diferentes papéis (User, PetSitter ou Shelter) e contém toda a informação\r\nnecessária para autenticação, perfil e interação na plataforma."];

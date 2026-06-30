@@ -1,0 +1,1 @@
+search_result['118']=["topic_0000000000000041.html","FavoritesController.Index Method","Apresenta os favoritos do utilizador autenticado,\r\nincluindo tanto anúncios de animais como pet sitters guardados."];

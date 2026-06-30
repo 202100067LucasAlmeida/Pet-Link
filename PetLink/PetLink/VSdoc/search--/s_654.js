@@ -1,0 +1,1 @@
+search_result['654']=["topic_00000000000001B7.html","ConversationDetail Class","Representa os detalhes completos de uma conversa,\r\nincluindo todas as mensagens trocadas entre os utilizadores."];

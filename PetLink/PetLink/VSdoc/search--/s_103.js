@@ -1,0 +1,1 @@
+search_result['103']=["topic_0000000000000037.html","EventsController.Manage Method","Apresenta a área de gestão de eventos para administradores,\r\nseparando os eventos pendentes de aprovação dos já aprovados.\r\nApenas acessível a administradores."];

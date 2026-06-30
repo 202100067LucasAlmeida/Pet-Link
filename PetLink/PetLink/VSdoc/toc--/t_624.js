@@ -1,0 +1,1 @@
+c['624']=[['625',"SendAdoptionConfirmationAsync Method","topic_0000000000000242.html",0],['626',"SendEmailAsync Method","topic_0000000000000241.html",0],['627',"SendNewMessageNotificationAsync Method","topic_0000000000000243.html",0]];

@@ -1,0 +1,1 @@
+search_result['163']=["topic_000000000000005A.html","ProfileController Class","Controlador responsável pela gestão de perfis e autenticação de utilizadores.\r\nCobre o registo, login, logout, autenticação via Google,\r\nrecuperação de password, definições de conta e painel de perfil..."];

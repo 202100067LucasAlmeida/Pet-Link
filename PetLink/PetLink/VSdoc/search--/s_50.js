@@ -1,0 +1,1 @@
+search_result['50']=["topic_000000000000001A.html","ApplicationsController.Create Method","Cria uma nova candidatura de adoção para um animal.\r\nTambém gera automaticamente uma mensagem inicial no sistema de chat entre utilizador e tutor."];

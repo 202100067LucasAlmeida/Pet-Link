@@ -1,0 +1,1 @@
+search_result['232']=["topic_0000000000000081.html","UsersController Constructor","Inicializa uma nova instância do controlador de utilizadores."];

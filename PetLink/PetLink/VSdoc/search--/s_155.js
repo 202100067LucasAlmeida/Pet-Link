@@ -1,0 +1,1 @@
+search_result['155']=["topic_0000000000000057.html","PetsitterController.Search Method","Pesquisa pet sitters aplicando filtros opcionais por tipo de serviço,\r\ntaxa horária máxima, preferências de animal e critério de ordenação."];

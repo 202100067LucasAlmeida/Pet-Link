@@ -1,0 +1,1 @@
+search_result['85']=["topic_000000000000002E.html","EventsController Class","Controlador responsável pela gestão de eventos criados por abrigos.\r\nPermite criar, editar, aprovar, rejeitar e eliminar eventos,\r\nbem como gerir o interesse dos utilizadores e pesquisar eventos aprov..."];

@@ -1,0 +1,1 @@
+search_result['73']=["topic_0000000000000027.html","BookingsController.Reject Method","Rejeita uma reserva pendente.\r\nPode ser efetuado pelo pet sitter ou pelo utilizador que criou a reserva."];

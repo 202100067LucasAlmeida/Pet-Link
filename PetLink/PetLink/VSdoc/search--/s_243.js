@@ -1,0 +1,1 @@
+search_result['243']=["topic_0000000000000089.html","UsersController.Create (User) Method","Cria um novo utilizador, verificando previamente se o email\r\njá se encontra registado na base de dados. Apenas acessível a administradores."];

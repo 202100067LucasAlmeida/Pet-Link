@@ -1,0 +1,1 @@
+search_result['673']=["topic_00000000000001C0.html","Petsitter Class","Representa o perfil de um Pet Sitter registado na plataforma.\r\nContém informações sobre os serviços prestados, preferências,\r\nlocalização, preço e classificação."];

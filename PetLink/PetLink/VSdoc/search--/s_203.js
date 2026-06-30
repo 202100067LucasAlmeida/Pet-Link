@@ -1,0 +1,1 @@
+search_result['203']=["topic_0000000000000074.html","ResourcesController.Details Method","Apresenta os detalhes de um recurso específico."];

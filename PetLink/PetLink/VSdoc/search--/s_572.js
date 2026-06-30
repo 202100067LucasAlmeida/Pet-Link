@@ -1,0 +1,1 @@
+search_result['572']=["topic_0000000000000183.html","FavoritesViewModel.FavoritePetsitters Property","Lista de pet sitters marcados como favoritos pelo utilizador."];

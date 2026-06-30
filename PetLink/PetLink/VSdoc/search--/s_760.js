@@ -1,0 +1,1 @@
+search_result['760']=["topic_00000000000001F9.html","UserReviewsViewModel Class","ViewModel utilizado para apresentar todas as reviews de um utilizador.\r\nInclui estatísticas e informação agregada da reputação."];

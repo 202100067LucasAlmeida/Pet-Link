@@ -1,0 +1,1 @@
+search_result['842']=["topic_000000000000022D.html","UserHashHelpers.HashPassword Method","Generates a BCrypt hash for the given plaintext password.\r\nUses work factor of 12 (secure default)."];

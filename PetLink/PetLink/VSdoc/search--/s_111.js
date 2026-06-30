@@ -1,0 +1,1 @@
+search_result['111']=["topic_000000000000003F.html","FavoritesController Class","Controlador responsável pela gestão dos favoritos do utilizador autenticado.\r\nPermite adicionar e remover anúncios de animais e pet sitters dos favoritos,\r\nbem como consultar e verificar o estado de c..."];

@@ -1,0 +1,1 @@
+search_result['191']=["topic_000000000000006E_overloads--.html","ProfileController.ResetPassword Method","Processa o pedido de recuperação de password.\r\nGera um token de reset, guarda-o na base de dados e envia um email com o link de redefinição.\r\nContas com login externo via Google não suportam este flux..."];

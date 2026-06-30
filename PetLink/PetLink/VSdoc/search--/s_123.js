@@ -1,0 +1,1 @@
+search_result['123']=["topic_0000000000000046.html","FavoritesController.CheckPetsitter Method","Verifica se um pet sitter se encontra nos favoritos do utilizador autenticado.\r\nDevolve o resultado em formato JSON."];

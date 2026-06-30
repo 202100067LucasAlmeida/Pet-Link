@@ -1,0 +1,1 @@
+search_result['494']=["topic_0000000000000149.html","ErrorViewModel Class","Modelo utilizado pela vista de erro da aplicação,\r\npermitindo apresentar o identificador do pedido associado a uma falha."];

@@ -1,0 +1,1 @@
+search_result['108']=["topic_000000000000003C.html","EventsController.RegisterInterest Method","Regista ou remove o interesse de um utilizador num evento aprovado.\r\nCaso o utilizador já esteja registado, o interesse é removido (comportamento de toggle).\r\nNotifica o organizador sempre que um novo..."];

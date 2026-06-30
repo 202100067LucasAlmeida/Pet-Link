@@ -1,0 +1,1 @@
+search_result['456']=["topic_000000000000012D.html","Application Class","Representa uma candidatura de adoção submetida por um utilizador\r\npara um anúncio de animal específico.\r\nRegista o progresso do processo de adoção e o respetivo estado."];

@@ -1,0 +1,1 @@
+search_result['75']=["topic_0000000000000029.html","BookingsController.Complete Method","Marca uma reserva como concluída e redireciona para a criação de uma avaliação.\r\nApenas o pet sitter associado à reserva pode efetuar esta ação."];

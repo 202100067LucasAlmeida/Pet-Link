@@ -1,0 +1,1 @@
+search_result['37']=["topic_0000000000000012.html","AnimalListingsController.Search Method","Pesquisa anúncios publicados aplicando filtros como\r\nespécie, localização, idade e ordenação."];

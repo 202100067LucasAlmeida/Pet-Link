@@ -1,0 +1,1 @@
+search_result['748']=["topic_00000000000001F2.html","CreateReviewViewModel Class","ViewModel utilizado para criação de uma nova avaliação (review).\r\nContém informação sobre o utilizador avaliado, o anúncio e a nota atribuída."];

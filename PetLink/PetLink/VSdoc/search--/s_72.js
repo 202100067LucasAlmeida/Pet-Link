@@ -1,0 +1,1 @@
+search_result['72']=["topic_0000000000000026.html","BookingsController.Confirm Method","Confirma uma reserva pendente.\r\nApenas o pet sitter associado à reserva pode efetuar esta ação."];

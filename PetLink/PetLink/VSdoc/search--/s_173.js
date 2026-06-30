@@ -1,0 +1,1 @@
+search_result['173']=["topic_000000000000005D_overloads--.html","ProfileController.LoginForm Method","Processa o início de sessão com email e password.\r\nEm caso de sucesso, cria o cookie de autenticação.\r\nDevolve o resultado em formato JSON."];

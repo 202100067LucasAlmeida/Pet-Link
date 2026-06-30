@@ -1,0 +1,1 @@
+search_result['691']=["topic_00000000000001CD.html","ProfileViewModel Class","ViewModel utilizado na página de perfil do utilizador.\r\nReúne todas as informações necessárias para apresentar o perfil,\r\nestatísticas, notificações, conversas, candidaturas e dados administrativos."];

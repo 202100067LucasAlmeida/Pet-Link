@@ -1,0 +1,1 @@
+search_result['181']=["topic_0000000000000065.html","ProfileController.MyProfile Method","Apresenta o painel de perfil do utilizador autenticado.\r\nInclui animais guardados, candidaturas ativas, conversas recentes,\r\nnotificações, avaliações e, para administradores,\r\ndados de gestão pendente..."];

@@ -1,0 +1,1 @@
+search_result['211']=["topic_0000000000000079.html","ResourcesController.Edit (Int32, Resource) Method","Atualiza as informações de um recurso existente.\r\nApenas acessível a administradores."];

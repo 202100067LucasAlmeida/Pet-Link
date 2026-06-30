@@ -1,0 +1,1 @@
+search_result['71']=["topic_0000000000000025.html","BookingsController.Manage Method","Lista todas as reservas recebidas pelo pet sitter autenticado.\r\nRequer que o utilizador possua um perfil de pet sitter."];

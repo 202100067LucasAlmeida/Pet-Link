@@ -1,0 +1,1 @@
+search_result['207']=["topic_0000000000000077.html","ResourcesController.Create (Resource) Method","Cria um novo recurso informativo.\r\nApenas acessível a administradores."];

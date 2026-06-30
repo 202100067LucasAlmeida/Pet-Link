@@ -1,0 +1,1 @@
+search_result['119']=["topic_0000000000000042.html","FavoritesController.Toggle Method","Adiciona ou remove um anúncio de animal dos favoritos do utilizador (comportamento de toggle).\r\nCaso o anúncio já esteja nos favoritos, é removido; caso contrário, é adicionado.\r\nDevolve o resultado e..."];

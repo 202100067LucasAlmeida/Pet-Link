@@ -1,0 +1,1 @@
+c['603']=[['604',"ChatbotService Constructor","topic_0000000000000231.html",0],['605',"Methods","topic_0000000000000230_methods--.html",1]];

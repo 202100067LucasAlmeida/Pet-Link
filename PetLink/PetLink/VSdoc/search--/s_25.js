@@ -1,0 +1,1 @@
+search_result['25']=["topic_000000000000000A.html","AnimalListingsController.Details Method","Apresenta os detalhes de um anúncio de adoção.\r\nTambém verifica permissões de acesso, histórico de mensagens,\r\ncandidaturas e possibilidade de avaliação."];

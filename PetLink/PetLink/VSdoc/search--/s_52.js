@@ -1,0 +1,1 @@
+search_result['52']=["topic_000000000000001C.html","ApplicationsController.Approve Method","Aprova uma candidatura de adoção.\r\nMarca o animal como adotado, rejeita candidaturas restantes e envia notificações."];

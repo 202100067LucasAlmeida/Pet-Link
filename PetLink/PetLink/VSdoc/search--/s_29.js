@@ -1,0 +1,1 @@
+search_result['29']=["topic_000000000000000D.html","AnimalListingsController.Create (AnimalListing, IFormFile, IFormFile(), Boolean, Boolean, Boolean, IFormFile(), IFormFile(), IFormFile()) Method","Cria um novo anúncio de adoção.\r\nEfetua validações, guarda imagens e documentos de saúde\r\ne envia uma notificação para os administradores."];

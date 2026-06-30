@@ -1,0 +1,1 @@
+search_result['527']=["topic_000000000000016A.html","EventInterest Class","Representa o interesse manifestado por um utilizador num evento.\r\nPermite registar a participação prevista e o respetivo estado de confirmação."];

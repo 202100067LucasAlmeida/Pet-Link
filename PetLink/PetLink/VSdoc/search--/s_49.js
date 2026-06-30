@@ -1,0 +1,1 @@
+search_result['49']=["topic_0000000000000019.html","ApplicationsController Constructor","Inicializa o controlador com acesso à base de dados e serviço de email."];

@@ -1,0 +1,1 @@
+search_result['629']=["topic_00000000000001A8.html","MessagesViewModel Class","ViewModel utilizado na página de mensagens.\r\nContém a lista de conversas do utilizador e a conversa atualmente selecionada."];

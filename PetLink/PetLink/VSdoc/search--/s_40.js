@@ -1,0 +1,1 @@
+search_result['40']=["topic_0000000000000015.html","AnimalListingsController.MyReceivedApplications Method","Lista todas as candidaturas recebidas para os anúncios\r\npertencentes ao utilizador autenticado."];

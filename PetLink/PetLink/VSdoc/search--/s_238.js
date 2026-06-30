@@ -1,0 +1,1 @@
+search_result['238']=["topic_0000000000000085_overloads--.html","UsersController.Edit Method","Atualiza os dados permitidos de um utilizador (nome, email, papel e estado de verificação),\r\npreservando os restantes campos. Apenas acessível a administradores."];

@@ -1,0 +1,1 @@
+search_result['145']=["topic_0000000000000052.html","MessagesController.SendMessage Method","Envia uma nova mensagem para o destinatário indicado.\r\nA mensagem pode estar associada a um anúncio de animal específico.\r\nApós o envio, é disparada uma notificação por email ao destinatário.\r\nDevolve..."];

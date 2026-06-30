@@ -1,0 +1,1 @@
+search_result['106']=["topic_000000000000003A.html","EventsController.Search Method","Pesquisa eventos aprovados por nome, descrição ou localização.\r\nDevolve os resultados em formato JSON para utilização em pesquisas rápidas."];

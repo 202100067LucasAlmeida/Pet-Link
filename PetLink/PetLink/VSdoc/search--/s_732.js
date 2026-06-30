@@ -1,0 +1,1 @@
+search_result['732']=["topic_00000000000001E7.html","Review Class","Representa uma avaliação deixada por um utilizador após uma adoção ou serviço de pet sitting.\r\nPermite avaliar a experiência associada a um utilizador e a um anúncio específico."];

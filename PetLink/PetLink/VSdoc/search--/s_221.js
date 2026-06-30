@@ -1,0 +1,1 @@
+search_result['221']=["topic_000000000000007D.html","ReviewController.Create (Int32, Nullable\u0026lt;Int32\u0026gt;, String) Method","Apresenta o formulário de criação de uma avaliação.\r\nDetermina o utilizador a avaliar e valida se o utilizador autenticado\r\ntem permissão para o fazer, de acordo com o tipo de avaliação (adoção ou pet..."];

@@ -1,0 +1,1 @@
+search_result['8']=["topic_0000000000000003.html","ChatbotController.SendMessage Method","Envia uma mensagem do utilizador ao chatbot e devolve a respetiva resposta.\r\nCaso o utilizador esteja autenticado, o seu identificador é associado ao pedido\r\npara permitir respostas contextualizadas."];

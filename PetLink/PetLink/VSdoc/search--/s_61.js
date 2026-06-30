@@ -1,0 +1,1 @@
+search_result['61']=["topic_0000000000000020.html","BaseController.GetCurrentUserId Method","Extracts current authenticated user ID from claims with validation\r\nReturns true if successful, false otherwise"];

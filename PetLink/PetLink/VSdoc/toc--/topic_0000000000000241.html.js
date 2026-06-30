@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"PetLink Reference","topic_0000000000000247.html"],['602',"PetLink.Services Namespace","topic_000000000000022F.html"],['623',"IEmailService Interface","topic_0000000000000240.html"],['624',"Methods","topic_0000000000000240_methods--.html"],['626',"SendEmailAsync Method","topic_0000000000000241.html"]];

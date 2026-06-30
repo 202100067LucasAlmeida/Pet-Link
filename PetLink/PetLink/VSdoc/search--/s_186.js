@@ -1,0 +1,1 @@
+search_result['186']=["topic_000000000000006A.html","ProfileController.RemoveProfilePicture Method","Remove a foto de perfil do utilizador autenticado,\r\napaga o ficheiro físico do servidor e repõe a imagem por defeito."];

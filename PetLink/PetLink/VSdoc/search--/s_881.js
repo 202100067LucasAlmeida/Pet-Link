@@ -1,0 +1,1 @@
+search_result['881']=["topic_0000000000000240.html","IEmailService Interface","Contrato para o serviço de envio de emails da plataforma PetLink.\r\nDefine os diferentes tipos de emails transacionais suportados pelo sistema,\r\ncomo notificações de mensagens e confirmações de adoção."];

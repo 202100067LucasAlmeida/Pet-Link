@@ -1,0 +1,1 @@
+search_result['1']=["topic_0000000000000001.html","ChatbotController Class","Controlador de API responsável pela interação com o chatbot da plataforma.\r\nRecebe mensagens do utilizador e devolve a resposta gerada pelo serviço de chatbot."];

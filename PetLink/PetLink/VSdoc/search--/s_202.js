@@ -1,0 +1,1 @@
+search_result['202']=["topic_0000000000000073.html","ResourcesController.Index Method","Apresenta a listagem pública de recursos disponíveis,\r\npermitindo filtrar por texto de pesquisa, espécie e categoria."];

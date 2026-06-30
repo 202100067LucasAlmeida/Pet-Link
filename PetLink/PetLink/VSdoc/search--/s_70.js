@@ -1,0 +1,1 @@
+search_result['70']=["topic_0000000000000024.html","BookingsController.MyBookings Method","Lista todas as reservas efetuadas pelo utilizador autenticado."];

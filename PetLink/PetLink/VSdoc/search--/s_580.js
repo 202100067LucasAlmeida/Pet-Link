@@ -1,0 +1,1 @@
+search_result['580']=["topic_0000000000000186.html","HealthDocument Class","Representa um documento comprovativo de saúde associado a um anúncio de animal,\r\ncomo vacinação, desparasitação ou esterilização.\r\nPode ser verificado por um administrador."];

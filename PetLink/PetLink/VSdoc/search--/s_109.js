@@ -1,0 +1,1 @@
+search_result['109']=["topic_000000000000003D.html","EventsController.InterestedUsers Method","Lista os utilizadores que registaram interesse num evento.\r\nApenas acessível pelo organizador do evento ou por administradores."];

@@ -1,0 +1,1 @@
+search_result['177']=["topic_0000000000000061.html","ProfileController.ValidateEmail Method","Verifica se um endereço de email já se encontra registado na plataforma.\r\nDevolve o resultado em formato JSON."];

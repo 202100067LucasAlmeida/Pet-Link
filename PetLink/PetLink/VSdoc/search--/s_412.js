@@ -1,0 +1,1 @@
+search_result['412']=["topic_00000000000000F5.html","ApplicationStatus Enumeration","Estado de uma candidatura de adoção submetida por um utilizador."];

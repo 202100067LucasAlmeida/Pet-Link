@@ -1,0 +1,1 @@
+search_result['411']=["topic_00000000000000F0.html","ListingStatus Enumeration","Estado de um anúncio de adoção ao longo do seu ciclo de vida."];

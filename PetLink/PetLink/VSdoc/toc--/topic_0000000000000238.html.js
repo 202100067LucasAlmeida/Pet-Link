@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"PetLink Reference","topic_0000000000000247.html"],['602',"PetLink.Services Namespace","topic_000000000000022F.html"],['613',"EmailSettings Class","topic_0000000000000233.html"],['614',"Properties","topic_0000000000000233_props--.html"],['616',"SenderName Property","topic_0000000000000238.html"]];

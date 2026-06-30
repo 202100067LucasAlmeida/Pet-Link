@@ -1,0 +1,1 @@
+search_result['237']=["topic_0000000000000085.html","UsersController.Edit (Int32, User) Method","Atualiza os dados permitidos de um utilizador (nome, email, papel e estado de verificação),\r\npreservando os restantes campos. Apenas acessível a administradores."];

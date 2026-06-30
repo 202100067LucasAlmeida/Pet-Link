@@ -1,0 +1,1 @@
+search_result['154']=["topic_0000000000000056.html","PetsitterController.Details Method","Apresenta os detalhes do perfil de um pet sitter.\r\nCaso o utilizador autenticado não seja o próprio pet sitter,\r\né também carregado o histórico de mensagens entre ambos."];

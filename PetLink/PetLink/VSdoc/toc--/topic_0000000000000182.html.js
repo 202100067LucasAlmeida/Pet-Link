@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"PetLink Reference","topic_0000000000000247.html"],['529',"PetLink.Models.ViewModels Namespace","topic_0000000000000180.html"],['559',"FavoritesViewModel Class","topic_0000000000000181.html"],['560',"Properties","topic_0000000000000181_props--.html"],['561',"FavoritePets Property","topic_0000000000000182.html"]];

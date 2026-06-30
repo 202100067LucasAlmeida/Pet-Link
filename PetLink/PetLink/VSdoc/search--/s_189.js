@@ -1,0 +1,1 @@
+search_result['189']=["topic_000000000000006D.html","ProfileController.ForgotPassword Method","Processa o pedido de recuperação de password.\r\nGera um token de reset, guarda-o na base de dados e envia um email com o link de redefinição.\r\nContas com login externo via Google não suportam este flux..."];

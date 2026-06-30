@@ -1,0 +1,1 @@
+search_result['43']=["topic_0000000000000018.html","ApplicationsController Class","Controlador responsável por gerir todo o fluxo de candidaturas a adoção.\r\nInclui criação de candidaturas, aprovação, rejeição, conclusão e gestão administrativa.\r\nTambém coordena a criação de mensagen..."];

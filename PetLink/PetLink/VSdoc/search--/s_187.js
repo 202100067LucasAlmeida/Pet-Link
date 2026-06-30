@@ -1,0 +1,1 @@
+search_result['187']=["topic_000000000000006B.html","ProfileController.LoginWithGoogle Method","Inicia o fluxo de autenticação via Google,\r\nredirecionando o utilizador para a página de login da Google."];

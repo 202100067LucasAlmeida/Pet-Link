@@ -1,0 +1,1 @@
+search_result['194']=["topic_0000000000000070.html","ProfileController.HelpCenter Method","Apresenta a página de centro de ajuda da plataforma."];

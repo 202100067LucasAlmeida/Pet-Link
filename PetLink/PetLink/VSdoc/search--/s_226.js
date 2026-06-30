@@ -1,0 +1,1 @@
+search_result['226']=["topic_0000000000000080.html","UsersController Class","Controlador responsável pela gestão administrativa de utilizadores.\r\nPermite listar, consultar, criar, editar e eliminar utilizadores,\r\nestando a maioria das operações reservadas a administradores."];

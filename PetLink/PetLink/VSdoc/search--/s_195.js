@@ -1,0 +1,1 @@
+search_result['195']=["topic_0000000000000071.html","ResourcesController Class","Controlador responsável pela gestão de recursos informativos da plataforma.\r\nPermite consultar, pesquisar, criar, editar e eliminar recursos,\r\nestando estas últimas operações reservadas a administrado..."];

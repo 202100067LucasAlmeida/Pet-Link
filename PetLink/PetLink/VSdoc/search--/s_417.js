@@ -1,0 +1,1 @@
+search_result['417']=["topic_000000000000010C.html","ResourceCategory Enumeration","Categoria temática de um recurso informativo."];

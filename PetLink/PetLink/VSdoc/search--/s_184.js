@@ -1,0 +1,1 @@
+search_result['184']=["topic_0000000000000068.html","ProfileController.MarkMessagesAsRead Method","Marca todas as mensagens não lidas do utilizador autenticado como lidas.\r\nAcessível apenas a utilizadores com os papéis User ou PetSitter.\r\nDevolve o resultado em formato JSON."];

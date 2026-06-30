@@ -1,0 +1,1 @@
+search_result['38']=["topic_0000000000000013.html","AnimalListingsController.Manage Method","Permite aos administradores gerir todos os anúncios."];

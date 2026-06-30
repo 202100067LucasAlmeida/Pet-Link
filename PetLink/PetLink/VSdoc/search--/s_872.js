@@ -1,0 +1,1 @@
+search_result['872']=["topic_000000000000023C.html","EmailService.SendAdoptionConfirmationAsync Method","Envia email de confirmação de adoção após conclusão do processo.\r\nInforma o utilizador sobre a conclusão e próximos passos com o abrigo."];

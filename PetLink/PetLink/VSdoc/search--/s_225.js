@@ -1,0 +1,1 @@
+search_result['225']=["topic_000000000000007F.html","ReviewController.UserReviews Method","Apresenta as avaliações recebidas por um utilizador,\r\nincluindo a classificação média e o total de avaliações.\r\nApenas utilizadores e pet sitters podem receber avaliações."];

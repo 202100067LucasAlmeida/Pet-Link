@@ -1,0 +1,1 @@
+search_result['864']=["topic_0000000000000239.html","EmailService Class","Serviço responsável pelo envio de emails na plataforma PetLink.\r\nUtiliza MailKit para envio via SMTP com suporte a HTML.\r\nInclui emails transacionais como confirmação de adoção e notificações de mensa..."];

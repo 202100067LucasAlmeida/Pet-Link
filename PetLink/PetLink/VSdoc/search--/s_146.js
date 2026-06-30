@@ -1,0 +1,1 @@
+search_result['146']=["topic_0000000000000053.html","PetsitterController Class","Controlador responsável pela gestão e visualização de perfis de pet sitters.\r\nPermite listar, pesquisar e consultar os detalhes de cada pet sitter,\r\nincluindo o histórico de mensagens com o utilizador..."];
